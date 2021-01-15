@@ -1,0 +1,10 @@
+
+# Add namespace to cloud account (not sure if will be used)
+ibmcloud account space-create CWM-SPACE-DE
+
+# Add namespace to k8s cluster
+kubectl create  namespace cwmnamespace
+
+# Add namespace to Kubernetes registry
+ibmcloud cr  namespace-add cwmregspace
+

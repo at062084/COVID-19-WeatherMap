@@ -1,44 +1,73 @@
 # Setup environment to work with kubernetes cluster and the rep-* apps
-APP_ID=cwm
+export APP_ID=cwm-rshiny
 
 # adapt to local directory structure
 export BASE_DIR="/home/at062084/DataEngineering/COVID-19/COIVD-19-WeatherMap"
+cd $BASE_DIR
+
+# source Cloud config
+. ./ibmcloud.conf
 
 # Specification of the k8s environment on IBM Cloud
-export IBM_LOC="eu-de"
-export IBM_ORG="REP-CF-ORG"
-export IBM_SPACE="REP-SPACE-DE"
-export IBM_RESGRP="REP-ResourceGroup"
-export IBM_K8C="REP-K8S-Cluster"
-export IBM_K8S="cwmnamespace"
-export IBM_REG_SPACE="cwmnamespace"
-export IBM_APIKEY_CLASSIC="`cat ../secrets/apikey-class.txt`"
-export IBM_APIKEY="`cat ../secrets/apikey.txt`"
-export IBM_APP="cwm"
+#export IBM_LOC="eu-de"
+#export IBM_ORG="REP-CF-ORG"
+#export IBM_SPACE="REP-SPACE-DE"
+#export IBM_RESGRP="REP-ResourceGroup"
+#export IBM_K8C="REP-K8S-Cluster"
+#export IBM_K8I="bp1g35gf0bfdrpfel34g"
+#export IBM_K8S="cwmnamespace"
+#export IBM_REG_SPACE="cwmregspace"
+#export IBM_APIKEY_CLASSIC="`cat ./secrets/apikey-classic.txt`"
+#export IBM_APIKEY="`cat ./secrets/apikey.txt`"
+#export IBM_APP="cwm"
+#export IBM_REG="de.icr.io"
 
 # Login into IBM cloud with API key
-export IBM_REG="de.icr.io"
-ibmcloud login -a https://api.$IBM_LOC.bluemix.net -apikey $IBM_APIKEY
+echo "Executing: ibmcloud login -a https://cloud.ibm.com -r $IBM_LOC -g $IBM_RESGRP"
+ibmcloud login -a https://cloud.ibm.com -r $IBM_LOC -g $IBM_RESGRP -apikey $IBM_APIKEY
 ibmcloud config --check-version=false
-ibmcloud target -o "$IBM_ORG" -r "$IBM_LOC" -s "$IBM_SPACE" -g "$IBM_RESGRP"
-ibmcloud cr login
 
-# Point to cluster config file
-export CMD="`ibmcloud cs cluster-config $IBM_K8C | grep export`"
-echo $CMD
+CMD="ibmcloud target -o $IBM_ORG -r $IBM_LOC -s $IBM_SPACE -g $IBM_RESGRP"
+echo "> Executing: $CMD"
 $CMD
 
-kubectl cluster-info
+CMD="ibmcloud cr login"
+echo "> Executing: $CMD"
+$CMD
+
+CMD="ibmcloud ks cluster config --cluster $IBM_K8I
+echo "> Executing: $CMD"
+$CMD
+
+CMD="kubectl config current-context"
+echo "> Executing: $CMD"
+$CMD
+
+CMD="ibmcloud ks cluster get --cluster REP-K8S-Cluster"
+echo "> Executing: $CMD"
+$CMD
+
+# Point to cluster config file
+#`ibmcloud cs cluster-config $IBM_K8C | grep export`"
+#echo "> Executing: $CMD"
+#$CMD
+
+#kubectl cluster-info
 
 # determine external IP and Port
-kubectl describe nodes |grep External
-kubectl describe deployments | grep -i name
-kubectl describe services | grep nodeport
-kubectl describe ingresses 
-kubectl describe pods | grep Name: | grep -i rep | grep deployment
+echo ""
+echo "> Listing resources in space $IBM_K8S ..."
+echo "> ingresses"
+kubectl describe ingresses -n §IBM_K8S
+echo "> services"
+kubectl describe services -n $IBM_K8S| grep nodeport
+echo "> deployments"
+kubectl describe deployments -n $IBM_K8S| grep -i name
+echo "> pods"
+kubectl describe pods -n $IBM_K8S | grep Name: | grep -i cwm | grep deployment
+echo "> nodes"
+kubectl describe nodes -n $IBM_K8S|grep External
 
-# write scripts to login into containers on kubernetes
-export REP_NODE=`kubectl describe pods | grep Name: |grep rep | grep deployment | awk '{ print $NF }'`
 
 # Some more kubectl commands
 

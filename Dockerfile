@@ -1,15 +1,22 @@
-FROM rocker-shiny-verse
+FROM rocker-shiny-verse:latest
 # local image based on rocker/r-ver + shiny + tidyverse
 
+RUN apt-get update -qq && apt-get -y --no-install-recommends install \
+  libudunits2-dev
+
 RUN  install2.r --error \
-  --deps TRUE \
     plotly \
-    leavelet \
+    leaflet \
     leaflet.extras \
-    maps \
-    mapproj \
+    RColorBrewer \
   && rm -rf /tmp/downloaded_packages
   
+RUN  install2.r --error \
+    geojsonsf \
+    spdplyr \
+  && rm -rf /tmp/downloaded_packages
+
+#  --deps TRUE \
   
 # RUN rm -rf /srv/shiny-server/*
 WORKDIR /srv/shiny-server/COVID-19-WeatherMap
@@ -22,7 +29,3 @@ RUN sudo chown -R shiny:shiny /srv/shiny-server
 EXPOSE 3838
 
 CMD ["/usr/bin/shiny-server.sh"]
-
-
-
-
