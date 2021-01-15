@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: cwm-ingress
+  namespace: cwmnamespace
+  labels:
+    app: cwm-ingress
+    context: REnterprise
+#  annotations:
+#    ingress.bluemix.net/rewrite-path: "rewrite=/;serviceName=rep-grafana-service rewrite=/"
+#    ingress.bluemix.net/proxy-read-timeout: "serviceName=rep-proxy-service timeout=300s"
+#    ingress.bluemix.net/proxy-connect-timeout: "serviceName=rep-proxy-service timeout=180s"
+#    ingress.bluemix.net/redirect-to-https: "True"
+#    ingress.bluemix.net/allowHTTP: "false"
+#    kubernetes.io/ingress.allowHTTP: "false"
+#    ingress.bluemix.net/ssl-services: "ssl-service=rep-proxy-service"
+#    ingress.bluemix.net/rewrite-target: /
+#    ingress.kubernetes.io/ssl-passthrough: "true"
+spec:
+  tls:
+  - hosts:
+    - rep-k8s-cluster.eu-de.containers.appdomain.cloud
+    secretName: rep-k8s-cluster-48a40589c62cd829903b0d7849def5a2-0000
+  rules:
+  - host: rep-k8s-cluster.eu-de.containers.appdomain.cloud
+    http:
+      paths:
+      - path: /COVID-19-WeatherMap
+        backend:
+          serviceName: cwm-rshiny-service
+          servicePort: 3838
+
