@@ -26,6 +26,7 @@ RUN  install2.r --error \
 
 RUN  install2.r --error \
     geojsonio \
+    DT \
   && rm -rf /tmp/downloaded_packages
   
 # RUN rm -rf /srv/shiny-server/*
