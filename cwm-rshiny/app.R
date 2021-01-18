@@ -47,7 +47,6 @@ logBreaks=c(seq(.1,1,by=.1),seq(1,10,by=1),seq(10,100,by=10),seq(100,1000,by=100
 #nPredDays=14
 yLimMax <- 128
 julDate <- as.Date("2020-07-01")
-maxDate <- max(df$Date)
 trans="log10"
 
 
@@ -57,6 +56,7 @@ trans="log10"
 df <- read.csv("./data/COVID-19-AGES-Curated.csv", sep=",", dec=".") %>%
   dplyr::mutate(Date=as.Date(Date,"%Y-%m-%d")) %>%
   dplyr::select(-Stamp)
+maxDate <- max(df$Date)
 
 di <- data.frame(RegionID=as.character(1:9), Region=c("Burgenland","Kärnten","Niederösterreich","Oberösterreich","Salzburg","Steiermark","Tirol","Vorarlberg","Wien"), stringsAsFactors=FALSE)
 dg <- read.csv("./data/COVID-19-AGES-GKZ.csv", stringsAsFactors=FALSE) %>%
