@@ -12,6 +12,7 @@ RUN  install2.r --error \
   && rm -rf /tmp/downloaded_packages
   
 RUN  install2.r --error \
+    geojsonio \
     geojsonsf \
     spdplyr \
   && rm -rf /tmp/downloaded_packages
