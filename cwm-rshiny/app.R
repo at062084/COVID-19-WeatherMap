@@ -143,7 +143,7 @@ ui <- fluidPage(
     # Sidebar panel for inputs ----
     sidebarPanel(width=2,
       
-      p("COVID-19-WeatherMap-0.2.2 IBM@20210118"),
+      p("COVID-19-WeatherMap-0.2.3 IBM@20210118"),
       
       fluidRow(
           checkboxGroupInput("cbgRegion",

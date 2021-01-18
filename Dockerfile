@@ -2,7 +2,14 @@ FROM rocker-shiny-verse:latest
 # local image based on rocker/r-ver + shiny + tidyverse
 
 RUN apt-get update -qq && apt-get -y --no-install-recommends install \
-  libudunits2-dev
+  libudunits2-dev 
+
+# V8 required
+ENV DOWNLOAD_STATIC_LIBV8=1
+RUN apt-get update -qq && apt-get -y --no-install-recommends install \
+  libprotobuf-dev \
+  libnode-dev \
+  libjq-dev
 
 RUN  install2.r --error \
     plotly \
@@ -12,12 +19,13 @@ RUN  install2.r --error \
   && rm -rf /tmp/downloaded_packages
   
 RUN  install2.r --error \
-    geojsonio \
     geojsonsf \
     spdplyr \
   && rm -rf /tmp/downloaded_packages
 
-#  --deps TRUE \
+RUN  install2.r --error \
+    geojsonio \
+  && rm -rf /tmp/downloaded_packages
   
 # RUN rm -rf /srv/shiny-server/*
 WORKDIR /srv/shiny-server/COVID-19-WeatherMap
