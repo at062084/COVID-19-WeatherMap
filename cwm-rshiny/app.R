@@ -29,6 +29,8 @@ library(leaflet.extras)
 library(geojsonsf)
 library(spdplyr)
 
+source("fun.R")
+
 
 # --------------------------------------------------------------------------------------------------------------------------
 # Global section. Data available to all sessions
@@ -40,8 +42,8 @@ popBreaksAll <- c(0,1,2,3,4,5,6,7,8,9,10,12,15,seq(20,150,by=10))
 popLogBreaks <- (c(.1,.2,.5,1,2,5,10,20,50,100))
 logBreaks=c(seq(.1,1,by=.1),seq(1,10,by=1),seq(10,100,by=10),seq(100,1000,by=100),seq(1000,10000,by=1000))
 logBreaks=c(seq(.1,1,by=.1),seq(1,10,by=1),seq(10,100,by=10),seq(100,1000,by=100),seq(1000,10000,by=1000),seq(10000,100000,by=10000))
-nModelDays=28
-nPredDays=14
+#nModelDays=28
+#nPredDays=14
 yLimMax <- 128
 julDate <- as.Date("2020-07-01")
 maxDate <- max(df$Date)
@@ -62,7 +64,6 @@ dg <- read.csv("./data/COVID-19-AGES-GKZ.csv", stringsAsFactors=FALSE) %>%
   dplyr::rename(County=Region, CountyID=RegionID) %>%
   dplyr::mutate(RegionID=(str_sub(as.character(CountyID),1,1)), CountyNR=(str_sub(as.character(CountyID),2,3))) %>%
   dplyr::left_join(di, by="RegionID") %>% dplyr::select(1,13,15,2,14,3,4,5:12)
-
 
 # -----------------------------------------------------
 # Map Austria data structures
@@ -176,17 +177,23 @@ ui <- fluidPage(
       
       tabsetPanel(type = "tabs",
  
-        tabPanel("Lage und Aussichten Bundesländer",
+        tabPanel("COVID Lage und Aussichten",
                  h4("Lage und Aussichten Bundesländer", align = "left", style="color:gray"),
                  p("[Menüauswahl: NA]", align = "left", style="color:green"),
                  fluidRow(column(width=10, leafletOutput(outputId = "lftWeatherMap", height="75vh")),
                           column(width=2, htmlOutput(outputId="hlpWeatherMap")))),
                   
+        tabPanel("Prognose TagesInzidenz",
+                 h4("Prognose TagesInzidenz", align = "left", style="color:gray"),
+                 p("[Menüauswahl: NA]", align = "left", style="color:green"),
+                 fluidRow(column(width=10, plotOutput(outputId = "ggpIncidencePrediciton", height="75vh")),
+                          column(width=2, htmlOutput(outputId="hlpIncidencePrediciton")))),
+
         tabPanel("TagesInzidenz Bundesländer",
-          h4("TagesInzidenz Bundesländer", align = "left", style="color:gray"),
-          p("[Menüauswahl: Zeitbereich,Region]", align = "left", style="color:green"),
-          fluidRow(column(width=10, plotOutput(outputId = "ggpIncidenceStates")),
-                   column(width=2, htmlOutput(outputId="hlpIncidenceStates")))),
+                  h4("TagesInzidenz Bundesländer", align = "left", style="color:gray"),
+                  p("[Menüauswahl: Zeitbereich,Region]", align = "left", style="color:green"),
+                  fluidRow(column(width=10, plotOutput(outputId = "ggpIncidenceStates")),
+                           column(width=2, htmlOutput(outputId="hlpIncidenceStates")))),
 
           tabPanel("TagesInzidenz Bezirke",
                  h4("TagesInzidenz Bezirke", align = "left", style="color:gray"),
@@ -274,10 +281,9 @@ server <- function(input, output, session) {
                   idxDblConfPop=.bincode(dt7rm7NewConfPop,binDblDays), 
                   idxForConfPop=.bincode(modrm7NewConfPop,binForeCast))
   
-  labConfPop <- sprintf(
-    "<strong>%s</strong><br/>TagesInzidenz: %g pro 100000<br>Änderung letze Woche: %g%%<br>Prognose nächste Woche: %g<br>Tage bis LockDown: %g",
-    mapNUTS2$Region, round(mapNUTS2$rm7NewConfPop,2), round(mapNUTS2$dt7rm7NewConfPop,2), round(mapNUTS2$modrm7NewConfPop,2), round(mapNUTS2$resrm7NewConfPop,0)
-  ) %>% lapply(htmltools::HTML)
+  labWeatherMap <- sprintf(
+    "<strong>%s</strong><br/>TagesInzidenz: %g pro 100000<br>Änderung seit letzer Woche: %g%%<br>Prognose nächste Woche: %g<br>Tage bis LockDown: %g",
+    mapNUTS2$Region, round(mapNUTS2$rm7NewConfPop,2), round(mapNUTS2$dt7rm7NewConfPop,2), round(mapNUTS2$modrm7NewConfPop,2), 0) %>% lapply(htmltools::HTML)
   
   
   output$lftWeatherMap <- renderLeaflet({
@@ -290,7 +296,7 @@ server <- function(input, output, session) {
       addPolygons(data=mapNUTS3, stroke = TRUE, smoothFactor = 0, fillOpacity = 0, fillColor="none", weight=1, group="AT3") %>%
       addPolygons(stroke = TRUE, weight=3, color="black",
                   fill=TRUE, fillOpacity = 1, fillColor=palConfPop[.bincode(mapNUTS2$rm7NewConfPop,binConfPop)],
-                  label=labConfPop, 
+                  label=labWeatherMap, 
                   labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="15px"),
                   popup=~paste(Region,round(rm7NewConfPop,2),round(dt7rm7NewConfPop,2),round(modrm7NewConfPop,2),sep="\n\r<br>"),
                   group="AT2") %>%
@@ -301,6 +307,56 @@ server <- function(input, output, session) {
       addLayersControl(overlayGroups=c("AT1","AT3"), options=layersControlOptions(collapsed=FALSE)) %>%
       hideGroup(c("AT1","AT3","Markers"))
   })
+  
+  # -------------------------------------------
+  # TagesInzidenz BundesLänder
+  # -------------------------------------------
+  output$hlpIncidencePrediciton <- renderText({
+    "<p><b>IncidencePrediciton</b></p><p>this is some help text that shall explain the plot</p><p><li>itime1</li><li>listitem 2<</li></p>"
+  })
+  
+  output$ggpIncidencePrediciton <- renderPlot({
+    logMsg("  output$ggpIncidenceStates: renderPlot", sessionID)
+
+    dk <- df.past()
+    dp <- caAgesRm7EstimatePoly(dk,nModelDays=20,nPredDays=14)
+
+    trans <- ifelse(input$cbLogScale, "log10", "identity")
+    if(as.integer(input$rbsPastTime)<26) {
+      rvBreaks="1 weeks"
+      rvLabels="%d.%m"
+    } else {
+      rvBreaks="1 months"
+      rvLabels="%B"
+    }
+    
+    ggplot(data=dp, aes(x=Date, y=rm7NewConfPop,color=Region,shape=Region)) + 
+      scale_shape_manual(values=c(1:10)) + 
+      scale_x_date(date_breaks=rvBreaks, date_labels=rvLabels, limits=c(min(dk$Date), max(dp$Date)), expand=expand_scale(mult=0.01)) +
+      scale_y_continuous(limits=c(1,yLimMax), breaks=popBreaksAll, position="right", expand=expand_scale(mult=0.01), trans=trans, 
+                         name="TagesInzidenz: PositiveGetestete/100.000 Einwohnern.") + 
+      geom_line(data=dk, aes(x=Date, y=1), size=1.0, color="green") +
+      geom_line(data=dk, aes(x=Date, y=2), size=1.0, color="orange") +
+      geom_line(data=dk, aes(x=Date, y=4), size=.8, color="magenta") +
+      geom_line(data=dk, aes(x=Date, y=8), size=.8, color="red") +
+      geom_line(data=dk, aes(x=Date, y=16), size=.8, color="darkred") +
+      geom_line(data=dk, aes(x=Date, y=32), size=.8, color="black") +
+      geom_line(data=dk, aes(x=Date, y=64), size=1.0, color="black") +
+      geom_line(data=dk, aes(x=Date, y=128), size=1.5, color="black") +
+      geom_line(data=dp, aes(x=Date, y=1), size=1.0, color="green") +
+      geom_line(data=dp, aes(x=Date, y=2), size=1.0, color="orange") +
+      geom_line(data=dp, aes(x=Date, y=4), size=.8, color="magenta") +
+      geom_line(data=dp, aes(x=Date, y=8), size=.8, color="red") +
+      geom_line(data=dp, aes(x=Date, y=16), size=.8, color="darkred") +
+      geom_line(data=dp, aes(x=Date, y=32), size=.8, color="black") +
+      geom_line(data=dp, aes(x=Date, y=64), size=1.0, color="black") +
+      geom_line(data=dp, aes(x=Date, y=128), size=1.5, color="black") +
+      geom_line(linetype=2, size=1) + 
+      geom_point(data=dk,aes(x=Date,y=rm7NewConfPop)) + 
+      geom_line(data=dk,aes(x=Date,y=rm7NewConfPop), size=.5) + 
+      ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Prognose TagesInzidenz. Model ab ", min(dp$Date), ".  Basisdaten: AGES"))
+  })
+  
   
   # -------------------------------------------
   # TagesInzidenz BundesLänder
@@ -332,14 +388,14 @@ server <- function(input, output, session) {
       scale_x_date(date_breaks=rvBreaks, date_labels=rvLabels, limits=c(min(dp$Date), maxDate+days(nPredDays*0+2)), expand=expand_scale(mult=0.01)) +
       scale_y_continuous(limits=c(1,yLimMax), breaks=popBreaksAll, position="right", expand=expand_scale(mult=0.01), trans=trans, 
                          name="Positive/100.000 Einwohnern. \nAmpelfarben entlang ECDC (European Centre for Disease Prevention and Control) ") + 
-      geom_line(aes(x=Date, y=1+0.01), size=1.0, color="green") +
-      geom_line(aes(x=Date, y=2+0.025), size=1.0, color="orange") +
-      geom_line(aes(x=Date, y=4+.075), size=.8, color="magenta") +
-      geom_line(aes(x=Date, y=8+.15), size=.8, color="red") +
-      geom_line(aes(x=Date, y=16+.30), size=.8, color="darkred") +
-      geom_line(aes(x=Date, y=32+.50), size=.8, color="black") +
-      geom_line(aes(x=Date, y=64+1), size=1, color="black") +
-      geom_line(aes(x=Date, y=128-2), size=1.5, color="black") +
+      geom_line(aes(x=Date, y=1), size=1.0, color="green") +
+      geom_line(aes(x=Date, y=2), size=1.0, color="orange") +
+      geom_line(aes(x=Date, y=4), size=.8, color="magenta") +
+      geom_line(aes(x=Date, y=8), size=.8, color="red") +
+      geom_line(aes(x=Date, y=16), size=.8, color="darkred") +
+      geom_line(aes(x=Date, y=32), size=.8, color="black") +
+      geom_line(aes(x=Date, y=64), size=1.0, color="black") +
+      geom_line(aes(x=Date, y=128), size=1.5, color="black") +
       geom_point(size=1)+geom_line()+
       #geom_smooth(data=dp%>%dplyr::filter(Date<as.Date("2020-12-01")), aes(x=Date, y=rm7NewConfPop),method="lm", se=FALSE) +
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Positiv Getestete pro 100.000 Einw. seit ", min(dp$Date), ".  Basisdaten: AGES"))
