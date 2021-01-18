@@ -8,6 +8,8 @@ RUN apt-get update -qq && apt-get -y --no-install-recommends install \
 ENV DOWNLOAD_STATIC_LIBV8=1
 RUN apt-get update -qq && apt-get -y --no-install-recommends install \
   libprotobuf-dev \
+  protobuf-compiler \
+  libgeos-dev \
   libnode-dev \
   libjq-dev
 
