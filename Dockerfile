@@ -4,7 +4,7 @@ FROM rocker-shiny-verse:latest
 # V8 required
 ENV DOWNLOAD_STATIC_LIBV8=1
 RUN apt-get update -qq && apt-get -y --no-install-recommends install \
-  libudunits2-dev 
+  libudunits2-dev \
   protobuf-compiler \
   libprotobuf-dev \
   libgeos-dev \
