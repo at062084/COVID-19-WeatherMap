@@ -62,7 +62,7 @@ echo $CMD
 [ $DRY_RUN -eq 0 ] && $CMD
 
 # run image locally
-CMD="docker run -d -p $DKR_NGINX_PORT:$DKR_NGINX_PORT -p $DKR_SHINY_PORT:$DKR_SHINY_PORT --name $DKR_PRJ $DKR_TAG"
+CMD="docker run -d -p $DKR_SHINY_PORT:$DKR_SHINY_PORT --name $DKR_PRJ $DKR_TAG"
 echo $CMD
 
 # Login to container

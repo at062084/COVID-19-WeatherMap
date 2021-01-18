@@ -1,16 +1,15 @@
 FROM rocker-shiny-verse:latest
 # local image based on rocker/r-ver + shiny + tidyverse
 
-RUN apt-get update -qq && apt-get -y --no-install-recommends install \
-  libudunits2-dev 
-
 # V8 required
 ENV DOWNLOAD_STATIC_LIBV8=1
 RUN apt-get update -qq && apt-get -y --no-install-recommends install \
-  libprotobuf-dev \
+  libudunits2-dev 
   protobuf-compiler \
+  libprotobuf-dev \
   libgeos-dev \
   libnode-dev \
+  libgdal-dev \
   libjq-dev
 
 RUN  install2.r --error \
