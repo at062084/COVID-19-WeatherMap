@@ -32,8 +32,12 @@ CMD="docker tag  $DKR_TAG $IBM_REG/$IBM_REG_SPACE/$DKR_TAG"
 echo "> Executing $CMD"
 [ $DRY_RUN -eq 0 ] && $CMD
 
-CMD="> docker push $IBM_REG/$IBM_REG_SPACE/$DKR_TAG"
-echo "Executing $CMD"
+CMD="docker push $IBM_REG/$IBM_REG_SPACE/$DKR_TAG"
+echo "> Executing $CMD"
+[ $DRY_RUN -eq 0 ] && $CMD
+
+CMD="docker push $IBM_REG/$IBM_REG_SPACE/$DKR_PRJ:latest"
+echo "> Executing $CMD"
 [ $DRY_RUN -eq 0 ] && $CMD
 
 echo "> Checking for $DKR_PRJ images"

@@ -35,7 +35,7 @@ CMD="ibmcloud cr login"
 echo "> Executing: $CMD"
 $CMD
 
-CMD="ibmcloud ks cluster config --cluster $IBM_K8I
+CMD="ibmcloud ks cluster config --cluster $IBM_K8I"
 echo "> Executing: $CMD"
 $CMD
 
@@ -43,7 +43,7 @@ CMD="kubectl config current-context"
 echo "> Executing: $CMD"
 $CMD
 
-CMD="ibmcloud ks cluster get --cluster REP-K8S-Cluster"
+CMD="ibmcloud ks cluster get --cluster $IBM_K8I"
 echo "> Executing: $CMD"
 $CMD
 

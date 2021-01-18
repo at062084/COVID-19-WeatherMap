@@ -25,7 +25,7 @@ spec:
   - host: rep-k8s-cluster.eu-de.containers.appdomain.cloud
     http:
       paths:
-      - path: /COVID-19-WeatherMap
+      - path: /
         backend:
           serviceName: cwm-rshiny-service
           servicePort: 3838

@@ -8,3 +8,15 @@ kubectl create  namespace cwmnamespace
 # Add namespace to Kubernetes registry
 ibmcloud cr  namespace-add cwmregspace
 
+# Error accesing images in new namespace in k8 registry 
+kubectl get secrets -n default | grep "icr-io"
+kubectl get secrets -n cwmnamespace | grep "icr-io"
+kubectl get secrets -n repnamespace | grep "icr-io"
+
+# https://cloud.ibm.com/docs/containers?topic=containers-registry#copy_imagePullSecret
+kubectl get secret default-de-icr-io -n default -o yaml | sed 's/default/cwmnamespace/g' | kubectl create -n cwmnamespace -f -
+kubectl get secrets -n cwmnamespace | grep "icr-io"
+
+# https://cloud.ibm.com/docs/containers?topic=containers-registry#store_imagePullSecret
+kubectl describe serviceaccount default -n cwmnamespace
+kubectl patch -n cwmnamespace serviceaccount/default -p '{"imagePullSecrets":[{"name": "all-icr-io"}]}'

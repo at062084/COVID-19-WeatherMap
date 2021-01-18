@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: cwm-rshiny
-        image: cwm-rshiny:latest
+        image: de.icr.io/cwmregspace/cwm-rshiny:latest
         env:
           - name: CWM_RSHINY_ENV
             value: Deployment
@@ -31,5 +31,5 @@ spec:
 #      - name: rep-crispml-volume
 #        persistentVolumeClaim:
 #          claimName: rep-crispml-pvc
-      nodeSelector:
-        env: default
+#      nodeSelector:
+#        env: default
