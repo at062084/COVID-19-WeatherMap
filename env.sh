@@ -2,7 +2,7 @@
 export APP_ID=cwm-rshiny
 
 # adapt to local directory structure
-export BASE_DIR="/home/at062084/DataEngineering/COVID-19/COIVD-19-WeatherMap"
+export BASE_DIR="/home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap"
 cd $BASE_DIR
 
 # source Cloud config
