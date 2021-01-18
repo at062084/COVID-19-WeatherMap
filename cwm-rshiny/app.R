@@ -30,6 +30,7 @@ library(geojsonsf)
 library(spdplyr)
 
 source("fun.R")
+source("hlp.R")
 
 
 # --------------------------------------------------------------------------------------------------------------------------
@@ -38,7 +39,7 @@ source("fun.R")
 # Global constants
 dblDays <- c(1:7,10,14,21,28,50,100,Inf,-100,-50,-28,-21,-14,-10,-7,-6,-5,-4,-3,-2,-1)
 popBreaks <- c(0,1,2,5,10,15,20,25,seq(30,150,by=10))
-popBreaksAll <- c(0,1,2,3,4,5,6,7,8,9,10,12,15,seq(20,150,by=10))
+popBreaksAll <- c(0,1,2,3,4,5,6,7,8,9,10,12,15,seq(20,100,by=10),120,150,200,300,400,500)
 popLogBreaks <- (c(.1,.2,.5,1,2,5,10,20,50,100))
 logBreaks=c(seq(.1,1,by=.1),seq(1,10,by=1),seq(10,100,by=10),seq(100,1000,by=100),seq(1000,10000,by=1000))
 logBreaks=c(seq(.1,1,by=.1),seq(1,10,by=1),seq(10,100,by=10),seq(100,1000,by=100),seq(1000,10000,by=1000),seq(10000,100000,by=10000))
@@ -68,16 +69,16 @@ dg <- read.csv("./data/COVID-19-AGES-GKZ.csv", stringsAsFactors=FALSE) %>%
 # -----------------------------------------------------
 # Map Austria data structures
 # -----------------------------------------------------
-iconSizeWeather=25
+iconSizeWeather=40
 iconsWeather <- iconList (
-  Thunder =   makeIcon(iconUrl="./www/iconWeather-Thunder.png",   iconWidth=iconSizeWeather, iconHeight=iconSizeWeather),
-  Rain =      makeIcon(iconUrl="./www/iconWeather-Rain.png",      iconWidth=iconSizeWeather, iconHeight=iconSizeWeather),
-  Sun_Rain =  makeIcon(iconUrl="./www/iconWeather-Sun-Rain.png",  iconWidth=iconSizeWeather, iconHeight=iconSizeWeather),
+  Sun =       makeIcon(iconUrl="./www/iconWeather-Sun.png",       iconWidth=iconSizeWeather, iconHeight=iconSizeWeather),
   Sun_Cloud = makeIcon(iconUrl="./www/iconWeather-Sun-Cloud.png", iconWidth=iconSizeWeather, iconHeight=iconSizeWeather),
-  Sun =       makeIcon(iconUrl="./www/iconWeather-Sun.png",       iconWidth=iconSizeWeather, iconHeight=iconSizeWeather)
+  Sun_Rain =  makeIcon(iconUrl="./www/iconWeather-Sun-Rain.png",  iconWidth=iconSizeWeather, iconHeight=iconSizeWeather),
+  Rain =      makeIcon(iconUrl="./www/iconWeather-Rain.png",      iconWidth=iconSizeWeather, iconHeight=iconSizeWeather),
+  Thunder =   makeIcon(iconUrl="./www/iconWeather-Thunder.png",   iconWidth=iconSizeWeather, iconHeight=iconSizeWeather)
 )
 
-iconSizeDirection=25
+iconSizeDirection=24
 iconsDirection <- iconList (
   dirS =   makeIcon(iconUrl="./www/iconDirection-S.png", iconWidth=iconSizeDirection, iconHeight=iconSizeDirection),
   dirESE = makeIcon(iconUrl="./www/iconDirection-SSE.png", iconWidth=iconSizeDirection, iconHeight=iconSizeDirection),
@@ -104,6 +105,26 @@ for(i in 1:length(mapNUTS2)) {
   cyNUTS2[i] <- mean(bbox(mapNUTS2[i,])[2,])
 }
 
+# TEST: add some properties to the geojson data structure
+NUTS2_AT <- data.frame(
+  NUTS_ID=c("AT11","AT12","AT13","AT21","AT22","AT31","AT32","AT33","AT34"),
+  Region= c("Burgenland","Niederösterreich","Wien","Kärnten", "Steiermark","Oberösterreich","Salzburg","Tirol","Vorarlberg"),
+  stringsAsFactors=FALSE)
+
+mapNUTS2 <- mapNUTS2 %>% 
+  dplyr::left_join(NUTS2_AT, by="NUTS_ID") %>% 
+  dplyr::mutate(cxNUTS2=cxNUTS2, cyNUTS2=cyNUTS2)
+                
+# Patch Wien, Niederösterreich and Burgenland center coords for better position of WeatherMap icons
+#mapNUTS2$cxNUTS2[mapNUTS2$Region=="Wien"] = mapNUTS2$cxNUTS2[mapNUTS2$Region=="Wien"] +.1
+mapNUTS2$cyNUTS2[mapNUTS2$Region=="Wien"] = mapNUTS2$cyNUTS2[mapNUTS2$Region=="Wien"] +.25
+mapNUTS2$cxNUTS2[mapNUTS2$Region=="Niederösterreich"] = mapNUTS2$cxNUTS2[mapNUTS2$Region=="Niederösterreich"] -.25
+mapNUTS2$cyNUTS2[mapNUTS2$Region=="Niederösterreich"] = mapNUTS2$cyNUTS2[mapNUTS2$Region=="Niederösterreich"] -.1
+mapNUTS2$cxNUTS2[mapNUTS2$Region=="Burgenland"] = mapNUTS2$cxNUTS2[mapNUTS2$Region=="Burgenland"] +.15
+mapNUTS2$cyNUTS2[mapNUTS2$Region=="Burgenland"] = mapNUTS2$cyNUTS2[mapNUTS2$Region=="Burgenland"] +.4
+mapNUTS2$cyNUTS2[mapNUTS2$Region=="Salzburg"] = mapNUTS2$cyNUTS2[mapNUTS2$Region=="Salzburg"] -.15
+mapNUTS2$cyNUTS2[mapNUTS2$Region=="Steiermark"] = mapNUTS2$cyNUTS2[mapNUTS2$Region=="Steiermark"] + .15
+mapNUTS2$cxNUTS2[mapNUTS2$Region=="Tirol"] = mapNUTS2$cxNUTS2[mapNUTS2$Region=="Tirol"] -.25
 
 
 # --------------------------------------------------------------------------------------------------------------------------
@@ -124,18 +145,7 @@ ui <- fluidPage(
       
       p("COVID-19-WeatherMap-0.1.1 IBM@20210115"),
       
-#      fluidRow(
-#        dateRangeInput(
-#          inputId = "DateRange",
-#          label = "DateRange",
-#          start=as.Date("2020-07-01"),
-#          end=as.Date("2021-01-13"),
-#          min = as.Date("2020-07-01"),
-#          max = as.Date("2021-01-13"),
-#          weekstart=1)),
-      
       fluidRow(
-#        column(width=6,
           checkboxGroupInput("cbgRegion",
             width="220px",
             label="Region",
@@ -149,10 +159,9 @@ ui <- fluidPage(
                            "Salzburg", 
                            "Tirol", 
                            "Vorarlberg"), 
-            selected = c("Österreich","Wien"))),
+            selected = c("Österreich","Wien","Oberösterreich","Kärnten"))),
 
         fluidRow(        
-#        column(width=6,
              radioButtons("rbsPastTime",
               width="220px",
               label="Zeitaum",
@@ -163,14 +172,21 @@ ui <- fluidPage(
                            "6 Monate" = "26",
                            "12 Monate"= "53"),
             selected="18")),
-              
+
+        fluidRow(        
+          sliderInput("sldModelDays",
+                       width="220px",
+                       label="PrognoseTage",
+                       min=7, max=28, step=7, value=14)),
+
       fluidRow(
         "Options", 
-        checkboxInput("cbLines", label="PointsOnly", value=FALSE, width="220px"),
-        checkboxInput("cbLogScale", label="LogScale", value=TRUE, width="220px"),
-        checkboxInput("cbRegression", label="Regression", value=FALSE, width="220px"))
+        checkboxInput("cbLogScale", label="LogScale", value=TRUE, width="220px"))
   ),
-  
+
+        #checkboxInput("cbLines", label="PointsOnly", value=FALSE, width="220px"),
+        #checkboxInput("cbRegression", label="Regression", value=FALSE, width="220px")),
+
     # Main panel for displaying outputs ----
     mainPanel(width=10,
      # h1("COVID-19-WeatherMap", align = "left"),
@@ -187,18 +203,18 @@ ui <- fluidPage(
                  h4("Prognose TagesInzidenz", align = "left", style="color:gray"),
                  p("[Menüauswahl: NA]", align = "left", style="color:green"),
                  fluidRow(column(width=10, plotOutput(outputId = "ggpIncidencePrediciton", height="75vh")),
-                          column(width=2, htmlOutput(outputId="hlpIncidencePrediciton")))),
+                          column(width=2, htmlOutput(outputId="hlpIncidencePrediction")))),
 
         tabPanel("TagesInzidenz Bundesländer",
                   h4("TagesInzidenz Bundesländer", align = "left", style="color:gray"),
                   p("[Menüauswahl: Zeitbereich,Region]", align = "left", style="color:green"),
-                  fluidRow(column(width=10, plotOutput(outputId = "ggpIncidenceStates")),
+                  fluidRow(column(width=10, plotOutput(outputId = "ggpIncidenceStates", height="75vh")),
                            column(width=2, htmlOutput(outputId="hlpIncidenceStates")))),
 
           tabPanel("TagesInzidenz Bezirke",
                  h4("TagesInzidenz Bezirke", align = "left", style="color:gray"),
                  p("[Menüauswahl: Zeitbereich,Region]", align = "left", style="color:green"),
-                 fluidRow(column(width=10, plotOutput(outputId = "ggpIncidenceCounties")),
+                 fluidRow(column(width=10, plotOutput(outputId = "ggpIncidenceCounties", height="75vh")),
                           column(width=2, htmlOutput(outputId="hlpIncidenceCounties")))),
         
                 
@@ -246,11 +262,11 @@ server <- function(input, output, session) {
   # -------------------------------------------
   # Weather Map
   # -------------------------------------------
-  output$hlpWeatherMap <- renderText({
-    "<p><b>Help</b></p><p>this is some help text that shall explain the plot</p><p><li>itime1</li><li>listitem 2<</li></p>"
-  })
+  output$hlpWeatherMap <- renderText({ htmlWeatherMap })
   
-  
+  output$lftWeatherMap <- renderLeaflet({
+    logMsg("  output$ggpIncidenceStates: renderPlot", sessionID)
+    
   #levConfPop <- round(c(0,10^seq(0,2,by=0.2),1000),1)
   # bins for rm7ConfPop
   binConfPop <- c(0,1,1.4,2,2.8,4,5.6,8,11,16,22,32,45,64,90,128,Inf)
@@ -264,46 +280,39 @@ server <- function(input, output, session) {
   # 5 Icons
   binForeCast <- c(0,4,8,16,32,Inf)
   
-  # TEST: add some properties to the geojson data structure
-  NUTS2_AT <- data.frame(
-    NUTS_ID=c("AT11","AT12","AT13","AT21","AT22","AT31","AT32","AT33","AT34"),
-    Region= c("Burgenland","Niederösterreich","Wien","Kärnten", "Steiermark","Oberösterreich","Salzburg","Tirol","Vorarlberg"),
-    stringsAsFactors=FALSE)
-  
   # today's data for weathermap
+  nWeatherForeCastDays=14
   dp <- df %>% dplyr::filter(Date==max(Date))
+  de <- df %>% dplyr::filter(Date>=max(Date)-days(nWeatherForeCastDays))
+  dm <- cwmAgesRm7EstimatePoly(de,nModelDays=nWeatherForeCastDays,nPredDays=7) %>%
+    dplyr::filter(Date==max(Date))
   
-  mapNUTS2 <- mapNUTS2 %>% 
-    dplyr::left_join(NUTS2_AT, by="NUTS_ID") %>% 
+  pMapNUTS2 <- mapNUTS2 %>% 
+    dplyr::left_join(dm, by="Region") %>%
     dplyr::left_join(dp, by="Region") %>%
-    dplyr::mutate(cxNUTS2=cxNUTS2, cyNUTS2=cyNUTS2, 
-                  idxCurConfPop=.bincode(rm7NewConfPop,binForeCast), 
+    dplyr::mutate(idxCurConfPop=.bincode(rm7NewConfPop.y,binForeCast), 
                   idxDblConfPop=.bincode(dt7rm7NewConfPop,binDblDays), 
-                  idxForConfPop=.bincode(modrm7NewConfPop,binForeCast))
+                  idxForConfPop=.bincode(rm7NewConfPop.x,binForeCast))
   
   labWeatherMap <- sprintf(
     "<strong>%s</strong><br/>TagesInzidenz: %g pro 100000<br>Änderung seit letzer Woche: %g%%<br>Prognose nächste Woche: %g<br>Tage bis LockDown: %g",
-    mapNUTS2$Region, round(mapNUTS2$rm7NewConfPop,2), round(mapNUTS2$dt7rm7NewConfPop,2), round(mapNUTS2$modrm7NewConfPop,2), 0) %>% lapply(htmltools::HTML)
+    pMapNUTS2$Region, round(pMapNUTS2$rm7NewConfPop.y,2), round(pMapNUTS2$dt7rm7NewConfPop,2), round(pMapNUTS2$rm7NewConfPop.x,2), 0) %>% lapply(htmltools::HTML)
   
-  
-  output$lftWeatherMap <- renderLeaflet({
-    logMsg("  output$ggpIncidenceStates: renderPlot", sessionID)
-    
-    leaflet(mapNUTS2) %>%
+    leaflet(pMapNUTS2) %>%
       addTiles(group="DefaultMap",options = providerTileOptions(minZoom=6, maxZoom=8)) %>%
       setView(lng=cxNUTS1, lat=cyNUTS1, zoom=7) %>%
       addPolygons(data=mapNUTS1, stroke = TRUE, smoothFactor = 0, color="black", fillOpacity = 0, fillColor="None", weight=10, group="AT1") %>%
       addPolygons(data=mapNUTS3, stroke = TRUE, smoothFactor = 0, fillOpacity = 0, fillColor="none", weight=1, group="AT3") %>%
       addPolygons(stroke = TRUE, weight=3, color="black",
-                  fill=TRUE, fillOpacity = 1, fillColor=palConfPop[.bincode(mapNUTS2$rm7NewConfPop,binConfPop)],
+                  fill=TRUE, fillOpacity = 1, fillColor=palConfPop[.bincode(pMapNUTS2$rm7NewConfPop.y,binConfPop)],
                   label=labWeatherMap, 
                   labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="15px"),
-                  popup=~paste(Region,round(rm7NewConfPop,2),round(dt7rm7NewConfPop,2),round(modrm7NewConfPop,2),sep="\n\r<br>"),
+                  popup=~paste(Region,round(rm7NewConfPop.y,2),round(dt7rm7NewConfPop,2),round(rm7NewConfPop.x,2),sep="\n\r<br>"),
                   group="AT2") %>%
-      addMarkers(lng=~cxNUTS2-.25, lat=~cyNUTS2, icon=~iconsWeather[idxCurConfPop], group="Incidence") %>%
+      addMarkers(lng=~cxNUTS2-.35, lat=~cyNUTS2, icon=~iconsWeather[idxCurConfPop], group="Incidence") %>%
       addMarkers(lng=~cxNUTS2, lat=~cyNUTS2, icon=~iconsDirection[idxDblConfPop], group="Trend") %>%
-      addMarkers(lng=~cxNUTS2+.25, lat=~cyNUTS2, icon=~iconsWeather[idxForConfPop], group="ForeCast") %>%
-      addLegend(pal=colConfPop, values=~rm7NewConfPop, position="bottomright") %>%
+      addMarkers(lng=~cxNUTS2+.35, lat=~cyNUTS2, icon=~iconsWeather[idxForConfPop], group="ForeCast") %>%
+      #addLegend(pal=colConfPop, values=~rm7NewConfPop.y, position="bottomright") %>%
       addLayersControl(overlayGroups=c("AT1","AT3"), options=layersControlOptions(collapsed=FALSE)) %>%
       hideGroup(c("AT1","AT3","Markers"))
   })
@@ -311,15 +320,14 @@ server <- function(input, output, session) {
   # -------------------------------------------
   # TagesInzidenz BundesLänder
   # -------------------------------------------
-  output$hlpIncidencePrediciton <- renderText({
-    "<p><b>IncidencePrediciton</b></p><p>this is some help text that shall explain the plot</p><p><li>itime1</li><li>listitem 2<</li></p>"
-  })
+  output$hlpIncidencePrediction <- renderText({ htmlIncidencePrediction })
   
   output$ggpIncidencePrediciton <- renderPlot({
     logMsg("  output$ggpIncidenceStates: renderPlot", sessionID)
 
-    dk <- df.past()
-    dp <- caAgesRm7EstimatePoly(dk,nModelDays=20,nPredDays=14)
+    # dk <- df.past()
+    dk <- df.past() %>% dplyr::filter(Region %in% input$cbgRegion)
+    dp <- cwmAgesRm7EstimatePoly(dk,nModelDays=input$sldModelDays,nPredDays=14)
 
     trans <- ifelse(input$cbLogScale, "log10", "identity")
     if(as.integer(input$rbsPastTime)<26) {
@@ -332,7 +340,7 @@ server <- function(input, output, session) {
     
     ggplot(data=dp, aes(x=Date, y=rm7NewConfPop,color=Region,shape=Region)) + 
       scale_shape_manual(values=c(1:10)) + 
-      scale_x_date(date_breaks=rvBreaks, date_labels=rvLabels, limits=c(min(dk$Date), max(dp$Date)), expand=expand_scale(mult=0.01)) +
+      scale_x_date(date_breaks=rvBreaks, date_labels=rvLabels, limits=c(min(dk$Date), max(dp$Date)), expand=expand_scale(mult=0.02)) +
       scale_y_continuous(limits=c(1,yLimMax), breaks=popBreaksAll, position="right", expand=expand_scale(mult=0.01), trans=trans, 
                          name="TagesInzidenz: PositiveGetestete/100.000 Einwohnern.") + 
       geom_line(data=dk, aes(x=Date, y=1), size=1.0, color="green") +
@@ -352,7 +360,8 @@ server <- function(input, output, session) {
       geom_line(data=dp, aes(x=Date, y=64), size=1.0, color="black") +
       geom_line(data=dp, aes(x=Date, y=128), size=1.5, color="black") +
       geom_line(linetype=2, size=1) + 
-      geom_point(data=dk,aes(x=Date,y=rm7NewConfPop)) + 
+      geom_point(data=dp%>%dplyr::filter(Date==max(Date)),size=5) + 
+      geom_point(data=dk,aes(x=Date,y=rm7NewConfPop), size=2) + 
       geom_line(data=dk,aes(x=Date,y=rm7NewConfPop), size=.5) + 
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Prognose TagesInzidenz. Model ab ", min(dp$Date), ".  Basisdaten: AGES"))
   })
@@ -361,43 +370,17 @@ server <- function(input, output, session) {
   # -------------------------------------------
   # TagesInzidenz BundesLänder
   # -------------------------------------------
-  output$hlpTagesInzidenz <- renderText({
-    "<p><b>Help</b></p><p>this is some help text that shall explain the plot</p><p><li>itime1</li><li>listitem 2<</li></p>"
-    })
+  output$hlpIncidenceStates <- renderText({ htmlIncidenceStates })
 
   output$ggpIncidenceStates <- renderPlot({
     logMsg("  output$ggpIncidenceStates: renderPlot", sessionID)
 
-    Regions <- input$cbgRegion
-    bSmooth <- input$cbRegression
-    bLines <- input$cbRegression
-    trans <- ifelse(input$cbLogScale, "log10", "identity")
-    if(as.integer(input$rbsPastTime)<26) {
-      rvBreaks="1 weeks"
-      rvLabels="%d.%m"
-    } else {
-      rvBreaks="1 months"
-      rvLabels="%B"
-    }
-    
-    dp <- df.past() %>% dplyr::filter(Region %in% Regions)
+    dp <- df.past() %>% dplyr::filter(Region %in% input$cbgRegion)
     
     ggplot(dp, aes(x=Date, y=rm7NewConfPop, color=Region))+
-      theme(panel.grid.major = element_line(color = "darkgray", linetype=3), panel.grid.minor=element_line(color = "gray90", linetype=1)) +
-      scale_shape_manual(values=c(1:10)) +
-      scale_x_date(date_breaks=rvBreaks, date_labels=rvLabels, limits=c(min(dp$Date), maxDate+days(nPredDays*0+2)), expand=expand_scale(mult=0.01)) +
-      scale_y_continuous(limits=c(1,yLimMax), breaks=popBreaksAll, position="right", expand=expand_scale(mult=0.01), trans=trans, 
-                         name="Positive/100.000 Einwohnern. \nAmpelfarben entlang ECDC (European Centre for Disease Prevention and Control) ") + 
-      geom_line(aes(x=Date, y=1), size=1.0, color="green") +
-      geom_line(aes(x=Date, y=2), size=1.0, color="orange") +
-      geom_line(aes(x=Date, y=4), size=.8, color="magenta") +
-      geom_line(aes(x=Date, y=8), size=.8, color="red") +
-      geom_line(aes(x=Date, y=16), size=.8, color="darkred") +
-      geom_line(aes(x=Date, y=32), size=.8, color="black") +
-      geom_line(aes(x=Date, y=64), size=1.0, color="black") +
-      geom_line(aes(x=Date, y=128), size=1.5, color="black") +
+      cwmConfPopStyle(input$rbsPastTime, input$cbLogScale) +
       geom_point(size=1)+geom_line()+
-      #geom_smooth(data=dp%>%dplyr::filter(Date<as.Date("2020-12-01")), aes(x=Date, y=rm7NewConfPop),method="lm", se=FALSE) +
+      geom_point(size=1)+
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Positiv Getestete pro 100.000 Einw. seit ", min(dp$Date), ".  Basisdaten: AGES"))
   })
 
@@ -405,43 +388,16 @@ server <- function(input, output, session) {
   # -------------------------------------------
   # TagesInzidenz Bezirke
   # -------------------------------------------
-  output$hlpIncidenceCounties <- renderText({
-    "<p><b>Help</b></p><p>this is some help text that shall explain the plot</p><p><li>itime1</li><li>listitem 2<</li></p>"
-  })
+  output$hlpIncidenceCounties <- renderText({ htmlIncidenceCounties })
   
   output$ggpIncidenceCounties <- renderPlot({
     logMsg("  output$ggpIncidenceCounties: renderPlot", sessionID)
     
-    Regions <- input$cbgRegion
-    trans <- ifelse(input$cbLogScale, "log10", "identity")
-    if(as.integer(input$rbsPastTime)<26) {
-        rvBreaks="1 weeks"
-        rvLabels="%d.%m"
-    } else {
-      rvBreaks="1 months"
-      rvLabels="%B"
-    }
-    
-    # dp <- dg %>% dplyr::filter(!is.na(newConfPop), newConfPop>0)
-    dp <- dg.past() %>% dplyr::filter(newConfPop>0, Region %in% Regions)
+    dp <- dg.past() %>% dplyr::filter(newConfPop>0, Region %in% input$cbgRegion)
     
     ggplot(dp, aes(x=Date, y=newConfPop, group=CountyID))+
-      theme(panel.grid.major = element_line(color = "darkgray", linetype=3), panel.grid.minor=element_line(color = "gray90", linetype=1)) +
-      # scale_color_manual(values = colorRampPalette(brewer.pal(11, "RdYlBu"))(nColors)) +
-      scale_x_date(date_breaks=rvBreaks, date_labels=rvLabels, limits=c(min(dp$Date), maxDate+days(nPredDays*0+2)), expand=expand_scale(mult=0.01)) +
-      scale_y_continuous(limits=c(.5,yLimMax), breaks=popBreaksAll, position="right", expand=expand_scale(mult=0.01), trans=trans, 
-                         name="Positive/100.000 Einwohnern. \nAmpelfarben entlang ECDC (European Centre for Disease Prevention and Control) ") + 
-      geom_line(aes(x=Date, y=1), size=1.0, color="green") +
-      geom_line(aes(x=Date, y=2), size=1.0, color="orange") +
-      geom_line(aes(x=Date, y=4), size=.8, color="magenta") +
-      geom_line(aes(x=Date, y=8), size=.8, color="red") +
-      geom_line(aes(x=Date, y=16), size=.8, color="darkred") +
-      geom_line(aes(x=Date, y=32), size=.8, color="black") +
-      geom_line(aes(x=Date, y=64), size=1.0, color="black") +
-      geom_line(aes(x=Date, y=128), size=1.5, color="black") +
+      cwmConfPopStyle(input$rbsPastTime, input$cbLogScale, yLimits=c(.5,256)) +
       geom_line(size=.25, aes(color=Region))+
-      #theme(legend.position = "none") + 
-      #geom_smooth(data=dp%>%dplyr::filter(Date<as.Date("2020-12-01")), aes(x=Date, y=rm7NewConfPop),method="lm", se=FALSE) +
       ggtitle(paste0("COVID-19 Österreich, Bundesländer und Bezirke: Positiv Getestete pro 100.000 Einw. seit ", min(dp$Date), ".  Basisdaten: AGES"))
   })
 

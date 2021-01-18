@@ -1,5 +1,42 @@
 
-caAgesRm7EstimatePoly <- function(df, nPoly=2, nModelDays=10, nPredDays=7) {
+# Settings for cwmConfPopStyle
+popBreaksAll <- c(0,1,2,3,4,5,6,7,8,9,10,12,15,seq(20,100,by=10),120,150,200,300,400,500)
+yLimMin <- 1
+yLimMax <- 128
+
+
+cwmConfPopStyle <- function(rbsPastTime=25, cbLogScale=TRUE, yLimits=c(yLimMin, yLimMax), yLabel="Positive/100.000 Einwohnern") {
+  
+  # Process left side menu user interactions
+  trans <- ifelse(cbLogScale, "log10", "identity")
+  if(as.integer(rbsPastTime)<26) {
+    rvBreaks="1 weeks"
+    rvLabels="%d.%m"
+  } else {
+    rvBreaks="1 months"
+    rvLabels="%B"
+  }
+  
+  list(
+    theme(panel.grid.major = element_line(color = "darkgray", linetype=3), panel.grid.minor=element_line(color = "gray90", linetype=1)),
+      scale_shape_manual(values=c(1:10)),
+      scale_x_date(date_breaks=rvBreaks, date_labels=rvLabels, expand=expand_scale(mult=0.01)),
+      scale_y_continuous(limits=yLimits, breaks=popBreaksAll, position="right", expand=expand_scale(mult=0.01), trans=trans, name=yLabel),
+      geom_line(aes(y=1), size=1.0, color="green"),
+      geom_line(aes(y=2), size=1.0, color="orange"),
+      geom_line(aes(y=4), size=.8, color="magenta"),
+      geom_line(aes(y=8), size=.8, color="red"),
+      geom_line(aes(y=16), size=.8, color="darkred"),
+      geom_line(aes(y=32), size=.8, color="black"),
+      geom_line(aes(y=64), size=1.0, color="black"),
+      geom_line(aes(y=128), size=1.5, color="black")
+  )
+}
+
+
+
+
+cwmAgesRm7EstimatePoly <- function(df, nPoly=2, nModelDays=10, nPredDays=7) {
   
   curDate <- max(df$Date)                      
   minDate <- curDate - days(nModelDays)+1 # Prediction interval: first day
