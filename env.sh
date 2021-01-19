@@ -58,15 +58,15 @@ $CMD
 echo ""
 echo "> Listing resources in space $IBM_K8S ..."
 echo "> ingresses"
-kubectl describe ingresses -n §IBM_K8S
+kubectl describe ingresses -n $IBM_K8S | egrep -i name
 echo "> services"
-kubectl describe services -n $IBM_K8S| grep nodeport
+kubectl describe services -n $IBM_K8S| egrep -i "nodeport|name"
 echo "> deployments"
 kubectl describe deployments -n $IBM_K8S| grep -i name
 echo "> pods"
-kubectl describe pods -n $IBM_K8S | grep Name: | grep -i cwm | grep deployment
+kubectl describe pods -n $IBM_K8S | grep -i name 
 echo "> nodes"
-kubectl describe nodes -n $IBM_K8S|grep External
+kubectl describe nodes -n $IBM_K8S| egrep -i "name|external"
 
 
 # Some more kubectl commands

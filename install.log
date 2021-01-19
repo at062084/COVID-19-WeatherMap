@@ -20,3 +20,26 @@ kubectl get secrets -n cwmnamespace | grep "icr-io"
 # https://cloud.ibm.com/docs/containers?topic=containers-registry#store_imagePullSecret
 kubectl describe serviceaccount default -n cwmnamespace
 kubectl patch -n cwmnamespace serviceaccount/default -p '{"imagePullSecrets":[{"name": "all-icr-io"}]}'
+
+# Order logDNA, then follow commands on logDNA service dashboard
+kubectl create namespace ibm-observe
+kubectl create secret generic logdna-agent-key -n ibm-observe --from-literal=logdna-agent-key=890ee814a0d8e8d376529949a5884aa6
+kubectl create -f https://assets.eu-de.logging.cloud.ibm.com/clients/agent-resources.yaml
+
+# dmesg image on cluster:
+Linux version 4.15.0-118-generic (buildd@lgw01-amd64-039) (gcc version 7.5.0 (Ubuntu 7.5.0-3ubuntu1~18.04)) #119-Ubuntu SMP Tue Sep 8 12:30:01 UTC 2020 (Ubuntu 4.15.0-118.119-generic 4.15.18)
+Command line: BOOT_IMAGE=/vmlinuz-4.15.0-118-generic root=UUID=6ddac925-891d-48c1-b0d5-a2feb62d2367 ro fsck.repair=yes earlyprintk nomodeset nofb vga=normal console=tty1 console=ttyS0 elevator=noop cgroup_enable=memor
+SMBIOS 2.4 present.
+DMI: Xen HVM domU, BIOS 4.7<denied> 12/14/2020
+Hypervisor detected: Xen HVM
+Xen version 4.7.
+Memory: 4007148K/4189812K available (12300K kernel code, 2482K rwdata, 4272K rodata, 2436K init, 2724K bss, 182664K reserved, 0K cma-reserved)
+SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=15, Nodes=1
+tsc: Detected 1999.985 MHz processor
+tsc: Detected 2000.032 MHz TSC
+smpboot: CPU0: Intel(R) Xeon(R) CPU E5-2683 v3 @ 2.00GHz (family: 0x6, model: 0x3f, stepping: 0x2)
+hpet0: 3 comparators, 64-bit 62.500000 MHz counter
+tsc: Refined TSC clocksource calibration: 1999.999 MHz
+
+
+

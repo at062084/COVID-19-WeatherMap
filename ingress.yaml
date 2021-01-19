@@ -6,6 +6,10 @@ metadata:
   labels:
     app: cwm-ingress
     context: REnterprise
+  annotations:
+    # nginx.ingress.kubernetes.io/ssl-redirect: "True" --> Does not work
+    ingress.bluemix.net/redirect-to-https: "True"
+      
 #  annotations:
 #    ingress.bluemix.net/rewrite-path: "rewrite=/;serviceName=rep-grafana-service rewrite=/"
 #    ingress.bluemix.net/proxy-read-timeout: "serviceName=rep-proxy-service timeout=300s"
@@ -16,6 +20,7 @@ metadata:
 #    ingress.bluemix.net/ssl-services: "ssl-service=rep-proxy-service"
 #    ingress.bluemix.net/rewrite-target: /
 #    ingress.kubernetes.io/ssl-passthrough: "true"
+
 spec:
   tls:
   - hosts:

@@ -1,0 +1,84 @@
+---
+output: html_document
+---
+
+# COVID-19-WeatherMap
+
+Dieses Dashboard beschäftigt sich mit der COVID-19 Epidemie in Österreich. Die Darstellungen und Analysen basieren auf drei Grundsätzen
+
+- **Die Verbreitung von COVID-19 erfolgt über Ansteckung von Mensch zu Mensch und erfasst daher immer schneller immer mehr Menschen.** Die Verbreitung ist im wesentlichen und immer explosionsartig, mit einer Explosionsgeschwindigkeit, die eng mit der Einhaltung der Schutzmassnahmen gekoppelt ist. In der Mathematik wird diese Art von Wachstum als 'exponentiell' bezeichnet. 
+- **Die Verbreitung erfolgt im Unterschied zur Grippe explosionsartig und nicht in Wellen.** Die Verbreitung von COVID-19 ist nicht saisonal begrenzt, sondern breitet sich bis zur Erfassung von großen Teilen der Bevölkerung immer schneller (d.h. exponentiell) aus. Erst wenn substantielle Teile der Bevölkerung von der COVID-10 Epidemie erfasst wurden ebbt die Verbreitung mangels gesunder, noch ansteckbarer Personen ab.
+- **Die wesentliche Größe zur Beschreibung des epidemiologischen Geschehens ist die Anzahl der positiv getesteten Personen, das ist die sog. 'Inzidenz'.**  Die Infektion durch das Virus selbst ist nicht beobachtbar, der Nachweis der Ansteckung kann erst nach einer substantiellen Vermehrung des Virus in der infizierten Person durch einen Test nachgewiesen werden. Damit hinken die Ergebnisse der Testungen immer um einige Tage hinter dem eigentlichen Ansteckungsgeschehen hinterher.
+
+## Einheiten
+
+
+### Inzidenz
+
+Die Inzidenz wird in Europa in unterschiedlichen Einheiten angegeben. Üblich sind 'Anzahl der positiv Getesteten in einem Land pro Tag', und die 'Anzahl der Positiv Getesteten pro 100.000 Einwohner' pro Tag oder pro Woche. Die Summe über eine Woche wird gebildet, um die Schwankungen im Testaufkommen an Wochenenden zu berücksichtigen. 
+
+Für Österreich mit seinen ca. 8 Mio Einwohnern beschreiben folgende Werte die gleiche epidemiologischen Lage:
+
+- Tages Inzidenz von **1000** positiven Testungen
+- **Tages Inzidenz pro 100.000 Einwohner:** 1000 / 80 = **12.5**
+- Sieben Tages Inzidenz pro 100.000 Einwohner: 12.5 * 7 = **87.5**
+
+**In diesem Dashboard wird ausschließlich die Einheit 'Tages Inzidenz pro 100.000 Einwohner' verwendet.**
+
+- Eine Tages Inzidenz von 100 bedeutet, dass 1 ProMill der getesteten positiv ist (ganz Österreich: 8.000)
+- Nach der 100-10-1 Regel kommen 800 davon ins Krankenhaus, und 80 Personen werden sterben, pro Tag.
+- Geht man davon aus, dass die Krankeit im Mittel 10 Tage dauert, dann ist gleichzeitig 1 Prozent der Bevölkerung erkrankt (ganz Österreich: 80.000). Davon liegen 8.000 im Spital, und 800 auf Intensivbetten.
+
+### Inzidenz Skala
+
+Um die explosionsartige Verbreitung von COVID-19 (das exponentielle Wachstum) adequat darzustellen wird die Inzidenz in diesem Dashboard in **explosionsartig (exponentiell) wachsenden Stufen** dargestellt. 
+
+- Die verwendeten Inzidenz Stufen sind 1,2,4,8,16,32,64,128
+- **Jede Inzidenz Stufe wird gleich groß dargestellt, um jede Phase der Explosion gleich gut sehen zu können**
+
+Beispiel: Bei einer Verdoppelung der Inzidenz (Fallzahlen) in 2 Wochen steigt die Inzidenz in 2 Monaten um rund 4 Stufen, also von z.B. 8 auf 128. Bei Stufe 16 funktioniert das Kontakt Tracing nicht mehr, über 64 wird es mit den Intensivstationen eng. 
+
+Alle Graphiken, die Inzidenz Werte darstellen folgen diesem Stufen Schema. 
+
+
+### ECDC Farbschema (European Center for Disease Control)
+
+Das Farbschema der ECDC sieht folgende Werte vor
+
+- Stufe 1: 5  grün
+- Stufe 2: 10 gelb
+- Stufe 3: 15 orange
+- Stufe 4: 20 rot
+
+
+# Erläuterungen zu den Graphiken
+
+## COVID-19 Lage und Prognose
+
+### Wetter Icons
+
+- ![image](../www/iconWeather-Sun.png) Inzidenz unter 4 
+- ![image](../www/iconWeather-Sun-Cloud.png) Inzidenz 4-8 
+- ![image](../www/iconWeather-Rain.png) Inzidenz 8-16 
+- ![image](../www/iconWeather-Rain.png) Inzidenz 16-32 
+- ![image](../www/iconWeather-Thunder.png) Inzidenz über 32 
+
+### Trend Icons
+
+- ![image](../www/iconDirection-S.png) Halbierung der Inzidenz in weniger als 2 Wochen
+- ![image](../www/iconDirection-SSE.png) Halbierung der Inzidenz in 2-4 Wochen
+- ![image](../www/iconDirection-ESE.png) Halbierung der Inzidenz in 4-8 Woche
+- ![image](../www/iconDirection-E.png) Halbierung / Verdoppelung in mehr als 8 Wochen
+- ![image](../www/iconDirection-ENE.png) Verdoppelung in 4-8  Wochen
+- ![image](../www/iconDirection-NNE.png) Verdoppelung in 2-4 Wochen
+- ![image](../www/iconDirection-N.png) Verdoppelung in weniger als 2 Wochen
+
+
+## Prognose
+
+## Inzidenz Bundesländer
+
+## Inzidenz Bezirke
+
+
+

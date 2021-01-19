@@ -1,18 +1,20 @@
 options(error = function() traceback(2))
 
-logDir <- Sys.getenv("RSHINY_LOGDIR")
-if (logDir=="") logDir = "."
+#logDir <- Sys.getenv("RSHINY_LOGDIR")
+#if (logDir=="") logDir = "./log"
 
-logFile <- Sys.getenv("RSHINY_LOGFILE")
-if (logFile=="") logFile <- "itg.rshiny.log"
+#logFile <- Sys.getenv("RSHINY_LOGFILE")
+#if (logFile=="") logFile <- "cwm.rshiny.log"
 
 # The above daoes not work -> hard code log path for now
-logDir = "/var/log/itg"
-logFile <- "itg.rshiny.log"
+#logDir = "/var/log/cwm"
+
+logDir = "./log"
+logFile <- "cwm.rshiny.log"
 
 # do some logging
 logMsg <- function(msg, sessionID="_global_") {
-  #cat(paste(format(Sys.time(), "%Y%m%d-%H%M%OS3"), sessionID, msg, "\n"), file=paste(logDir,"/",logFile, sep=""), append=TRUE)
+  cat(paste(format(Sys.time(), "%Y%m%d-%H%M%OS3"), sessionID, msg, "\n"), file=paste0(logDir,"/",logFile), append=TRUE)
   cat(paste(format(Sys.time(), "%Y%m%d-%H%M%OS3"), sessionID, msg, "\n"))
 }
 
@@ -28,6 +30,7 @@ library(leaflet)
 library(leaflet.extras)
 library(geojsonsf)
 library(spdplyr)
+library(readr)
 
 source("fun.R")
 source("hlp.R")
@@ -176,7 +179,7 @@ ui <- fluidPage(
         fluidRow(        
           sliderInput("sldModelDays",
                        width="220px",
-                       label="PrognoseTage",
+                       label="BerechnungsTage",
                        min=7, max=28, step=7, value=14)),
 
       fluidRow(
@@ -196,37 +199,42 @@ ui <- fluidPage(
         tabPanel("COVID Lage und Aussichten",
                  h4("Lage und Aussichten Bundesländer", align = "left", style="color:gray"),
                  p("[Menüauswahl: NA]", align = "left", style="color:green"),
-                 fluidRow(column(width=10, leafletOutput(outputId = "lftWeatherMap", height="75vh")),
-                          column(width=2, htmlOutput(outputId="hlpWeatherMap")))),
+                 fluidRow(column(width=9, leafletOutput(outputId = "lftWeatherMap", height="75vh")),
+                          column(width=3, htmlOutput(outputId="hlpWeatherMap")))),
                   
         tabPanel("Prognose TagesInzidenz",
                  h4("Prognose TagesInzidenz", align = "left", style="color:gray"),
                  p("[Menüauswahl: NA]", align = "left", style="color:green"),
-                 fluidRow(column(width=10, plotOutput(outputId = "ggpIncidencePrediciton", height="75vh")),
-                          column(width=2, htmlOutput(outputId="hlpIncidencePrediction")))),
+                 fluidRow(column(width=9, plotOutput(outputId = "ggpIncidencePrediciton", height="75vh")),
+                          column(width=3, htmlOutput(outputId="hlpIncidencePrediction")))),
 
         tabPanel("TagesInzidenz Bundesländer",
                   h4("TagesInzidenz Bundesländer", align = "left", style="color:gray"),
                   p("[Menüauswahl: Zeitbereich,Region]", align = "left", style="color:green"),
-                  fluidRow(column(width=10, plotOutput(outputId = "ggpIncidenceStates", height="75vh")),
-                           column(width=2, htmlOutput(outputId="hlpIncidenceStates")))),
+                  fluidRow(column(width=9, plotOutput(outputId = "ggpIncidenceStates", height="75vh")),
+                           column(width=3, htmlOutput(outputId="hlpIncidenceStates")))),
 
           tabPanel("TagesInzidenz Bezirke",
                  h4("TagesInzidenz Bezirke", align = "left", style="color:gray"),
                  p("[Menüauswahl: Zeitbereich,Region]", align = "left", style="color:green"),
-                 fluidRow(column(width=10, plotOutput(outputId = "ggpIncidenceCounties", height="75vh")),
-                          column(width=2, htmlOutput(outputId="hlpIncidenceCounties")))),
+                 fluidRow(column(width=9, plotOutput(outputId = "ggpIncidenceCounties", height="75vh")),
+                          column(width=3, htmlOutput(outputId="hlpIncidenceCounties")))),
         
                 
-        tabPanel("Rohdaten Bundesländer",
-          h4("Rohdaten Bundesländer", align = "left", style="color:black"),
-          p("[Menüauswahl: Zeitbereich,Region]", align = "left", style="color:green"),
-          DT::dataTableOutput(outputId = "dtoRawDataRegion")),
+#        tabPanel("Rohdaten Bundesländer",
+#          h4("Rohdaten Bundesländer", align = "left", style="color:black"),
+#          p("[Menüauswahl: Zeitbereich,Region]", align = "left", style="color:green"),
+#          DT::dataTableOutput(outputId = "dtoRawDataRegion")),
         
-        tabPanel("Rohdaten Bezirke",
-                 h4("Rohdaten Bezirke", align = "left", style="color:black"),
-                 p("[Menüauswahl: Zeitbereich,Region]", align = "left", style="color:green"),
-                 DT::dataTableOutput(outputId = "dtoRawDataCounty"))
+#        tabPanel("Rohdaten Bezirke",
+#                 h4("Rohdaten Bezirke", align = "left", style="color:black"),
+#                 p("[Menüauswahl: Zeitbereich,Region]", align = "left", style="color:green"),
+#                 DT::dataTableOutput(outputId = "dtoRawDataCounty")),
+        
+        tabPanel("Erläuterungen",
+                 h4("Beschreibung der Graphiken und Hintergrund zu Berechnungen", align = "left", style="color:black"),
+                 p("[Menüauswahl: NA]", align = "left", style="color:green"),
+                 htmlOutput(outputId="manDescription"))
       )
     )
   )
@@ -360,8 +368,9 @@ server <- function(input, output, session) {
       geom_line(data=dp, aes(x=Date, y=64), size=1.0, color="black") +
       geom_line(data=dp, aes(x=Date, y=128), size=1.5, color="black") +
       geom_line(linetype=2, size=1) + 
-      geom_point(data=dp%>%dplyr::filter(Date==max(Date)),size=5) + 
-      geom_point(data=dk,aes(x=Date,y=rm7NewConfPop), size=2) + 
+      geom_point(data=dk%>%dplyr::filter(Date==max(Date)),size=6) + 
+      geom_point(data=dp%>%dplyr::filter(Date==max(Date)),size=6) + 
+      geom_point(data=dk,aes(x=Date,y=rm7NewConfPop), size=3) + 
       geom_line(data=dk,aes(x=Date,y=rm7NewConfPop), size=.5) + 
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Prognose TagesInzidenz. Model ab ", min(dp$Date), ".  Basisdaten: AGES"))
   })
@@ -414,6 +423,13 @@ server <- function(input, output, session) {
     dg.past() %>% dplyr::filter(Date==max(Date)) %>%
       dplyr::mutate(newConfPop=round(newConfPop,2)) %>%
       dplyr::arrange(desc(Date),Region)})
+  
+  
+  # -------------------------------------------
+  # Erläuterungen
+  # -------------------------------------------
+  output$manDescription <- renderText({ htmlDescription })
+  
   
 }
 
