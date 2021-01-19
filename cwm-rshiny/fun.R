@@ -33,6 +33,36 @@ cwmConfPopStyle <- function(rbsPastTime=25, cbLogScale=TRUE, yLimits=c(yLimMin, 
   )
 }
 
+cwmSpreadStyle <- function(rbsPastTime=25, yLimits=c(0.84, 1.19)) {
+
+  dblXDays <- c(1:7,10,14,21,28,56,Inf,-56,-28,-21,-14,-10,-7,-6,-5,-4,-3,-2,-1)
+  sSize=.5
+  
+  # Process left side menu user interactions
+   if(as.integer(rbsPastTime)<26) {
+    rvBreaks="1 weeks"
+    rvLabels="%d.%m"
+  } else {
+    rvBreaks="1 months"
+    rvLabels="%B"
+  }
+
+  list(
+    scale_shape_manual(values=c(1:10)),
+    scale_x_date(date_breaks=rvBreaks, date_labels=rvLabels, expand=expand_scale(mult=0.01)),
+    scale_y_continuous(limits=yLimits, breaks=exp(log(2)/dblXDays), labels=dblXDays, position="right",
+                       sec.axis=dup_axis(labels=as.character(round((exp(log(2)/dblXDays)-1)*100,1)), name="Tägliche Steigerungsrate [%]")),
+    geom_line(aes(y=1.104), size=sSize, color="black"),
+    geom_line(aes(y=1.051), size=sSize, color="darkred"),
+    geom_line(aes(y=1.025), size=sSize, color="red"),
+    geom_line(aes(y=1.012), size=sSize, color="orange"),
+    geom_line(aes(y=1.00), size=1.0, color="black"),
+    geom_line(aes(y=0.988), size=sSize, color="lightgreen"),
+    geom_line(aes(y=0.976), size=sSize, color="green"),
+    geom_line(aes(y=0.952), size=sSize, color="blue"),
+    geom_line(aes(y=0.906), size=sSize, color="darkblue")
+  )
+}
 
 
 

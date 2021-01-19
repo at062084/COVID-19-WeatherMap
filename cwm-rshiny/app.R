@@ -202,25 +202,31 @@ ui <- fluidPage(
                  fluidRow(column(width=9, leafletOutput(outputId = "lftWeatherMap", height="75vh")),
                           column(width=3, htmlOutput(outputId="hlpWeatherMap")))),
                   
-        tabPanel("Prognose TagesInzidenz",
-                 h4("Prognose TagesInzidenz", align = "left", style="color:gray"),
+        tabPanel("Inzidenz Prognose",
+                 h4("Progno  se TagesInzidenz", align = "left", style="color:gray"),
                  p("[Menüauswahl: NA]", align = "left", style="color:green"),
                  fluidRow(column(width=9, plotOutput(outputId = "ggpIncidencePrediciton", height="75vh")),
                           column(width=3, htmlOutput(outputId="hlpIncidencePrediction")))),
 
-        tabPanel("TagesInzidenz Bundesländer",
+        tabPanel("Inzidenz Bundesländer",
                   h4("TagesInzidenz Bundesländer", align = "left", style="color:gray"),
                   p("[Menüauswahl: Zeitbereich,Region]", align = "left", style="color:green"),
                   fluidRow(column(width=9, plotOutput(outputId = "ggpIncidenceStates", height="75vh")),
                            column(width=3, htmlOutput(outputId="hlpIncidenceStates")))),
 
-          tabPanel("TagesInzidenz Bezirke",
+          tabPanel("Inzidenz Bezirke",
                  h4("TagesInzidenz Bezirke", align = "left", style="color:gray"),
                  p("[Menüauswahl: Zeitbereich,Region]", align = "left", style="color:green"),
                  fluidRow(column(width=9, plotOutput(outputId = "ggpIncidenceCounties", height="75vh")),
                           column(width=3, htmlOutput(outputId="hlpIncidenceCounties")))),
         
-                
+
+        tabPanel("Verbreitung Bundesländer",
+                 h4("Änderung der TagesInzidenz in % vom Vortag", align = "left", style="color:gray"),
+                 p("[Menüauswahl: Zeitbereich,Region]", align = "left", style="color:green"),
+                 fluidRow(column(width=9, plotOutput(outputId = "ggpChangeRateStates", height="75vh")),
+                          column(width=3, htmlOutput(outputId="hlpChangeRateStates")))),
+        
 #        tabPanel("Rohdaten Bundesländer",
 #          h4("Rohdaten Bundesländer", align = "left", style="color:black"),
 #          p("[Menüauswahl: Zeitbereich,Region]", align = "left", style="color:green"),
@@ -410,6 +416,25 @@ server <- function(input, output, session) {
       ggtitle(paste0("COVID-19 Österreich, Bundesländer und Bezirke: Positiv Getestete pro 100.000 Einw. seit ", min(dp$Date), ".  Basisdaten: AGES"))
   })
 
+  
+  # -------------------------------------------
+  # ChangeRateStates
+  # -------------------------------------------
+  output$hlpChangeRateStates <- renderText({ htmlChangeRateStates })
+  
+  output$ggpChangeRateStates <- renderPlot({
+    logMsg("  output$ggpChangeRateStates: renderPlot", sessionID)
+    
+    dp <- df.past() %>% dplyr::filter(Region %in% input$cbgRegion) %>% dplyr::filter(dt7rm7NewConfPop<1.19, dt7rm7NewConfPop>.84)
+    #dp <- df %>% dplyr::filter(dt7rm7NewConfPop<1.20, dt7rm7NewConfPop>.85)
+    
+    ggplot(dp, aes(x=Date, y=dt7rm7NewConfPop, color=Region, shape=Region))+
+      cwmSpreadStyle(input$rbsPastTime) +
+      geom_line(size=.25) +
+      geom_point(size=3) + 
+      ggtitle(paste0("COVID-19 Österreich und Bundesländer: Ausbreitungsgeschwindigkeit in % pro Tag, seit ", min(dp$Date), ".  Basisdaten: AGES"))
+  })
+  
   
   # -------------------------------------------
   # Raw Data

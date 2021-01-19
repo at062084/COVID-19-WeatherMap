@@ -46,4 +46,6 @@ htmlIncidenceStates <- "<p><b>IncidenceStates</b></p><p></p>"
 
 htmlIncidenceCounties <- "<p><b>IncidenceCounties</b></p><p></p>"
 
+htmlChangeRateStates <- "<p><b>ChangeRateStates</b></p><p></p>"
+
 htmlDescription <- read_file("./doc/COVID-19-WeatherMap.html")
