@@ -1,0 +1,199 @@
+20210119-145246.305 _global_ Loading libraries 
+20210119-145252.492 6c490886 Server called ... 
+20210119-145252.567 6c490886   output$ggpIncidenceStates: renderPlot 
+20210119-145410.483 208b157c Server called ... 
+20210119-145410.538 208b157c   output$ggpIncidenceStates: renderPlot 
+20210119-145417.504 208b157c   Reactive: dg.past: Filtering for rbsPastTime 
+20210119-145447.574 eca9126b Server called ... 
+20210119-145447.651 eca9126b   output$ggpIncidenceStates: renderPlot 
+20210119-145556.840 _global_ Loading libraries 
+20210119-145602.998 13a8f769 Server called ... 
+20210119-145603.049 13a8f769   output$ggpIncidenceStates: renderPlot 
+20210119-145629.213 13a8f769   Reactive: dg.past: Filtering for rbsPastTime 
+20210119-150404.090 _global_ Loading libraries 
+20210119-150410.484 c8376ee8 Server called ... 
+20210119-150410.538 c8376ee8   output$ggpIncidenceStates: renderPlot 
+20210119-150535.635 _global_ Loading libraries 
+20210119-150542.353 d28310a1 Server called ... 
+20210119-150542.404 d28310a1   output$ggpIncidenceStates: renderPlot 
+20210119-151136.030 _global_ Loading libraries 
+20210119-151142.398 f03f56cf Server called ... 
+20210119-151142.521 f03f56cf   output$ggpIncidenceStates: renderPlot 
+20210119-151246.133 _global_ Loading libraries 
+20210119-151254.765 4952c2af Server called ... 
+20210119-151254.822 4952c2af   output$ggpIncidenceStates: renderPlot 
+20210119-151443.591 _global_ Loading libraries 
+20210119-151449.754 7e9c6551 Server called ... 
+20210119-151449.876 7e9c6551   output$ggpIncidenceStates: renderPlot 
+20210119-201100.151 _global_ Loading libraries 
+20210119-201107.032 6654bcc2 Server called ... 
+20210119-201107.084 6654bcc2   output$ggpIncidenceStates: renderPlot 
+20210119-201131.597 6654bcc2   output$ggpIncidenceCounties: renderPlot 
+20210119-201131.598 6654bcc2   Reactive: dg.past: Filtering for rbsPastTime 
+20210119-201749.906 _global_ Loading libraries 
+20210119-201752.752 32beca48 Server called ... 
+20210119-201752.803 32beca48   output$ggpIncidenceStates: renderPlot 
+20210119-202602.490 32beca48   output$ggpIncidenceStates: renderPlot 
+20210119-202602.491 32beca48   Reactive: df.past: Filtering for rbsPastTime 
+20210119-202629.109 32beca48   output$ggpIncidenceStates: renderPlot 
+20210119-202631.709 32beca48   output$ggpIncidenceStates: renderPlot 
+20210119-202634.321 32beca48   output$ggpIncidenceStates: renderPlot 
+20210119-202649.877 32beca48   output$ggpIncidenceStates: renderPlot 
+20210119-202653.359 32beca48   output$ggpIncidenceCounties: renderPlot 
+20210119-202653.361 32beca48   Reactive: dg.past: Filtering for rbsPastTime 
+20210119-205907.308 _global_ Loading libraries 
+20210119-205911.805 600ce53f Server called ... 
+20210119-205912.018 600ce53f   output$ggpIncidenceStates: renderPlot 
+20210119-210043.557 _global_ Loading libraries 
+20210119-210046.228 d0f5cd3e Server called ... 
+20210119-210046.292 d0f5cd3e   output$ggpIncidenceStates: renderPlot 
+20210119-210057.143 d0f5cd3e   output$ggpChangeRateStates: renderPlot 
+20210119-210057.145 d0f5cd3e   Reactive: df.past: Filtering for rbsPastTime 
+20210119-210121.283 d0f5cd3e   output$ggpChangeRateStates: renderPlot 
+20210119-210122.320 d0f5cd3e   output$ggpChangeRateStates: renderPlot 
+20210119-210123.553 d0f5cd3e   output$ggpChangeRateStates: renderPlot 
+20210119-210125.117 d0f5cd3e   output$ggpChangeRateStates: renderPlot 
+20210119-210126.043 d0f5cd3e   output$ggpChangeRateStates: renderPlot 
+20210119-210126.939 d0f5cd3e   output$ggpChangeRateStates: renderPlot 
+20210119-210135.493 d0f5cd3e   output$ggpChangeRateStates: renderPlot 
+20210119-210135.495 d0f5cd3e   Reactive: df.past: Filtering for rbsPastTime 
+20210119-210138.715 d0f5cd3e   output$ggpChangeRateStates: renderPlot 
+20210119-210138.719 d0f5cd3e   Reactive: df.past: Filtering for rbsPastTime 
+20210120-000057.504 d0f5cd3e   output$ggpChangeRateStates: renderPlot 
+20210120-000057.507 d0f5cd3e   Reactive: df.past: Filtering for rbsPastTime 
+20210120-000103.292 d0f5cd3e   output$ggpChangeRateStates: renderPlot 
+20210120-000103.293 d0f5cd3e   Reactive: df.past: Filtering for rbsPastTime 
+20210120-000110.909 d0f5cd3e   output$ggpChangeRateStates: renderPlot 
+20210120-000110.913 d0f5cd3e   Reactive: df.past: Filtering for rbsPastTime 
+20210120-003846.347 _global_ Loading libraries 
+20210120-003849.021 72925eac Server called ... 
+20210120-003849.069 72925eac   output$ggpIncidenceStates: renderPlot 
+20210120-003857.531 72925eac   output$ggpIncidenceStates: renderPlot 
+20210120-003857.533 72925eac   Reactive: df.past: Filtering for rbsPastTime 
+20210120-003901.678 72925eac   output$ggpIncidenceStates: renderPlot 
+20210120-003905.016 72925eac   output$ggpIncidenceCounties: renderPlot 
+20210120-003905.017 72925eac   Reactive: dg.past: Filtering for rbsPastTime 
+20210120-003910.482 72925eac   output$ggpChangeRateStates: renderPlot 
+20210120-004002.507 _global_ Loading libraries 
+20210120-004003.919 a3c84c94 Server called ... 
+20210120-004003.970 a3c84c94   output$ggpIncidenceStates: renderPlot 
+20210120-004006.927 a3c84c94   output$ggpIncidenceCounties: renderPlot 
+20210120-004006.929 a3c84c94   Reactive: dg.past: Filtering for rbsPastTime 
+20210120-004010.111 a3c84c94   output$ggpChangeRateStates: renderPlot 
+20210120-004010.112 a3c84c94   Reactive: df.past: Filtering for rbsPastTime 
+20210120-004044.321 aaddee97 Server called ... 
+20210120-004044.395 aaddee97   output$ggpIncidenceStates: renderPlot 
+20210120-004047.098 aaddee97   output$ggpChangeRateStates: renderPlot 
+20210120-004047.100 aaddee97   Reactive: df.past: Filtering for rbsPastTime 
+20210120-004520.911 _global_ Loading libraries 
+20210120-004523.692 1ca4bf61 Server called ... 
+20210120-004523.741 1ca4bf61   output$ggpIncidenceStates: renderPlot 
+20210120-004528.977 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004528.978 1ca4bf61   Reactive: df.past: Filtering for rbsPastTime 
+20210120-004658.123 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004658.124 1ca4bf61   Reactive: df.past: Filtering for rbsPastTime 
+20210120-004703.322 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004703.325 1ca4bf61   Reactive: df.past: Filtering for rbsPastTime 
+20210120-004710.176 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004719.115 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004725.199 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004727.403 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004733.197 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004739.338 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004744.132 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004747.332 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004752.147 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004755.499 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004758.310 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004801.739 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004805.884 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004808.614 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004812.018 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004818.439 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004821.028 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004823.569 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004824.690 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004827.547 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004834.506 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004838.005 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004841.663 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004847.526 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004850.247 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004856.247 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004902.220 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-004914.212 1ca4bf61   output$ggpChangeRateStates: renderPlot 
+20210120-005004.115 1ca4bf61   output$ggpIncidenceStates: renderPlot 
+20210120-005007.061 1ca4bf61   output$ggpIncidenceStates: renderPlot 
+20210120-005008.662 1ca4bf61   output$ggpIncidenceCounties: renderPlot 
+20210120-005008.664 1ca4bf61   Reactive: dg.past: Filtering for rbsPastTime 
+20210120-005058.310 _global_ Loading libraries 
+20210120-005101.294 d3cbd8ea Server called ... 
+20210120-005101.378 d3cbd8ea   output$ggpIncidenceStates: renderPlot 
+20210120-005108.128 d3cbd8ea   output$ggpIncidenceStates: renderPlot 
+20210120-005108.130 d3cbd8ea   Reactive: df.past: Filtering for rbsPastTime 
+20210120-005738.748 _global_ Loading libraries 
+20210120-005743.785 c28b433d Server called ... 
+20210120-005744.185 c28b433d   output$ggpIncidenceStates: renderPlot 
+20210120-005749.989 c28b433d   output$ggpIncidenceStates: renderPlot 
+20210120-005749.990 c28b433d   Reactive: df.past: Filtering for rbsPastTime 
+20210120-005802.908 c28b433d   output$ggpIncidenceStates: renderPlot 
+20210120-005809.680 c28b433d   output$ggpIncidenceStates: renderPlot 
+20210120-005818.002 c28b433d   output$ggpIncidenceStates: renderPlot 
+20210120-005819.457 c28b433d   output$ggpIncidenceStates: renderPlot 
+20210120-005820.910 c28b433d   output$ggpIncidenceStates: renderPlot 
+20210120-005822.449 c28b433d   output$ggpIncidenceStates: renderPlot 
+20210120-005823.936 c28b433d   output$ggpIncidenceStates: renderPlot 
+20210120-005825.506 c28b433d   output$ggpIncidenceStates: renderPlot 
+20210120-005834.769 c28b433d   output$ggpIncidenceStates: renderPlot 
+20210120-005834.771 c28b433d   Reactive: df.past: Filtering for rbsPastTime 
+20210120-005842.895 c28b433d   output$ggpIncidenceStates: renderPlot 
+20210120-005851.001 c28b433d   output$ggpIncidenceStates: renderPlot 
+20210120-005915.935 c28b433d   output$ggpIncidenceStates: renderPlot 
+20210120-005921.948 c28b433d   output$ggpIncidenceStates: renderPlot 
+20210120-010013.178 _global_ Loading libraries 
+20210120-010014.829 df713d4b Server called ... 
+20210120-010014.880 df713d4b   output$ggpIncidenceStates: renderPlot 
+20210120-010018.434 df713d4b   output$ggpIncidenceStates: renderPlot 
+20210120-010018.435 df713d4b   Reactive: df.past: Filtering for rbsPastTime 
+20210120-010020.569 df713d4b   output$ggpIncidenceStates: renderPlot 
+20210120-010020.571 df713d4b   Reactive: df.past: Filtering for rbsPastTime 
+20210120-010029.412 df713d4b   output$ggpIncidenceStates: renderPlot 
+20210120-010033.889 df713d4b   output$ggpIncidenceStates: renderPlot 
+20210120-010036.011 df713d4b   output$ggpIncidenceStates: renderPlot 
+20210120-010037.481 df713d4b   output$ggpIncidenceStates: renderPlot 
+20210120-010038.850 df713d4b   output$ggpIncidenceStates: renderPlot 
+20210120-010040.098 df713d4b   output$ggpIncidenceStates: renderPlot 
+20210120-010052.586 df713d4b   output$ggpIncidenceStates: renderPlot 
+20210120-010123.903 df713d4b   output$ggpIncidenceStates: renderPlot 
+20210120-010137.590 df713d4b   output$ggpIncidenceStates: renderPlot 
+20210120-010147.854 df713d4b   output$ggpIncidenceStates: renderPlot 
+20210120-010155.686 df713d4b   output$ggpIncidenceStates: renderPlot 
+20210120-010201.986 df713d4b   output$ggpIncidenceStates: renderPlot 
+20210120-010218.157 df713d4b   output$ggpIncidenceStates: renderPlot 
+20210120-010219.447 df713d4b   output$ggpIncidenceStates: renderPlot 
+20210120-010220.712 df713d4b   output$ggpIncidenceStates: renderPlot 
+20210120-010222.013 df713d4b   output$ggpIncidenceStates: renderPlot 
+20210120-010223.413 df713d4b   output$ggpIncidenceStates: renderPlot 
+20210120-010224.698 df713d4b   output$ggpIncidenceStates: renderPlot 
+20210120-010226.038 df713d4b   output$ggpIncidenceStates: renderPlot 
+20210120-010227.489 df713d4b   output$ggpIncidenceStates: renderPlot 
+20210120-010543.849 _global_ Loading libraries 
+20210120-010545.316 c7291686 Server called ... 
+20210120-010545.375 c7291686   output$ggpIncidenceStates: renderPlot 
+20210120-010828.570 _global_ Loading libraries 
+20210120-010830.124 89c4cf4e Server called ... 
+20210120-010830.172 89c4cf4e   output$ggpIncidenceStates: renderPlot 
+20210120-010834.934 89c4cf4e   output$ggpIncidenceStates: renderPlot 
+20210120-010834.936 89c4cf4e   Reactive: df.past: Filtering for rbsPastTime 
+20210120-010848.863 89c4cf4e   output$ggpIncidenceStates: renderPlot 
+20210120-011117.610 _global_ Loading libraries 
+20210120-011119.570 7506e71c Server called ... 
+20210120-011119.676 7506e71c   output$ggpIncidenceStates: renderPlot 
+20210120-011122.650 7506e71c   output$ggpIncidenceStates: renderPlot 
+20210120-011122.652 7506e71c   Reactive: df.past: Filtering for rbsPastTime 
+20210120-011134.884 7506e71c   output$ggpIncidenceStates: renderPlot 
+20210120-011136.695 7506e71c   output$ggpIncidenceCounties: renderPlot 
+20210120-011136.697 7506e71c   Reactive: dg.past: Filtering for rbsPastTime 
+20210120-011139.032 7506e71c   output$ggpChangeRateStates: renderPlot 
+20210120-011156.361 7506e71c   output$ggpIncidenceStates: renderPlot 
+20210120-011156.363 7506e71c   Reactive: df.past: Filtering for rbsPastTime 
