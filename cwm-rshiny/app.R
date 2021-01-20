@@ -168,7 +168,8 @@ ui <- fluidPage(
              radioButtons("rbsPastTime",
               width="220px",
               label="Zeitaum",
-            choices = list("2 Monate" = "9",
+            choices = list("1 Monat" = "4",
+                           "2 Monate" = "9",
                            "3 Monate" = "13",
                            "4 Monate" = "18",
                            "5 Monate" = "22",
@@ -176,15 +177,25 @@ ui <- fluidPage(
                            "12 Monate"= "53"),
             selected="18")),
 
+      fluidRow(
+        "Options", 
+        checkboxInput("cbLogScale", label="LogScale", value=TRUE, width="220px")),
+      
+      
         fluidRow(        
           sliderInput("sldModelDays",
                        width="220px",
                        label="BerechnungsTage",
                        min=7, max=28, step=7, value=14)),
+      fluidRow(        
+        radioButtons("rbsSpreadModlel",
+                     width="220px",
+                     label="BerechnungsModel",
+                     choices = list("Linear" = "1",
+                                    "Quadratisch" = "2"),
+                     selected="2")),
+      
 
-      fluidRow(
-        "Options", 
-        checkboxInput("cbLogScale", label="LogScale", value=TRUE, width="220px"))
   ),
 
         #checkboxInput("cbLines", label="PointsOnly", value=FALSE, width="220px"),
