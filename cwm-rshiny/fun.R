@@ -156,7 +156,7 @@ cwmSpreadStyle <- function(rbsPastTime=25, yLimits=c(0.84, 1.19)) {
 
 
 
-caAgesRm7EstimatePoly <- function(df, nPoly=2, nModelDays=10, nPredDays=7) {
+cwmAgesRm7EstimatePoly <- function(df, nPoly=2, nModelDays=10, nPredDays=7) {
   
   curDate <- max(df$Date)                      
   minDate <- curDate - days(nModelDays)+1 # Prediction interval: first day
