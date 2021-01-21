@@ -35,6 +35,9 @@ RUN apt-get update -qq && apt-get -y --no-install-recommends install \
 RUN  install2.r --error \
     cronR \
     zoo \
+    tibbletime \
+    scales \
+    forecats \
   && rm -rf /tmp/downloaded_packages
   
 # RUN rm -rf /srv/shiny-server/*
