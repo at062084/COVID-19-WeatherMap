@@ -49,7 +49,7 @@ source("hlp.R", local=TRUE)
 # Define cron job to retrieve new data from AGES
 # -----------------------------------------------------------
 logMsg("Define cron job for data retrieval from AGES")
-cronJobR <- "/srv/shiny-server/COVID-19-WeatherMap/cron.R"
+cronJobDir <- "/srv/shiny-server/COVID-19-WeatherMap"
 #cronJobDir <- "/home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny"
 cronJobFile <- paste0(cronJobDir,"/cron.R")
 cronJobLog <-paste0(cronJobDir,"/log/cwm.cron.log")  

@@ -551,3 +551,4 @@
 20210121-232730.827 7b97fdc9   output$ggpIncidenceStates: renderPlot 
 20210121-232813.920 7b97fdc9   output$ggpIncidenceStates: renderPlot 
 20210121-232814.974 7b97fdc9   output$ggpIncidenceCounties: renderPlot 
+20210122-000634.040 _global_ Define cron job for data retrieval from AGES 
