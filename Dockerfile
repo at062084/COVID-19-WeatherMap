@@ -37,7 +37,7 @@ RUN  install2.r --error \
     zoo \
     tibbletime \
     scales \
-    forecats \
+    forcats \
   && rm -rf /tmp/downloaded_packages
   
 # RUN rm -rf /srv/shiny-server/*
