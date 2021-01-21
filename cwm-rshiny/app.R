@@ -1,18 +1,8 @@
 options(error = function() traceback(2))
 
-#logDir <- Sys.getenv("RSHINY_LOGDIR")
-#if (logDir=="") logDir = "./log"
-
-#logFile <- Sys.getenv("RSHINY_LOGFILE")
-#if (logFile=="") logFile <- "cwm.rshiny.log"
-
-# The above daoes not work -> hard code log path for now
-#logDir = "/var/log/cwm"
-
+# do some logging
 logDir = "./log"
 logFile <- "cwm.rshiny.log"
-
-# do some logging
 logMsg <- function(msg, sessionID="_global_") {
   cat(paste(format(Sys.time(), "%Y%m%d-%H%M%OS3"), sessionID, msg, "\n"), file=paste0(logDir,"/",logFile), append=TRUE)
   cat(paste(format(Sys.time(), "%Y%m%d-%H%M%OS3"), sessionID, msg, "\n"))
@@ -32,7 +22,9 @@ library(geojsonsf)
 library(spdplyr)
 library(readr)
 
+logMsg("Sourcing fun.R")
 source("fun.R")
+logMsg("Sourcing hlp.R")
 source("hlp.R")
 
 
@@ -40,38 +32,33 @@ source("hlp.R")
 # Global section. Data available to all sessions
 # --------------------------------------------------------------------------------------------------------------------------
 # Global constants
-dblDays <- c(1:7,10,14,21,28,50,100,Inf,-100,-50,-28,-21,-14,-10,-7,-6,-5,-4,-3,-2,-1)
-popBreaks <- c(0,1,2,5,10,15,20,25,seq(30,150,by=10))
-popBreaksAll <- c(0,1,2,3,4,5,6,7,8,9,10,12,15,seq(20,100,by=10),120,150,200,300,400,500)
-popLogBreaks <- (c(.1,.2,.5,1,2,5,10,20,50,100))
-logBreaks=c(seq(.1,1,by=.1),seq(1,10,by=1),seq(10,100,by=10),seq(100,1000,by=100),seq(1000,10000,by=1000))
-logBreaks=c(seq(.1,1,by=.1),seq(1,10,by=1),seq(10,100,by=10),seq(100,1000,by=100),seq(1000,10000,by=1000),seq(10000,100000,by=10000))
+#dblDays <- c(1:7,10,14,21,28,50,100,Inf,-100,-50,-28,-21,-14,-10,-7,-6,-5,-4,-3,-2,-1)
+#popBreaks <- c(0,1,2,5,10,15,20,25,seq(30,150,by=10))
+#popLogBreaks <- (c(.1,.2,.5,1,2,5,10,20,50,100))
+#logBreaks=c(seq(.1,1,by=.1),seq(1,10,by=1),seq(10,100,by=10),seq(100,1000,by=100),seq(1000,10000,by=1000))
+#logBreaks=c(seq(.1,1,by=.1),seq(1,10,by=1),seq(10,100,by=10),seq(100,1000,by=100),seq(1000,10000,by=1000),seq(10000,100000,by=10000))
 #nModelDays=28
 #nPredDays=14
-yLimMax <- 128
-julDate <- as.Date("2020-07-01")
-trans="log10"
+#yLimMax <- 128
+#julDate <- as.Date("2020-07-01")
+#trans="log10"
 
 
 # -----------------------------------------------------
 # AGES data files
 # -----------------------------------------------------
-df <- read.csv("./data/COVID-19-AGES-Curated.csv", sep=",", dec=".") %>%
-  dplyr::mutate(Date=as.Date(Date,"%Y-%m-%d")) %>%
-  dplyr::select(-Stamp)
-maxDate <- max(df$Date)
-
-di <- data.frame(RegionID=as.character(1:9), Region=c("Burgenland","Kärnten","Niederösterreich","Oberösterreich","Salzburg","Steiermark","Tirol","Vorarlberg","Wien"), stringsAsFactors=FALSE)
-dg <- read.csv("./data/COVID-19-AGES-GKZ.csv", stringsAsFactors=FALSE) %>%
-  dplyr::mutate(Date=as.Date(Date,"%Y-%m-%d")) %>%
-  dplyr::select(-Stamp) %>%
-  dplyr::rename(County=Region, CountyID=RegionID) %>%
-  dplyr::mutate(RegionID=(str_sub(as.character(CountyID),1,1)), CountyNR=(str_sub(as.character(CountyID),2,3))) %>%
-  dplyr::left_join(di, by="RegionID") %>% dplyr::select(1,13,15,2,14,3,4,5:12)
+logMsg("Loading data files")
+df <- readRDS(file="./data/COVID-19-CWM-AGES-States-Curated.rda")
+dg <- readRDS(file="./data/COVID-19-CWM-AGES-Counties-Curated.rda")
 
 # -----------------------------------------------------
 # Map Austria data structures
 # -----------------------------------------------------
+logMsg("Constructing global data structures")
+# Poligon geoJson structure
+mapNUTS <- mapNUTSAT()
+
+# Weather Icons
 iconSizeWeather=40
 iconsWeather <- iconList (
   Sun =       makeIcon(iconUrl="./www/iconWeather-Sun.png",       iconWidth=iconSizeWeather, iconHeight=iconSizeWeather),
@@ -81,6 +68,7 @@ iconsWeather <- iconList (
   Thunder =   makeIcon(iconUrl="./www/iconWeather-Thunder.png",   iconWidth=iconSizeWeather, iconHeight=iconSizeWeather)
 )
 
+# Direction Icons
 iconSizeDirection=24
 iconsDirection <- iconList (
   dirS =   makeIcon(iconUrl="./www/iconDirection-S.png", iconWidth=iconSizeDirection, iconHeight=iconSizeDirection),
@@ -92,43 +80,6 @@ iconsDirection <- iconList (
   dirN =   makeIcon(iconUrl="./www/iconDirection-N.png", iconWidth=iconSizeDirection, iconHeight=iconSizeDirection)
 )
 
-# Austria NUTS poligons for NUTS1, NUTS2 and NUTS3
-mapNUTS1 <- geojsonio::geojson_read(x="./maps/nuts_rg_60m_2013_lvl_1.geojson", what="sp") %>% dplyr::filter(startsWith(NUTS_ID,"AT"))
-mapNUTS2 <- geojsonio::geojson_read(x="./maps/nuts_rg_60m_2013_lvl_2.geojson", what="sp") %>% dplyr::filter(startsWith(NUTS_ID,"AT"))
-mapNUTS3 <- geojsonio::geojson_read(x="./maps/nuts_rg_60m_2013_lvl_3.geojson", what="sp") %>% dplyr::filter(startsWith(NUTS_ID,"AT"))
-
-# Center of NUTSn boxes
-cxNUTS1 = mean(bbox(mapNUTS1)[1,])
-cyNUTS1 = mean(bbox(mapNUTS1)[2,])
-
-cxNUTS2 <- vector()
-cyNUTS2 <- vector()
-for(i in 1:length(mapNUTS2)) {
-  cxNUTS2[i] <- mean(bbox(mapNUTS2[i,])[1,])
-  cyNUTS2[i] <- mean(bbox(mapNUTS2[i,])[2,])
-}
-
-# TEST: add some properties to the geojson data structure
-NUTS2_AT <- data.frame(
-  NUTS_ID=c("AT11","AT12","AT13","AT21","AT22","AT31","AT32","AT33","AT34"),
-  Region= c("Burgenland","Niederösterreich","Wien","Kärnten", "Steiermark","Oberösterreich","Salzburg","Tirol","Vorarlberg"),
-  stringsAsFactors=FALSE)
-
-mapNUTS2 <- mapNUTS2 %>% 
-  dplyr::left_join(NUTS2_AT, by="NUTS_ID") %>% 
-  dplyr::mutate(cxNUTS2=cxNUTS2, cyNUTS2=cyNUTS2)
-                
-# Patch Wien, Niederösterreich and Burgenland center coords for better position of WeatherMap icons
-#mapNUTS2$cxNUTS2[mapNUTS2$Region=="Wien"] = mapNUTS2$cxNUTS2[mapNUTS2$Region=="Wien"] +.1
-mapNUTS2$cyNUTS2[mapNUTS2$Region=="Wien"] = mapNUTS2$cyNUTS2[mapNUTS2$Region=="Wien"] +.25
-mapNUTS2$cxNUTS2[mapNUTS2$Region=="Niederösterreich"] = mapNUTS2$cxNUTS2[mapNUTS2$Region=="Niederösterreich"] -.25
-mapNUTS2$cyNUTS2[mapNUTS2$Region=="Niederösterreich"] = mapNUTS2$cyNUTS2[mapNUTS2$Region=="Niederösterreich"] -.1
-mapNUTS2$cxNUTS2[mapNUTS2$Region=="Burgenland"] = mapNUTS2$cxNUTS2[mapNUTS2$Region=="Burgenland"] +.15
-mapNUTS2$cyNUTS2[mapNUTS2$Region=="Burgenland"] = mapNUTS2$cyNUTS2[mapNUTS2$Region=="Burgenland"] +.4
-mapNUTS2$cyNUTS2[mapNUTS2$Region=="Salzburg"] = mapNUTS2$cyNUTS2[mapNUTS2$Region=="Salzburg"] -.15
-mapNUTS2$cyNUTS2[mapNUTS2$Region=="Steiermark"] = mapNUTS2$cyNUTS2[mapNUTS2$Region=="Steiermark"] + .15
-mapNUTS2$cxNUTS2[mapNUTS2$Region=="Tirol"] = mapNUTS2$cxNUTS2[mapNUTS2$Region=="Tirol"] -.25
-
 
 # --------------------------------------------------------------------------------------------------------------------------
 # GUI definition
@@ -136,7 +87,7 @@ mapNUTS2$cxNUTS2[mapNUTS2$Region=="Tirol"] = mapNUTS2$cxNUTS2[mapNUTS2$Region=="
 
 # Define UI for app that draws a histogram ----
 ui <- fluidPage(
-
+  
   # App title ----
   titlePanel("COVID-19-WeatherMap"),
 
@@ -188,7 +139,7 @@ ui <- fluidPage(
                        label="BerechnungsTage",
                        min=7, max=28, step=7, value=14)),
       fluidRow(        
-        radioButtons("rbsSpreadModlel",
+        radioButtons("rbsModelOrder",
                      width="220px",
                      label="BerechnungsModel",
                      choices = list("Linear" = "1",
@@ -294,10 +245,11 @@ server <- function(input, output, session) {
     
   #levConfPop <- round(c(0,10^seq(0,2,by=0.2),1000),1)
   # bins for rm7ConfPop
-  binConfPop <- c(0,1,1.4,2,2.8,4,5.6,8,11,16,22,32,45,64,90,128,Inf)
-  palConfPop <- c("#FFFFFF", brewer.pal(9,"YlOrRd"), "#600026", "#400020", "#200010", "#000000", "#000000","#000000","#000000")
-  colConfPop <- colorBin(palette=palConfPop, domain=binConfPop, bins=binConfPop)
-
+  binConfPop <- c(0,1,1.4,2,2.8,4,5.6,8,11,16,22,32,45,64,90,128,512)
+  palConfPop <- c(brewer.pal(9,"Greens")[c(7,6,5,4)], brewer.pal(9,"YlOrRd"), "#404040", brewer.pal(9,"Greys")[c(8,9)])
+  colConfPop <- colorBin(palette=palConfPop, domain=0:256, bins=binConfPop)
+  
+  
   # 7 icons: bins for dt* 
   dblDays <- c(1,14,28,56,-56,-28,-14,-1)
   binDblDays <- sort(round(exp(log(2)/dblDays),3))
@@ -307,38 +259,39 @@ server <- function(input, output, session) {
   
   # today's data for weathermap
   nWeatherForeCastDays=14
-  dp <- df %>% dplyr::filter(Date==max(Date))
-  de <- df %>% dplyr::filter(Date>=max(Date)-days(nWeatherForeCastDays))
+  dp <- df %>% dplyr::filter(Date==max(Date)) %>% dplyr::select(Date, Region, dt7rm7NewConfPop,starts_with("rm7"))# Today
+  de <- df %>% dplyr::filter(Date>=max(Date)-days(nWeatherForeCastDays)) %>% dplyr::select(Date, Region, dt7rm7NewConfPop,starts_with("rm7")) # Past days for forecast
   dm <- cwmAgesRm7EstimatePoly(de,nModelDays=nWeatherForeCastDays,nPredDays=7) %>%
     dplyr::filter(Date==max(Date))
-  
-  pMapNUTS2 <- mapNUTS2 %>% 
+
+  pMapNUTS <- mapNUTS %>% 
     dplyr::left_join(dm, by="Region") %>%
-    dplyr::left_join(dp, by="Region") %>%
-    dplyr::mutate(idxCurConfPop=.bincode(rm7NewConfPop.y,binForeCast), 
+    dplyr::left_join(dp, by="Region", suffix = c(".f", ".c")) %>%
+    dplyr::mutate(idxCurConfPop=.bincode(rm7NewConfPop.c,binForeCast), 
                   idxDblConfPop=.bincode(dt7rm7NewConfPop,binDblDays), 
-                  idxForConfPop=.bincode(rm7NewConfPop.x,binForeCast))
+                  idxForConfPop=.bincode(rm7NewConfPop.f,binForeCast))
   
   labWeatherMap <- sprintf(
     "<strong>%s</strong><br/>TagesInzidenz: %g pro 100000<br>Änderung seit letzer Woche: %g%%<br>Prognose nächste Woche: %g<br>Tage bis LockDown: %g",
-    pMapNUTS2$Region, round(pMapNUTS2$rm7NewConfPop.y,2), round(pMapNUTS2$dt7rm7NewConfPop,2), round(pMapNUTS2$rm7NewConfPop.x,2), 0) %>% lapply(htmltools::HTML)
+    pMapNUTS$Region, round(pMapNUTS$rm7NewConfPop.c,2), round(pMapNUTS$dt7rm7NewConfPop,2), round(pMapNUTS$rm7NewConfPop.f,2), 0) %>% lapply(htmltools::HTML)
   
-    leaflet(pMapNUTS2) %>%
+    leaflet(pMapNUTS) %>%
       addTiles(group="DefaultMap",options = providerTileOptions(minZoom=6, maxZoom=8)) %>%
-      setView(lng=cxNUTS1, lat=cyNUTS1, zoom=7) %>%
-      addPolygons(data=mapNUTS1, stroke = TRUE, smoothFactor = 0, color="black", fillOpacity = 0, fillColor="None", weight=10, group="AT1") %>%
-      addPolygons(data=mapNUTS3, stroke = TRUE, smoothFactor = 0, fillOpacity = 0, fillColor="none", weight=1, group="AT3") %>%
+      setView(lng=pMapNUTS$cxNUTS[1]-3, lat=pMapNUTS$cyNUTS[1], zoom=7) %>%
+      #addPolygons(data=mapNUTS1, stroke = TRUE, smoothFactor = 0, color="black", fillOpacity = 0, fillColor="None", weight=10, group="AT1") %>%
+      #addPolygons(data=mapNUTS3, stroke = TRUE, smoothFactor = 0, fillOpacity = 0, fillColor="none", weight=1, group="AT3") %>%
       addPolygons(stroke = TRUE, weight=3, color="black",
-                  fill=TRUE, fillOpacity = 1, fillColor=palConfPop[.bincode(pMapNUTS2$rm7NewConfPop.y,binConfPop)],
+                  fill=TRUE, fillOpacity = 1, fillColor=palConfPop[.bincode(pMapNUTS$rm7NewConfPop.c,binConfPop)],
                   label=labWeatherMap, 
                   labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="15px"),
-                  popup=~paste(Region,round(rm7NewConfPop.y,2),round(dt7rm7NewConfPop,2),round(rm7NewConfPop.x,2),sep="\n\r<br>"),
                   group="AT2") %>%
-      addMarkers(lng=~cxNUTS2-.35, lat=~cyNUTS2, icon=~iconsWeather[idxCurConfPop], group="Incidence") %>%
-      addMarkers(lng=~cxNUTS2, lat=~cyNUTS2, icon=~iconsDirection[idxDblConfPop], group="Trend") %>%
-      addMarkers(lng=~cxNUTS2+.35, lat=~cyNUTS2, icon=~iconsWeather[idxForConfPop], group="ForeCast") %>%
-      #addLegend(pal=colConfPop, values=~rm7NewConfPop.y, position="bottomright") %>%
-      addLayersControl(overlayGroups=c("AT1","AT3"), options=layersControlOptions(collapsed=FALSE)) %>%
+      addMarkers(lng=~cxNUTS-.35, lat=~cyNUTS, icon=~iconsWeather[idxCurConfPop], group="Incidence") %>%
+      addMarkers(lng=~cxNUTS, lat=~cyNUTS, icon=~iconsDirection[idxDblConfPop], group="Trend",
+                 label=labWeatherMap, labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="15px")) %>%
+      addMarkers(lng=~cxNUTS+.35, lat=~cyNUTS, icon=~iconsWeather[idxForConfPop], group="ForeCast") %>%
+      addLegend(pal=colConfPop, values=~rm7NewConfPop.c, position="bottomright", opacity=1, title="Incidence") %>%
+      #addMarkers(lng=~cxNUTS, lat=~cyNUTS, group="Trend", label=atRegions, popup=~Region) %>%
+      #addLayersControl(overlayGroups=c("AT1","AT3"), options=layersControlOptions(collapsed=FALSE)) %>%
       hideGroup(c("AT1","AT3","Markers"))
   })
   
@@ -349,10 +302,10 @@ server <- function(input, output, session) {
   
   output$ggpIncidencePrediciton <- renderPlot({
     logMsg("  output$ggpIncidenceStates: renderPlot", sessionID)
-
+    
     # dk <- df.past()
     dk <- df.past() %>% dplyr::filter(Region %in% input$cbgRegion)
-    dp <- cwmAgesRm7EstimatePoly(dk,nModelDays=input$sldModelDays,nPredDays=14)
+    dp <- cwmAgesRm7EstimatePoly(dk, nModelDays=input$sldModelDays, nPoly=as.integer(input$rbsModelOrder), nPredDays=14)
 
     trans <- ifelse(input$cbLogScale, "log10", "identity")
     if(as.integer(input$rbsPastTime)<26) {
@@ -362,6 +315,8 @@ server <- function(input, output, session) {
       rvBreaks="1 months"
       rvLabels="%B"
     }
+    
+    popBreaksAll <- c(0,1,2,3,4,5,6,7,8,9,10,12,15,seq(20,100,by=10),120,150,200,300,400,500)
     
     ggplot(data=dp, aes(x=Date, y=rm7NewConfPop,color=Region,shape=Region)) + 
       scale_shape_manual(values=c(1:10)) + 
@@ -441,8 +396,8 @@ server <- function(input, output, session) {
     
     ggplot(dp, aes(x=Date, y=dt7rm7NewConfPop, color=Region, shape=Region))+
       cwmSpreadStyle(input$rbsPastTime) +
-      geom_line(size=.25) +
-      geom_point(size=3) + 
+      geom_line(size=.75) +
+      geom_point(size=2) + 
       ggtitle(paste0("COVID-19 Österreich und Bundesländer: Ausbreitungsgeschwindigkeit in % pro Tag, seit ", min(dp$Date), ".  Basisdaten: AGES"))
   })
   
