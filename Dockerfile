@@ -12,9 +12,6 @@ RUN apt-get update -qq && apt-get -y --no-install-recommends install \
   libgdal-dev \
   libjq-dev
 
-RUN apt-get update -qq && apt-get -y --no-install-recommends install \
-  cron
-
 RUN  install2.r --error \
     plotly \
     leaflet \
@@ -32,6 +29,9 @@ RUN  install2.r --error \
     DT \
   && rm -rf /tmp/downloaded_packages
   
+RUN apt-get update -qq && apt-get -y --no-install-recommends install \
+  cron
+
 RUN  install2.r --error \
     cronR \
   && rm -rf /tmp/downloaded_packages
