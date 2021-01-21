@@ -1,0 +1,13 @@
+20210121-010158.314 _rscript_ cron: Start Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210121-010224.746 _rscript_ Sourcing ages.R 
+20210121-010228.735 _rscript_ DownLoading CovidFallzahlen data from AGES ... 
+20210121-010233.516 _rscript_ Downloading CovidFaelle_Timeline data from AGES ... 
+20210121-010236.687 _rscript_ Downloading CovidFaelle_Timeline_GKZ data from AGES ... 
+20210121-010241.755 _rscript_ Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ... 
+20210121-010352.511 _rscript_ Sourcing fun.R 
+20210121-011007.664 _rscript_ Sourcing fun.R 
+20210121-011009.137 _rscript_ Sourcing hlp.R 
+20210121-011011.957 _rscript_ Loading data files 
+20210121-011823.277 _rscript_ Sourcing ages.R 
+20210121-224349.254 _rscript_ cron: Start Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210121-224349.282 _rscript_ Sourcing fun.R 
