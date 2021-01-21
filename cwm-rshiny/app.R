@@ -50,7 +50,7 @@ source("hlp.R", local=TRUE)
 # -----------------------------------------------------------
 logMsg("Define cron job for data retrieval from AGES")
 cronJobR <- "/srv/shiny-server/COVID-19-WeatherMap/cron.R"
-cronJobDir <- "/home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny"
+#cronJobDir <- "/home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny"
 cronJobFile <- paste0(cronJobDir,"/cron.R")
 cronJobLog <-paste0(cronJobDir,"/log/cwm.cron.log")  
 cmd <- cron_rscript(rscript=cronJobFile, rscript_log=cronJobLog, log_timestamp=TRUE, workdir=cronJobDir)
