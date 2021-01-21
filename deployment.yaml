@@ -19,7 +19,7 @@ spec:
       # sessionAffinity: ClientIP
       containers:
       - name: cwm-rshiny
-        image: de.icr.io/cwmregspace/cwm-rshiny:0.2.7
+        image: de.icr.io/cwmregspace/cwm-rshiny:0.2.8
         env:
           - name: CWM_RSHINY_ENV
             value: Deployment

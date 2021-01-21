@@ -29,6 +29,10 @@ RUN  install2.r --error \
     DT \
   && rm -rf /tmp/downloaded_packages
   
+RUN  install2.r --error \
+    cronR \
+  && rm -rf /tmp/downloaded_packages
+  
 # RUN rm -rf /srv/shiny-server/*
 WORKDIR /srv/shiny-server/COVID-19-WeatherMap
 COPY ./cwm-rshiny .

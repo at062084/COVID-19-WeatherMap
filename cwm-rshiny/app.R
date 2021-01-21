@@ -1,4 +1,5 @@
 options(error = function() traceback(2))
+options(shiny.reactlog = TRUE)
 
 # do some logging
 logDir = "./log"
@@ -21,11 +22,12 @@ library(leaflet.extras)
 library(geojsonsf)
 library(spdplyr)
 library(readr)
+library(cronR)
 
 logMsg("Sourcing fun.R")
-source("fun.R")
+source("fun.R", local=TRUE)
 logMsg("Sourcing hlp.R")
-source("hlp.R")
+source("hlp.R", local=TRUE)
 
 
 # --------------------------------------------------------------------------------------------------------------------------
@@ -43,13 +45,63 @@ source("hlp.R")
 #julDate <- as.Date("2020-07-01")
 #trans="log10"
 
+# -----------------------------------------------------------
+# Define cron job to retrieve new data from AGES
+# -----------------------------------------------------------
+logMsg("Define cron job for data retrieval from AGES")
+cronJobR <- "/srv/shiny-server/COVID-19-WeatherMap/cron.R"
+cronJobDir <- "/home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny"
+cronJobFile <- paste0(cronJobDir,"/cron.R")
+cronJobLog <-paste0(cronJobDir,"/log/cwm.cron.log")  
+cmd <- cron_rscript(rscript=cronJobFile, rscript_log=cronJobLog, log_timestamp=TRUE, workdir=cronJobDir)
+cmd
+cron_add(cmd, frequency='daily', id='AGES-15', at = '14:41')
+cron_add(cmd, frequency='daily', id='AGES-21', at = '22:22')
+
+# -----------------------------------------------------------
+# Reactiv File Poller: Monitor for new files created by cron
+# -----------------------------------------------------------
+cwmStatesFile <- "./data/COVID-19-CWM-AGES-States-Curated.rda"
+df.rfr <- reactiveFileReader(
+  session=NULL,
+  intervalMillis=10000,
+  filePath=cwmStatesFile,
+  readFunc=readRDS
+)
+df <- eventReactive(df.rfr(), {
+  logMsg(paste("eventReactive: reactiveFileReader for", cwmStatesFile)) 
+  df.rfr()} )
+
+cwmCountiesFile <- "./data/COVID-19-CWM-AGES-Counties-Curated.rda"
+dg.rfr <- reactiveFileReader(
+  session=NULL,
+  intervalMillis=10000,
+  filePath=cwmCountiesFile,
+  readFunc=readRDS
+)
+dg <- eventReactive(dg.rfr(), {
+  logMsg(paste("eventReactive: reactiveFileReader for", cwmStatesFile)) 
+  dg.rfr()} )
+
+
+cwmTestFile <- "./data/COVID-19-CWM-AGES-Test-Curated.rda"
+cwmTestFile <- "./data/test.csv"
+dt.rfr <- reactiveFileReader(
+  session=NULL,
+  intervalMillis=1000,
+  filePath=cwmTestFile,
+  readFunc=read.csv
+)
+dt <- eventReactive(dt.rfr(), {
+  logMsg(paste("eventReactive: reactiveFileReader for", cwmTestFile)) 
+  dt.rfr()} )
 
 # -----------------------------------------------------
 # AGES data files
 # -----------------------------------------------------
-logMsg("Loading data files")
-df <- readRDS(file="./data/COVID-19-CWM-AGES-States-Curated.rda")
-dg <- readRDS(file="./data/COVID-19-CWM-AGES-Counties-Curated.rda")
+#logMsg("Loading data files")
+#df <- readRDS(file="./data/COVID-19-CWM-AGES-States-Curated.rda")
+#dg <- readRDS(file="./data/COVID-19-CWM-AGES-Counties-Curated.rda")
 
 # -----------------------------------------------------
 # Map Austria data structures
@@ -97,7 +149,8 @@ ui <- fluidPage(
     # Sidebar panel for inputs ----
     sidebarPanel(width=2,
       
-      p("COVID-19-WeatherMap-0.2.8 IBM@20210120"),
+      p("CWM V0.2.8 @2021-01-20"),
+#      tableOutput("secTime"),
       
       fluidRow(
           checkboxGroupInput("cbgRegion",
@@ -129,7 +182,6 @@ ui <- fluidPage(
             selected="18")),
 
       fluidRow(
-        "Options", 
         checkboxInput("cbLogScale", label="LogScale", value=TRUE, width="220px")),
       
       
@@ -158,6 +210,9 @@ ui <- fluidPage(
       
       tabsetPanel(type = "tabs",
  
+#        tabPanel("Test",
+#                 fluidRow(plotOutput(outputId = "testID"))),
+
         tabPanel("COVID Lage und Aussichten",
                  h4("Lage und Aussichten Bundesländer", align = "left", style="color:gray"),
                  p("[Menüauswahl: NA]", align = "left", style="color:green"),
@@ -183,7 +238,7 @@ ui <- fluidPage(
                           column(width=3, htmlOutput(outputId="hlpIncidenceCounties")))),
         
 
-        tabPanel("Verbreitung Bundesländer",
+        tabPanel("Ausbreitungsgeschwindigkeit",
                  h4("Änderung der TagesInzidenz in % vom Vortag", align = "left", style="color:gray"),
                  p("[Menüauswahl: Zeitbereich,Region]", align = "left", style="color:green"),
                  fluidRow(column(width=9, plotOutput(outputId = "ggpChangeRateStates", height="75vh")),
@@ -227,13 +282,26 @@ server <- function(input, output, session) {
   # logMsg("Defining reactive sensorID Filter", sessionID)
   df.past <- reactive({
     logMsg("  Reactive: df.past: Filtering for rbsPastTime", sessionID)
-    return(df %>% dplyr::filter(Date > max(Date)-weeks(as.integer(input$rbsPastTime))))
+    return(df() %>% dplyr::filter(Date > max(Date)-weeks(as.integer(input$rbsPastTime))))
   })
   
   dg.past <- reactive({
     logMsg("  Reactive: dg.past: Filtering for rbsPastTime", sessionID)
-    return(dg %>% dplyr::filter(Date > max(Date)-weeks(as.integer(input$rbsPastTime))))
+    return(dg() %>% dplyr::filter(Date > max(Date)-weeks(as.integer(input$rbsPastTime))))
   })
+  
+  # -------------------------------------------
+  # Test
+  # -------------------------------------------
+#  output$testID <- renderPlot({
+#    logMsg("  output$testID: renderPlot", sessionID)
+#    ggplot(dt(), aes(x=x,y=y))+geom_point(size=5)
+#  })
+  
+#  st <- reactive({ invalidateLater(1000)
+#    as.character(format(Sys.time(), "%H:%H:%S")) })
+#  output$secTime <- renderText({ st() }) 
+  
   
   # -------------------------------------------
   # Weather Map
@@ -259,8 +327,8 @@ server <- function(input, output, session) {
   
   # today's data for weathermap
   nWeatherForeCastDays=14
-  dp <- df %>% dplyr::filter(Date==max(Date)) %>% dplyr::select(Date, Region, dt7rm7NewConfPop,starts_with("rm7"))# Today
-  de <- df %>% dplyr::filter(Date>=max(Date)-days(nWeatherForeCastDays)) %>% dplyr::select(Date, Region, dt7rm7NewConfPop,starts_with("rm7")) # Past days for forecast
+  dp <- df.past() %>% dplyr::filter(Date==max(Date)) %>% dplyr::select(Date, Region, dt7rm7NewConfPop,starts_with("rm7"))# Today
+  de <- df.past() %>% dplyr::filter(Date>=max(Date)-days(nWeatherForeCastDays)) %>% dplyr::select(Date, Region, dt7rm7NewConfPop,starts_with("rm7")) # Past days for forecast
   dm <- cwmAgesRm7EstimatePoly(de,nModelDays=nWeatherForeCastDays,nPredDays=7) %>%
     dplyr::filter(Date==max(Date))
 
@@ -358,10 +426,10 @@ server <- function(input, output, session) {
 
     dp <- df.past() %>% dplyr::filter(Region %in% input$cbgRegion)
     
-    ggplot(dp, aes(x=Date, y=rm7NewConfPop, color=Region))+
+    ggplot(dp, aes(x=Date, y=rm7NewConfPop, color=Region, shape=Region))+
       cwmConfPopStyle(input$rbsPastTime, input$cbLogScale) +
-      geom_point(size=1)+geom_line()+
-      geom_point(size=1)+
+      geom_point(size=2)+geom_line()+
+      geom_point(data=dp %>% dplyr::filter(Date==max(Date)), size=4)+
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Positiv Getestete pro 100.000 Einw. seit ", min(dp$Date), ".  Basisdaten: AGES"))
   })
 
@@ -398,6 +466,7 @@ server <- function(input, output, session) {
       cwmSpreadStyle(input$rbsPastTime) +
       geom_line(size=.75) +
       geom_point(size=2) + 
+      geom_point(data=dp %>% dplyr::filter(Date==max(Date)), size=4)+
       ggtitle(paste0("COVID-19 Österreich und Bundesländer: Ausbreitungsgeschwindigkeit in % pro Tag, seit ", min(dp$Date), ".  Basisdaten: AGES"))
   })
   

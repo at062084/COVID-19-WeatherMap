@@ -38,8 +38,8 @@ env | egrep "GIT|IBM|DIR" | sort
 cd $PRJ_DIR
 
 # Patch Git Tag into source code to display in dashboard
-APP_VER=`cat $APP_DIR/$DKR_PRJ/app.R | awk '{if(index($0,"COVID-19-WeatherMap-")){split($0,sp,"\"");id=sp[2];gsub("@","\\\@",id);print id}}'`
-NEW_VER="COVID-19-WeatherMap-$GIT_VER IBM\@`date +%Y%m%d`"
+APP_VER=`cat $APP_DIR/$DKR_PRJ/app.R | awk '{if(index($0,"CWM V")){split($0,sp,"\"");print sp[2]}}'`
+NEW_VER="CWM V$GIT_VER `date +%Y-%m-%d`"
 echo "Current: $APP_VER  New Version: $NEW_VER"
 perl -pi -e "s/$APP_VER/$NEW_VER/" $APP_DIR/$DKR_PRJ/app.R
 

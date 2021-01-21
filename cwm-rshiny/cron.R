@@ -1,4 +1,4 @@
-#!/usr/bin/Rscript
+#!/usr/lib64/R/bin/Rscript
 
 options(error = function() traceback(2))
 setwd("/srv/shiny-server/COVID-19-WeatherMap")
