@@ -25,7 +25,7 @@ dplm <- df %>%
 nModelDaysST=10
 nPredDaysST=7
 
-de <- caAgesRm7EstimatePoly(df, nPolyDays=7, nPoly=2, nRm7Days=7)
+de <- cwmAgesRm7EstimatePoly(df, nPolyDays=7, nPoly=2, nRm7Days=7)
 
 maxDate <- max(df$Date)
 regions <- df %>% group_by(Region) %>% summarize(Date=first(Date)) %>% dplyr::ungroup() %>% dplyr::select(Region)

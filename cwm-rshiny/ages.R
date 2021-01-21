@@ -231,7 +231,7 @@ caAgesRead_tlrm <- function(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile=
   
   # patch rm7* NA's with predicts from lm poly model
   if(bPredict) {
-    dp <- caAgesRm7EstimatePoly(df, nModelDays=nPolyDays, nPoly=nPoly) %>%
+    dp <- cwmAgesRm7EstimatePoly(df, nModelDays=nPolyDays, nPoly=nPoly) %>%
       dplyr::arrange(Date, Region)
     
     df <- df %>% dplyr::arrange(Date, Region)
