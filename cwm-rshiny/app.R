@@ -151,7 +151,7 @@ ui <- fluidPage(
     # Sidebar panel for inputs ----
     sidebarPanel(width=2,
       
-      p("CWM V0.2.8 @2021-01-20"),
+      p("CWM-V0.2.8@2021-01-20"),
 #      tableOutput("secTime"),
       
       fluidRow(
