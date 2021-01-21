@@ -12,6 +12,9 @@ RUN apt-get update -qq && apt-get -y --no-install-recommends install \
   libgdal-dev \
   libjq-dev
 
+RUN apt-get update -qq && apt-get -y --no-install-recommends install \
+  cron
+
 RUN  install2.r --error \
     plotly \
     leaflet \
