@@ -39,7 +39,7 @@ cd $PRJ_DIR
 
 # Patch Git Tag into source code to display in dashboard
 APP_VER=`cat $APP_DIR/$DKR_PRJ/app.R | awk '{if(index($0,"CWM-V")){split($0,sp,"\"");print sp[2]}}'`
-NEW_VER="CWM-V$GIT_VER@`date +%Y-%m-%d`"
+NEW_VER="CWM-V$GIT_VER-`date +%Y%m%d`"
 echo "Current: $APP_VER  New Version: $NEW_VER"
 perl -pi -e "s/$APP_VER/$NEW_VER/" $APP_DIR/$DKR_PRJ/app.R
 
