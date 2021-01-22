@@ -30,11 +30,18 @@ cfz <- "CovidFallzahlen.csv"               # https://covid19-dashboard.ages.at/d
 # -------------------------------------------------------------------------------------------
 # CovidFaelle_Timeline_GKZ.csv: TimeLine Bezirke (Confirmed, Recovered, Deaths)
 # -------------------------------------------------------------------------------------------
-caAgesRead_cfGKZtl <- function(csvFile=NULL, bSave=TRUE) {
+caAgesRead_cfGKZtl <- function(csvFile="CovidFaelle_Timeline_GKZ.csv", bSave=TRUE) {
   
-  if(is.null(csvFile)) csvFile <- "http://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv"
-  logMsg(paste("Download", csvFile))
-  df <- read.csv(csvFile, stringsAsFactors=FALSE, sep=";") %>% 
+  # "http://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv"
+  webAGES <- "https://covid19-dashboard.ages.at/data"
+  webFile <- paste0(webAGES,"/",csvFile) 
+  logMsg(paste("Download AGES data from", webFile))
+  dskFile <- paste0("./data/",csvFile)
+  logMsg(paste("Storing AGES data to", dskFile))
+  cmd <- paste(webFile, "-O", dskFile)
+  system2("wget", cmd)
+  
+  df <- read.csv(dskFile, stringsAsFactors=FALSE, sep=";") %>% 
     dplyr::mutate(Stamp=as.POSIXct(Time, format="%d.%m.%Y %H:%M:%S"), Date=date(Stamp)) %>%
     dplyr::rename(RegionID=GKZ, Region=Bezirk, Population=AnzEinwohner) %>%
     dplyr::rename(newConfirmed=AnzahlFaelle, sumConfirmed=AnzahlFaelleSum, rmaConfirmed=AnzahlFaelle7Tage) %>%
@@ -88,10 +95,18 @@ caAgesRead_cfGKZtl <- function(csvFile=NULL, bSave=TRUE) {
 # -------------------------------------------------------------------------------------------
 # CovidFaelle_Timeline.csv: TimeLine BundesLänder (Confirmed, Recovered, Deaths)
 # -------------------------------------------------------------------------------------------
-caAgesRead_cftl <- function(csvFile=NULL, bSave=TRUE) {
+caAgesRead_cftl <- function(csvFile="CovidFaelle_Timeline.csv", bSave=TRUE) {
   
-  if(is.null(csvFile)) csvFile <- "http://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv"
-  dc <- read.csv(csvFile, stringsAsFactors=FALSE, sep=";") %>% 
+  # "http://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv"
+  webAGES <- "https://covid19-dashboard.ages.at/data"
+  webFile <- paste0(webAGES,"/",csvFile) 
+  logMsg(paste("Download AGES data from", webFile))
+  dskFile <- paste0("./data/",csvFile)
+  logMsg(paste("Storing AGES data to", dskFile))
+  cmd <- paste(webFile, "-O", dskFile)
+  system2("wget", cmd)
+  
+  dc <- read.csv(dskFile, stringsAsFactors=FALSE, sep=";") %>% 
     dplyr::mutate(Stamp=as.POSIXct(Time, format="%d.%m.%Y %H:%M:%S"), Date=date(Stamp)) %>%
     dplyr::rename(RegionID=BundeslandID, Region=Bundesland, Population=AnzEinwohner) %>%
     dplyr::rename(newConfirmed=AnzahlFaelle, newRecovered=AnzahlGeheiltTaeglich, newDeaths=AnzahlTotTaeglich) %>%
@@ -112,7 +127,7 @@ caAgesRead_cftl <- function(csvFile=NULL, bSave=TRUE) {
 # -------------------------------------------------------------------------------------------
 # CovidFallzahlen.csv: TimeLine Bezirke (Tested, Hospital, ICU)
 # -------------------------------------------------------------------------------------------
-caAgesRead_cfz <- function(csvFile=NULL, bSave=TRUE) {
+caAgesRead_cfz <- function(csvFile="CovidFallzahlen.csv", bSave=TRUE) {
 
   # prepare imputation of some weird problems in AGES data. TODO: check and enhance !!!
   cfzImpute <- function(newTested) {
@@ -122,9 +137,17 @@ caAgesRead_cfz <- function(csvFile=NULL, bSave=TRUE) {
     newTested=round(newTested)
     return(newTested)
   }    
+
+  # "http://covid19-dashboard.ages.at/data/CovidFallzahlen.csv"
+  webAGES <- "https://covid19-dashboard.ages.at/data"
+  webFile <- paste0(webAGES,"/",csvFile) 
+  logMsg(paste("Download AGES data from", webFile))
+  dskFile <- paste0("./data/",csvFile)
+  logMsg(paste("Storing AGES data to", dskFile))
+  cmd <- paste(webFile, "-O", dskFile)
+  system2("wget", cmd)
   
-  if(is.null(csvFile))  csvFile <- "http://covid19-dashboard.ages.at/data/CovidFallzahlen.csv"
-  dt <- read.csv(csvFile, stringsAsFactors=FALSE, sep=";") %>% 
+  dt <- read.csv(dskFile, stringsAsFactors=FALSE, sep=";") %>% 
     dplyr::mutate(Stamp=as.POSIXct(MeldeDatum, format="%d.%m.%Y %H:%M:%S"), Date=date(as.POSIXct(Meldedat, format="%d.%m.%Y"))) %>%
     dplyr::rename(RegionID=BundeslandID, Region=Bundesland, sumTested=TestGesamt) %>%
     dplyr::rename(curHospital=FZHosp, freeHospital=FZHospFree, curICU=FZICU, freeICU=FZICUFree) %>%

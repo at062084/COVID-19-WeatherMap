@@ -48,3 +48,23 @@ echo "> Executing $CMD"
 echo "> Checking for $DKR_PRJ images"
 ibmcloud cr images | grep $DKR_PRJ
 
+CMD="kubectl delete deployment $DKR_PRJ -n $IBM_K8S"
+echo "> Executing $CMD"
+[ $DRY_RUN -eq 0 ] && $CMD
+
+CMD="kubectl apply -f deployment.yaml
+echo "> Executing $CMD"
+[ $DRY_RUN -eq 0 ] && $CMD
+
+CMD="kubectl apply -f service.yaml
+echo "> Executing $CMD"
+[ $DRY_RUN -eq 0 ] && $CMD
+
+CMD="kubectl apply -f ingress.yaml
+echo "> Executing $CMD"
+[ $DRY_RUN -eq 0 ] && $CMD
+
+
+
+
+
