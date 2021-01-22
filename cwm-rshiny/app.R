@@ -58,7 +58,7 @@ cronJobLog <-paste0(cronJobDir,"/log/cwm.cron.log")
 cmd <- cron_rscript(rscript=cronJobFile, rscript_log=cronJobLog, log_timestamp=TRUE, workdir=cronJobDir)
 cmd
 cron_clear(ask=FALSE)
-cron_add(cmd, frequency='daily', id='AGES-15', at = '14:41')
+cron_add(cmd, frequency='daily', id='AGES-15', at = '14:14')
 cron_add(cmd, frequency='daily', id='AGES-21', at = '22:22')
 
 # -----------------------------------------------------------
