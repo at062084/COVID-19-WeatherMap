@@ -32,7 +32,7 @@ cfz <- "CovidFallzahlen.csv"               # https://covid19-dashboard.ages.at/d
 # -------------------------------------------------------------------------------------------
 caAgesRead_cfGKZtl <- function(csvFile=NULL, bSave=TRUE) {
   
-  if(is.null(csvFile)) csvFile <- "https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv"
+  if(is.null(csvFile)) csvFile <- "http://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv"
   logMsg(paste("Download", csvFile))
   df <- read.csv(csvFile, stringsAsFactors=FALSE, sep=";") %>% 
     dplyr::mutate(Stamp=as.POSIXct(Time, format="%d.%m.%Y %H:%M:%S"), Date=date(Stamp)) %>%
@@ -90,7 +90,7 @@ caAgesRead_cfGKZtl <- function(csvFile=NULL, bSave=TRUE) {
 # -------------------------------------------------------------------------------------------
 caAgesRead_cftl <- function(csvFile=NULL, bSave=TRUE) {
   
-  if(is.null(csvFile)) csvFile <- "https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv"
+  if(is.null(csvFile)) csvFile <- "http://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv"
   dc <- read.csv(csvFile, stringsAsFactors=FALSE, sep=";") %>% 
     dplyr::mutate(Stamp=as.POSIXct(Time, format="%d.%m.%Y %H:%M:%S"), Date=date(Stamp)) %>%
     dplyr::rename(RegionID=BundeslandID, Region=Bundesland, Population=AnzEinwohner) %>%
@@ -123,7 +123,7 @@ caAgesRead_cfz <- function(csvFile=NULL, bSave=TRUE) {
     return(newTested)
   }    
   
-  if(is.null(csvFile))  csvFile <- "https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv"
+  if(is.null(csvFile))  csvFile <- "http://covid19-dashboard.ages.at/data/CovidFallzahlen.csv"
   dt <- read.csv(csvFile, stringsAsFactors=FALSE, sep=";") %>% 
     dplyr::mutate(Stamp=as.POSIXct(MeldeDatum, format="%d.%m.%Y %H:%M:%S"), Date=date(as.POSIXct(Meldedat, format="%d.%m.%Y"))) %>%
     dplyr::rename(RegionID=BundeslandID, Region=Bundesland, sumTested=TestGesamt) %>%

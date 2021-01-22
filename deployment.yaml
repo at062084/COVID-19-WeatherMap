@@ -6,7 +6,7 @@ metadata:
   labels:
     context: REnterprise
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: cwm-rshiny
@@ -19,7 +19,7 @@ spec:
       # sessionAffinity: ClientIP
       containers:
       - name: cwm-rshiny
-        image: de.icr.io/cwmregspace/cwm-rshiny:0.4.0
+        image: de.icr.io/cwmregspace/cwm-rshiny:latest
         env:
           - name: CWM_RSHINY_ENV
             value: Deployment
