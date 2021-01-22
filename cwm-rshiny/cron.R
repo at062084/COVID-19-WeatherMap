@@ -2,7 +2,7 @@
 
 options(error = function() traceback(2))
 setwd("/srv/shiny-server/COVID-19-WeatherMap")
-setwd("/home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny")
+# setwd("/home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny")
 
 logDir = "./log"
 logFile <- "cwm.cron.log"
