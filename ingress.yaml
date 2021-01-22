@@ -16,17 +16,6 @@ metadata:
     ingress.bluemix.net/sticky-cookie-services: "serviceName=cwm-rshiny-service name=cwm-rshiny expires=1h path=/ hash=sha1"
     nginx.org/websocket-services: "cwm-rshiny-service"
   
-#  annotations:
-#    ingress.bluemix.net/rewrite-path: "rewrite=/;serviceName=rep-grafana-service rewrite=/"
-#    ingress.bluemix.net/proxy-read-timeout: "serviceName=rep-proxy-service timeout=300s"
-#    ingress.bluemix.net/proxy-connect-timeout: "serviceName=rep-proxy-service timeout=180s"
-#    ingress.bluemix.net/redirect-to-https: "True"
-#    ingress.bluemix.net/allowHTTP: "false"
-#    kubernetes.io/ingress.allowHTTP: "false"
-#    ingress.bluemix.net/ssl-services: "ssl-service=rep-proxy-service"
-#    ingress.bluemix.net/rewrite-target: /
-#    ingress.kubernetes.io/ssl-passthrough: "true"
-
 spec:
   tls:
   - hosts:
