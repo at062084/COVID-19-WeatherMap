@@ -11,3 +11,7 @@
 20210121-011823.277 _rscript_ Sourcing ages.R 
 20210121-224349.254 _rscript_ cron: Start Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
 20210121-224349.282 _rscript_ Sourcing fun.R 
+20210123-003324.836 __cron__ cron: Start Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210123-003326.126 __cron__ Sourcing fun.R 
+20210123-003844.764 __cron__ cron: Start Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210123-003846.266 __cron__ Sourcing fun.R 

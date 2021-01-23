@@ -251,16 +251,21 @@ caAgesRead_tlrm <- function(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile=
     dplyr::ungroup() 
   # str(df)
   
-  
+  # TODO CHECK !!!!!
   # patch rm7* NA's with predicts from lm poly model
   if(bPredict) {
-    dp <- cwmAgesRm7EstimatePoly(df, nModelDays=nPolyDays, nPoly=nPoly) %>%
+    # this should work as the last three days have NA's in rm7*, which are omitted from modeling here:
+    dp <- cwmAgesRm7EstimatePoly(df, nPoly=nPoly, nModelDays=nPolyDays+3, nPredDays=0) %>%
       dplyr::arrange(Date, Region)
     
+    # Same order as in dp
     df <- df %>% dplyr::arrange(Date, Region)
     rm7Cols=c("rm7NewTested", "rm7NewConfirmed","rm7NewRecovered","rm7NewDeaths", "rm7NewConfPop", "rm7NewConfTest", 
               "rm7CurConfirmed", "rm7CurHospital", "rm7CurICU")
-    df[df$Date %in% unique(dp$Date),rm7Cols] <- dp[,rm7Cols]
+    # Last three days have been estimated above, so can now be patched 
+    patchDates <- unique(dp$Date)[(nPolyDays+1):(nPolyDays+3)]
+    # TODO: some weir results for rm7NewTested ans rm7NewConfTest. Maybe others
+    df[df$Date %in% patchDates,rm7Cols] <- dp[dp$Date %in% patchDates,rm7Cols]
   }
   
   # df %>% dplyr::filter(Region=="Wien", Date > max(Date)-days(10)) %>% dplyr::select(Date, Region, newConfPop,rm7NewConfPop)

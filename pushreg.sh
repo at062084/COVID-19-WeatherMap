@@ -52,19 +52,19 @@ CMD="kubectl delete deployment $DKR_PRJ -n $IBM_K8S"
 echo "> Executing $CMD"
 [ $DRY_RUN -eq 0 ] && $CMD
 
-CMD="kubectl apply -f deployment.yaml
+CMD="kubectl apply -f deployment.yaml"
 echo "> Executing $CMD"
 [ $DRY_RUN -eq 0 ] && $CMD
 
-CMD="kubectl apply -f service.yaml
+CMD="kubectl apply -f service.yaml"
 echo "> Executing $CMD"
 [ $DRY_RUN -eq 0 ] && $CMD
 
-CMD="kubectl apply -f ingress.yaml
+CMD="kubectl apply -f ingress.yaml"
 echo "> Executing $CMD"
 [ $DRY_RUN -eq 0 ] && $CMD
 
-
+kubectl describe deployment cwm-rshiny -n $IBM_K8S
 
 
 
