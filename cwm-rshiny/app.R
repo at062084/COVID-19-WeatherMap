@@ -50,7 +50,7 @@ source("ages.R", local=TRUE)
 # -----------------------------------------------------------
 # Define cron job to retrieve new data from AGES
 # -----------------------------------------------------------
-if(0==1) {
+#if(0==1) {
 logMsg("Define cron job for data retrieval from AGES")
 cronJobDir <- "/srv/shiny-server/COVID-19-WeatherMap"
 #cronJobDir <- "/home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny"
@@ -61,7 +61,7 @@ cmd
 cron_clear(ask=FALSE)
 cron_add(cmd, frequency='daily', id='AGES-15', at = '14:14')
 cron_add(cmd, frequency='daily', id='AGES-21', at = '22:22')
-}
+#}
 # -----------------------------------------------------------
 # Reactiv File Poller: Monitor for new files created by cron
 # -----------------------------------------------------------
@@ -78,7 +78,7 @@ df <- eventReactive(df.rfr(), {
 de <- eventReactive(df.rfr(), {
   logMsg(paste("eventReactive: reactiveFileReader de for", cwmStatesFile)) 
   df.rfr() %>% 
-    dplyr::filter(Date>=as.Date("2020-08-03"),Date<=as.Date("2020-11-16")) %>% 
+    dplyr::filter(Date>=as.Date("2020-07-27"),Date<=as.Date("2020-11-16")) %>% 
     dplyr::select(Date,Region,rm7NewConfPop,dt7rm7NewConfPop, modrm7NewConfPop)} )
 
 cwmCountiesFile <- "./data/COVID-19-CWM-AGES-Counties-Curated.rda"
@@ -414,14 +414,10 @@ server <- function(input, output, session) {
       rvBreaks="1 months"
       rvLabels="%B"
     }
-    
-    popBreaksAll <- c(0,1,2,3,4,5,6,7,8,9,10,12,15,seq(20,100,by=10),120,150,200,300,400,500)
-    
-    ggplot(data=dp, aes(x=Date, y=rm7NewConfPop,color=Region,shape=Region)) + 
-      scale_shape_manual(values=c(1:10)) + 
-      scale_x_date(date_breaks=rvBreaks, date_labels=rvLabels, limits=c(min(dk$Date), max(dp$Date)), expand=expand_scale(mult=0.02)) +
-      scale_y_continuous(limits=c(1,yLimMax), breaks=popBreaksAll, position="right", expand=expand_scale(mult=0.01), trans=trans, 
-                         name="TagesInzidenz: PositiveGetestete/100.000 Einwohnern.") + 
+
+    ggplot(data=dp, aes(x=Date, y=rm7NewConfPop, color=Region, shape=Region)) + 
+      cwmConfPopStyle(rbsPastTime=input$rbsPastTime, cbLogScale=input$cbLogScale, inRegions=input$cbgRegion, xLimits=c(min(dk$Date), max(dp$Date))) +
+      geom_line(linetype=2, size=1) + 
       geom_line(data=dk, aes(x=Date, y=1), size=1.0, color="green") +
       geom_line(data=dk, aes(x=Date, y=2), size=1.0, color="orange") +
       geom_line(data=dk, aes(x=Date, y=4), size=.8, color="magenta") +
@@ -430,19 +426,10 @@ server <- function(input, output, session) {
       geom_line(data=dk, aes(x=Date, y=32), size=.8, color="black") +
       geom_line(data=dk, aes(x=Date, y=64), size=1.0, color="black") +
       geom_line(data=dk, aes(x=Date, y=128), size=1.5, color="black") +
-      geom_line(data=dp, aes(x=Date, y=1), size=1.0, color="green") +
-      geom_line(data=dp, aes(x=Date, y=2), size=1.0, color="orange") +
-      geom_line(data=dp, aes(x=Date, y=4), size=.8, color="magenta") +
-      geom_line(data=dp, aes(x=Date, y=8), size=.8, color="red") +
-      geom_line(data=dp, aes(x=Date, y=16), size=.8, color="darkred") +
-      geom_line(data=dp, aes(x=Date, y=32), size=.8, color="black") +
-      geom_line(data=dp, aes(x=Date, y=64), size=1.0, color="black") +
-      geom_line(data=dp, aes(x=Date, y=128), size=1.5, color="black") +
-      geom_line(linetype=2, size=1) + 
-      geom_point(data=dk%>%dplyr::filter(Date==max(Date)),size=6) + 
-      geom_point(data=dk%>%dplyr::filter(Date==max(Date)),size=3) + 
-      geom_point(data=dp%>%dplyr::filter(Date==max(Date)),size=6) + 
-      geom_point(data=dk,aes(x=Date,y=rm7NewConfPop), size=3) + 
+      geom_point(data=dk%>%dplyr::filter(Date==max(Date)),size=5) + 
+      geom_point(data=dk%>%dplyr::filter(Date==max(Date)),size=2) + 
+      geom_point(data=dp%>%dplyr::filter(Date==max(Date)),size=5) + 
+      geom_point(data=dk,aes(x=Date,y=rm7NewConfPop), size=2) + 
       geom_line(data=dk,aes(x=Date,y=rm7NewConfPop), size=.5) + 
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Prognose TagesInzidenz. Stand ", max(dp$Date), ".  Basisdaten: AGES"))
   })
@@ -459,7 +446,7 @@ server <- function(input, output, session) {
     dp <- df.past() %>% dplyr::filter(Region %in% input$cbgRegion)
     
     ggplot(dp, aes(x=Date, y=rm7NewConfPop, color=Region, shape=Region))+
-      cwmConfPopStyle(input$rbsPastTime, input$cbLogScale) +
+      cwmConfPopStyle(rbsPastTime=input$rbsPastTime, cbLogScale=input$cbLogScale, inRegions=input$cbgRegion) +
       geom_point(size=2)+geom_line()+
       geom_point(data=dp %>% dplyr::filter(Date==max(Date)), size=4)+
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Positiv Getestete pro 100.000 Einw. seit ", min(dp$Date), ".  Basisdaten: AGES"))
@@ -477,7 +464,7 @@ server <- function(input, output, session) {
     dp <- dg.past() %>% dplyr::filter(newConfPop>0, Region %in% input$cbgRegion)
     
     ggplot(dp, aes(x=Date, y=newConfPop, group=CountyID))+
-      cwmConfPopStyle(input$rbsPastTime, input$cbLogScale, yLimits=c(.5,256)) +
+      cwmConfPopStyle(rbsPastTime=input$rbsPastTime, cbLogScale=input$cbLogScale, inRegions=input$cbgRegion, yLimits=c(.5,256)) +
       geom_line(size=.25, aes(color=Region))+
       ggtitle(paste0("COVID-19 Österreich, Bundesländer und Bezirke: Positiv Getestete pro 100.000 Einw. seit ", min(dp$Date), ".  Basisdaten: AGES"))
   })
@@ -495,7 +482,7 @@ server <- function(input, output, session) {
     #dp <- df %>% dplyr::filter(dt7rm7NewConfPop<1.20, dt7rm7NewConfPop>.85)
     
     ggplot(dp, aes(x=Date, y=dt7rm7NewConfPop, color=Region, shape=Region))+
-      cwmSpreadStyle(input$rbsPastTime) +
+      cwmSpreadStyle(rbsPastTime=input$rbsPastTime, inRegions=input$cbgRegion) +
       geom_line(size=.75) +
       geom_point(size=2) + 
       geom_point(data=dp %>% dplyr::filter(Date==max(Date)), size=4)+
@@ -511,7 +498,7 @@ server <- function(input, output, session) {
     logMsg("  output$ggpExpDateConfPop: renderPlot", sessionID)
     
     ggplot(de.regions(), aes(x=Date, y=rm7NewConfPop, color=Region, shape=Region))+
-      cwmConfPopStyle(input$rbsPastTime, input$cbLogScale) +
+      cwmConfPopStyle(rbsPastTime=input$rbsPastTime, cbLogScale=input$cbLogScale, inRegions=input$cbgRegion) +
       geom_point(size=2)+geom_line()+
       geom_line(aes(y=modrm7NewConfPop)) +
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Positiv Getestete pro 100.000 Einwohner.  Basisdaten: AGES"))
@@ -531,7 +518,7 @@ server <- function(input, output, session) {
     dp <- de.regions()  %>% dplyr::filter(dt7rm7NewConfPop<1.19, dt7rm7NewConfPop>.84)
     
     ggplot(dp, aes(x=Date, y=dt7rm7NewConfPop, color=Region, shape=Region))+
-      cwmSpreadStyle(input$rbsPastTime) +
+      cwmSpreadStyle(rbsPastTime=input$rbsPastTime, inRegions=input$cbgRegion) +
       scale_y_continuous(limits=c(yLimMin,yLimMax), breaks=exp(log(2)/dblDays), labels=dblDays, position="right") +
       geom_line(size=.75) +
       geom_point(size=2) + 

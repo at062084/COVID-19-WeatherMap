@@ -23,11 +23,12 @@ library(geojsonsf)
 library(spdplyr)
 library(readr)
 
-# Regions
+# Regions characteristics. Matched. Don't mess around
 atRegions=c("Burgenland","Kärnten","Niederösterreich","Oberösterreich","Österreich","Salzburg","Steiermark","Tirol","Vorarlberg","Wien")
-
+atShapes <- c(10,6,7,2,11,5,12,22,1,9)
 # Settings for all Region Plots: Color Blind Palette
-cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#000000", "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#FF0000")
+#cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#000000", "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#FF0000")
+cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#222222", "#F0D042", "#0072B2", "#D55E00", "#CC79A7", "#C40000")
 
 # Settings for cwmConfPopStyle
 popBreaksAll <- c(0,1,2,3,4,5,6,7,8,9,10,12,15,seq(20,100,by=10),120,150,200,300,400,500)
@@ -92,7 +93,7 @@ mapNUTSAT <- function () {
 }
 
 
-cwmConfPopStyle <- function(rbsPastTime=25, cbLogScale=TRUE, yLimits=c(yLimMin, yLimMax), yLabel="Positive/100.000 Einwohnern") {
+cwmConfPopStyle <- function(rbsPastTime=25, cbLogScale=TRUE, inRegions=1:10, xLimits=c(NULL,NULL), yLimits=c(yLimMin, yLimMax), yLabel="Positive/100.000 Einwohnern") {
   
   # Process left side menu user interactions
   trans <- ifelse(cbLogScale, "log10", "identity")
@@ -103,13 +104,17 @@ cwmConfPopStyle <- function(rbsPastTime=25, cbLogScale=TRUE, yLimits=c(yLimMin, 
     rvBreaks="1 months"
     rvLabels="%B"
   }
+
+  idxRegions <- sort(match(inRegions,atRegions))
+  regPalette <- cbPalette[idxRegions]
+  regShapes <- atShapes[idxRegions]
   
   list(
     theme(panel.grid.major = element_line(color = "darkgray", linetype=3), panel.grid.minor=element_line(color = "gray90", linetype=1)),
-      scale_shape_manual(values=c(1:10)),
-      scale_fill_manual(values=cbPalette),
-      scale_color_manual(values=cbPalette),
-      scale_x_date(date_breaks=rvBreaks, date_labels=rvLabels, expand=expand_scale(mult=0.01)),
+      scale_shape_manual(values=regShapes),
+      scale_fill_manual(values=regPalette),
+      scale_color_manual(values=regPalette),
+      scale_x_date(limits=xLimits, date_breaks=rvBreaks, date_labels=rvLabels, expand=expand_scale(mult=0.01)),
       scale_y_continuous(limits=yLimits, breaks=popBreaksAll, position="right", expand=expand_scale(mult=0.01), trans=trans, name=yLabel),
       geom_line(aes(y=1), size=1.0, color="green"),
       geom_line(aes(y=2), size=1.0, color="orange"),
@@ -122,7 +127,7 @@ cwmConfPopStyle <- function(rbsPastTime=25, cbLogScale=TRUE, yLimits=c(yLimMin, 
   )
 }
 
-cwmSpreadStyle <- function(rbsPastTime=25, yLimits=c(0.84, 1.19)) {
+cwmSpreadStyle <- function(rbsPastTime=25, inRegions=1:10, yLimits=c(0.84, 1.19)) {
 
   sSize=.5
   
@@ -135,13 +140,17 @@ cwmSpreadStyle <- function(rbsPastTime=25, yLimits=c(0.84, 1.19)) {
     rvLabels="%B"
   }
 
+  idxRegions <- sort(match(inRegions,atRegions))
+  regPalette <- cbPalette[idxRegions]
+  regShapes <- atShapes[idxRegions]
+  
   list(
-    scale_shape_manual(values=c(1:10)),
+    scale_shape_manual(values=regShapes),
     scale_x_date(date_breaks=rvBreaks, date_labels=rvLabels, expand=expand_scale(mult=0.01)),
     scale_y_continuous(limits=yLimits, breaks=exp(log(2)/dblXDays), labels=dblXDays, position="right",
                        sec.axis=dup_axis(labels=as.character(round((exp(log(2)/dblXDays)-1)*100,1)), name="Tägliche Steigerungsrate [%]")),
-    scale_fill_manual(values=cbPalette),
-    scale_color_manual(values=cbPalette),
+    scale_fill_manual(values=regPalette),
+    scale_color_manual(values=regPalette),
     geom_line(aes(y=1.104), size=sSize, color="black"),
     geom_line(aes(y=1.051), size=sSize, color="darkred"),
     geom_line(aes(y=1.025), size=sSize, color="red"),
