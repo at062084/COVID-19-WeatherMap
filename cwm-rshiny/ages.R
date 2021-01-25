@@ -176,6 +176,7 @@ caAgesRead_cfz <- function(csvFile="CovidFallzahlen.csv", bSave=TRUE) {
 caAgesRead_tlrm <- function(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile="./data/CovidFallzahlen.rda", bPlot=FALSE, bSave=TRUE,
                             nRm7Days=7, bDt7=TRUE, nDt7Days=7, bLpr=TRUE, nLprDays=19,
                             bResiduals=TRUE, dResFirst=as.Date("2020-07-01"), dResLast=as.Date("2020-12-07"), bShiftDown=TRUE,
+                            bDOWCorrection=TRUE, nDOWCorrectionWeeks=5,
                             bPredict=TRUE, nPolyDays=7, nPoly=2,
                             bEstimate=FALSE, bCompleteCases=FALSE) {
   
@@ -234,7 +235,7 @@ caAgesRead_tlrm <- function(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile=
   idx <- which(df$newConfTest >.7) # Heuristic :(
   df$newConfTest[idx] <- round((df$newConfTest[idx-1]+df$newConfTest[idx+1])/2)
   
-  # apply rolling mean to 'new*' cols.
+  # apply rolling mean to 'new*' cols. Leaves the last three days with NA's
   df <- df %>%
     dplyr::arrange(Region, Date) %>%
     dplyr::group_by(Region) %>%
@@ -251,12 +252,59 @@ caAgesRead_tlrm <- function(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile=
     dplyr::ungroup() 
   # str(df)
   
-  # TODO CHECK !!!!!
+  # apply 'Dow of Week Correction' for newConfirmed values for last three days of data
+  if (bDOWCorrection) {
+    # Estimate actual newConfirmed based on over/under reports of last nWeeks 
+    dq <- cwmAgesRm7DOWCorrection(df, nWeeks=nDOWCorrectionWeeks) %>%
+      dplyr::arrange(Date, Region) %>%
+      dplyr::filter(Date>max(Date)-days(3)) %>%
+      dplyr::arrange(Region,Date)
+    
+    # patch newConfirmed with dowNewConfirmed. This relies on same sort order: Region,Date    
+    df$newConfirmed[df$Date>max(df$Date)-days(3)] <- dq$dowNewConfirmed
+  }
+
+  # Calculate 'shorted' week means for last three days:
+  # This is provided as 'raw' data for downstream processing.
+  # e.g. calculation of today's incidence rate may need to do more postprocessing, e.g. fitting a second order LS model 
+  # d-3 = mean(last 7)
+  # d-2 = mean(last 5)
+  # d-1 = mean(last 3)
+  # d-0 = last
+  
+  # work last three days
+  maxDate <- max(df$Date)
+  # work all cols with rolling means by week
+  rm7s <- colnames(df)[startsWith(colnames(df),"rm7")]
+  for(d in 0:2) {
+    # work all rm7 features
+    for (rm7 in rm7s) {
+      # select item for all regions
+      df[df$Date==maxDate-days(d),rm7] <- df %>% 
+                                             dplyr::filter(Date>=maxDate-days(d*2)) %>% 
+                                             dplyr::select(Region,x=paste0(tolower(substr(!!rm7, 4,4)),substr(!!rm7,5,100))) %>% 
+                                             dplyr::group_by(Region)  %>%
+                                             dplyr::summarize(rm7=mean(x)) %>%
+                                             dplyr::ungroup() %>% 
+                                             dplyr::select(rm7)
+    }
+  }
+    
+  # Update 2020-01-24: This is obsoleted by above strategy of 'shorted week weekly means'
   # patch rm7* NA's with predicts from lm poly model
-  if(bPredict) {
+  if(bPredict==Inf) {
+    # Estimate actual newConfirmed based on linear model estimates of order 2.
     # this should work as the last three days have NA's in rm7*, which are omitted from modeling here:
     dp <- cwmAgesRm7EstimatePoly(df, nPoly=nPoly, nModelDays=nPolyDays+3, nPredDays=0) %>%
-      dplyr::arrange(Date, Region)
+      dplyr::arrange(Date, Region) 
+
+    
+    ggplot(dp, aes(x=Date, y=rm7NewConfirmed))+geom_line() +
+      geom_point(data=df%>%dplyr::filter(Date>=min(dp$Date)), aes(x=Date, y=newConfirmed), color="red") +
+      geom_line(data=df%>%dplyr::filter(Date>=min(dp$Date)), aes(x=Date, y=rm7NewConfirmed), color="black", size=.5) +
+      geom_line(data=df%>%dplyr::filter(Date>=min(dp$Date)), aes(x=Date, y=newConfirmed), color="red", size=.5) +
+      geom_point(data=dq, aes(x=Date, y=dwfNewConfirmed), color="blue") +
+      facet_wrap(.~Region, nrow=2, scales="free_y")
     
     # Same order as in dp
     df <- df %>% dplyr::arrange(Date, Region)
@@ -270,7 +318,9 @@ caAgesRead_tlrm <- function(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile=
   
   # df %>% dplyr::filter(Region=="Wien", Date > max(Date)-days(10)) %>% dplyr::select(Date, Region, newConfPop,rm7NewConfPop)
   
-  # Calculate speed of spread in percent change of new* per day. TODO: better handling of zeros in data 
+  # Calculate speed of spread in percent change of new* per day. 
+  # TODO: better handling of zeros in data 
+  # TODO: Window should be center, as with rm7, plus special handling of last 3 days
   rolm <- rollify(.f=function(Date,vals) {exp(coef(lm(log(vals+0.001)~Date), na.action=na.ignore, singular.ok=TRUE)[2])}, window=nDt7Days)
   
   # Add spread 
@@ -280,23 +330,23 @@ caAgesRead_tlrm <- function(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile=
       dplyr::arrange(Region,Date) %>% 
       dplyr::group_by(Region) %>% 
       dplyr::mutate(dt7rm7NewTested=rolm(Date,rm7NewTested)) %>%
-      #dplyr::mutate(dt7NewConfirmed=rolm(Date,newConfirmed)) %>%
       dplyr::mutate(dt7rm7NewConfirmed=rolm(Date,rm7NewConfirmed)) %>%
-      dplyr::mutate(dt7rm7NewConfPop=rolm(Date,rm7NewConfPop)) %>%
-      dplyr::mutate(dt7rm7NewConfTest=rolm(Date,rm7NewConfTest)) %>%    # produces some NA's
-      #dplyr::mutate(dt7CurConfirmed=rolm(Date,curConfirmed)) %>%
-      dplyr::mutate(dt7rm7CurConfirmed=rolm(Date,rm7CurConfirmed)) %>%
-      #dplyr::mutate(dt7CurHospital=rolm(Date,curHospital)) %>%
-      dplyr::mutate(dt7rm7CurHospital=rolm(Date,rm7CurHospital)) %>%
-      dplyr::mutate(dt7rm7CurICU=rolm(Date,rm7CurICU)) %>%
-      #dplyr::mutate(dt7NewDeaths=rolm(Date,newDeaths)) %>%
       dplyr::mutate(dt7rm7NewRecovered=rolm(Date,rm7NewRecovered)) %>%
       dplyr::mutate(dt7rm7NewDeaths=rolm(Date,rm7NewDeaths)) %>%
+      dplyr::mutate(dt7rm7NewConfPop=rolm(Date,rm7NewConfPop)) %>%
+      dplyr::mutate(dt7rm7NewConfTest=rolm(Date,rm7NewConfTest)) %>%    # produces some NA's
+      dplyr::mutate(dt7rm7CurConfirmed=rolm(Date,rm7CurConfirmed)) %>%
+      dplyr::mutate(dt7rm7CurHospital=rolm(Date,rm7CurHospital)) %>%
+      dplyr::mutate(dt7rm7CurICU=rolm(Date,rm7CurICU)) %>%
       dplyr::ungroup() 
+    #dplyr::mutate(dt7NewConfirmed=rolm(Date,newConfirmed)) %>%
+    #dplyr::mutate(dt7CurConfirmed=rolm(Date,curConfirmed)) %>%
+    #dplyr::mutate(dt7CurHospital=rolm(Date,curHospital)) %>%
+    #dplyr::mutate(dt7NewDeaths=rolm(Date,newDeaths)) %>%
   }
   
   # add lpreds
-  if(bLpr) {
+  if(bLpr==Inf) {
     # Span adjusted manually to 19 after visual inspection of several options. maybe a bit too lpr. Smaller number for closer match to rm7
     span <- nLprDays/(dim(df)[1]/10) # Heuristic :(
     df <- df %>%
@@ -316,7 +366,7 @@ caAgesRead_tlrm <- function(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile=
   # Calculate robust regression on log transformed 
   if (bResiduals) {
     
-    modLogLM <- function(Date, Count, dResFirst=as.Date("2020-07-01"), dResLast=as.Date("2020-11-15"), bPlot=FALSE, bShiftDown=FALSE) {
+    modLogLM <- function(Date, Count, dResFirst=as.Date("2020-07-06"), dResLast=as.Date("2020-11-16"), bPlot=FALSE, bShiftDown=FALSE) {
       # Complete log(Count)~Date dataframe d, with index into dateRange s considered for regression
       d <- data.frame(Date=Date, logCount=log(Count+0.001))
       s <- Date>=dResFirst & Date<=dResLast
@@ -371,7 +421,7 @@ caAgesRead_tlrm <- function(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile=
   }
   
   # patch rm7NewConfirmed data. DISABLED !
-  if(bEstimate == "#") {
+  if(bEstimate == Inf) {
     dx <- caAgesRM7Estimate(df)
     for (i in 1:dim(dx)[1]) {
       idxf <- which(df$Date==dx$Date[i] & df$Region==dx$Region[i])

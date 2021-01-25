@@ -48,4 +48,7 @@ htmlIncidenceCounties <- "<p><b>IncidenceCounties</b></p><p></p>"
 
 htmlChangeRateStates <- "<p><b>ChangeRateStates</b></p><p></p>"
 
+htmlExponential <- "<p><b>Rückblick 2020</b></p><p></p>"
+
 htmlDescription <- read_file("./doc/COVID-19-WeatherMap.html")
+

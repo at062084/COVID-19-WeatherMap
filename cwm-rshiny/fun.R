@@ -155,13 +155,26 @@ cwmSpreadStyle <- function(rbsPastTime=25, yLimits=c(0.84, 1.19)) {
 }
 
 
-
+# ------------------------------------------------------------------------------------------
+# Fit order 1 or 2 linear model using last nModelDays and calc estimate for one week ahead
+# Given 
+# 1. the weakness of the data reported for the past few days and
+# 2. the 'shorted week' weekly means strategy used to calc the weekly means for the last 3 days
+# this function is used to get a grasp of the current situation 
+# It uses a order 1 or 2 LS linear model of the log'ed data, with weights
+# weights are decreasing linearly from current day till the begin of model period
+# then add to these weights the number of days that have been used to calculate their value (7 for weekly means, 5,3,1 for shorted weekly means)
+# then subtract the minimum resulting weight from all weights (to decrease effective weight from days further in the past)
+# ------------------------------------------------------------------------------------------
 cwmAgesRm7EstimatePoly <- function(df, nPoly=2, nModelDays=10, nPredDays=7) {
   
   curDate <- max(df$Date)                      
   minDate <- curDate - days(nModelDays)+1 # Prediction interval: first day
   maxDate <- curDate + days(nPredDays) # Prediction interval: last day
 
+  weights <- c(1:(nModelDays-3),nModelDays-1,nModelDays-2,nModelDays-3) + c(rep(7,nModelDays-3), 5,3,1)
+  weights <- weights-min(weights)+1
+  
   # construct dataframe of Regions and Dates relevant to modelling
   dd <- df %>% dplyr::filter(Date>=minDate) %>% dplyr::arrange(Region,Date)
   regions <- dd %>% dplyr::filter(Date==curDate) %>% dplyr::select(Region)
@@ -177,8 +190,8 @@ cwmAgesRm7EstimatePoly <- function(df, nPoly=2, nModelDays=10, nPredDays=7) {
   rm7PolyLog <- function(y, nPoly=2, nModelDays=10) {
     nx=1:length(y)
     x <- 1:nModelDays
-    y <- y[x]
-    pm <- lm(formula = log(y) ~ poly(x, nPoly, raw=TRUE), na.action="na.omit", weights=x)
+    y <- y[x]+0.001
+    pm <- lm(formula = log(y) ~ poly(x, nPoly, raw=TRUE), na.action="na.omit", weights=weights)
     exp(predict(pm, newdata=data.frame(x=nx)))
   }
   
@@ -186,8 +199,8 @@ cwmAgesRm7EstimatePoly <- function(df, nPoly=2, nModelDays=10, nPredDays=7) {
   rm7PolyLin <- function(y, nPoly=2, nModelDays=10) {
     nx=1:length(y)
     x <- 1:nModelDays
-    y <- y[x]
-    pm <- lm(formula = y ~ poly(x, nPoly, raw=TRUE), na.action="na.omit", weights=x)
+    y <- y[x]+0.001
+    pm <- lm(formula = y ~ poly(x, nPoly, raw=TRUE), na.action="na.omit", weights=weights)
     predict(pm, newdata=data.frame(x=nx))
   }
   
@@ -195,10 +208,10 @@ cwmAgesRm7EstimatePoly <- function(df, nPoly=2, nModelDays=10, nPredDays=7) {
   dp <- dd %>%
     dplyr::select(Date, Region, starts_with("rm7")) %>%
     dplyr::group_by(Region) %>%
-    # Log poly model for potentially exponentially growing items
-    dplyr::mutate_at(vars(c(starts_with("rm7"),-rm7NewTested,-rm7NewConfTest)), rm7PolyLog, nPoly, nModelDays) %>%
+        # Log poly model for potentially exponentially growing items
+    dplyr::mutate_at(vars(c(starts_with("rm7"),-rm7NewTested,-rm7NewConfTest)), rm7PolyLog, nPoly=nPoly, nModelDays=nModelDays) %>%
     # nonLog linear model for newTested
-    dplyr::mutate_at(vars(rm7NewTested), rm7PolyLin, nPoly, nModelDays) %>%
+    dplyr::mutate_at(vars(rm7NewTested), rm7PolyLin, nPoly=nPoly, nModelDays=nModelDays) %>%
     # Calc newConfProp from estimated Confirmed and Tested
     dplyr::mutate(rm7NewConfTest = rm7NewConfirmed/rm7NewTested) %>%
     dplyr::ungroup() 
@@ -206,4 +219,78 @@ cwmAgesRm7EstimatePoly <- function(df, nPoly=2, nModelDays=10, nPredDays=7) {
   #dp %>% dplyr::filter(Region=="Wien", Date > max(Date)-days(10)) %>% dplyr::select(Date, Region, rm7NewConfPop)
   
   return(dp)
+}
+
+
+
+
+# --------------------------------------------------------------------------------------------------------
+# AGES Estimate of rm7 data for past three days based on estimate of over/under reports depending on day of week
+# Currently implemented for newConfirmed only. TODO: Calculate for all rm7* features
+# --------------------------------------------------------------------------------------------------------
+cwmAgesRm7DOWCorrection <- function(df, nWeeks=5, bPlot=FALSE) {
+  # estimate the weekly rolling mean for today and the past two days by 
+  # compensating the over/under estimation as the mean in the past three weeks
+  begDate <- max(df$Date) - weeks(nWeeks) - days(3)
+  endDate <- max(df$Date) - days(3)
+
+  # Calculate over/under estimation factor
+  dft <- df %>%
+    dplyr::filter(Date > begDate) %>%
+    dplyr::mutate(WeekDay=wday(Date, week_start=getOption("lubridate.week.start",1))) %>%
+    dplyr::mutate(WeekNo=as.character(isoweek(Date)))
+  
+  dff <- dft %>% dplyr::filter(Date<endDate) %>%
+    dplyr::mutate(proNewConfirmed=newConfirmed/rm7NewConfirmed)
+    
+    
+  # plot 
+  if (bPlot) {
+    ggplot(data=dft, aes(x=Date, y=newConfirmed, group=Region, color=Region)) + geom_point() + geom_line(size=0.5) +
+      geom_line(aes(y=rm7NewConfirmed), size=2) +
+      facet_wrap(.~Region, nrow=2, scales="free_y")
+  }
+  
+  if (bPlot) {
+    dfq <- dft %>% 
+      dplyr::filter(Date<=endDate) %>%
+      dplyr::group_by(Region,WeekDay) %>% 
+      dplyr::summarize(meanProNewConfirmed=mean(proNewConfirmed, trim=0.25)) %>%
+      dplyr::ungroup()
+    
+    ggplot(data=dft, aes(x=WeekDay, y=proNewConfirmed, shape=WeekNo)) +
+      scale_x_continuous(breaks=1:7)+
+      scale_shape_manual(values=c(21:25,7,9,10,12,13,14)) +
+      geom_point(size=5) +
+      geom_line(aes(y=1)) +
+      geom_point(data=dfq, aes(x=WeekDay, y=meanProNewConfirmed, size=5, col="red"), inherit.aes=FALSE)+
+      facet_wrap(.~Region, nrow=2)
+  }
+  
+  # though away one outlyer
+  dowFactorCalc <- function(n){
+    d <- n-mean(n)
+    n <- n[which (abs(d)!=max(abs(d)))]
+    return(mean(n))
+  }
+  
+  # extract correction factor for the last three days from the same week days on the three weeks before
+  estWeekDays <- dft %>% dplyr::filter(Date>endDate) %>% dplyr::select(WeekDay) %>% dplyr::distinct()
+  estWeekDays <- as.data.frame(estWeekDays)[,1]
+  dof <- dff %>% 
+    dplyr::filter(Date<=endDate) %>%
+    dplyr::filter(WeekDay %in% estWeekDays) %>%
+    dplyr::group_by(Region,WeekDay) %>% 
+    dplyr::summarize(dowFactor=dowFactorCalc(proNewConfirmed)) %>%
+    dplyr::ungroup()
+    
+  dow <- dof %>%
+    # add Date colum back
+    dplyr::inner_join (dft %>% dplyr::filter(Date>endDate) %>% dplyr::select(Date,Region,WeekDay,newConfirmed), by=c("WeekDay","Region")) %>%
+    dplyr::select(Date, Region, WeekDay, newConfirmed, dowFactor) %>%
+    dplyr::mutate(dowNewConfirmed=round(newConfirmed/dowFactor)) %>%
+    dplyr::select(Date, Region, newConfirmed, dowNewConfirmed, WeekDay, dowFactor)
+  
+  # let the caller handle the estimates
+  return(dow)    
 }

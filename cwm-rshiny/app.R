@@ -50,6 +50,7 @@ source("ages.R", local=TRUE)
 # -----------------------------------------------------------
 # Define cron job to retrieve new data from AGES
 # -----------------------------------------------------------
+if(0==1) {
 logMsg("Define cron job for data retrieval from AGES")
 cronJobDir <- "/srv/shiny-server/COVID-19-WeatherMap"
 #cronJobDir <- "/home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny"
@@ -60,7 +61,7 @@ cmd
 cron_clear(ask=FALSE)
 cron_add(cmd, frequency='daily', id='AGES-15', at = '14:14')
 cron_add(cmd, frequency='daily', id='AGES-21', at = '22:22')
-
+}
 # -----------------------------------------------------------
 # Reactiv File Poller: Monitor for new files created by cron
 # -----------------------------------------------------------
@@ -72,8 +73,13 @@ df.rfr <- reactiveFileReader(
   readFunc=readRDS
 )
 df <- eventReactive(df.rfr(), {
-  logMsg(paste("eventReactive: reactiveFileReader for", cwmStatesFile)) 
+  logMsg(paste("eventReactive: reactiveFileReader df for", cwmStatesFile)) 
   df.rfr()} )
+de <- eventReactive(df.rfr(), {
+  logMsg(paste("eventReactive: reactiveFileReader de for", cwmStatesFile)) 
+  df.rfr() %>% 
+    dplyr::filter(Date>=as.Date("2020-08-03"),Date<=as.Date("2020-11-16")) %>% 
+    dplyr::select(Date,Region,rm7NewConfPop,dt7rm7NewConfPop, modrm7NewConfPop)} )
 
 cwmCountiesFile <- "./data/COVID-19-CWM-AGES-Counties-Curated.rda"
 dg.rfr <- reactiveFileReader(
@@ -83,7 +89,7 @@ dg.rfr <- reactiveFileReader(
   readFunc=readRDS
 )
 dg <- eventReactive(dg.rfr(), {
-  logMsg(paste("eventReactive: reactiveFileReader for", cwmStatesFile)) 
+  logMsg(paste("eventReactive: reactiveFileReader dg for", cwmStatesFile)) 
   dg.rfr()} )
 
 
@@ -169,7 +175,7 @@ ui <- fluidPage(
                            "Salzburg", 
                            "Tirol", 
                            "Vorarlberg"), 
-            selected = c("Österreich","Wien","Oberösterreich","Kärnten"))),
+            selected = c("Österreich","Wien"))),
 
         fluidRow(        
              radioButtons("rbsPastTime",
@@ -182,7 +188,7 @@ ui <- fluidPage(
                            "5 Monate" = "22",
                            "6 Monate" = "26",
                            "12 Monate"= "53"),
-            selected="18")),
+            selected="13")),
 
       fluidRow(
         checkboxInput("cbLogScale", label="LogScale", value=TRUE, width="220px")),
@@ -192,14 +198,14 @@ ui <- fluidPage(
           sliderInput("sldModelDays",
                        width="220px",
                        label="BerechnungsTage",
-                       min=7, max=28, step=7, value=14)),
+                       min=7, max=28, step=7, value=7)),
       fluidRow(        
         radioButtons("rbsModelOrder",
                      width="220px",
                      label="BerechnungsModel",
                      choices = list("Linear" = "1",
                                     "Quadratisch" = "2"),
-                     selected="2")),
+                     selected="1")),
       
 
   ),
@@ -246,7 +252,16 @@ ui <- fluidPage(
                  p("[Menüauswahl: Zeitbereich,Region]", align = "left", style="color:green"),
                  fluidRow(column(width=9, plotOutput(outputId = "ggpChangeRateStates", height="75vh")),
                           column(width=3, htmlOutput(outputId="hlpChangeRateStates")))),
-        
+
+        tabPanel("Rückblick 2020",
+                 h4("Exponentielles Wachstum in zweiten Halbjahr 2020", align = "left", style="color:gray"),
+                 p("[Menüauswahl: Zeitbereich, Region]", align = "left", style="color:green"),
+                 fluidRow(column(width=9, 
+                                 plotOutput(outputId = "ggpExpDateConfPop", height="50vh"),
+                                 plotOutput(outputId = "ggpExpDatedt7ConfPop", height="50vh"),
+                                 plotOutput(outputId = "ggpExpConfPopdt7ConfPop", height="50vh")),
+                          column(width=3, htmlOutput(outputId="hlpExponential")))),
+
 #        tabPanel("Rohdaten Bundesländer",
 #          h4("Rohdaten Bundesländer", align = "left", style="color:black"),
 #          p("[Menüauswahl: Zeitbereich,Region]", align = "left", style="color:green"),
@@ -292,6 +307,11 @@ server <- function(input, output, session) {
     logMsg("  Reactive: dg.past: Filtering for rbsPastTime", sessionID)
     return(dg() %>% dplyr::filter(Date > max(Date)-weeks(as.integer(input$rbsPastTime))))
   })
+
+  de.regions <- reactive({
+    logMsg("  Reactive: dg.past: Filtering for cbgRegion", sessionID)
+    return(de() %>% dplyr::filter(Region %in% input$cbgRegion))
+  })
   
   # -------------------------------------------
   # Test
@@ -320,7 +340,6 @@ server <- function(input, output, session) {
   palConfPop <- c(brewer.pal(9,"Greens")[c(7,6,5,4)], brewer.pal(9,"YlOrRd"), "#404040", brewer.pal(9,"Greys")[c(8,9)])
   colConfPop <- colorBin(palette=palConfPop, domain=0:256, bins=binConfPop)
   
-  
   # 7 icons: bins for dt* 
   dblDays <- c(1,14,28,56,-56,-28,-14,-1)
   binDblDays <- sort(round(exp(log(2)/dblDays),3))
@@ -329,22 +348,31 @@ server <- function(input, output, session) {
   binForeCast <- c(0,4,8,16,32,Inf)
   
   # today's data for weathermap
-  nWeatherForeCastDays=14
-  dp <- df.past() %>% dplyr::filter(Date==max(Date)) %>% dplyr::select(Date, Region, dt7rm7NewConfPop,starts_with("rm7"))# Today
+  nWeatherForeCastDays=10 # same as slider=7 for incidence prediction (3 is automatically added to slider reading)
+  #dp <- df.past() %>% dplyr::filter(Date==max(Date)) %>% dplyr::select(Date, Region, dt7rm7NewConfPop,starts_with("rm7"))# Today
+  # days from today back nWeatherForeCastDays days
   de <- df.past() %>% dplyr::filter(Date>=max(Date)-days(nWeatherForeCastDays)) %>% dplyr::select(Date, Region, dt7rm7NewConfPop,starts_with("rm7")) # Past days for forecast
-  dm <- cwmAgesRm7EstimatePoly(de,nModelDays=nWeatherForeCastDays,nPredDays=7) %>%
+  # model prediction for today
+  dq <- cwmAgesRm7EstimatePoly(de, nModelDays=nWeatherForeCastDays, nPredDays=0, nPoly=1) %>%
+    dplyr::filter(Date==max(de$Date))
+  # model predicition for next week
+  dm <- cwmAgesRm7EstimatePoly(de, nModelDays=nWeatherForeCastDays, nPredDays=7, nPoly=1) %>%
     dplyr::filter(Date==max(Date))
+  
 
   pMapNUTS <- mapNUTS %>% 
+    # construct single row with all required fields. merges data for today and forecast
     dplyr::left_join(dm, by="Region") %>%
-    dplyr::left_join(dp, by="Region", suffix = c(".f", ".c")) %>%
+    dplyr::left_join(dq, by="Region", suffix = c(".f", ".c")) %>%
+    dplyr::left_join(de %>% dplyr::select(Date, Region,dt7rm7NewConfPop) %>% dplyr::filter(Date==max(Date)) %>% dplyr::select(-Date), by="Region") %>%
     dplyr::mutate(idxCurConfPop=.bincode(rm7NewConfPop.c,binForeCast), 
-                  idxDblConfPop=.bincode(dt7rm7NewConfPop,binDblDays), 
+                  idxDblConfPop=.bincode((rm7NewConfPop.c+(rm7NewConfPop.f-rm7NewConfPop.c)/7)/rm7NewConfPop.c,binDblDays), 
                   idxForConfPop=.bincode(rm7NewConfPop.f,binForeCast))
+  # idxDblConfPop=.bincode(dt7rm7NewConfPop,binDblDays), 
   
   labWeatherMap <- sprintf(
-    "<strong>%s</strong><br/>TagesInzidenz: %g pro 100000<br>Änderung seit letzer Woche: %g%%<br>Prognose nächste Woche: %g<br>Tage bis LockDown: %g",
-    pMapNUTS$Region, round(pMapNUTS$rm7NewConfPop.c,2), round(pMapNUTS$dt7rm7NewConfPop,2), round(pMapNUTS$rm7NewConfPop.f,2), 0) %>% lapply(htmltools::HTML)
+    "<strong>%s</strong><br/>TagesInzidenz: %g pro 100000<br>Änderung seit letzer Woche: %g%%<br>Prognose nächste Woche: %g",
+    pMapNUTS$Region, round(pMapNUTS$rm7NewConfPop.c,2), round(pMapNUTS$dt7rm7NewConfPop,2), round(pMapNUTS$rm7NewConfPop.f,2)) %>% lapply(htmltools::HTML)
   
     leaflet(pMapNUTS) %>%
       addTiles(group="DefaultMap",options = providerTileOptions(minZoom=6, maxZoom=8)) %>%
@@ -376,7 +404,7 @@ server <- function(input, output, session) {
     
     # dk <- df.past()
     dk <- df.past() %>% dplyr::filter(Region %in% input$cbgRegion)
-    dp <- cwmAgesRm7EstimatePoly(dk, nModelDays=input$sldModelDays, nPoly=as.integer(input$rbsModelOrder), nPredDays=14)
+    dp <- cwmAgesRm7EstimatePoly(dk, nModelDays=input$sldModelDays+3, nPoly=as.integer(input$rbsModelOrder), nPredDays=7)
 
     trans <- ifelse(input$cbLogScale, "log10", "identity")
     if(as.integer(input$rbsPastTime)<26) {
@@ -412,10 +440,11 @@ server <- function(input, output, session) {
       geom_line(data=dp, aes(x=Date, y=128), size=1.5, color="black") +
       geom_line(linetype=2, size=1) + 
       geom_point(data=dk%>%dplyr::filter(Date==max(Date)),size=6) + 
+      geom_point(data=dk%>%dplyr::filter(Date==max(Date)),size=3) + 
       geom_point(data=dp%>%dplyr::filter(Date==max(Date)),size=6) + 
       geom_point(data=dk,aes(x=Date,y=rm7NewConfPop), size=3) + 
       geom_line(data=dk,aes(x=Date,y=rm7NewConfPop), size=.5) + 
-      ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Prognose TagesInzidenz. Model ab ", min(dp$Date), ".  Basisdaten: AGES"))
+      ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Prognose TagesInzidenz. Stand ", max(dp$Date), ".  Basisdaten: AGES"))
   })
   
   
@@ -473,7 +502,74 @@ server <- function(input, output, session) {
       ggtitle(paste0("COVID-19 Österreich und Bundesländer: Ausbreitungsgeschwindigkeit in % pro Tag, seit ", min(dp$Date), ".  Basisdaten: AGES"))
   })
   
+  # -------------------------------------------
+  # 2020
+  # -------------------------------------------
+  output$hlpExponential <- renderText({ htmlExponential })
+
+  output$ggpExpDateConfPop <- renderPlot({
+    logMsg("  output$ggpExpDateConfPop: renderPlot", sessionID)
+    
+    ggplot(de.regions(), aes(x=Date, y=rm7NewConfPop, color=Region, shape=Region))+
+      cwmConfPopStyle(input$rbsPastTime, input$cbLogScale) +
+      geom_point(size=2)+geom_line()+
+      geom_line(aes(y=modrm7NewConfPop)) +
+      ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Positiv Getestete pro 100.000 Einwohner.  Basisdaten: AGES"))
+  })
+
+  #       geom_point(data=de.regions() %>% dplyr::filter(dt7rm7NewConfPop>0.99, dt7rm7NewConfPop<1.01), size=4) +
+ 
+  output$ggpExpDatedt7ConfPop <- renderPlot({
+    logMsg("  output$ggpExpDatedt7ConfPop: renderPlot", sessionID)
+    
+    xLimMin <- .9
+    xLimMax <- 100
+    yLimMin <- 0.95
+    yLimMax <- 1.12
+    dblDays <- c(1:7,10,14,21,28,50,100,Inf,-100,-50,-28,-21,-14,-10,-7,-6,-5,-4,-3,-2,-1)
+
+    dp <- de.regions()  %>% dplyr::filter(dt7rm7NewConfPop<1.19, dt7rm7NewConfPop>.84)
+    
+    ggplot(dp, aes(x=Date, y=dt7rm7NewConfPop, color=Region, shape=Region))+
+      cwmSpreadStyle(input$rbsPastTime) +
+      scale_y_continuous(limits=c(yLimMin,yLimMax), breaks=exp(log(2)/dblDays), labels=dblDays, position="right") +
+      geom_line(size=.75) +
+      geom_point(size=2) + 
+      ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Ausbreitungsgeschwindigkeit in % pro Tag.  Basisdaten: AGES"))
+  })
   
+  output$ggpExpConfPopdt7ConfPop <- renderPlot({
+    logMsg("  output$ggpExpConfPopdt7ConfPop: renderPlot", sessionID)
+    
+    xLimMin <- .9
+    xLimMax <- 100
+    yLimMin <- 0.95
+    yLimMax <- 1.12
+    dblDays <- c(1:7,10,14,21,28,50,100,Inf,-100,-50,-28,-21,-14,-10,-7,-6,-5,-4,-3,-2,-1)
+    
+    trans <- ifelse(input$cbLogScale, "log10", "identity")
+    
+    dp <- de.regions()  %>% 
+      dplyr::filter(dt7rm7NewConfPop<1.19, dt7rm7NewConfPop>.84) %>%
+      dplyr::mutate(Month=month(Date, label=TRUE, abbr=FALSE)) %>%
+      dplyr::arrange(Region, Date)
+    
+    # , name="Tägliche Steigerungsrate [%]"
+    ggplot(dp, aes(x=rm7NewConfPop, y=dt7rm7NewConfPop, color=Region, shape=Month))+
+      #cwmSpreadStyle(input$rbsPastTime) +
+      #theme(panel.grid.major  = element_line(color = "darkgray", linetype=3)) +
+      scale_x_continuous(limits=c(xLimMin,xLimMax), breaks=round(10^seq(0,2,by=.2),1), trans=trans) + 
+      scale_y_continuous(limits=c(yLimMin,yLimMax), breaks=exp(log(2)/dblDays), labels=dblDays, position="right") +
+#                         sec.axis=dup_axis(labels=round((round(exp(log(2)/dblDays),2)-1)*100))) +
+      geom_path() + 
+      #geom_line(size=.75) +
+      geom_point(size=3) +
+      scale_shape_manual(values=c(21:25,7,9,10,12,13,14)) +
+      geom_line(data=dp, aes(x=rm7NewConfPop, y=1)) +
+      ggtitle(paste0("COVID-19 Österreich und Bundesländer: Ausbreitungsgeschwindigkeit gegen TagesInzidenz.  Basisdaten: AGES"))
+  })
+  
+      
   # -------------------------------------------
   # Raw Data
   # -------------------------------------------
