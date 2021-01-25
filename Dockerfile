@@ -39,7 +39,11 @@ RUN  install2.r --error \
     scales \
     forcats \
   && rm -rf /tmp/downloaded_packages
-  
+ 
+RUN adduser shiny
+RUN touch /etc/cron.allow
+RUN echo shiny >> /etc/cron.allow
+ 
 # RUN rm -rf /srv/shiny-server/*
 WORKDIR /srv/shiny-server/COVID-19-WeatherMap
 COPY ./cwm-rshiny .
