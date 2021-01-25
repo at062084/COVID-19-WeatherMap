@@ -158,7 +158,7 @@ ui <- fluidPage(
     # Sidebar panel for inputs ----
     sidebarPanel(width=2,
       
-      p("CWM-V0.4.7-20210125"),
+      p("CWM-V0.4.8-20210125"),
 #      tableOutput("secTime"),
       
       fluidRow(
@@ -175,7 +175,7 @@ ui <- fluidPage(
                            "Salzburg", 
                            "Tirol", 
                            "Vorarlberg"), 
-            selected = c("Österreich","Wien"))),
+            selected = c("Österreich","Wien","Niederösterreich"))),
 
         fluidRow(        
              radioButtons("rbsPastTime",
