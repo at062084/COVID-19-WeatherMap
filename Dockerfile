@@ -40,7 +40,6 @@ RUN  install2.r --error \
     forcats \
   && rm -rf /tmp/downloaded_packages
  
-RUN adduser shiny
 RUN touch /etc/cron.allow
 RUN echo shiny >> /etc/cron.allow
  
