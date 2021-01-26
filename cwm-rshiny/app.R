@@ -50,7 +50,7 @@ source("ages.R", local=TRUE)
 # -----------------------------------------------------------
 # Define cron job to retrieve new data from AGES
 # -----------------------------------------------------------
-if(0==1) {
+#if(0==1) {
 logMsg("Define cron job for data retrieval from AGES")
 cronJobDir <- "/srv/shiny-server/COVID-19-WeatherMap"
 #cronJobDir <- "/home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny"
@@ -61,7 +61,7 @@ cmd
 cron_clear(ask=FALSE)
 cron_add(cmd, frequency='daily', id='AGES-15', at = '14:14')
 cron_add(cmd, frequency='daily', id='AGES-21', at = '22:22')
-}
+#}
 # -----------------------------------------------------------
 # Reactiv File Poller: Monitor for new files created by cron
 # -----------------------------------------------------------
@@ -158,7 +158,7 @@ ui <- fluidPage(
     # Sidebar panel for inputs ----
     sidebarPanel(width=2,
       
-      p("CWM-V0.4.10-20210126"),
+      p("CWM-V0.4.11-20210126"),
 #      tableOutput("secTime"),
       
       fluidRow(
