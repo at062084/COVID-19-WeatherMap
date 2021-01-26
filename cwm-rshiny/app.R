@@ -50,7 +50,7 @@ source("ages.R", local=TRUE)
 # -----------------------------------------------------------
 # Define cron job to retrieve new data from AGES
 # -----------------------------------------------------------
-#if(0==1) {
+if(0==1) {
 logMsg("Define cron job for data retrieval from AGES")
 cronJobDir <- "/srv/shiny-server/COVID-19-WeatherMap"
 #cronJobDir <- "/home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny"
@@ -61,7 +61,7 @@ cmd
 cron_clear(ask=FALSE)
 cron_add(cmd, frequency='daily', id='AGES-15', at = '14:14')
 cron_add(cmd, frequency='daily', id='AGES-21', at = '22:22')
-#}
+}
 # -----------------------------------------------------------
 # Reactiv File Poller: Monitor for new files created by cron
 # -----------------------------------------------------------
@@ -158,7 +158,7 @@ ui <- fluidPage(
     # Sidebar panel for inputs ----
     sidebarPanel(width=2,
       
-      p("CWM-V0.4.12-20210126"),
+      p("CWM-V0.4.13-20210126"),
 #      tableOutput("secTime"),
       
       fluidRow(
@@ -229,10 +229,10 @@ ui <- fluidPage(
                           column(width=3, htmlOutput(outputId="hlpWeatherMap")))),
                   
         tabPanel("Inzidenz Prognose",
-                 h4("Progno  se TagesInzidenz", align = "left", style="color:gray"),
+                 h4("Prognose TagesInzidenz", align = "left", style="color:gray"),
                  p("[Menüauswahl: NA]", align = "left", style="color:green"),
-                 fluidRow(column(width=9, plotOutput(outputId = "ggpIncidencePrediciton", height="75vh")),
-                          column(width=3, htmlOutput(outputId="hlpIncidencePrediction")))),
+                 fluidRow(column(width=8, plotOutput(outputId = "ggpIncidencePrediciton", height="75vh")),
+                          column(width=4, htmlOutput(outputId="hlpIncidencePrediction")))),
 
         tabPanel("Inzidenz Bundesländer",
                   h4("TagesInzidenz Bundesländer", align = "left", style="color:gray"),
@@ -416,7 +416,7 @@ server <- function(input, output, session) {
     }
 
     ggplot(data=dp, aes(x=Date, y=rm7NewConfPop, color=Region, shape=Region)) + 
-      cwmConfPopStyle(rbsPastTime=input$rbsPastTime, cbLogScale=input$cbLogScale, inRegions=input$cbgRegion, xLimits=c(min(dk$Date), max(dp$Date))) +
+      cwmConfPopStyle(rbsPastTime=input$rbsPastTime, cbLogScale=input$cbLogScale, inRegions=input$cbgRegion, xLimits=c(max(dk$Date)-weeks(6), max(dp$Date)+days(1))) +
       geom_line(linetype=2, size=1) + 
       geom_line(data=dk, aes(x=Date, y=1), size=1.0, color="green") +
       geom_line(data=dk, aes(x=Date, y=2), size=1.0, color="orange") +
@@ -511,15 +511,15 @@ server <- function(input, output, session) {
     
     xLimMin <- .9
     xLimMax <- 100
-    yLimMin <- 0.95
-    yLimMax <- 1.12
+    yLimMin <- 0.84
+    yLimMax <- 1.19
     dblDays <- c(1:7,10,14,21,28,50,100,Inf,-100,-50,-28,-21,-14,-10,-7,-6,-5,-4,-3,-2,-1)
 
     dp <- de.regions()  %>% dplyr::filter(dt7rm7NewConfPop<1.19, dt7rm7NewConfPop>.84)
     
     ggplot(dp, aes(x=Date, y=dt7rm7NewConfPop, color=Region, shape=Region))+
       cwmSpreadStyle(rbsPastTime=input$rbsPastTime, inRegions=input$cbgRegion) +
-      scale_y_continuous(limits=c(yLimMin,yLimMax), breaks=exp(log(2)/dblDays), labels=dblDays, position="right") +
+      #scale_y_continuous(limits=c(yLimMin,yLimMax), breaks=exp(log(2)/dblDays), labels=dblDays, position="right") +
       geom_line(size=.75) +
       geom_point(size=2) + 
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Ausbreitungsgeschwindigkeit in % pro Tag.  Basisdaten: AGES"))
@@ -529,24 +529,30 @@ server <- function(input, output, session) {
     logMsg("  output$ggpExpConfPopdt7ConfPop: renderPlot", sessionID)
     
     xLimMin <- .9
-    xLimMax <- 100
-    yLimMin <- 0.95
-    yLimMax <- 1.12
+    xLimMax <- 128
+    yLimMin <- 0.84
+    yLimMax <- 1.21
     dblDays <- c(1:7,10,14,21,28,50,100,Inf,-100,-50,-28,-21,-14,-10,-7,-6,-5,-4,-3,-2,-1)
     
     trans <- ifelse(input$cbLogScale, "log10", "identity")
+    idxRegions <- sort(match(input$cbgRegion,atRegions))
+    regPalette <- cbPalette[idxRegions]
+    regShapes <- atShapes[idxRegions]
     
     dp <- de.regions()  %>% 
-      dplyr::filter(dt7rm7NewConfPop<1.19, dt7rm7NewConfPop>.84) %>%
+      dplyr::filter(dt7rm7NewConfPop<1.21, dt7rm7NewConfPop>.84) %>%
       dplyr::mutate(Month=month(Date, label=TRUE, abbr=FALSE)) %>%
       dplyr::arrange(Region, Date)
     
     # , name="Tägliche Steigerungsrate [%]"
     ggplot(dp, aes(x=rm7NewConfPop, y=dt7rm7NewConfPop, color=Region, shape=Month))+
-      #cwmSpreadStyle(input$rbsPastTime) +
+      scale_shape_manual(values=regShapes) +
+      scale_fill_manual(values=regPalette)+
+      scale_color_manual(values=regPalette) +
+    #cwmSpreadStyle(input$rbsPastTime) +
       #theme(panel.grid.major  = element_line(color = "darkgray", linetype=3)) +
-      scale_x_continuous(limits=c(xLimMin,xLimMax), breaks=round(10^seq(0,2,by=.2),1), trans=trans) + 
-      scale_y_continuous(limits=c(yLimMin,yLimMax), breaks=exp(log(2)/dblDays), labels=dblDays, position="right") +
+      scale_x_continuous(limits=c(xLimMin,xLimMax), breaks=2^(1:7), trans=trans, sec.axis=dup_axis()) + 
+      scale_y_continuous(limits=c(yLimMin,yLimMax), breaks=exp(log(2)/dblDays), labels=dblDays, position="right", sec.axis=dup_axis()) +
 #                         sec.axis=dup_axis(labels=round((round(exp(log(2)/dblDays),2)-1)*100))) +
       geom_path() + 
       #geom_line(size=.75) +

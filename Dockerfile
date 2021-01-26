@@ -40,16 +40,17 @@ RUN  install2.r --error \
     forcats \
   && rm -rf /tmp/downloaded_packages
  
-RUN touch /etc/cron.allow
-RUN echo shiny >> /etc/cron.allow
  
 # RUN rm -rf /srv/shiny-server/*
 WORKDIR /srv/shiny-server/COVID-19-WeatherMap
 COPY ./cwm-rshiny .
 RUN sudo chown -R shiny:shiny /srv/shiny-server
 
+RUN sudo touch /etc/cron.allow
+RUN sudo echo shiny >> /etc/cron.allow
+RUN sudo groupmems -g crontab -a shiny
+
 # Pass Kubernetes variable if available
-#ENV REP_CRISPML_ENV=${REP_CRISPML_ENV}
 ENV APPLICATION_LOGS_TO_STDOUT=${APPLICATION_LOGS_TO_STDOUT}
 
 EXPOSE 3838
