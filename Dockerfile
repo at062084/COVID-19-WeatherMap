@@ -49,7 +49,8 @@ COPY ./cwm-rshiny .
 RUN sudo chown -R shiny:shiny /srv/shiny-server
 
 # Pass Kubernetes variable if available
-# ENV REP_CRISPML_ENV=${REP_CRISPML_ENV}
+#ENV REP_CRISPML_ENV=${REP_CRISPML_ENV}
+ENV APPLICATION_LOGS_TO_STDOUT=${APPLICATION_LOGS_TO_STDOUT}
 
 EXPOSE 3838
 

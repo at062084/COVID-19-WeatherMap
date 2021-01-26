@@ -5,7 +5,7 @@ metadata:
   namespace: cwmnamespace
   labels:
     app: cwm-ingress
-    context: REnterprise
+    context: COVID-19
   annotations:
     # nginx.ingress.kubernetes.io/ssl-redirect: "True" --> Does not work
     ingress.bluemix.net/redirect-to-https: "True"

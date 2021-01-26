@@ -4,7 +4,7 @@ metadata:
   name: cwm-rshiny
   namespace: cwmnamespace
   labels:
-    context: REnterprise
+    context: COVID-19
 spec:
   replicas: 1
   selector:
@@ -23,6 +23,8 @@ spec:
         env:
           - name: CWM_RSHINY_ENV
             value: Deployment
+          - name:  APPLICATION_LOGS_TO_STDOUT
+            value: true
         imagePullPolicy: Always        
         ports:
         - containerPort: 3838

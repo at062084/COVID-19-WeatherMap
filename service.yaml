@@ -5,7 +5,7 @@ metadata:
   namespace: cwmnamespace
   labels:
     app: cwm-rshiny
-    context: REnterprise
+    context: COVID-19
 spec:
   type: NodePort
   ports:
