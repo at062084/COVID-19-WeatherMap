@@ -48,7 +48,7 @@ RUN sudo chown -R shiny:shiny /srv/shiny-server
 
 RUN sudo touch /etc/cron.allow
 RUN sudo echo shiny >> /etc/cron.allow
-RUN sudo groupmems -g crontab -a shiny
+#RUN sudo groupmems -g crontab -a shiny
 
 # Pass Kubernetes variable if available
 ENV APPLICATION_LOGS_TO_STDOUT=${APPLICATION_LOGS_TO_STDOUT}
