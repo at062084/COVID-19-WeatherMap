@@ -8,7 +8,7 @@ logDir = "./log"
 logFile <- "cwm.cron.log"
 logMsg <- function(msg, sessionID="__cron__") {
   cat(paste(format(Sys.time(), "%Y%m%d-%H%M%OS3"), sessionID, msg, "\n"), file=paste0(logDir,"/",logFile), append=TRUE)
-  cat(paste(format(Sys.time(), "%Y%m%d-%H%M%OS3"), sessionID, msg, "\n"))
+  cat(paste(format(Sys.time(), "%Y%m%d-%H%M%OS3"), sessionID, msg, "\n"), file=stderr())
 }
 
 # Download AGES Data Files from AGES website at www.data.gv.at/covid-19
