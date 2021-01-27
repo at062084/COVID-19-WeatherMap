@@ -61,10 +61,13 @@ cmd
 cron_clear(ask=FALSE)
 cron_add(cmd, id='AGES-14', at = '14:14')
 cron_add(cmd, id='AGES-22', at = '22:22')
+logMsg("Starting service cron")
+system2("sudo","service cron start")
 #}
 # -----------------------------------------------------------
 # Reactiv File Poller: Monitor for new files created by cron
 # -----------------------------------------------------------
+# States
 cwmStatesFile <- "./data/COVID-19-CWM-AGES-States-Curated.rda"
 df.rfr <- reactiveFileReader(
   session=NULL,
@@ -72,15 +75,18 @@ df.rfr <- reactiveFileReader(
   filePath=cwmStatesFile,
   readFunc=readRDS
 )
+# complete timeframe
 df <- eventReactive(df.rfr(), {
   logMsg(paste("eventReactive: reactiveFileReader df for", cwmStatesFile)) 
   df.rfr()} )
+# timeframe for '2020 history'
 de <- eventReactive(df.rfr(), {
   logMsg(paste("eventReactive: reactiveFileReader de for", cwmStatesFile)) 
   df.rfr() %>% 
     dplyr::filter(Date>=as.Date("2020-07-27"),Date<=as.Date("2020-11-16")) %>% 
     dplyr::select(Date,Region,rm7NewConfPop,dt7rm7NewConfPop, modrm7NewConfPop)} )
 
+# Counties
 cwmCountiesFile <- "./data/COVID-19-CWM-AGES-Counties-Curated.rda"
 dg.rfr <- reactiveFileReader(
   session=NULL,
@@ -93,17 +99,17 @@ dg <- eventReactive(dg.rfr(), {
   dg.rfr()} )
 
 
-cwmTestFile <- "./data/COVID-19-CWM-AGES-Test-Curated.rda"
-cwmTestFile <- "./data/test.csv"
-dt.rfr <- reactiveFileReader(
-  session=NULL,
-  intervalMillis=1000,
-  filePath=cwmTestFile,
-  readFunc=read.csv
-)
-dt <- eventReactive(dt.rfr(), {
-  logMsg(paste("eventReactive: reactiveFileReader for", cwmTestFile)) 
-  dt.rfr()} )
+#cwmTestFile <- "./data/COVID-19-CWM-AGES-Test-Curated.rda"
+#cwmTestFile <- "./data/test.csv"
+#dt.rfr <- reactiveFileReader(
+#  session=NULL,
+#  intervalMillis=1000,
+#  filePath=cwmTestFile,
+#  readFunc=read.csv
+#)
+#dt <- eventReactive(dt.rfr(), {
+#  logMsg(paste("eventReactive: reactiveFileReader for", cwmTestFile)) 
+#  dt.rfr()} )
 
 # -----------------------------------------------------
 # AGES data files
@@ -162,6 +168,7 @@ ui <- fluidPage(
 #      tableOutput("secTime"),
       
       fluidRow(
+        column(6,
           checkboxGroupInput("cbgRegion",
             width="220px",
             label="Region",
@@ -176,6 +183,8 @@ ui <- fluidPage(
                            "Tirol", 
                            "Vorarlberg"), 
             selected = c("Österreich","Wien","Kärnten"))),
+        column(6,
+          actionButton("abUpdate", "Update Region"))),
 
         fluidRow(        
              radioButtons("rbsPastTime",
@@ -210,47 +219,41 @@ ui <- fluidPage(
 
   ),
 
-        #checkboxInput("cbLines", label="PointsOnly", value=FALSE, width="220px"),
-        #checkboxInput("cbRegression", label="Regression", value=FALSE, width="220px")),
-
     # Main panel for displaying outputs ----
     mainPanel(width=10,
      # h1("COVID-19-WeatherMap", align = "left"),
       
       tabsetPanel(type = "tabs",
  
-#        tabPanel("Test",
-#                 fluidRow(plotOutput(outputId = "testID"))),
-
-        tabPanel("COVID Lage und Aussichten",
+       tabPanel("COVID Lage und Aussichten",
                  h4("Lage und Aussichten Bundesländer", align = "left", style="color:gray"),
                  p("[Menüauswahl: keine]", align = "left", style="color:green"),
-                 fluidRow(column(width=9, leafletOutput(outputId = "lftWeatherMap", height="90vh")),
+                 fluidRow(column(width=9, leafletOutput(outputId = "lftWeatherMap", height="75vh")),
                           column(width=3, htmlOutput(outputId="hlpWeatherMap")))),
                   
         tabPanel("Inzidenz Prognose",
                  h4("Prognose TagesInzidenz", align = "left", style="color:gray"),
                  p("[Menüauswahl: Region,LogScale,BerechnungsTage,BerechnungsModell]", align = "left", style="color:green"),
-                 fluidRow(column(width=8, plotOutput(outputId = "ggpIncidencePrediciton", height="90vh")),
+                 fluidRow(column(width=8, plotOutput(outputId = "ggpIncidencePrediciton", height="75vh")),
                           column(width=4, htmlOutput(outputId="hlpIncidencePrediction")))),
 
         tabPanel("Inzidenz Bundesländer",
                   h4("TagesInzidenz Bundesländer", align = "left", style="color:gray"),
                   p("[Menüauswahl: Region,Zeitbereich,LogScale]", align = "left", style="color:green"),
-                  fluidRow(column(width=9, plotOutput(outputId = "ggpIncidenceStates", height="90vh")),
+                  fluidRow(column(width=9, plotOutput(outputId = "ggpIncidenceStates", height="75vh")),
                            column(width=3, htmlOutput(outputId="hlpIncidenceStates")))),
 
           tabPanel("Inzidenz Bezirke",
                  h4("TagesInzidenz Bezirke", align = "left", style="color:gray"),
                  p("[Menüauswahl: Region,Zeitbereich,LogScale]", align = "left", style="color:green"),
-                 fluidRow(column(width=9, plotOutput(outputId = "ggpIncidenceCounties", height="90vh")),
+                 fluidRow(column(width=9, plotOutput(outputId = "ggpIncidenceCounties", height="75vh")),
                           column(width=3, htmlOutput(outputId="hlpIncidenceCounties")))),
         
 
         tabPanel("Ausbreitungsgeschwindigkeit",
                  h4("Änderung der TagesInzidenz in % vom Vortag", align = "left", style="color:gray"),
                  p("[Menüauswahl: Region,Zeitbereich]", align = "left", style="color:green"),
-                 fluidRow(column(width=9, plotOutput(outputId = "ggpChangeRateStates", height="90vh")),
+                 fluidRow(column(width=9, plotOutput(outputId = "ggpChangeRateStates", height="75vh")),
                           column(width=3, htmlOutput(outputId="hlpChangeRateStates")))),
 
         tabPanel("Rückblick 2020",
@@ -281,12 +284,6 @@ ui <- fluidPage(
   )
 )
 
-#        tabPanel("Messwerte Verlauf",
-#                 h4("Zeitreihe der Messwerte einer Sensorart von allen Messstationen", align = "left", style="color:gray"),
-#                 p("[Menüauswahl: Zeitbereich,Sensor]", align = "left", style="color:green"),
-#                 plotOutput(outputId = "CovidPlot")),
-#                 plotOutput("sensorTimeSeriesPO", height = "75vh")),
-
 
 # --------------------------------------------------------------------------------------------------------------------------
 # GUI definition
@@ -300,34 +297,26 @@ server <- function(input, output, session) {
   sessionID = substr(session$token,1,8)
   logMsg("Server called ...", sessionID)
   
-  # logMsg("Defining reactive sensorID Filter", sessionID)
+  # states by Time
   df.past <- reactive({
     logMsg("  Reactive: df.past: Filtering for rbsPastTime", sessionID)
     return(df() %>% dplyr::filter(Date > max(Date)-weeks(as.integer(input$rbsPastTime))))
   })
   
+  # counties by Time
   dg.past <- reactive({
     logMsg("  Reactive: dg.past: Filtering for rbsPastTime", sessionID)
     return(dg() %>% dplyr::filter(Date > max(Date)-weeks(as.integer(input$rbsPastTime))))
   })
 
+  # state history by regions
   de.regions <- reactive({
     logMsg("  Reactive: dg.past: Filtering for cbgRegion", sessionID)
-    return(de() %>% dplyr::filter(Region %in% input$cbgRegion))
+    input$abUpdate
+    return(de() %>% dplyr::filter(Region %in% isolate(input$cbgRegion)))
   })
   
-  # -------------------------------------------
-  # Test
-  # -------------------------------------------
-#  output$testID <- renderPlot({
-#    logMsg("  output$testID: renderPlot", sessionID)
-#    ggplot(dt(), aes(x=x,y=y))+geom_point(size=5)
-#  })
-  
-#  st <- reactive({ invalidateLater(1000)
-#    as.character(format(Sys.time(), "%H:%H:%S")) })
-#  output$secTime <- renderText({ st() }) 
-  
+
   
   # -------------------------------------------
   # Weather Map
@@ -403,23 +392,16 @@ server <- function(input, output, session) {
   output$hlpIncidencePrediction <- renderText({ htmlIncidencePrediction })
   
   output$ggpIncidencePrediciton <- renderPlot({
-    logMsg("  output$ggpIncidenceStates: renderPlot", sessionID)
+    logMsg("  output$ggpIncidencePrediciton: renderPlot", sessionID)
     
-    # dk <- df.past()
-    dk <- df.past() %>% dplyr::filter(Region %in% input$cbgRegion)
+    # react on Update button
+    input$abUpdate
+    inRegions <- isolate(input$cbgRegion)
+    dk <- df.past() %>% dplyr::filter(Region %in% inRegions)
     dp <- cwmAgesRm7EstimatePoly(dk, nModelDays=input$sldModelDays+3, nPoly=as.integer(input$rbsModelOrder), nPredDays=28)
 
-    trans <- ifelse(input$cbLogScale, "log10", "identity")
-    if(as.integer(input$rbsPastTime)<26) {
-      rvBreaks="1 weeks"
-      rvLabels="%d.%m"
-    } else {
-      rvBreaks="1 months"
-      rvLabels="%B"
-    }
-
     ggplot(data=dp, aes(x=Date, y=rm7NewConfPop, color=Region, shape=Region)) + 
-      cwmConfPopStyle(rbsPastTime=5, cbLogScale=input$cbLogScale, inRegions=input$cbgRegion, xLimits=c(max(dk$Date)-weeks(6), max(dp$Date)+days(1))) +
+      cwmConfPopStyle(rbsPastTime=5, cbLogScale=input$cbLogScale, inRegions=inRegions, xLimits=c(max(dk$Date)-weeks(6), max(dp$Date)+days(1))) +
       geom_line(linetype=2, size=1) + 
       geom_line(data=dk, aes(x=Date, y=1), size=1.0, color="green") +
       geom_line(data=dk, aes(x=Date, y=2), size=1.0, color="orange") +
@@ -446,10 +428,12 @@ server <- function(input, output, session) {
   output$ggpIncidenceStates <- renderPlot({
     logMsg("  output$ggpIncidenceStates: renderPlot", sessionID)
 
-    dp <- df.past() %>% dplyr::filter(Region %in% input$cbgRegion)
+    input$abUpdate
+    inRegions <- isolate(input$cbgRegion)
+    dp <- df.past() %>% dplyr::filter(Region %in% inRegions)
     
     ggplot(dp, aes(x=Date, y=rm7NewConfPop, color=Region, shape=Region))+
-      cwmConfPopStyle(rbsPastTime=input$rbsPastTime, cbLogScale=input$cbLogScale, inRegions=input$cbgRegion) +
+      cwmConfPopStyle(rbsPastTime=input$rbsPastTime, cbLogScale=input$cbLogScale, inRegions=inRegions) +
       geom_point(size=2)+geom_line()+
       geom_point(data=dp %>% dplyr::filter(Date==max(Date)), size=4)+
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Positiv Getestete pro 100.000 Einw. seit ", min(dp$Date), ".  Basisdaten: AGES"))
@@ -464,10 +448,12 @@ server <- function(input, output, session) {
   output$ggpIncidenceCounties <- renderPlot({
     logMsg("  output$ggpIncidenceCounties: renderPlot", sessionID)
     
-    dp <- dg.past() %>% dplyr::filter(newConfPop>0, Region %in% input$cbgRegion)
+    input$abUpdate
+    inRegions <- isolate(input$cbgRegion)
+    dp <- dg.past() %>% dplyr::filter(newConfPop>0, Region %in% inRegions)
     
     ggplot(dp, aes(x=Date, y=newConfPop, group=CountyID))+
-      cwmConfPopStyle(rbsPastTime=input$rbsPastTime, cbLogScale=input$cbLogScale, inRegions=input$cbgRegion[input$cbgRegion!="Österreich"], yLimits=c(.5,256)) +
+      cwmConfPopStyle(rbsPastTime=input$rbsPastTime, cbLogScale=input$cbLogScale, inRegions=inRegions[inRegions!="Österreich"], yLimits=c(.5,256)) +
       geom_line(size=.25, aes(color=Region))+
       ggtitle(paste0("COVID-19 Österreich, Bundesländer und Bezirke: Positiv Getestete pro 100.000 Einw. seit ", min(dp$Date), ".  Basisdaten: AGES"))
   })
@@ -481,11 +467,13 @@ server <- function(input, output, session) {
   output$ggpChangeRateStates <- renderPlot({
     logMsg("  output$ggpChangeRateStates: renderPlot", sessionID)
     
-    dp <- df.past() %>% dplyr::filter(Region %in% input$cbgRegion) %>% dplyr::filter(dt7rm7NewConfPop<1.19, dt7rm7NewConfPop>.84)
+    input$abUpdate
+    inRegions <- isolate(input$cbgRegion)
+    dp <- df.past() %>% dplyr::filter(Region %in% inRegions) %>% dplyr::filter(dt7rm7NewConfPop<1.19, dt7rm7NewConfPop>.84)
     #dp <- df %>% dplyr::filter(dt7rm7NewConfPop<1.20, dt7rm7NewConfPop>.85)
     
     ggplot(dp, aes(x=Date, y=dt7rm7NewConfPop, color=Region, shape=Region))+
-      cwmSpreadStyle(rbsPastTime=input$rbsPastTime, inRegions=input$cbgRegion) +
+      cwmSpreadStyle(rbsPastTime=input$rbsPastTime, inRegions=inRegions) +
       geom_line(size=.75) +
       geom_point(size=2) + 
       geom_point(data=dp %>% dplyr::filter(Date==max(Date)), size=4)+
@@ -500,8 +488,10 @@ server <- function(input, output, session) {
   output$ggpExpDateConfPop <- renderPlot({
     logMsg("  output$ggpExpDateConfPop: renderPlot", sessionID)
     
+    input$abUpdate
+    inRegions <- isolate(input$cbgRegion)
     ggplot(de.regions(), aes(x=Date, y=rm7NewConfPop, color=Region, shape=Region))+
-      cwmConfPopStyle(rbsPastTime=5, cbLogScale=input$cbLogScale, inRegions=input$cbgRegion) +
+      cwmConfPopStyle(rbsPastTime=5, cbLogScale=input$cbLogScale, inRegions=inRegions) +
       geom_point(size=2)+geom_line()+
       geom_line(aes(y=modrm7NewConfPop)) +
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: TagesInzidenz: Positiv getestete pro Tag pro 100.000 Einwohner.  Basisdaten: AGES"))
@@ -516,10 +506,12 @@ server <- function(input, output, session) {
     yLimMax <- 1.19
     dblDays <- c(1:7,10,14,21,28,50,100,Inf,-100,-50,-28,-21,-14,-10,-7,-6,-5,-4,-3,-2,-1)
 
+    input$abUpdate
+    inRegions <- isolate(input$cbgRegion)
     dp <- de.regions()  %>% dplyr::filter(dt7rm7NewConfPop<1.19, dt7rm7NewConfPop>.84)
     
     ggplot(dp, aes(x=Date, y=dt7rm7NewConfPop, color=Region, shape=Region))+
-      cwmSpreadStyle(rbsPastTime=5, inRegions=input$cbgRegion) +
+      cwmSpreadStyle(rbsPastTime=5, inRegions=inRegions) +
       #scale_y_continuous(limits=c(yLimMin,yLimMax), breaks=exp(log(2)/dblDays), labels=dblDays, position="right") +
       geom_line(size=.75) +
       geom_point(size=2) + 
@@ -535,10 +527,12 @@ server <- function(input, output, session) {
     yLimMax <- 1.21
     dblDays <- c(1:7,10,14,21,28,50,100,Inf,-100,-50,-28,-21,-14,-10,-7,-6,-5,-4,-3,-2,-1)
     
-    trans <- ifelse(input$cbLogScale, "log10", "identity")
-    idxRegions <- sort(match(input$cbgRegion,atRegions))
+    input$abUpdate
+    inRegions <- isolate(input$cbgRegion)
+    idxRegions <- sort(match(inRegions,atRegions))
     regPalette <- cbPalette[idxRegions]
     regShapes <- atShapes[idxRegions]
+    trans <- ifelse(input$cbLogScale, "log10", "identity")
     sSize=0.5
     
     dl <- data.frame(x=c(xLimMin,xLimMax), y=c(yLimMin,yLimMax))
@@ -548,7 +542,6 @@ server <- function(input, output, session) {
       dplyr::mutate(Month=month(Date, label=TRUE, abbr=FALSE)) %>%
       dplyr::arrange(Region, Date)
     
-    # , name="Tägliche Steigerungsrate [%]"
     ggplot(dp, aes(x=rm7NewConfPop, y=dt7rm7NewConfPop, color=Region, shape=Month))+
       geom_line(data=dl, aes(x=x,y=1.104), size=sSize, color="#b00000", inherit.aes=FALSE) +
       geom_line(data=dl, aes(x=x,y=1.051), size=sSize, color="#ff0000", inherit.aes=FALSE) +
