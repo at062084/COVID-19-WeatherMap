@@ -2177,3 +2177,587 @@
 20210126-152243.853 _global_ eventReactive: reactiveFileReader de for ./data/COVID-19-CWM-AGES-States-Curated.rda 
 20210126-152244.680 ab4010c6   output$ggpExpDatedt7ConfPop: renderPlot 
 20210126-152245.369 ab4010c6   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210126-191918.140 ab4010c6   output$ggpIncidenceCounties: renderPlot 
+20210126-191918.142 ab4010c6   Reactive: dg.past: Filtering for rbsPastTime 
+20210126-191922.828 ab4010c6   output$ggpIncidenceCounties: renderPlot 
+20210126-191922.830 ab4010c6   Reactive: dg.past: Filtering for rbsPastTime 
+20210126-192024.731 ab4010c6   output$ggpIncidenceCounties: renderPlot 
+20210126-192028.560 ab4010c6   output$ggpIncidenceCounties: renderPlot 
+20210126-192442.819 ab4010c6   output$ggpIncidenceCounties: renderPlot 
+20210126-192445.351 ab4010c6   output$ggpIncidenceCounties: renderPlot 
+20210126-192448.195 ab4010c6   output$ggpIncidenceCounties: renderPlot 
+20210126-192455.831 ab4010c6   output$ggpIncidenceCounties: renderPlot 
+20210126-192459.239 ab4010c6   output$ggpIncidenceCounties: renderPlot 
+20210126-222342.174 ab4010c6   output$ggpIncidenceStates: renderPlot 
+20210126-222342.176 ab4010c6   Reactive: df.past: Filtering for rbsPastTime 
+20210126-222425.891 ab4010c6   output$ggpIncidenceStates: renderPlot 
+20210126-224141.168 ab4010c6   output$ggpChangeRateStates: renderPlot 
+20210126-231042.045 ab4010c6   output$ggpExpDateConfPop: renderPlot 
+20210126-231042.047 ab4010c6   Reactive: dg.past: Filtering for cbgRegion 
+20210126-231043.369 ab4010c6   output$ggpExpDatedt7ConfPop: renderPlot 
+20210126-231044.564 ab4010c6   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210126-231046.533 ab4010c6   output$ggpIncidenceStates: renderPlot 
+20210126-231124.402 _global_ Loading libraries 
+20210126-231124.404 _global_ Sourcing fun.R 
+20210126-231124.408 _global_ Loading libraries 
+20210126-231124.410 _global_ Sourcing hlp.R 
+20210126-231124.414 _global_ Sourcing ages.R 
+20210126-231124.447 _global_ Constructing global data structures 
+20210126-231127.160 c0db42f5 Server called ... 
+20210126-231127.389 c0db42f5   output$ggpIncidenceStates: renderPlot 
+20210126-231127.392 c0db42f5   Reactive: df.past: Filtering for rbsPastTime 
+20210126-231127.414 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210126-231254.950 c0db42f5   output$ggpIncidenceStates: renderPlot 
+20210126-231400.219 _global_ Loading libraries 
+20210126-231400.223 _global_ Sourcing fun.R 
+20210126-231400.240 _global_ Loading libraries 
+20210126-231400.249 _global_ Sourcing hlp.R 
+20210126-231400.262 _global_ Sourcing ages.R 
+20210126-231400.440 _global_ Constructing global data structures 
+20210126-231401.620 ea082e5c Server called ... 
+20210126-231401.714 ea082e5c   output$ggpIncidenceStates: renderPlot 
+20210126-231401.716 ea082e5c   Reactive: df.past: Filtering for rbsPastTime 
+20210126-231401.733 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210126-231436.264 _global_ Loading libraries 
+20210126-231436.265 _global_ Sourcing fun.R 
+20210126-231436.270 _global_ Loading libraries 
+20210126-231436.274 _global_ Sourcing hlp.R 
+20210126-231436.280 _global_ Sourcing ages.R 
+20210126-231436.453 _global_ Constructing global data structures 
+20210126-231437.923 bf9d4a49 Server called ... 
+20210126-231438.029 bf9d4a49   output$ggpIncidenceStates: renderPlot 
+20210126-231438.033 bf9d4a49   Reactive: df.past: Filtering for rbsPastTime 
+20210126-231438.048 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210126-231710.628 _global_ Loading libraries 
+20210126-231710.630 _global_ Sourcing fun.R 
+20210126-231710.635 _global_ Loading libraries 
+20210126-231710.637 _global_ Sourcing hlp.R 
+20210126-231710.642 _global_ Sourcing ages.R 
+20210126-231710.840 _global_ Constructing global data structures 
+20210126-231712.148 bb38629b Server called ... 
+20210126-231712.290 bb38629b   output$ggpIncidenceStates: renderPlot 
+20210126-231712.292 bb38629b   Reactive: df.past: Filtering for rbsPastTime 
+20210126-231712.308 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210126-231726.983 _global_ Loading libraries 
+20210126-231726.984 _global_ Sourcing fun.R 
+20210126-231726.989 _global_ Loading libraries 
+20210126-231726.992 _global_ Sourcing hlp.R 
+20210126-231727.000 _global_ Sourcing ages.R 
+20210126-231727.048 _global_ Constructing global data structures 
+20210126-231728.198 0e169b04 Server called ... 
+20210126-231728.319 0e169b04   output$ggpIncidenceStates: renderPlot 
+20210126-231728.323 0e169b04   Reactive: df.past: Filtering for rbsPastTime 
+20210126-231728.344 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210126-231807.310 _global_ Loading libraries 
+20210126-231807.314 _global_ Sourcing fun.R 
+20210126-231807.319 _global_ Loading libraries 
+20210126-231807.321 _global_ Sourcing hlp.R 
+20210126-231807.324 _global_ Sourcing ages.R 
+20210126-231807.357 _global_ Constructing global data structures 
+20210126-232027.209 _global_ Loading libraries 
+20210126-232027.211 _global_ Sourcing fun.R 
+20210126-232027.217 _global_ Loading libraries 
+20210126-232027.221 _global_ Sourcing hlp.R 
+20210126-232027.227 _global_ Sourcing ages.R 
+20210126-232027.449 _global_ Constructing global data structures 
+20210126-232028.537 e8dd752b Server called ... 
+20210126-232028.674 e8dd752b   output$ggpIncidenceStates: renderPlot 
+20210126-232028.677 e8dd752b   Reactive: df.past: Filtering for rbsPastTime 
+20210126-232028.694 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210126-232106.158 _global_ Loading libraries 
+20210126-232106.160 _global_ Sourcing fun.R 
+20210126-232106.166 _global_ Loading libraries 
+20210126-232106.169 _global_ Sourcing hlp.R 
+20210126-232106.174 _global_ Sourcing ages.R 
+20210126-232106.206 _global_ Constructing global data structures 
+20210126-232107.306 23f29d80 Server called ... 
+20210126-232107.422 23f29d80   output$ggpIncidenceStates: renderPlot 
+20210126-232107.426 23f29d80   Reactive: df.past: Filtering for rbsPastTime 
+20210126-232107.446 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210126-232127.125 _global_ Loading libraries 
+20210126-232127.127 _global_ Sourcing fun.R 
+20210126-232127.134 _global_ Loading libraries 
+20210126-232127.139 _global_ Sourcing hlp.R 
+20210126-232127.146 _global_ Sourcing ages.R 
+20210126-232127.194 _global_ Constructing global data structures 
+20210126-232250.273 _global_ Loading libraries 
+20210126-232250.274 _global_ Sourcing fun.R 
+20210126-232250.313 _global_ Loading libraries 
+20210126-232250.316 _global_ Sourcing hlp.R 
+20210126-232250.323 _global_ Sourcing ages.R 
+20210126-232250.565 _global_ Constructing global data structures 
+20210126-232251.726 b882bcf8 Server called ... 
+20210126-232251.799 b882bcf8   output$ggpIncidenceStates: renderPlot 
+20210126-232251.803 b882bcf8   Reactive: df.past: Filtering for rbsPastTime 
+20210126-232251.818 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210126-232254.072 b882bcf8   output$ggpChangeRateStates: renderPlot 
+20210126-232426.212 0e655fc5 Server called ... 
+20210126-232426.311 0e655fc5   output$ggpIncidenceStates: renderPlot 
+20210126-232426.315 0e655fc5   Reactive: df.past: Filtering for rbsPastTime 
+20210126-232429.191 0e655fc5   output$ggpChangeRateStates: renderPlot 
+20210126-232437.371 _global_ Loading libraries 
+20210126-232437.372 _global_ Sourcing fun.R 
+20210126-232437.377 _global_ Loading libraries 
+20210126-232437.379 _global_ Sourcing hlp.R 
+20210126-232437.383 _global_ Sourcing ages.R 
+20210126-232437.582 _global_ Constructing global data structures 
+20210126-232440.067 8c9c1ae1 Server called ... 
+20210126-232440.370 8c9c1ae1   output$ggpIncidenceStates: renderPlot 
+20210126-232440.373 8c9c1ae1   Reactive: df.past: Filtering for rbsPastTime 
+20210126-232440.390 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210126-232443.025 8c9c1ae1   output$ggpChangeRateStates: renderPlot 
+20210126-233423.638 28b71cd1 Server called ... 
+20210126-233423.728 28b71cd1   output$ggpIncidenceStates: renderPlot 
+20210126-233423.731 28b71cd1   Reactive: df.past: Filtering for rbsPastTime 
+20210126-233426.011 28b71cd1   output$ggpChangeRateStates: renderPlot 
+20210126-233433.686 _global_ Loading libraries 
+20210126-233433.688 _global_ Sourcing fun.R 
+20210126-233433.698 _global_ Loading libraries 
+20210126-233433.701 _global_ Sourcing hlp.R 
+20210126-233433.705 _global_ Sourcing ages.R 
+20210126-233433.894 _global_ Constructing global data structures 
+20210126-233436.318 f702e55d Server called ... 
+20210126-233436.425 f702e55d   output$ggpIncidenceStates: renderPlot 
+20210126-233436.427 f702e55d   Reactive: df.past: Filtering for rbsPastTime 
+20210126-233436.447 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210126-233439.297 f702e55d   output$ggpChangeRateStates: renderPlot 
+20210126-233612.610 f702e55d   output$ggpExpDateConfPop: renderPlot 
+20210126-233612.611 f702e55d   Reactive: dg.past: Filtering for cbgRegion 
+20210126-233612.613 _global_ eventReactive: reactiveFileReader de for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210126-233613.510 f702e55d   output$ggpExpDatedt7ConfPop: renderPlot 
+20210126-233614.746 f702e55d   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210126-234741.586 _global_ Loading libraries 
+20210126-234741.589 _global_ Sourcing fun.R 
+20210126-234741.593 _global_ Loading libraries 
+20210126-234741.596 _global_ Sourcing hlp.R 
+20210126-234741.602 _global_ Sourcing ages.R 
+20210126-234741.637 _global_ Constructing global data structures 
+20210126-234742.985 e1a91eed Server called ... 
+20210126-234743.070 e1a91eed   output$ggpIncidenceStates: renderPlot 
+20210126-234743.073 e1a91eed   Reactive: df.past: Filtering for rbsPastTime 
+20210126-234743.088 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210126-234746.504 e1a91eed   output$ggpChangeRateStates: renderPlot 
+20210126-234752.592 e1a91eed   output$ggpExpDateConfPop: renderPlot 
+20210126-234752.593 e1a91eed   Reactive: dg.past: Filtering for cbgRegion 
+20210126-234752.595 _global_ eventReactive: reactiveFileReader de for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210126-234753.877 e1a91eed   output$ggpExpDatedt7ConfPop: renderPlot 
+20210126-234754.719 e1a91eed   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210126-234942.930 _global_ Loading libraries 
+20210126-234942.932 _global_ Sourcing fun.R 
+20210126-234942.941 _global_ Loading libraries 
+20210126-234942.946 _global_ Sourcing hlp.R 
+20210126-234942.952 _global_ Sourcing ages.R 
+20210126-234943.137 _global_ Constructing global data structures 
+20210126-234944.617 1d589da6 Server called ... 
+20210126-234944.707 1d589da6   output$ggpIncidenceStates: renderPlot 
+20210126-234944.710 1d589da6   Reactive: df.past: Filtering for rbsPastTime 
+20210126-234944.727 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210126-234947.274 1d589da6   output$ggpChangeRateStates: renderPlot 
+20210126-234948.395 1d589da6   output$ggpExpDateConfPop: renderPlot 
+20210126-234948.396 1d589da6   Reactive: dg.past: Filtering for cbgRegion 
+20210126-234948.398 _global_ eventReactive: reactiveFileReader de for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210126-234949.406 1d589da6   output$ggpExpDatedt7ConfPop: renderPlot 
+20210126-234950.295 1d589da6   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210126-235013.076 _global_ Loading libraries 
+20210126-235013.077 _global_ Sourcing fun.R 
+20210126-235013.081 _global_ Loading libraries 
+20210126-235013.084 _global_ Sourcing hlp.R 
+20210126-235013.090 _global_ Sourcing ages.R 
+20210126-235013.122 _global_ Constructing global data structures 
+20210126-235014.570 fdc73c7f Server called ... 
+20210126-235014.666 fdc73c7f   output$ggpIncidenceStates: renderPlot 
+20210126-235014.669 fdc73c7f   Reactive: df.past: Filtering for rbsPastTime 
+20210126-235014.683 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210126-235017.640 fdc73c7f   output$ggpChangeRateStates: renderPlot 
+20210126-235018.886 fdc73c7f   output$ggpExpDateConfPop: renderPlot 
+20210126-235018.887 fdc73c7f   Reactive: dg.past: Filtering for cbgRegion 
+20210126-235018.890 _global_ eventReactive: reactiveFileReader de for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210126-235019.883 fdc73c7f   output$ggpExpDatedt7ConfPop: renderPlot 
+20210126-235020.716 fdc73c7f   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210126-235218.643 _global_ Loading libraries 
+20210126-235218.644 _global_ Sourcing fun.R 
+20210126-235218.651 _global_ Loading libraries 
+20210126-235218.653 _global_ Sourcing hlp.R 
+20210126-235218.658 _global_ Sourcing ages.R 
+20210126-235218.692 _global_ Constructing global data structures 
+20210126-235219.788 59cce152 Server called ... 
+20210126-235219.875 59cce152   output$ggpIncidenceStates: renderPlot 
+20210126-235220.224 59cce152   Reactive: df.past: Filtering for rbsPastTime 
+20210126-235220.551 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210126-235222.816 59cce152   output$ggpExpDateConfPop: renderPlot 
+20210126-235222.818 59cce152   Reactive: dg.past: Filtering for cbgRegion 
+20210126-235222.821 _global_ eventReactive: reactiveFileReader de for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210126-235223.897 59cce152   output$ggpExpDatedt7ConfPop: renderPlot 
+20210126-235224.858 59cce152   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210126-235457.766 _global_ Loading libraries 
+20210126-235457.768 _global_ Sourcing fun.R 
+20210126-235457.772 _global_ Loading libraries 
+20210126-235457.774 _global_ Sourcing hlp.R 
+20210126-235457.779 _global_ Sourcing ages.R 
+20210126-235457.816 _global_ Constructing global data structures 
+20210126-235458.991 ef5cef7a Server called ... 
+20210126-235459.112 ef5cef7a   output$ggpIncidenceStates: renderPlot 
+20210126-235459.114 ef5cef7a   Reactive: df.past: Filtering for rbsPastTime 
+20210126-235459.130 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210126-235502.301 ef5cef7a   output$ggpExpDateConfPop: renderPlot 
+20210126-235502.303 ef5cef7a   Reactive: dg.past: Filtering for cbgRegion 
+20210126-235502.306 _global_ eventReactive: reactiveFileReader de for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210126-235503.296 ef5cef7a   output$ggpExpDatedt7ConfPop: renderPlot 
+20210126-235504.121 ef5cef7a   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210126-235531.764 _global_ Loading libraries 
+20210126-235531.766 _global_ Sourcing fun.R 
+20210126-235531.771 _global_ Loading libraries 
+20210126-235531.775 _global_ Sourcing hlp.R 
+20210126-235531.781 _global_ Sourcing ages.R 
+20210126-235531.820 _global_ Constructing global data structures 
+20210126-235532.948 c798a189 Server called ... 
+20210126-235533.033 c798a189   output$ggpIncidenceStates: renderPlot 
+20210126-235533.035 c798a189   Reactive: df.past: Filtering for rbsPastTime 
+20210126-235533.048 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210126-235534.976 c798a189   output$ggpExpDateConfPop: renderPlot 
+20210126-235534.977 c798a189   Reactive: dg.past: Filtering for cbgRegion 
+20210126-235534.979 _global_ eventReactive: reactiveFileReader de for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210126-235535.859 c798a189   output$ggpExpDatedt7ConfPop: renderPlot 
+20210126-235537.114 c798a189   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210126-235942.206 _global_ Loading libraries 
+20210126-235942.208 _global_ Sourcing fun.R 
+20210126-235942.215 _global_ Loading libraries 
+20210126-235942.220 _global_ Sourcing hlp.R 
+20210126-235942.226 _global_ Sourcing ages.R 
+20210126-235942.260 _global_ Constructing global data structures 
+20210126-235943.447 2cec9b73 Server called ... 
+20210126-235943.741 2cec9b73   output$ggpIncidenceStates: renderPlot 
+20210126-235943.743 2cec9b73   Reactive: df.past: Filtering for rbsPastTime 
+20210126-235943.756 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210126-235947.952 2cec9b73   output$ggpExpDateConfPop: renderPlot 
+20210126-235947.954 2cec9b73   Reactive: dg.past: Filtering for cbgRegion 
+20210126-235947.956 _global_ eventReactive: reactiveFileReader de for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210126-235948.905 2cec9b73   output$ggpExpDatedt7ConfPop: renderPlot 
+20210126-235949.783 2cec9b73   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210127-000931.513 _global_ Loading libraries 
+20210127-000931.515 _global_ Sourcing fun.R 
+20210127-000931.520 _global_ Loading libraries 
+20210127-000931.522 _global_ Sourcing hlp.R 
+20210127-000931.526 _global_ Sourcing ages.R 
+20210127-000931.554 _global_ Constructing global data structures 
+20210127-000934.337 a1a25e3b Server called ... 
+20210127-000934.625 a1a25e3b   output$ggpIncidenceStates: renderPlot 
+20210127-000934.628 a1a25e3b   Reactive: df.past: Filtering for rbsPastTime 
+20210127-000934.644 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210127-000937.865 a1a25e3b   output$ggpExpDateConfPop: renderPlot 
+20210127-000937.867 a1a25e3b   Reactive: dg.past: Filtering for cbgRegion 
+20210127-000937.869 _global_ eventReactive: reactiveFileReader de for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210127-000938.902 a1a25e3b   output$ggpExpDatedt7ConfPop: renderPlot 
+20210127-000939.812 a1a25e3b   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210127-001222.116 _global_ Loading libraries 
+20210127-001222.118 _global_ Sourcing fun.R 
+20210127-001222.123 _global_ Loading libraries 
+20210127-001222.128 _global_ Sourcing hlp.R 
+20210127-001222.133 _global_ Sourcing ages.R 
+20210127-001222.173 _global_ Constructing global data structures 
+20210127-001223.426 70355464 Server called ... 
+20210127-001223.678 70355464   output$ggpIncidenceStates: renderPlot 
+20210127-001223.681 70355464   Reactive: df.past: Filtering for rbsPastTime 
+20210127-001223.696 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210127-001227.748 70355464   output$ggpChangeRateStates: renderPlot 
+20210127-001229.880 70355464   output$ggpExpDateConfPop: renderPlot 
+20210127-001229.882 70355464   Reactive: dg.past: Filtering for cbgRegion 
+20210127-001229.885 _global_ eventReactive: reactiveFileReader de for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210127-001230.779 70355464   output$ggpExpDatedt7ConfPop: renderPlot 
+20210127-001232.052 70355464   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210127-001341.819 _global_ Loading libraries 
+20210127-001341.822 _global_ Sourcing fun.R 
+20210127-001341.827 _global_ Loading libraries 
+20210127-001341.830 _global_ Sourcing hlp.R 
+20210127-001341.835 _global_ Sourcing ages.R 
+20210127-001341.869 _global_ Constructing global data structures 
+20210127-001343.452 ba854e1e Server called ... 
+20210127-001343.727 ba854e1e   output$ggpIncidenceStates: renderPlot 
+20210127-001343.730 ba854e1e   Reactive: df.past: Filtering for rbsPastTime 
+20210127-001343.745 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210127-001347.219 ba854e1e   output$ggpExpDateConfPop: renderPlot 
+20210127-001347.220 ba854e1e   Reactive: dg.past: Filtering for cbgRegion 
+20210127-001347.222 _global_ eventReactive: reactiveFileReader de for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210127-001348.191 ba854e1e   output$ggpExpDatedt7ConfPop: renderPlot 
+20210127-001349.093 ba854e1e   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210127-001621.934 ba854e1e   output$ggpExpDateConfPop: renderPlot 
+20210127-001621.936 ba854e1e   Reactive: dg.past: Filtering for cbgRegion 
+20210127-001622.891 ba854e1e   output$ggpExpDatedt7ConfPop: renderPlot 
+20210127-001623.873 ba854e1e   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210127-001633.404 ba854e1e   output$ggpExpDateConfPop: renderPlot 
+20210127-001633.406 ba854e1e   Reactive: dg.past: Filtering for cbgRegion 
+20210127-001634.390 ba854e1e   output$ggpExpDatedt7ConfPop: renderPlot 
+20210127-001635.221 ba854e1e   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210127-001643.948 ba854e1e   output$ggpExpDateConfPop: renderPlot 
+20210127-001644.979 ba854e1e   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210127-001711.212 ba854e1e   output$ggpExpDateConfPop: renderPlot 
+20210127-001712.262 ba854e1e   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210127-001730.545 ba854e1e   output$ggpExpDatedt7ConfPop: renderPlot 
+20210127-001730.547 ba854e1e   Reactive: dg.past: Filtering for cbgRegion 
+20210127-001731.511 ba854e1e   output$ggpExpDateConfPop: renderPlot 
+20210127-001732.843 ba854e1e   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210127-002014.431 _global_ Loading libraries 
+20210127-002014.432 _global_ Sourcing fun.R 
+20210127-002014.441 _global_ Loading libraries 
+20210127-002014.445 _global_ Sourcing hlp.R 
+20210127-002014.450 _global_ Sourcing ages.R 
+20210127-002014.663 _global_ Constructing global data structures 
+20210127-002015.812 aaee8903 Server called ... 
+20210127-002015.918 aaee8903   output$ggpIncidenceStates: renderPlot 
+20210127-002015.922 aaee8903   Reactive: df.past: Filtering for rbsPastTime 
+20210127-002016.123 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210127-002019.372 aaee8903   output$ggpExpDateConfPop: renderPlot 
+20210127-002019.373 aaee8903   Reactive: dg.past: Filtering for cbgRegion 
+20210127-002019.375 _global_ eventReactive: reactiveFileReader de for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210127-002020.690 aaee8903   output$ggpExpDatedt7ConfPop: renderPlot 
+20210127-002021.850 aaee8903   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210127-002044.262 _global_ Loading libraries 
+20210127-002044.263 _global_ Sourcing fun.R 
+20210127-002044.273 _global_ Loading libraries 
+20210127-002044.277 _global_ Sourcing hlp.R 
+20210127-002044.284 _global_ Sourcing ages.R 
+20210127-002044.316 _global_ Constructing global data structures 
+20210127-002045.447 c1d66c5a Server called ... 
+20210127-002045.755 c1d66c5a   output$ggpIncidenceStates: renderPlot 
+20210127-002045.758 c1d66c5a   Reactive: df.past: Filtering for rbsPastTime 
+20210127-002045.772 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210127-002049.194 c1d66c5a   output$ggpExpDateConfPop: renderPlot 
+20210127-002049.195 c1d66c5a   Reactive: dg.past: Filtering for cbgRegion 
+20210127-002049.197 _global_ eventReactive: reactiveFileReader de for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210127-002050.169 c1d66c5a   output$ggpExpDatedt7ConfPop: renderPlot 
+20210127-002051.070 c1d66c5a   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210127-002248.713 c1d66c5a   output$ggpChangeRateStates: renderPlot 
+20210127-002724.075 c1d66c5a   output$ggpIncidenceStates: renderPlot 
+20210127-002727.230 c1d66c5a   output$ggpIncidenceStates: renderPlot 
+20210127-002727.234 c1d66c5a   Reactive: df.past: Filtering for rbsPastTime 
+20210127-002732.044 c1d66c5a   output$ggpIncidenceStates: renderPlot 
+20210127-002732.047 c1d66c5a   Reactive: df.past: Filtering for rbsPastTime 
+20210127-003225.486 c1d66c5a   output$ggpExpDateConfPop: renderPlot 
+20210127-003226.393 c1d66c5a   output$ggpExpDatedt7ConfPop: renderPlot 
+20210127-003422.131 _global_ Loading libraries 
+20210127-003422.150 __cron__ Sourcing ages.R 
+20210127-003422.158 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210127-003422.392 _global_ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210127-003422.393 _global_ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210127-003424.126 _global_ Writing ./data/CovidFallzahlen.rda 
+20210127-003424.139 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210127-003424.166 _global_ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210127-003424.166 _global_ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210127-003425.650 _global_ Writing ./data/CovidFaelle_Timeline.rda 
+20210127-003425.666 __cron__ Downloading CovidFaelle_Timeline_GKZ data from AGES ... 
+20210127-003425.712 _global_ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv 
+20210127-003425.713 _global_ Storing AGES data to ./data/CovidFaelle_Timeline_GKZ.csv 
+20210127-003429.953 _global_ Writing ./data/CovidFaelle_Timeline_GKZ.rda 
+20210127-003431.121 _global_ Writing ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210127-003431.250 __cron__ Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ... 
+20210127-003454.215 _global_ Writing ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210127-003454.289 __cron__ Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features 
+20210127-003454.290 __cron__ cron: Done Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210127-003501.641 _global_ Loading libraries 
+20210127-003501.643 _global_ Sourcing fun.R 
+20210127-003501.653 _global_ Loading libraries 
+20210127-003501.656 _global_ Sourcing hlp.R 
+20210127-003501.662 _global_ Sourcing ages.R 
+20210127-003501.878 _global_ Constructing global data structures 
+20210127-003504.320 04a1af31 Server called ... 
+20210127-003504.431 04a1af31   output$ggpIncidenceStates: renderPlot 
+20210127-003504.434 04a1af31   Reactive: df.past: Filtering for rbsPastTime 
+20210127-003504.624 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210127-003510.448 04a1af31   output$ggpExpDateConfPop: renderPlot 
+20210127-003510.450 04a1af31   Reactive: dg.past: Filtering for cbgRegion 
+20210127-003510.452 _global_ eventReactive: reactiveFileReader de for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210127-003511.438 04a1af31   output$ggpExpDatedt7ConfPop: renderPlot 
+20210127-003512.360 04a1af31   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210127-004112.188 _global_ Loading libraries 
+20210127-004112.200 __cron__ Sourcing ages.R 
+20210127-004112.205 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210127-004112.839 _global_ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210127-004112.840 _global_ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210127-004114.406 _global_ Writing ./data/CovidFallzahlen.rda 
+20210127-004114.420 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210127-004114.702 _global_ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210127-004114.702 _global_ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210127-004116.413 _global_ Writing ./data/CovidFaelle_Timeline.rda 
+20210127-004116.430 __cron__ Downloading CovidFaelle_Timeline_GKZ data from AGES ... 
+20210127-004116.729 _global_ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv 
+20210127-004116.730 _global_ Storing AGES data to ./data/CovidFaelle_Timeline_GKZ.csv 
+20210127-004121.449 _global_ Writing ./data/CovidFaelle_Timeline_GKZ.rda 
+20210127-004122.215 _global_ Writing ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210127-004122.354 __cron__ Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ... 
+20210127-004144.565 _global_ Writing ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210127-004144.634 __cron__ Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features 
+20210127-004144.635 __cron__ cron: Done Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210127-004158.303 _global_ Loading libraries 
+20210127-004158.305 _global_ Sourcing fun.R 
+20210127-004158.316 _global_ Loading libraries 
+20210127-004158.320 _global_ Sourcing hlp.R 
+20210127-004158.326 _global_ Sourcing ages.R 
+20210127-004158.382 _global_ Constructing global data structures 
+20210127-004201.005 39b9b97b Server called ... 
+20210127-004201.277 39b9b97b   output$ggpIncidenceStates: renderPlot 
+20210127-004201.280 39b9b97b   Reactive: df.past: Filtering for rbsPastTime 
+20210127-004201.295 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210127-004205.743 39b9b97b   output$ggpChangeRateStates: renderPlot 
+20210127-004208.884 39b9b97b   output$ggpExpDateConfPop: renderPlot 
+20210127-004208.886 39b9b97b   Reactive: dg.past: Filtering for cbgRegion 
+20210127-004208.887 _global_ eventReactive: reactiveFileReader de for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210127-004210.634 39b9b97b   output$ggpExpDatedt7ConfPop: renderPlot 
+20210127-004211.675 39b9b97b   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210127-004836.859 _global_ Loading libraries 
+20210127-004836.872 __cron__ Sourcing ages.R 
+20210127-004836.878 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210127-004837.503 _global_ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210127-004837.504 _global_ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210127-004838.643 _global_ Writing ./data/CovidFallzahlen.rda 
+20210127-004838.656 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210127-004838.682 _global_ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210127-004838.682 _global_ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210127-004840.148 _global_ Writing ./data/CovidFaelle_Timeline.rda 
+20210127-004840.163 __cron__ Downloading CovidFaelle_Timeline_GKZ data from AGES ... 
+20210127-004840.207 _global_ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv 
+20210127-004840.207 _global_ Storing AGES data to ./data/CovidFaelle_Timeline_GKZ.csv 
+20210127-004844.670 _global_ Writing ./data/CovidFaelle_Timeline_GKZ.rda 
+20210127-004845.287 _global_ Writing ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210127-004845.425 __cron__ Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ... 
+20210127-005239.494 _global_ Loading libraries 
+20210127-005239.505 __cron__ Sourcing ages.R 
+20210127-005239.511 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210127-005239.556 _global_ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210127-005239.556 _global_ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210127-005240.964 _global_ Writing ./data/CovidFallzahlen.rda 
+20210127-005240.979 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210127-005241.005 _global_ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210127-005241.006 _global_ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210127-005242.596 _global_ Writing ./data/CovidFaelle_Timeline.rda 
+20210127-005242.612 __cron__ Downloading CovidFaelle_Timeline_GKZ data from AGES ... 
+20210127-005242.657 _global_ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv 
+20210127-005242.658 _global_ Storing AGES data to ./data/CovidFaelle_Timeline_GKZ.csv 
+20210127-005247.139 _global_ Writing ./data/CovidFaelle_Timeline_GKZ.rda 
+20210127-005247.914 _global_ Writing ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210127-005248.093 __cron__ Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ... 
+20210127-005936.020 _global_ Loading libraries 
+20210127-005936.035 __cron__ Sourcing ages.R 
+20210127-005936.041 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210127-005936.090 _global_ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210127-005936.091 _global_ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210127-005938.082 _global_ Writing ./data/CovidFallzahlen.rda 
+20210127-005938.096 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210127-005938.122 _global_ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210127-005938.122 _global_ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210127-005939.754 _global_ Writing ./data/CovidFaelle_Timeline.rda 
+20210127-005939.769 __cron__ Downloading CovidFaelle_Timeline_GKZ data from AGES ... 
+20210127-005939.815 _global_ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv 
+20210127-005939.816 _global_ Storing AGES data to ./data/CovidFaelle_Timeline_GKZ.csv 
+20210127-005945.493 _global_ Writing ./data/CovidFaelle_Timeline_GKZ.rda 
+20210127-005946.099 _global_ Writing ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210127-005946.238 __cron__ Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ... 
+20210127-010007.979 _global_ Writing ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210127-010008.052 __cron__ Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features 
+20210127-010008.053 __cron__ cron: Done Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210127-010013.338 _global_ Loading libraries 
+20210127-010013.340 _global_ Sourcing fun.R 
+20210127-010013.347 _global_ Loading libraries 
+20210127-010013.350 _global_ Sourcing hlp.R 
+20210127-010013.356 _global_ Sourcing ages.R 
+20210127-010013.397 _global_ Constructing global data structures 
+20210127-010016.458 94d84d3a Server called ... 
+20210127-010016.556 94d84d3a   output$ggpIncidenceStates: renderPlot 
+20210127-010016.559 94d84d3a   Reactive: df.past: Filtering for rbsPastTime 
+20210127-010016.574 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210127-010020.306 94d84d3a   output$ggpExpDateConfPop: renderPlot 
+20210127-010020.307 94d84d3a   Reactive: dg.past: Filtering for cbgRegion 
+20210127-010020.310 _global_ eventReactive: reactiveFileReader de for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210127-010021.465 94d84d3a   output$ggpExpDatedt7ConfPop: renderPlot 
+20210127-010022.445 94d84d3a   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210127-010708.731 _global_ Loading libraries 
+20210127-010708.750 __cron__ Sourcing ages.R 
+20210127-010708.761 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210127-010708.844 _global_ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210127-010708.845 _global_ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210127-010710.585 _global_ Writing ./data/CovidFallzahlen.rda 
+20210127-010710.600 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210127-010710.628 _global_ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210127-010710.628 _global_ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210127-010712.174 _global_ Writing ./data/CovidFaelle_Timeline.rda 
+20210127-010712.191 __cron__ Downloading CovidFaelle_Timeline_GKZ data from AGES ... 
+20210127-010712.244 _global_ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv 
+20210127-010712.244 _global_ Storing AGES data to ./data/CovidFaelle_Timeline_GKZ.csv 
+20210127-010716.588 _global_ Writing ./data/CovidFaelle_Timeline_GKZ.rda 
+20210127-010717.351 _global_ Writing ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210127-010717.498 __cron__ Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ... 
+20210127-010739.749 _global_ Writing ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210127-010739.822 __cron__ Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features 
+20210127-010739.822 __cron__ cron: Done Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210127-010741.145 _global_ Loading libraries 
+20210127-010741.146 _global_ Sourcing fun.R 
+20210127-010741.152 _global_ Loading libraries 
+20210127-010741.155 _global_ Sourcing hlp.R 
+20210127-010741.159 _global_ Sourcing ages.R 
+20210127-010741.184 _global_ Constructing global data structures 
+20210127-010743.780 83fff387 Server called ... 
+20210127-010743.909 83fff387   output$ggpIncidenceStates: renderPlot 
+20210127-010743.914 83fff387   Reactive: df.past: Filtering for rbsPastTime 
+20210127-010743.939 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210127-010747.281 83fff387   output$ggpExpDateConfPop: renderPlot 
+20210127-010747.283 83fff387   Reactive: dg.past: Filtering for cbgRegion 
+20210127-010747.285 _global_ eventReactive: reactiveFileReader de for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210127-010748.277 83fff387   output$ggpExpDatedt7ConfPop: renderPlot 
+20210127-010749.237 83fff387   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210127-010805.566 83fff387   output$ggpExpDateConfPop: renderPlot 
+20210127-010805.567 83fff387   Reactive: dg.past: Filtering for cbgRegion 
+20210127-010806.643 83fff387   output$ggpExpDatedt7ConfPop: renderPlot 
+20210127-010807.812 83fff387   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210127-010809.374 83fff387   output$ggpExpDateConfPop: renderPlot 
+20210127-010809.374 83fff387   Reactive: dg.past: Filtering for cbgRegion 
+20210127-010810.362 83fff387   output$ggpExpDatedt7ConfPop: renderPlot 
+20210127-010811.185 83fff387   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210127-011047.503 83fff387   output$ggpExpDateConfPop: renderPlot 
+20210127-011047.505 83fff387   Reactive: dg.past: Filtering for cbgRegion 
+20210127-011048.593 83fff387   output$ggpExpDatedt7ConfPop: renderPlot 
+20210127-011049.479 83fff387   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210127-011100.642 83fff387   output$ggpExpDateConfPop: renderPlot 
+20210127-011100.644 83fff387   Reactive: dg.past: Filtering for cbgRegion 
+20210127-011101.897 83fff387   output$ggpExpDatedt7ConfPop: renderPlot 
+20210127-011102.866 83fff387   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210127-011127.441 83fff387   output$ggpExpDateConfPop: renderPlot 
+20210127-011127.442 83fff387   Reactive: dg.past: Filtering for cbgRegion 
+20210127-011128.702 83fff387   output$ggpExpDatedt7ConfPop: renderPlot 
+20210127-011129.739 83fff387   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210127-011131.042 83fff387   output$ggpExpDateConfPop: renderPlot 
+20210127-011131.043 83fff387   Reactive: dg.past: Filtering for cbgRegion 
+20210127-011132.809 83fff387   output$ggpExpDatedt7ConfPop: renderPlot 
+20210127-011133.733 83fff387   output$ggpExpConfPopdt7ConfPop: renderPlot 
+20210127-011342.655 _global_ Loading libraries 
+20210127-011342.837 __cron__ Sourcing ages.R 
+20210127-011342.845 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210127-011342.902 _global_ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210127-011342.902 _global_ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210127-011344.403 _global_ Writing ./data/CovidFallzahlen.rda 
+20210127-011344.416 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210127-011344.444 _global_ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210127-011344.444 _global_ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210127-011345.953 _global_ Writing ./data/CovidFaelle_Timeline.rda 
+20210127-011345.969 __cron__ Downloading CovidFaelle_Timeline_GKZ data from AGES ... 
+20210127-011346.018 _global_ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv 
+20210127-011346.019 _global_ Storing AGES data to ./data/CovidFaelle_Timeline_GKZ.csv 
+20210127-011350.224 _global_ Writing ./data/CovidFaelle_Timeline_GKZ.rda 
+20210127-011350.806 _global_ Writing ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210127-011350.955 __cron__ Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ... 
+20210127-011416.081 _global_ Writing ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210127-011416.158 __cron__ Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features 
+20210127-011416.159 __cron__ cron: Done Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210127-011419.978 _global_ Loading libraries 
+20210127-011419.981 _global_ Sourcing fun.R 
+20210127-011419.992 _global_ Loading libraries 
+20210127-011419.995 _global_ Sourcing hlp.R 
+20210127-011420.001 _global_ Sourcing ages.R 
+20210127-011420.058 _global_ Constructing global data structures 
+20210127-011422.987 2426d803 Server called ... 
+20210127-011423.112 2426d803   output$ggpIncidenceStates: renderPlot 
+20210127-011423.115 2426d803   Reactive: df.past: Filtering for rbsPastTime 
+20210127-011423.140 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210127-011425.955 2426d803   output$ggpExpDateConfPop: renderPlot 
+20210127-011425.956 2426d803   Reactive: dg.past: Filtering for cbgRegion 
+20210127-011425.958 _global_ eventReactive: reactiveFileReader de for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210127-011426.954 2426d803   output$ggpExpDatedt7ConfPop: renderPlot 
+20210127-011427.931 2426d803   output$ggpExpConfPopdt7ConfPop: renderPlot 
