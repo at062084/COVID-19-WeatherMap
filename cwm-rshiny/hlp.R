@@ -89,7 +89,7 @@ htmlIncidenceStates <- "<p><b>Historie der Inzidenz in Bundesländern</b></p>
 
 htmlIncidenceCounties <- "<p><b>Historie der Inzidenz in Bezirken</b></p>
                           <p>Die Einmeldungen der Fallzahlen, d.h. der positiv Getesteten, in des EMS erfolgt auf Bezirksebene. 
-                             Österreich ist in 90 Bezirke eingeteilt, wobei Wien in den von AGES veröffentlichten Daten als ein einziger Bezirk geführt wird.
+                             Österreich ist in 90 Bezirke eingeteilt, wobei Wien in den von AGES veröffentlichten Daten als ein Bezirk geführt wird.
                           </p><p>
                              Auffällig ist die Änderung des Verhaltens in den letzten beiden Oktober Wochen. 
                             Die Inzidenz steigt von grob 4-32 Mitte Oktober um 2 Stufen auf 16-128 Anfang November. Das entspricht in etwa einer Verdoppelung innerhalb einer Woche.
@@ -102,7 +102,7 @@ htmlChangeRateStates <- "<p><b>Ausbreitungsgeschwindigkeit</b></p>
                              Die genaue Berechnung ist nicht ganz einfach und ist auf der AGES Website in einem vierseitigen Artikel genau beschrieben.
                              </p><p> Eine andere, etwas einfachere, Möglichkeit die Ausbreitungsgeschwindigkeit zu messen ist die <b>prozentuelle Änderung der Fallzahlen</b> gegenüber dem Vortag.
                              Dieser Wert ist eng verknüpft mit der Anzahl der <b>Tage bis zur Verdoppelung</b> oder auch Verzehnfachung  der Fallzahlen.
-                             Während die Reproduktionszahl und die prozentuelle Änderung der Fallzahlen die Treiber des exponentiellen Wachstums sind, 
+                             Während die Reproduktionszahl und die prozentuelle Änderung der Fallzahlen die <b>Treiber des exponentiellen Wachstums</b> sind, 
                              beschreibt die Dauer bis zur Verdoppelung der Inzidenz die Auswirkungen anhand der täglichen Einmeldungen in das EMS. 
                           </p><p>
                              In nebenstehender Graphik sind beide Größen eingezeichnet. Links die Änderung der Inzidenz in % vom Vortag, 
@@ -112,7 +112,45 @@ htmlChangeRateStates <- "<p><b>Ausbreitungsgeschwindigkeit</b></p>
 
 htmlExponential <- "<p><b>Rückblick 2020</b></p>
                     <p>
+                      Die drei Graphiken auf dieser Seie gehen der Frage nach, was aus der Entwicklung der <b>Inzidenz Zahlen im Sommer und Herbst 2020</b> abgeleitet werden kann.
+                    </p>
+                    <p><b>Inzidenz</b><br><p>
+                      Aus der ersten Graphik wird deutlich, dass seit Ende Juli die <b>Fallzahlen gleichmäßig steigen</b>, mit einigen Abweichungen, aber in allen Bundesländern ähnlich.
+                      Die Explosion, d.h. das exponentielle Wachstum, ist langsamer als im März 2020. Damals haben sich die Inzidenz Zahlen in einer Woche verzehnfacht.
+                      Ab Anfang August ist die Geschwindigkeit der Ausbreitung mit 7-11 Wochen bis zur Verzehnfachung wesentlich langsamer (je nach Bundesland),
+                      folgt aber gleichwohl dem <b>explosiven Muster der Verdoppelung</b> in festen Zeitintervallen.
+                      Dieses Verhalten wird erst durch die Betrachtung mit 'Verdoppelungsstufen', d.h.  in einer logarithmischen Skala, deutlich.
+                      Die in Ministerien und ORF üblicherweise gewählte 'lineare' Skala verschleiert diese der Pandemie inherente Gesetzmässigkeit. 
+                      Die 'lineare' Skala kann durch enfernen des Häckchens bei 'LogScale' im Menü links entfernt werden.
+                    </p><p>
+                      Weiters lässt sich aus der ersten Graphik ablesen, dass seit Anfang August die <b>Inzidenz in drei Stufen gestiegen</b> ist.
+                      Betrachtet man Österreich gesamt, so hat die erste Stufe Anfang August die Inzidenz von 1 auf 3 angehoben, 
+                      die zweite Stufe Anfang Sepember von 3 auf 8, und die dritte Stufe ab Mitte Oktober von 8 auf 80.
+                      Diese dritte Stufe (seit August 2020) wird von Ministerien und ORF als <b>'zweite Welle'</b>   bezeichnet.
+                      Das Verhalten ist in allen Bundesländern ähnlich, z.T. zeitgleich, z.T. mit leichten Verschiebungen oder kleineren Zwischenstufen.
+                      Gleichwohl mach die Graphik anhand der ersten beiden Stufen deutlich, 
+                      daß eine dritte Stufe mit dramatischen Fallzahlen ohne rechtzeitige Gegenmassnahmen nicht vermeidbar ist.
+                      Der <b>Zeitpunkt für die Gegenmassnahmen</b> ist das erreichen einer kritischen Inzidenz. 
+                      Legt man diese kritische Inzidenz auf 10, so ist das der 5.Okt., bei 15 der 12.Okt, und bei 20 der 19.Okt. 
+                      Auffällig ist die <b>starke Zunahme der Inzidenz ab 19.Okt.</b>, 
+                      auch in Bundesländern mit bis dahin sehr gleichmäßigem Anstieg (e.g. Burgenland oder Kärnten) 
+                    </p>
+                     <p><b>Ausbreitungsgeschwindigkeit</b><br>Die zweite Graphik zeigt Geschwindigkeit der Zunahme bzw. Abnahme der Inzidenz. 
+                        Die Messung erfolgt in Änderung in Prozent vom Vortag, 
+                        und ist in der Skala rechts umgerechnet auf die 'Anzahl Tage bis Verdoppelung' bzw. Halbierung der Inzidenz.
+                        An dieser Darstellung lassen sich die drei Stufen aus dem letzten Abschnitt eindeutig identifizieren.
+                        Zu beachten ist, dass, solange die Ausbreitungsgeschwindigkeit größer als 0% ist, die Infektionszahlen zunehmen. 
+                        Das ist zwischen August und November bis auf wenige Tage immer der Fall.
+                    </p><p><b>Inzidenz und Ausbreitungsgeschwindigkeit</b><br>Für die Beurteilung der aktuellen Lage muss die Inzidenz
+                      zusammen mit der Ausbreitungsgeschwindigkeit (dem Reproduktionsfaktor) betrachtet werden.
+                      (wie insbesondere vom Gesundheitsministerium immer wieder betont wird).
+                      Die dritte Graphik zeigt den Zusammenhang zwischen Inzidenz und Ausbreitungsgeschwindigkeit. Die Kurve beschreibt den <b>Weg Österreichs 
+                      durch die Pandemie</b> (bzw. eines Bundeslandes). Die Monate sind durch unterschiedliche Symbole erkennbar.
+                      Die Lage ist kritisch bei hoher Inzidenz und hoher Ausbreitungsgeschwindigkeit, also im oberen rechten Quadranten der Graphik.
+                      Die Situation verbessert sich, je weiter die Inzidenz und Ausbreitungsgeschwindigkeit abnehmen, 
+                      d.h. die Zahlen sich nach links und unten bewegen. <br> Für diese Graphik ist eine Auswahl von nur ein oder zwei Bundesländern vorteilhaft. 
                     </p>"
+                  
 
 htmlDescription <- read_file("./doc/COVID-19-WeatherMap.html")
 

@@ -1,12 +1,12 @@
 options(error = function() traceback(2))
 
 # do some logging
-logDir = "./log"
-logFile <- "cwm.rshiny.log"
-logMsg <- function(msg, sessionID="_global_") {
-  cat(paste(format(Sys.time(), "%Y%m%d-%H%M%OS3"), sessionID, msg, "\n"), file=paste0(logDir,"/",logFile), append=TRUE)
-  cat(paste(format(Sys.time(), "%Y%m%d-%H%M%OS3"), sessionID, msg, "\n"), file=stderr())
-}
+#logDir = "./log"
+#logFile <- "cwm.rshiny.log"
+#logMsg <- function(msg, sessionID="_global_") {
+#  cat(paste(format(Sys.time(), "%Y%m%d-%H%M%OS3"), sessionID, msg, "\n"), file=paste0(logDir,"/",logFile), append=TRUE)
+#  cat(paste(format(Sys.time(), "%Y%m%d-%H%M%OS3"), sessionID, msg, "\n"), file=stderr())
+#}
 
 
 logMsg("Loading libraries")

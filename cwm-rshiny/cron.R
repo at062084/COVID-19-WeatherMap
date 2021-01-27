@@ -33,7 +33,7 @@ db <- caAgesRead_cfGKZtl()
 logMsg("Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ...","__cron__")
 df <- caAgesRead_tlrm(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile="./data/CovidFallzahlen.rda", bPlot=FALSE, 
                       nRm7Days=7, bDt7=TRUE, nDt7Days=7, bLpr=TRUE, nLprDays=19,
-                      bResiduals=TRUE, dResFirst=as.Date("2020-07-01"), dResLast=as.Date("2020-12-07"), bShiftDown=TRUE,
+                      bResiduals=TRUE, dResFirst=as.Date("2020-07-27"), dResLast=as.Date("2020-11-16"), bShiftDown=TRUE,
                       bPredict=TRUE, nPolyDays=7, nPoly=2,
                       bEstimate=FALSE, bCompleteCases=FALSE)
 logMsg("Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features","__cron__")
