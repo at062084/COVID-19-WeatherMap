@@ -50,7 +50,7 @@ source("ages.R", local=TRUE)
 # -----------------------------------------------------------
 # Define cron job to retrieve new data from AGES
 # -----------------------------------------------------------
-if(0==1) {
+#if(0==1) {
 logMsg("Define cron job for data retrieval from AGES")
 cronJobDir <- "/srv/shiny-server/COVID-19-WeatherMap"
 #cronJobDir <- "/home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny"
@@ -59,9 +59,9 @@ cronJobLog <-paste0(cronJobDir,"/log/cwm.cron.log")
 cmd <- cron_rscript(rscript=cronJobFile, rscript_log=cronJobLog, log_timestamp=TRUE, workdir=cronJobDir)
 cmd
 cron_clear(ask=FALSE)
-cron_add(cmd, frequency='daily', id='AGES-15', at = '14:14')
-cron_add(cmd, frequency='daily', id='AGES-21', at = '22:22')
-}
+cron_add(cmd, id='AGES-14', at = '14:14')
+cron_add(cmd, id='AGES-22', at = '22:22')
+#}
 # -----------------------------------------------------------
 # Reactiv File Poller: Monitor for new files created by cron
 # -----------------------------------------------------------
@@ -154,10 +154,10 @@ ui <- fluidPage(
 
   # Sidebar layout with input and output definitions ----
   sidebarLayout(
-
+    
     # Sidebar panel for inputs ----
     sidebarPanel(width=2,
-      
+      #p("COVID-19-WeatherMap", align = "left", style="color:darkred"),
       p("CWM-V0.4.14-20210126"),
 #      tableOutput("secTime"),
       
@@ -225,41 +225,41 @@ ui <- fluidPage(
         tabPanel("COVID Lage und Aussichten",
                  h4("Lage und Aussichten Bundesländer", align = "left", style="color:gray"),
                  p("[Menüauswahl: NA]", align = "left", style="color:green"),
-                 fluidRow(column(width=9, leafletOutput(outputId = "lftWeatherMap", height="75vh")),
+                 fluidRow(column(width=9, leafletOutput(outputId = "lftWeatherMap", height="90vh")),
                           column(width=3, htmlOutput(outputId="hlpWeatherMap")))),
                   
         tabPanel("Inzidenz Prognose",
                  h4("Prognose TagesInzidenz", align = "left", style="color:gray"),
                  p("[Menüauswahl: NA]", align = "left", style="color:green"),
-                 fluidRow(column(width=8, plotOutput(outputId = "ggpIncidencePrediciton", height="75vh")),
+                 fluidRow(column(width=8, plotOutput(outputId = "ggpIncidencePrediciton", height="90vh")),
                           column(width=4, htmlOutput(outputId="hlpIncidencePrediction")))),
 
         tabPanel("Inzidenz Bundesländer",
                   h4("TagesInzidenz Bundesländer", align = "left", style="color:gray"),
                   p("[Menüauswahl: Zeitbereich,Region]", align = "left", style="color:green"),
-                  fluidRow(column(width=9, plotOutput(outputId = "ggpIncidenceStates", height="75vh")),
+                  fluidRow(column(width=9, plotOutput(outputId = "ggpIncidenceStates", height="90vh")),
                            column(width=3, htmlOutput(outputId="hlpIncidenceStates")))),
 
           tabPanel("Inzidenz Bezirke",
                  h4("TagesInzidenz Bezirke", align = "left", style="color:gray"),
                  p("[Menüauswahl: Zeitbereich,Region]", align = "left", style="color:green"),
-                 fluidRow(column(width=9, plotOutput(outputId = "ggpIncidenceCounties", height="75vh")),
+                 fluidRow(column(width=9, plotOutput(outputId = "ggpIncidenceCounties", height="90vh")),
                           column(width=3, htmlOutput(outputId="hlpIncidenceCounties")))),
         
 
         tabPanel("Ausbreitungsgeschwindigkeit",
                  h4("Änderung der TagesInzidenz in % vom Vortag", align = "left", style="color:gray"),
                  p("[Menüauswahl: Zeitbereich,Region]", align = "left", style="color:green"),
-                 fluidRow(column(width=9, plotOutput(outputId = "ggpChangeRateStates", height="75vh")),
+                 fluidRow(column(width=9, plotOutput(outputId = "ggpChangeRateStates", height="90vh")),
                           column(width=3, htmlOutput(outputId="hlpChangeRateStates")))),
 
         tabPanel("Rückblick 2020",
                  h4("Exponentielles Wachstum in zweiten Halbjahr 2020", align = "left", style="color:gray"),
                  p("[Menüauswahl: Zeitbereich, Region]", align = "left", style="color:green"),
                  fluidRow(column(width=9, 
-                                 plotOutput(outputId = "ggpExpDateConfPop", height="50vh"),
-                                 plotOutput(outputId = "ggpExpDatedt7ConfPop", height="50vh"),
-                                 plotOutput(outputId = "ggpExpConfPopdt7ConfPop", height="50vh")),
+                                 plotOutput(outputId = "ggpExpDateConfPop", height="60vh"),
+                                 plotOutput(outputId = "ggpExpDatedt7ConfPop", height="60vh"),
+                                 plotOutput(outputId = "ggpExpConfPopdt7ConfPop", height="60vh")),
                           column(width=3, htmlOutput(outputId="hlpExponential")))),
 
 #        tabPanel("Rohdaten Bundesländer",
@@ -293,6 +293,9 @@ ui <- fluidPage(
 # --------------------------------------------------------------------------------------------------------------------------
 server <- function(input, output, session) {
 
+  oldWarn <- getOption("warn")
+  options(warn=-1)
+  
   # identify session
   sessionID = substr(session$token,1,8)
   logMsg("Server called ...", sessionID)
@@ -528,7 +531,7 @@ server <- function(input, output, session) {
   output$ggpExpConfPopdt7ConfPop <- renderPlot({
     logMsg("  output$ggpExpConfPopdt7ConfPop: renderPlot", sessionID)
     
-    xLimMin <- .9
+    xLimMin <- 1
     xLimMax <- 128
     yLimMin <- 0.84
     yLimMax <- 1.21
@@ -538,6 +541,9 @@ server <- function(input, output, session) {
     idxRegions <- sort(match(input$cbgRegion,atRegions))
     regPalette <- cbPalette[idxRegions]
     regShapes <- atShapes[idxRegions]
+    sSize=0.5
+    
+    dl <- data.frame(x=c(xLimMin,xLimMax), y=c(yLimMin,yLimMax))
     
     dp <- de.regions()  %>% 
       dplyr::filter(dt7rm7NewConfPop<1.21, dt7rm7NewConfPop>.84) %>%
@@ -546,23 +552,45 @@ server <- function(input, output, session) {
     
     # , name="Tägliche Steigerungsrate [%]"
     ggplot(dp, aes(x=rm7NewConfPop, y=dt7rm7NewConfPop, color=Region, shape=Month))+
-      scale_shape_manual(values=regShapes) +
-      scale_fill_manual(values=regPalette)+
+      geom_line(data=dl, aes(x=x,y=1.104), size=sSize, color="#b00000", inherit.aes=FALSE) +
+      geom_line(data=dl, aes(x=x,y=1.051), size=sSize, color="#ff0000", inherit.aes=FALSE) +
+      geom_line(data=dl, aes(x=x,y=1.025), size=sSize, color="#fe7f00", inherit.aes=FALSE) +
+      geom_line(data=dl, aes(x=x,y=1.012), size=sSize, color="#e3e300", inherit.aes=FALSE) +
+      geom_line(data=dl, aes(x=x,y=1.00), size=2.0, color="white", inherit.aes=FALSE) +
+      geom_line(data=dl, aes(x=x,y=0.988), size=sSize, color="#7ffe00", inherit.aes=FALSE) +
+      geom_line(data=dl, aes(x=x,y=0.976), size=sSize, color="#72e400", inherit.aes=FALSE) +
+      geom_line(data=dl, aes(x=x,y=0.952), size=sSize, color="#62c400", inherit.aes=FALSE) +
+      geom_line(data=dl, aes(x=x,y=0.906), size=sSize, color="#4f9e00", inherit.aes=FALSE) +
+      geom_line(data=dl, aes(y=y,x=1), size=1.0*sSize, color="green", inherit.aes=FALSE) +
+      geom_line(data=dl, aes(y=y,x=2), size=1.0*sSize, color="orange", inherit.aes=FALSE) +
+      geom_line(data=dl, aes(y=y,x=4), size=.8*sSize, color="magenta", inherit.aes=FALSE) +
+      geom_line(data=dl, aes(y=y,x=8), size=.8*sSize, color="red", inherit.aes=FALSE) +
+      geom_line(data=dl, aes(y=y,x=16), size=.8*sSize, color="darkred", inherit.aes=FALSE) +
+      geom_line(data=dl, aes(y=y,x=32), size=.8*sSize, color="black", inherit.aes=FALSE) +
+      geom_line(data=dl, aes(y=y,x=64), size=1.0*sSize, color="black", inherit.aes=FALSE) +
+      geom_line(data=dl, aes(y=y,x=128), size=1.5*sSize, color="black", inherit.aes=FALSE) +
+      
+      theme(panel.grid.major = element_line(color = "darkgray", linetype=3), 
+            panel.grid.minor=element_line(color = "gray90", linetype=1),
+            axis.text = element_text(size=12), axis.title.x=element_blank()) +
+      scale_shape_manual(values=atShapes) +
+      scale_fill_manual(values=regPalette) +
       scale_color_manual(values=regPalette) +
-    #cwmSpreadStyle(input$rbsPastTime) +
-      #theme(panel.grid.major  = element_line(color = "darkgray", linetype=3)) +
-      scale_x_continuous(limits=c(xLimMin,xLimMax), breaks=2^(1:7), trans=trans, sec.axis=dup_axis()) + 
-      scale_y_continuous(limits=c(yLimMin,yLimMax), breaks=exp(log(2)/dblDays), labels=dblDays, position="right", sec.axis=dup_axis()) +
-#                         sec.axis=dup_axis(labels=round((round(exp(log(2)/dblDays),2)-1)*100))) +
+      scale_x_continuous(limits=c(xLimMin,xLimMax), breaks=2^(0:7), trans=trans, sec.axis=dup_axis()) + 
+#      scale_y_continuous(limits=c(yLimMin,yLimMax), breaks=popBreaksAll, position="right", expand=expand_scale(mult=0.025), trans=trans, name="yLabel", sec.axis=dup_axis()) +
+      scale_y_continuous(limits=c(yLimMin,yLimMax), breaks=exp(log(2)/dblXDays), labels=dblXDays, position="right",
+                         sec.axis=dup_axis(labels=as.character(round((exp(log(2)/dblXDays)-1)*100,1)), name="Tägliche Steigerungsrate [%]")) +
       geom_path() + 
-      #geom_line(size=.75) +
       geom_point(size=3) +
-      scale_shape_manual(values=c(21:25,7,9,10,12,13,14)) +
-      geom_line(data=dp, aes(x=rm7NewConfPop, y=1)) +
       ggtitle(paste0("COVID-19 Österreich und Bundesländer: Ausbreitungsgeschwindigkeit gegen TagesInzidenz.  Basisdaten: AGES"))
   })
+
   
-      
+  #      scale_y_continuous(limits=c(yLimMin,yLimMax), breaks=exp(log(2)/dblDays), labels=dblDays, position="right", sec.axis=dup_axis()) +
+  #                         sec.axis=dup_axis(labels=round((round(exp(log(2)/dblDays),2)-1)*100))) +
+  #scale_shape_manual(values=c(21:25,7,9,10,12,13,14)) +
+  #geom_line(data=dp, aes(x=rm7NewConfPop, y=1)) +
+  
   # -------------------------------------------
   # Raw Data
   # -------------------------------------------
@@ -582,7 +610,7 @@ server <- function(input, output, session) {
   # -------------------------------------------
   output$manDescription <- renderText({ htmlDescription })
   
-  
+  options(warn=oldWarn)
 }
 
 

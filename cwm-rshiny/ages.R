@@ -366,9 +366,10 @@ caAgesRead_tlrm <- function(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile=
   # Calculate robust regression on log transformed 
   if (bResiduals) {
     
-    modLogLM <- function(Date, Count, dResFirst=as.Date("2020-07-06"), dResLast=as.Date("2020-11-16"), bPlot=FALSE, bShiftDown=FALSE) {
+    modLogLM <- function(Date, Count, Speed, dResFirst=as.Date("2020-07-27"), dResLast=as.Date("2020-10-19"), bPlot=FALSE, bShiftDown=FALSE) {
       # Complete log(Count)~Date dataframe d, with index into dateRange s considered for regression
       d <- data.frame(Date=Date, logCount=log(Count+0.001))
+      # s <- Date>=dResFirst & Date<=dResLast & Speed > 0.99 & Speed <1.01
       s <- Date>=dResFirst & Date<=dResLast
       # m <- MASS::rlm(logCount~Date, data=d[s,], method="MM", maxit=100)
       # model and prediction of log(Count)
@@ -398,15 +399,15 @@ caAgesRead_tlrm <- function(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile=
     df <- df %>%
       dplyr::arrange(Region, Date) %>%
       dplyr::group_by(Region) %>%
-      dplyr::mutate(modrm7NewTested=modLogLM(Date,rm7NewTested, dResFirst, dResLast)) %>%
-      dplyr::mutate(modrm7NewConfirmed=modLogLM(Date,rm7NewConfirmed, dResFirst, dResLast)) %>%
-      dplyr::mutate(modrm7NewConfPop=modLogLM(Date,rm7NewConfPop, dResFirst, dResLast)) %>%
-      dplyr::mutate(modrm7NewConfTest=modLogLM(Date,rm7NewConfTest, dResFirst, dResLast)) %>%    # produces some NA's
-      dplyr::mutate(modrm7CurConfirmed=modLogLM(Date,rm7CurConfirmed, dResFirst, dResLast)) %>%
-      dplyr::mutate(modrm7CurHospital=modLogLM(Date,rm7CurHospital, dResFirst, dResLast)) %>%
-      dplyr::mutate(modrm7CurICU=modLogLM(Date,rm7CurICU, dResFirst, dResLast)) %>%
-      dplyr::mutate(modrm7NewRecovered=modLogLM(Date,rm7NewRecovered, dResFirst, dResLast)) %>%
-      dplyr::mutate(modrm7NewDeaths=modLogLM(Date,rm7NewDeaths, as.Date("2020-09-21"), as.Date("2020-12-07"))) %>%
+      dplyr::mutate(modrm7NewTested=modLogLM(Date, rm7NewTested, dt7rm7NewConfirmed, dResFirst, dResLast)) %>%
+      dplyr::mutate(modrm7NewConfirmed=modLogLM(Date, rm7NewConfirmed, dt7rm7NewConfirmed, dResFirst, dResLast)) %>%
+      dplyr::mutate(modrm7NewConfPop=modLogLM(Date, rm7NewConfPop, dt7rm7NewConfirmed, dResFirst, dResLast)) %>%
+      dplyr::mutate(modrm7NewConfTest=modLogLM(Date, rm7NewConfTest, dt7rm7NewConfirmed, dResFirst, dResLast)) %>%    # produces some NA's
+      dplyr::mutate(modrm7CurConfirmed=modLogLM(Date, rm7CurConfirmed, dt7rm7NewConfirmed, dResFirst, dResLast)) %>%
+      dplyr::mutate(modrm7CurHospital=modLogLM(Date, rm7CurHospital, dt7rm7NewConfirmed, dResFirst, dResLast)) %>%
+      dplyr::mutate(modrm7CurICU=modLogLM(Date, rm7CurICU, dt7rm7NewConfirmed, dResFirst, dResLast)) %>%
+      dplyr::mutate(modrm7NewRecovered=modLogLM(Date, rm7NewRecovered, dt7rm7NewConfirmed, dResFirst, dResLast)) %>%
+      dplyr::mutate(modrm7NewDeaths=modLogLM(Date, rm7NewDeaths, dt7rm7NewConfirmed, as.Date("2020-09-21"), as.Date("2020-12-07"))) %>%
       
       dplyr::mutate(resrm7NewTested=rm7NewTested-modrm7NewTested) %>%
       dplyr::mutate(resrm7NewConfirmed=rm7NewConfirmed-modrm7NewConfirmed) %>%

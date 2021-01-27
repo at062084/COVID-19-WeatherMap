@@ -28,7 +28,7 @@ atRegions=c("Burgenland","Kärnten","Niederösterreich","Oberösterreich","Öste
 atShapes <- c(10,6,7,2,11,5,12,22,1,9)
 # Settings for all Region Plots: Color Blind Palette
 #cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#000000", "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#FF0000")
-cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#333333", "#F0D042", "#0072B2", "#D55E00", "#CC79A7", "#C40000")
+cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#444444", "#F0D042", "#0072B2", "#D55E00", "#CC79A7", "#C40000")
 
 # Settings for cwmConfPopStyle
 popBreaksAll <- c(0,1,2,3,4,5,6,7,8,9,10,12,15,seq(20,100,by=10),120,150,200,300,400,500)
@@ -118,8 +118,8 @@ cwmConfPopStyle <- function(rbsPastTime=25, cbLogScale=TRUE, inRegions=1:10, xLi
       scale_shape_manual(values=regShapes),
       scale_fill_manual(values=regPalette),
       scale_color_manual(values=regPalette),
-      scale_x_date(limits=xLimits, date_breaks=rvBreaks, date_labels=rvLabels, expand=expand_scale(mult=0.025), sec.axis=dup_axis()),
-      scale_y_continuous(limits=yLimits, breaks=popBreaksAll, position="right", expand=expand_scale(mult=0.01), trans=trans, name=yLabel, sec.axis=dup_axis()),
+      scale_x_date(limits=xLimits, date_breaks=rvBreaks, date_labels=rvLabels, expand=expand_scale(add=1), sec.axis=dup_axis()),
+      scale_y_continuous(limits=yLimits, breaks=popBreaksAll, position="right", expand=expand_scale(mult=0.025), trans=trans, name=yLabel, sec.axis=dup_axis()),
       geom_line(aes(y=1), size=1.0, color="green"),
       geom_line(aes(y=2), size=1.0, color="orange"),
       geom_line(aes(y=4), size=.8, color="magenta"),
@@ -156,20 +156,20 @@ cwmSpreadStyle <- function(rbsPastTime=25, inRegions=1:10, yLimits=c(0.84, 1.19)
           panel.grid.minor=element_line(color = "gray90", linetype=1),
           axis.text = element_text(size=12), axis.title.x=element_blank()),
     scale_shape_manual(values=regShapes),
-    scale_x_date(date_breaks=rvBreaks, date_labels=rvLabels, expand=expand_scale(mult=0.025), sec.axis=dup_axis()),
+    scale_x_date(date_breaks=rvBreaks, date_labels=rvLabels, expand=expand_scale(add=1), sec.axis=dup_axis()),
     scale_y_continuous(limits=yLimits, breaks=exp(log(2)/dblXDays), labels=dblXDays, position="right",
                        sec.axis=dup_axis(labels=as.character(round((exp(log(2)/dblXDays)-1)*100,1)), name="Tägliche Steigerungsrate [%]")),
     scale_fill_manual(values=regPalette),
     scale_color_manual(values=regPalette),
-    geom_line(aes(y=1.104), size=sSize, color="black"),
-    geom_line(aes(y=1.051), size=sSize, color="darkred"),
-    geom_line(aes(y=1.025), size=sSize, color="red"),
-    geom_line(aes(y=1.012), size=sSize, color="orange"),
-    geom_line(aes(y=1.00), size=1.0, color="black"),
-    geom_line(aes(y=0.988), size=sSize, color="lightgreen"),
-    geom_line(aes(y=0.976), size=sSize, color="green"),
-    geom_line(aes(y=0.952), size=sSize, color="blue"),
-    geom_line(aes(y=0.906), size=sSize, color="darkblue")
+    geom_line(aes(y=1.104), size=sSize, color="#b00000"),
+    geom_line(aes(y=1.051), size=sSize, color="#ff0000"),
+    geom_line(aes(y=1.025), size=sSize, color="#fe7f00"),
+    geom_line(aes(y=1.012), size=sSize, color="#e3e300"),
+    geom_line(aes(y=1.00), size=2.0, color="white"),
+    geom_line(aes(y=0.988), size=sSize, color="#7ffe00"),
+    geom_line(aes(y=0.976), size=sSize, color="#72e400"),
+    geom_line(aes(y=0.952), size=sSize, color="#62c400"),
+    geom_line(aes(y=0.906), size=sSize, color="#4f9e00")
   )
 }
 
