@@ -44,10 +44,11 @@ RUN  install2.r --error \
 # RUN rm -rf /srv/shiny-server/*
 WORKDIR /srv/shiny-server/COVID-19-WeatherMap
 COPY ./cwm-rshiny .
-RUN sudo chown -R shiny:shiny /srv/shiny-server
-
-RUN sudo touch /etc/cron.allow
-RUN sudo echo shiny >> /etc/cron.allow
+RUN sudo chown -R shiny:shiny /srv/shiny-server \
+    && sudo touch /etc/cron.allow \
+    && sudo echo shiny >> /etc/cron.allow \
+    && sudo perl -p -i -e s/101:/101:shiny/g /etc/group \
+    && sudo service cron start
 #RUN sudo groupmems -g crontab -a shiny
 
 # Pass Kubernetes variable if available

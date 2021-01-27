@@ -35,3 +35,24 @@
 20210127-010708.720 __cron__ Sourcing fun.R 
 20210127-011342.631 __cron__ cron: Start Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
 20210127-011342.645 __cron__ Sourcing fun.R 
+20210127-153413.071 __cron__ cron: Start Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210127-153413.093 __cron__ Sourcing fun.R 
+20210127-153413.104 __cron__ Loading libraries 
+20210127-153413.107 __cron__ Sourcing ages.R 
+20210127-153413.123 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210127-153413.186 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210127-153413.187 __cron__ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210127-153414.395 __cron__ Writing ./data/CovidFallzahlen.rda 
+20210127-153414.407 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210127-153414.438 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210127-153414.439 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210127-153415.622 __cron__ Writing ./data/CovidFaelle_Timeline.rda 
+20210127-153415.638 __cron__ Downloading CovidFaelle_Timeline_GKZ data from AGES ... 
+20210127-153415.717 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv 
+20210127-153415.717 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline_GKZ.csv 
+20210127-153419.618 __cron__ Writing ./data/CovidFaelle_Timeline_GKZ.rda 
+20210127-153420.403 __cron__ Writing ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210127-153420.543 __cron__ Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ... 
+20210127-153445.246 __cron__ Writing ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210127-153445.338 __cron__ Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features 
+20210127-153445.338 __cron__ cron: Done Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
