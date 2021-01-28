@@ -1,5 +1,8 @@
 #!/usr/lib64/R/bin/Rscript
 
+library(httr)
+library(lubridate)
+
 options(error = function() traceback(2))
 setwd("/srv/shiny-server/COVID-19-WeatherMap")
 #setwd("/home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny")
@@ -10,6 +13,14 @@ logMsg <- function(msg, sessionID="__cron__") {
   cat(paste(format(Sys.time(), "%Y%m%d-%H%M%OS3"), sessionID, msg, "\n"), file=paste0(logDir,"/",logFile), append=TRUE)
   cat(paste(format(Sys.time(), "%Y%m%d-%H%M%OS3"), sessionID, msg, "\n"), file=stderr())
 }
+
+slackMsg <- function (title, msg) {
+  url <- as.character(read.csv("./secrets/slack.txt",header=FALSE)[1,1])
+  body <- list(text = paste(paste0(now()," *",title,"*: "), msg))
+  r <- POST(url, content_type_json(), body = body, encode = "json")
+  invisible(r)
+}
+slackMsg(title="COVID-19-WeatherMap",msg=paste("Start cron job cron.R"))
 
 # Download AGES Data Files from AGES website at www.data.gv.at/covid-19
 logMsg(paste("cron: Start Running script cron.R in ", getwd()),"__cron__")
@@ -38,6 +49,7 @@ df <- caAgesRead_tlrm(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile="./dat
                       bEstimate=FALSE, bCompleteCases=FALSE)
 logMsg("Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features","__cron__")
 
+slackMsg(title="COVID-19-WeatherMap",msg=paste("Complete cron job cron.R"))
 logMsg(paste("cron: Done Running script cron.R in ", getwd()),"__cron__")
 
 

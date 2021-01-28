@@ -1,5 +1,7 @@
 options(error = function() traceback(2))
 options(shiny.reactlog = TRUE)
+library(lubridate)
+library(httr)
 
 # do some logging
 logDir = "./log"
@@ -9,9 +11,16 @@ logMsg <- function(msg, sessionID="_global_") {
   cat(paste(format(Sys.time(), "%Y%m%d-%H%M%OS3"), sessionID, msg, "\n"), file=stderr())
 }
 
+slackMsg <- function (title, msg) {
+  url <- as.character(read.csv("./secrets/slack.txt",header=FALSE)[1,1])
+  body <- list(text = paste(paste0(now()," *",title,"*: "), msg))
+  r <- POST(url, content_type_json(), body = body, encode = "json")
+  invisible(r)
+}
+slackMsg(title="COVID-19-WeatherMap",msg=paste("Start shiny global section in app.R"))
+
 logMsg("Loading libraries")
 library(shiny)
-library(lubridate)
 library(dplyr)
 library(ggplot2)
 library(stringi)
@@ -99,24 +108,6 @@ dg <- eventReactive(dg.rfr(), {
   dg.rfr()} )
 
 
-#cwmTestFile <- "./data/COVID-19-CWM-AGES-Test-Curated.rda"
-#cwmTestFile <- "./data/test.csv"
-#dt.rfr <- reactiveFileReader(
-#  session=NULL,
-#  intervalMillis=1000,
-#  filePath=cwmTestFile,
-#  readFunc=read.csv
-#)
-#dt <- eventReactive(dt.rfr(), {
-#  logMsg(paste("eventReactive: reactiveFileReader for", cwmTestFile)) 
-#  dt.rfr()} )
-
-# -----------------------------------------------------
-# AGES data files
-# -----------------------------------------------------
-#logMsg("Loading data files")
-#df <- readRDS(file="./data/COVID-19-CWM-AGES-States-Curated.rda")
-#dg <- readRDS(file="./data/COVID-19-CWM-AGES-Counties-Curated.rda")
 
 # -----------------------------------------------------
 # Map Austria data structures
@@ -291,9 +282,6 @@ ui <- fluidPage(
 # --------------------------------------------------------------------------------------------------------------------------
 server <- function(input, output, session) {
 
-  oldWarn <- getOption("warn")
-  options(warn=-1)
-  
   # identify session
   sessionID = substr(session$token,1,8)
   logMsg("Server called ...", sessionID)
@@ -327,45 +315,48 @@ server <- function(input, output, session) {
   output$lftWeatherMap <- renderLeaflet({
     logMsg("  output$ggpIncidenceStates: renderPlot", sessionID)
     
-  #levConfPop <- round(c(0,10^seq(0,2,by=0.2),1000),1)
-  # bins for rm7ConfPop
-  binConfPop <- c(0,1,1.4,2,2.8,4,5.6,8,11,16,22,32,45,64,90,128,512)
-  palConfPop <- c(brewer.pal(9,"Greens")[c(7,6,5,4)], brewer.pal(9,"YlOrRd"), "#404040", brewer.pal(9,"Greys")[c(8,9)])
-  colConfPop <- colorBin(palette=palConfPop, domain=0:256, bins=binConfPop)
+    oldWarn <- getOption("warn")
+    options(warn=-1)
+    
+    #levConfPop <- round(c(0,10^seq(0,2,by=0.2),1000),1)
+    # bins for rm7ConfPop
+    binConfPop <- c(0,1,1.4,2,2.8,4,5.6,8,11,16,22,32,45,64,90,128,512)
+    palConfPop <- c(brewer.pal(9,"Greens")[c(7,6,5,4)], brewer.pal(9,"YlOrRd"), "#404040", brewer.pal(9,"Greys")[c(8,9)])
+    colConfPop <- colorBin(palette=palConfPop, domain=0:256, bins=binConfPop)
+    
+    # 7 icons: bins for dt* 
+    dblDays <- c(1,14,28,56,-56,-28,-14,-1)
+    binDblDays <- sort(round(exp(log(2)/dblDays),3))
+    
+    # 5 Icons
+    binForeCast <- c(0,4,8,16,32,Inf)
+    
+    # today's data for weathermap
+    nWeatherForeCastDays=10 # same as slider=7 for incidence prediction (3 is automatically added to slider reading)
+    #dp <- df.past() %>% dplyr::filter(Date==max(Date)) %>% dplyr::select(Date, Region, dt7rm7NewConfPop,starts_with("rm7"))# Today
+    # days from today back nWeatherForeCastDays days
+    de <- df.past() %>% dplyr::filter(Date>=max(Date)-days(nWeatherForeCastDays)) %>% dplyr::select(Date, Region, dt7rm7NewConfPop,starts_with("rm7")) # Past days for forecast
+    # model prediction for today
+    dq <- cwmAgesRm7EstimatePoly(de, nModelDays=nWeatherForeCastDays, nPredDays=0, nPoly=1) %>%
+      dplyr::filter(Date==max(de$Date))
+    # model predicition for next week
+    dm <- cwmAgesRm7EstimatePoly(de, nModelDays=nWeatherForeCastDays, nPredDays=7, nPoly=1) %>%
+      dplyr::filter(Date==max(Date))
+    
   
-  # 7 icons: bins for dt* 
-  dblDays <- c(1,14,28,56,-56,-28,-14,-1)
-  binDblDays <- sort(round(exp(log(2)/dblDays),3))
-  
-  # 5 Icons
-  binForeCast <- c(0,4,8,16,32,Inf)
-  
-  # today's data for weathermap
-  nWeatherForeCastDays=10 # same as slider=7 for incidence prediction (3 is automatically added to slider reading)
-  #dp <- df.past() %>% dplyr::filter(Date==max(Date)) %>% dplyr::select(Date, Region, dt7rm7NewConfPop,starts_with("rm7"))# Today
-  # days from today back nWeatherForeCastDays days
-  de <- df.past() %>% dplyr::filter(Date>=max(Date)-days(nWeatherForeCastDays)) %>% dplyr::select(Date, Region, dt7rm7NewConfPop,starts_with("rm7")) # Past days for forecast
-  # model prediction for today
-  dq <- cwmAgesRm7EstimatePoly(de, nModelDays=nWeatherForeCastDays, nPredDays=0, nPoly=1) %>%
-    dplyr::filter(Date==max(de$Date))
-  # model predicition for next week
-  dm <- cwmAgesRm7EstimatePoly(de, nModelDays=nWeatherForeCastDays, nPredDays=7, nPoly=1) %>%
-    dplyr::filter(Date==max(Date))
-  
-
-  pMapNUTS <- mapNUTS %>% 
-    # construct single row with all required fields. merges data for today and forecast
-    dplyr::left_join(dm, by="Region") %>%
-    dplyr::left_join(dq, by="Region", suffix = c(".f", ".c")) %>%
-    dplyr::left_join(de %>% dplyr::select(Date, Region,dt7rm7NewConfPop) %>% dplyr::filter(Date==max(Date)) %>% dplyr::select(-Date), by="Region") %>%
-    dplyr::mutate(idxCurConfPop=.bincode(rm7NewConfPop.c,binForeCast), 
-                  idxDblConfPop=.bincode((rm7NewConfPop.c+(rm7NewConfPop.f-rm7NewConfPop.c)/7)/rm7NewConfPop.c,binDblDays), 
-                  idxForConfPop=.bincode(rm7NewConfPop.f,binForeCast))
-  # idxDblConfPop=.bincode(dt7rm7NewConfPop,binDblDays), 
-  
-  labWeatherMap <- sprintf(
-    "<strong>%s</strong><br/>TagesInzidenz: %g pro 100000<br>Änderung seit letzer Woche: %g%%<br>Prognose nächste Woche: %g",
-    pMapNUTS$Region, round(pMapNUTS$rm7NewConfPop.c,2), round(pMapNUTS$dt7rm7NewConfPop,2), round(pMapNUTS$rm7NewConfPop.f,2)) %>% lapply(htmltools::HTML)
+    pMapNUTS <- mapNUTS %>% 
+      # construct single row with all required fields. merges data for today and forecast
+      dplyr::left_join(dm, by="Region") %>%
+      dplyr::left_join(dq, by="Region", suffix = c(".f", ".c")) %>%
+      dplyr::left_join(de %>% dplyr::select(Date, Region,dt7rm7NewConfPop) %>% dplyr::filter(Date==max(Date)) %>% dplyr::select(-Date), by="Region") %>%
+      dplyr::mutate(idxCurConfPop=.bincode(rm7NewConfPop.c,binForeCast), 
+                    idxDblConfPop=.bincode((rm7NewConfPop.c+(rm7NewConfPop.f-rm7NewConfPop.c)/7)/rm7NewConfPop.c,binDblDays), 
+                    idxForConfPop=.bincode(rm7NewConfPop.f,binForeCast))
+    # idxDblConfPop=.bincode(dt7rm7NewConfPop,binDblDays), 
+    
+    labWeatherMap <- sprintf(
+      "<strong>%s</strong><br/>TagesInzidenz: %g pro 100000<br>Änderung seit letzer Woche: %g%%<br>Prognose nächste Woche: %g",
+      pMapNUTS$Region, round(pMapNUTS$rm7NewConfPop.c,2), round(pMapNUTS$dt7rm7NewConfPop,2), round(pMapNUTS$rm7NewConfPop.f,2)) %>% lapply(htmltools::HTML)
   
     leaflet(pMapNUTS) %>%
       addTiles(group="DefaultMap",options = providerTileOptions(minZoom=6, maxZoom=8)) %>%
@@ -385,6 +376,8 @@ server <- function(input, output, session) {
       #addMarkers(lng=~cxNUTS, lat=~cyNUTS, group="Trend", label=atRegions, popup=~Region) %>%
       #addLayersControl(overlayGroups=c("AT1","AT3"), options=layersControlOptions(collapsed=FALSE)) %>%
       hideGroup(c("AT1","AT3","Markers"))
+    
+    options(warn=oldWarn)
   })
   
   # -------------------------------------------
@@ -394,6 +387,8 @@ server <- function(input, output, session) {
   
   output$ggpIncidencePrediciton <- renderPlot({
     logMsg("  output$ggpIncidencePrediciton: renderPlot", sessionID)
+    oldWarn <- getOption("warn")
+    options(warn=-1)
     
     # react on Update button
     input$abUpdate
@@ -418,6 +413,8 @@ server <- function(input, output, session) {
       geom_point(data=dk,aes(x=Date,y=rm7NewConfPop), size=2) + 
       geom_line(data=dk,aes(x=Date,y=rm7NewConfPop), size=.5) + 
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Prognose TagesInzidenz. Stand ", max(dk$Date), ".  Basisdaten: AGES"))
+  
+    options(warn=oldWarn)
   })
   
   
@@ -428,7 +425,9 @@ server <- function(input, output, session) {
 
   output$ggpIncidenceStates <- renderPlot({
     logMsg("  output$ggpIncidenceStates: renderPlot", sessionID)
-
+    oldWarn <- getOption("warn")
+    options(warn=-1)
+    
     input$abUpdate
     inRegions <- isolate(input$cbgRegion)
     dp <- df.past() %>% dplyr::filter(Region %in% inRegions)
@@ -438,6 +437,8 @@ server <- function(input, output, session) {
       geom_point(size=2)+geom_line()+
       geom_point(data=dp %>% dplyr::filter(Date==max(Date)), size=4)+
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Positiv Getestete pro 100.000 Einw. seit ", min(dp$Date), ".  Basisdaten: AGES"))
+
+    options(warn=oldWarn)
   })
 
   
@@ -448,6 +449,8 @@ server <- function(input, output, session) {
   
   output$ggpIncidenceCounties <- renderPlot({
     logMsg("  output$ggpIncidenceCounties: renderPlot", sessionID)
+    oldWarn <- getOption("warn")
+    options(warn=-1)
     
     input$abUpdate
     inRegions <- isolate(input$cbgRegion)
@@ -457,6 +460,8 @@ server <- function(input, output, session) {
       cwmConfPopStyle(rbsPastTime=input$rbsPastTime, cbLogScale=input$cbLogScale, inRegions=inRegions[inRegions!="Österreich"], yLimits=c(.5,256)) +
       geom_line(size=.25, aes(color=Region))+
       ggtitle(paste0("COVID-19 Österreich, Bundesländer und Bezirke: Positiv Getestete pro 100.000 Einw. seit ", min(dp$Date), ".  Basisdaten: AGES"))
+
+    options(warn=oldWarn)
   })
 
   
@@ -467,6 +472,8 @@ server <- function(input, output, session) {
   
   output$ggpChangeRateStates <- renderPlot({
     logMsg("  output$ggpChangeRateStates: renderPlot", sessionID)
+    oldWarn <- getOption("warn")
+    options(warn=-1)
     
     input$abUpdate
     inRegions <- isolate(input$cbgRegion)
@@ -479,6 +486,8 @@ server <- function(input, output, session) {
       geom_point(size=2) + 
       geom_point(data=dp %>% dplyr::filter(Date==max(Date)), size=4)+
       ggtitle(paste0("COVID-19 Österreich und Bundesländer: Ausbreitungsgeschwindigkeit in % pro Tag, seit ", min(dp$Date), ".  Basisdaten: AGES"))
+
+    options(warn=oldWarn)
   })
   
   # -------------------------------------------
@@ -488,6 +497,8 @@ server <- function(input, output, session) {
 
   output$ggpExpDateConfPop <- renderPlot({
     logMsg("  output$ggpExpDateConfPop: renderPlot", sessionID)
+    oldWarn <- getOption("warn")
+    options(warn=-1)
     
     input$abUpdate
     inRegions <- isolate(input$cbgRegion)
@@ -496,10 +507,14 @@ server <- function(input, output, session) {
       geom_point(size=2)+geom_line()+
       geom_line(aes(y=modrm7NewConfPop)) +
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: TagesInzidenz: Positiv getestete pro Tag pro 100.000 Einwohner.  Basisdaten: AGES"))
+
+    options(warn=oldWarn)
   })
 
   output$ggpExpDatedt7ConfPop <- renderPlot({
     logMsg("  output$ggpExpDatedt7ConfPop: renderPlot", sessionID)
+    oldWarn <- getOption("warn")
+    options(warn=-1)
     
     xLimMin <- .9
     xLimMax <- 100
@@ -517,10 +532,14 @@ server <- function(input, output, session) {
       geom_line(size=.75) +
       geom_point(size=2) + 
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Ausbreitungsgeschwindigkeit in % pro Tag.  Basisdaten: AGES"))
+  
+    options(warn=oldWarn)
   })
   
   output$ggpExpConfPopdt7ConfPop <- renderPlot({
     logMsg("  output$ggpExpConfPopdt7ConfPop: renderPlot", sessionID)
+    oldWarn <- getOption("warn")
+    options(warn=-1)
     
     xLimMin <- 1
     xLimMax <- 128
@@ -575,6 +594,8 @@ server <- function(input, output, session) {
       geom_path() + 
       geom_point(size=3) +
       ggtitle(paste0("COVID-19 Österreich und Bundesländer: Ausbreitungsgeschwindigkeit gegen TagesInzidenz.  Basisdaten: AGES"))
+  
+    options(warn=oldWarn)
   })
 
   
@@ -601,8 +622,6 @@ server <- function(input, output, session) {
   # Erläuterungen
   # -------------------------------------------
   output$manDescription <- renderText({ htmlDescription })
-  
-  options(warn=oldWarn)
 }
 
 
