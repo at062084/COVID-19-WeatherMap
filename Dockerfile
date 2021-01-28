@@ -40,8 +40,13 @@ RUN  install2.r --error \
     forcats \
   && rm -rf /tmp/downloaded_packages
  
+RUN  install2.r --error \
+    httr \
+  && rm -rf /tmp/downloaded_packages
  
-# RUN rm -rf /srv/shiny-server/*
+RUN rm -rf /srv/shiny-server/*
+WORKDIR /srv/shiny-server/COVID-19-WeatherMap/secrets
+COPY ./secrets . 
 WORKDIR /srv/shiny-server/COVID-19-WeatherMap
 COPY ./cwm-rshiny .
 
