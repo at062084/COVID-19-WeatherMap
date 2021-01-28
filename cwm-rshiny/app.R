@@ -314,8 +314,6 @@ server <- function(input, output, session) {
   
   output$lftWeatherMap <- renderLeaflet({
     logMsg("  output$ggpIncidenceStates: renderPlot", sessionID)
-    
-    oldWarn <- getOption("warn")
     options(warn=-1)
     
     #levConfPop <- round(c(0,10^seq(0,2,by=0.2),1000),1)
@@ -376,8 +374,6 @@ server <- function(input, output, session) {
       #addMarkers(lng=~cxNUTS, lat=~cyNUTS, group="Trend", label=atRegions, popup=~Region) %>%
       #addLayersControl(overlayGroups=c("AT1","AT3"), options=layersControlOptions(collapsed=FALSE)) %>%
       hideGroup(c("AT1","AT3","Markers"))
-    
-    options(warn=oldWarn)
   })
   
   # -------------------------------------------
@@ -387,7 +383,6 @@ server <- function(input, output, session) {
   
   output$ggpIncidencePrediciton <- renderPlot({
     logMsg("  output$ggpIncidencePrediciton: renderPlot", sessionID)
-    oldWarn <- getOption("warn")
     options(warn=-1)
     
     # react on Update button
@@ -413,8 +408,6 @@ server <- function(input, output, session) {
       geom_point(data=dk,aes(x=Date,y=rm7NewConfPop), size=2) + 
       geom_line(data=dk,aes(x=Date,y=rm7NewConfPop), size=.5) + 
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Prognose TagesInzidenz. Stand ", max(dk$Date), ".  Basisdaten: AGES"))
-  
-    options(warn=oldWarn)
   })
   
   
@@ -425,7 +418,6 @@ server <- function(input, output, session) {
 
   output$ggpIncidenceStates <- renderPlot({
     logMsg("  output$ggpIncidenceStates: renderPlot", sessionID)
-    oldWarn <- getOption("warn")
     options(warn=-1)
     
     input$abUpdate
@@ -437,8 +429,6 @@ server <- function(input, output, session) {
       geom_point(size=2)+geom_line()+
       geom_point(data=dp %>% dplyr::filter(Date==max(Date)), size=4)+
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Positiv Getestete pro 100.000 Einw. seit ", min(dp$Date), ".  Basisdaten: AGES"))
-
-    options(warn=oldWarn)
   })
 
   
@@ -449,7 +439,6 @@ server <- function(input, output, session) {
   
   output$ggpIncidenceCounties <- renderPlot({
     logMsg("  output$ggpIncidenceCounties: renderPlot", sessionID)
-    oldWarn <- getOption("warn")
     options(warn=-1)
     
     input$abUpdate
@@ -460,8 +449,6 @@ server <- function(input, output, session) {
       cwmConfPopStyle(rbsPastTime=input$rbsPastTime, cbLogScale=input$cbLogScale, inRegions=inRegions[inRegions!="Österreich"], yLimits=c(.5,256)) +
       geom_line(size=.25, aes(color=Region))+
       ggtitle(paste0("COVID-19 Österreich, Bundesländer und Bezirke: Positiv Getestete pro 100.000 Einw. seit ", min(dp$Date), ".  Basisdaten: AGES"))
-
-    options(warn=oldWarn)
   })
 
   
@@ -472,7 +459,6 @@ server <- function(input, output, session) {
   
   output$ggpChangeRateStates <- renderPlot({
     logMsg("  output$ggpChangeRateStates: renderPlot", sessionID)
-    oldWarn <- getOption("warn")
     options(warn=-1)
     
     input$abUpdate
@@ -486,8 +472,6 @@ server <- function(input, output, session) {
       geom_point(size=2) + 
       geom_point(data=dp %>% dplyr::filter(Date==max(Date)), size=4)+
       ggtitle(paste0("COVID-19 Österreich und Bundesländer: Ausbreitungsgeschwindigkeit in % pro Tag, seit ", min(dp$Date), ".  Basisdaten: AGES"))
-
-    options(warn=oldWarn)
   })
   
   # -------------------------------------------
@@ -497,7 +481,6 @@ server <- function(input, output, session) {
 
   output$ggpExpDateConfPop <- renderPlot({
     logMsg("  output$ggpExpDateConfPop: renderPlot", sessionID)
-    oldWarn <- getOption("warn")
     options(warn=-1)
     
     input$abUpdate
@@ -507,13 +490,10 @@ server <- function(input, output, session) {
       geom_point(size=2)+geom_line()+
       geom_line(aes(y=modrm7NewConfPop)) +
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: TagesInzidenz: Positiv getestete pro Tag pro 100.000 Einwohner.  Basisdaten: AGES"))
-
-    options(warn=oldWarn)
   })
 
   output$ggpExpDatedt7ConfPop <- renderPlot({
     logMsg("  output$ggpExpDatedt7ConfPop: renderPlot", sessionID)
-    oldWarn <- getOption("warn")
     options(warn=-1)
     
     xLimMin <- .9
@@ -532,13 +512,10 @@ server <- function(input, output, session) {
       geom_line(size=.75) +
       geom_point(size=2) + 
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Ausbreitungsgeschwindigkeit in % pro Tag.  Basisdaten: AGES"))
-  
-    options(warn=oldWarn)
   })
   
   output$ggpExpConfPopdt7ConfPop <- renderPlot({
     logMsg("  output$ggpExpConfPopdt7ConfPop: renderPlot", sessionID)
-    oldWarn <- getOption("warn")
     options(warn=-1)
     
     xLimMin <- 1
@@ -594,8 +571,6 @@ server <- function(input, output, session) {
       geom_path() + 
       geom_point(size=3) +
       ggtitle(paste0("COVID-19 Österreich und Bundesländer: Ausbreitungsgeschwindigkeit gegen TagesInzidenz.  Basisdaten: AGES"))
-  
-    options(warn=oldWarn)
   })
 
   
