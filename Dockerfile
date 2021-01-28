@@ -45,7 +45,7 @@ RUN  install2.r --error \
 WORKDIR /srv/shiny-server/COVID-19-WeatherMap
 COPY ./cwm-rshiny .
 
-RUN sudo 'chown -R shiny:shiny /srv/shiny-server \
+RUN sudo chown -R shiny:shiny /srv/shiny-server \
     && touch /etc/cron.allow \
     && echo shiny >> /etc/cron.allow \
     && perl -p -i -e s/101:/101:shiny/g /etc/group \
