@@ -3161,3 +3161,39 @@
 20210128-003819.522 ef4108fd   output$ggpChangeRateStates: renderPlot 
 20210128-003819.527 ef4108fd   Reactive: df.past: Filtering for rbsPastTime 
 20210128-003830.162 ef4108fd   output$ggpChangeRateStates: renderPlot 
+20210128-005939.345 _global_ Loading libraries 
+20210128-005939.348 _global_ Sourcing fun.R 
+20210128-005939.353 _global_ Loading libraries 
+20210128-005939.356 _global_ Sourcing hlp.R 
+20210128-005939.363 _global_ Sourcing ages.R 
+20210128-005939.372 _global_ Define cron job for data retrieval from AGES 
+20210128-010005.882 _global_ Loading libraries 
+20210128-010005.884 _global_ Sourcing fun.R 
+20210128-010005.888 _global_ Loading libraries 
+20210128-010005.891 _global_ Sourcing hlp.R 
+20210128-010005.896 _global_ Sourcing ages.R 
+20210128-010005.927 _global_ Constructing global data structures 
+20210128-010007.819 60872f6d Server called ... 
+20210128-010007.944 60872f6d   output$ggpIncidenceStates: renderPlot 
+20210128-010007.951 60872f6d   Reactive: df.past: Filtering for rbsPastTime 
+20210128-010007.977 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210128-010111.890 _global_ Loading libraries 
+20210128-010111.891 _global_ Sourcing fun.R 
+20210128-010111.896 _global_ Loading libraries 
+20210128-010111.899 _global_ Sourcing hlp.R 
+20210128-010111.905 _global_ Sourcing ages.R 
+20210128-010111.939 _global_ Constructing global data structures 
+20210128-010113.729 c398be46 Server called ... 
+20210128-010114.522 c398be46   output$ggpIncidenceStates: renderPlot 
+20210128-010114.525 c398be46   Reactive: df.past: Filtering for rbsPastTime 
+20210128-010114.540 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210128-010141.885 _global_ Loading libraries 
+20210128-010141.887 _global_ Sourcing fun.R 
+20210128-010141.895 _global_ Loading libraries 
+20210128-010141.899 _global_ Sourcing hlp.R 
+20210128-010141.906 _global_ Sourcing ages.R 
+20210128-010141.941 _global_ Constructing global data structures 
+20210128-010143.632 0dc68667 Server called ... 
+20210128-010143.778 0dc68667   output$ggpIncidenceStates: renderPlot 
+20210128-010143.780 0dc68667   Reactive: df.past: Filtering for rbsPastTime 
+20210128-010143.799 _global_ eventReactive: reactiveFileReader df for ./data/COVID-19-CWM-AGES-States-Curated.rda 

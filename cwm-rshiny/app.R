@@ -164,7 +164,7 @@ ui <- fluidPage(
     # Sidebar panel for inputs ----
     sidebarPanel(width=2,
       #p("COVID-19-WeatherMap", align = "left", style="color:darkred"),
-      p("CWM-V0.4.17-20210128"),
+      p("CWM-V0.5.0-20210128"),
 #      tableOutput("secTime"),
       
       fluidRow(
