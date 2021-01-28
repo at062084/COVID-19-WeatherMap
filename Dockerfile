@@ -49,7 +49,9 @@ RUN sudo 'chown -R shiny:shiny /srv/shiny-server \
     && touch /etc/cron.allow \
     && echo shiny >> /etc/cron.allow \
     && perl -p -i -e s/101:/101:shiny/g /etc/group \
-    && echo "shiny ALL=NOPASSWD: /usr/sbin/cron" >>/etc/sudoers'
+    && perl -p -i -e s/:27:/:27:shiny/g /etc/group \
+    && echo "shiny ALL=NOPASSWD: /usr/sbin/cron" >>/etc/sudoers \
+    && echo "shiny ALL=NOPASSWD: /usr/sbin/service" >>/etc/sudoers
 
 # Pass Kubernetes variable if available
 ENV APPLICATION_LOGS_TO_STDOUT=${APPLICATION_LOGS_TO_STDOUT}
