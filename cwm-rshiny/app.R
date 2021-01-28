@@ -203,7 +203,8 @@ ui <- fluidPage(
         checkboxInput("cbLogScale", label="LogScale", value=TRUE, width="220px")),
       
       
-        fluidRow(        
+        fluidRow( 
+          hr(style = "border-top: 1px solid #777777;"),
           sliderInput("sldModelDays",
                        width="220px",
                        label="BerechnungsTage",
