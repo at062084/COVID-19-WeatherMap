@@ -49,6 +49,7 @@ WORKDIR /srv/shiny-server/COVID-19-WeatherMap/secrets
 COPY ./secrets . 
 WORKDIR /srv/shiny-server/COVID-19-WeatherMap
 COPY ./cwm-rshiny .
+RUN rm /srv/shiny-server/COVID-19-WeatherMap/log/*
 
 RUN sudo chown -R shiny:shiny /srv/shiny-server \
     && touch /etc/cron.allow \

@@ -9,12 +9,12 @@ metadata:
   annotations:
     # nginx.ingress.kubernetes.io/ssl-redirect: "True" --> Does not work
     ingress.bluemix.net/redirect-to-https: "True"
+    nginx.org/websocket-services: "cwm-rshiny-service"
     #ingress.bluemix.net/proxy-connct-timeout: "serviceName=cwm-rshiny-service timeout=32s"
     #ingress.bluemix.net/proxy-read-timeout: "serviceName=cwm-rshiny-service timeout=256s"
     #ingress.bluemix.net/keepalive-requests: "1024"
     #ingress.bluemix.net/keepalive-timeout:  "32"
     #ingress.bluemix.net/sticky-cookie-services: "serviceName=cwm-rshiny-service name=cwm-rshiny expires=1h path=/ hash=sha1"
-    nginx.org/websocket-services: "cwm-rshiny-service"
   
 spec:
   tls:

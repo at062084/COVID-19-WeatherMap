@@ -6,7 +6,7 @@ metadata:
   labels:
     context: COVID-19
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: cwm-rshiny
@@ -28,7 +28,8 @@ spec:
         imagePullPolicy: Always        
         ports:
         - containerPort: 3838
-
+      nodeSelector:
+        env: mlops
 
 #        volumeMounts:
 #          - name: rep-crispml-volume
@@ -37,5 +38,3 @@ spec:
 #      - name: rep-crispml-volume
 #        persistentVolumeClaim:
 #          claimName: rep-crispml-pvc
-#      nodeSelector:
-#        env: default

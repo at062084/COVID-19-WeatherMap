@@ -66,6 +66,7 @@ echo "> Executing $CMD"
 
 kubectl describe deployment cwm-rshiny -n $IBM_K8S
 
+
 # construct login command
 echo "> Login command"
 POD=`kubectl get pods -n $IBM_K8S | tail -f | awk '{print $1}'`
