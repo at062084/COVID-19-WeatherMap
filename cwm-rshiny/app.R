@@ -86,11 +86,11 @@ df.rfr <- reactiveFileReader(
 )
 # complete timeframe
 df <- eventReactive(df.rfr(), {
-  logMsg(paste("eventReactive: reactiveFileReader df for", cwmStatesFile)) 
+  logMsg(paste("eventReactive reactiveFileReader:df", cwmStatesFile)) 
   df.rfr()} )
 # timeframe for '2020 history'
 de <- eventReactive(df.rfr(), {
-  logMsg(paste("eventReactive: reactiveFileReader de for", cwmStatesFile)) 
+  logMsg(paste("eventReactive reactiveFileReader:de", cwmStatesFile)) 
   df.rfr() %>% 
     dplyr::filter(Date>=as.Date("2020-07-27"),Date<=as.Date("2020-11-16")) %>% 
     dplyr::select(Date,Region,rm7NewConfPop,dt7rm7NewConfPop, modrm7NewConfPop)} )
@@ -104,7 +104,7 @@ dg.rfr <- reactiveFileReader(
   readFunc=readRDS
 )
 dg <- eventReactive(dg.rfr(), {
-  logMsg(paste("eventReactive: reactiveFileReader dg for", cwmStatesFile)) 
+  logMsg(paste("eventReactive reactiveFileReader:dg", cwmCountiesFile)) 
   dg.rfr()} )
 
 
@@ -284,23 +284,23 @@ server <- function(input, output, session) {
 
   # identify session
   sessionID = substr(session$token,1,8)
-  logMsg("Server called ...", sessionID)
+  logMsg("Server WeatherMap app.R", sessionID)
   
   # states by Time
   df.past <- reactive({
-    logMsg("  Reactive: df.past: Filtering for rbsPastTime", sessionID)
+    logMsg(" reactive df.past rbsPastTime", sessionID)
     return(df() %>% dplyr::filter(Date > max(Date)-weeks(as.integer(input$rbsPastTime))))
   })
   
   # counties by Time
   dg.past <- reactive({
-    logMsg("  Reactive: dg.past: Filtering for rbsPastTime", sessionID)
+    logMsg(" reactive dg.past rbsPastTime", sessionID)
     return(dg() %>% dplyr::filter(Date > max(Date)-weeks(as.integer(input$rbsPastTime))))
   })
 
   # state history by regions
   de.regions <- reactive({
-    logMsg("  Reactive: dg.past: Filtering for cbgRegion", sessionID)
+    logMsg(" reactive dg.regions cbgRegion", sessionID)
     input$abUpdate
     return(de() %>% dplyr::filter(Region %in% isolate(input$cbgRegion)))
   })
@@ -313,7 +313,7 @@ server <- function(input, output, session) {
   output$hlpWeatherMap <- renderText({ htmlWeatherMap })
   
   output$lftWeatherMap <- renderLeaflet({
-    logMsg("  output$ggpIncidenceStates: renderPlot", sessionID)
+    logMsg("  output renderPlot lftWeatherMap", sessionID)
     options(warn=-1)
     
     #levConfPop <- round(c(0,10^seq(0,2,by=0.2),1000),1)
@@ -382,7 +382,7 @@ server <- function(input, output, session) {
   output$hlpIncidencePrediction <- renderText({ htmlIncidencePrediction })
   
   output$ggpIncidencePrediciton <- renderPlot({
-    logMsg("  output$ggpIncidencePrediciton: renderPlot", sessionID)
+    logMsg("  output renderPlot ggpIncidencePrediciton", sessionID)
     options(warn=-1)
     
     # react on Update button
@@ -417,7 +417,7 @@ server <- function(input, output, session) {
   output$hlpIncidenceStates <- renderText({ htmlIncidenceStates })
 
   output$ggpIncidenceStates <- renderPlot({
-    logMsg("  output$ggpIncidenceStates: renderPlot", sessionID)
+    logMsg("  output renderPlot ggpIncidenceStates", sessionID)
     options(warn=-1)
     
     input$abUpdate
@@ -438,7 +438,7 @@ server <- function(input, output, session) {
   output$hlpIncidenceCounties <- renderText({ htmlIncidenceCounties })
   
   output$ggpIncidenceCounties <- renderPlot({
-    logMsg("  output$ggpIncidenceCounties: renderPlot", sessionID)
+    logMsg("  output renderPlot ggpIncidenceCounties", sessionID)
     options(warn=-1)
     
     input$abUpdate
@@ -458,7 +458,7 @@ server <- function(input, output, session) {
   output$hlpChangeRateStates <- renderText({ htmlChangeRateStates })
   
   output$ggpChangeRateStates <- renderPlot({
-    logMsg("  output$ggpChangeRateStates: renderPlot", sessionID)
+    logMsg("  output renderPlot ggpChangeRateStates", sessionID)
     options(warn=-1)
     
     input$abUpdate
@@ -480,7 +480,7 @@ server <- function(input, output, session) {
   output$hlpExponential <- renderText({ htmlExponential })
 
   output$ggpExpDateConfPop <- renderPlot({
-    logMsg("  output$ggpExpDateConfPop: renderPlot", sessionID)
+    logMsg("  output renderPlot ggpExpDateConfPop", sessionID)
     options(warn=-1)
     
     input$abUpdate
@@ -493,7 +493,7 @@ server <- function(input, output, session) {
   })
 
   output$ggpExpDatedt7ConfPop <- renderPlot({
-    logMsg("  output$ggpExpDatedt7ConfPop: renderPlot", sessionID)
+    logMsg("  output renderPlot ggpExpDatedt7ConfPop", sessionID)
     options(warn=-1)
     
     xLimMin <- .9
@@ -515,7 +515,7 @@ server <- function(input, output, session) {
   })
   
   output$ggpExpConfPopdt7ConfPop <- renderPlot({
-    logMsg("  output$ggpExpConfPopdt7ConfPop: renderPlot", sessionID)
+    logMsg("  output  renderPlot ggpExpConfPopdt7ConfPop", sessionID)
     options(warn=-1)
     
     xLimMin <- 1

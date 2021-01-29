@@ -418,14 +418,24 @@ summary {
 <p>Dieses Dashboard beschäftigt sich mit der COVID-19 Epidemie in Österreich. Die Darstellungen und Analysen basieren auf drei Grundsätzen</p>
 <ul>
 <li><strong>Die Verbreitung von COVID-19 erfolgt über Ansteckung von Mensch zu Mensch und erfasst daher immer schneller immer mehr Menschen.</strong> Die Verbreitung ist im wesentlichen und immer explosionsartig, mit einer Explosionsgeschwindigkeit, die eng mit der Einhaltung der Schutzmassnahmen gekoppelt ist. In der Mathematik wird diese Art von Wachstum als ‘exponentiell’ bezeichnet.</li>
-<li><strong>Die Verbreitung erfolgt im Unterschied zur Grippe nicht in Wellen.</strong> Die Verbreitung von COVID-19 ist nicht saisonal begrenzt, sondern breitet sich bis zur Erfassung von großen Teilen der Bevölkerung immer schneller (d.h. exponentiell) aus. Erst wenn substantielle Teile der Bevölkerung von der COVID-10 Epidemie erfasst wurden ebbt die Verbreitung mangels Gesunder Personen ab.</li>
+<li><strong>Die Verbreitung erfolgt im Unterschied zur Grippe explosionsartig und nicht in Wellen.</strong> Die Verbreitung von COVID-19 ist nicht saisonal begrenzt, sondern breitet sich bis zur Erfassung von großen Teilen der Bevölkerung immer schneller (d.h. exponentiell) aus. Erst wenn substantielle Teile der Bevölkerung von der COVID-10 Epidemie erfasst wurden ebbt die Verbreitung mangels gesunder, noch ansteckbarer Personen ab.</li>
 <li><strong>Die wesentliche Größe zur Beschreibung des epidemiologischen Geschehens ist die Anzahl der positiv getesteten Personen, das ist die sog. ‘Inzidenz’.</strong> Die Infektion durch das Virus selbst ist nicht beobachtbar, der Nachweis der Ansteckung kann erst nach einer substantiellen Vermehrung des Virus in der infizierten Person durch einen Test nachgewiesen werden. Damit hinken die Ergebnisse der Testungen immer um einige Tage hinter dem eigentlichen Ansteckungsgeschehen hinterher.</li>
 </ul>
+<div id="technik" class="section level2">
+<h2>Technik</h2>
+<ul>
+<li>Die Daten werden von der <strong>AGES</strong> (covid19-dashboard.ages.at) bereitgestellt und vom ‘<strong>Open Data Informationsportal</strong>’ (www.data.gv.at) heruntergeladen.</li>
+<li>Das Dashboard ist in der <strong>Programmiersprache ‘R’</strong> (www.r-project.org) geschrieben, und basiert auf der <strong>‘Shiny’ Platform</strong> (shiny.rstudio.com)</li>
+<li>Die Anwendung wird als <strong>Docker image</strong> basierend auf rocker/shiny (hub.docker.com/r/rocker/shiny) verpackt und auf der <strong>IBM Cloud Kubernetes</strong> Platform betrieben (www.ibm.com/de-de/cloud/kubernetes-service)</li>
+<li>Der <strong>Source code liegt auf github</strong> (github.com/at062084/COVID-19-WeatherMap). Rückmeldungen bitte ebendort (Issue anlegen)</li>
+</ul>
+</div>
 <div id="einheiten" class="section level2">
 <h2>Einheiten</h2>
 <div id="inzidenz" class="section level3">
 <h3>Inzidenz</h3>
-<p>Die Inzidenz wird in unterschiedlichen Einheiten angegeben. Üblich sind ‘Anzahl der positiv Getesteten in einem Land pro Tag’, ‘Anzahl der Positiv Getesteten pro 100.000 Einwohner’ pro Tag oder pro Woche. Die Einheit Woche wird verwendet, um die Schwankungen im Testaufkommen an Wochenenden zu berücksichtigen. Für Österreich mit seinen ca. 8 Mio Einwohnern beschreiben folgende Werte diegleiche epidemiologischen Lage:</p>
+<p>Die Inzidenz wird in Europa in unterschiedlichen Einheiten angegeben. Üblich sind ‘Anzahl der positiv Getesteten in einem Land pro Tag’, und die ‘Anzahl der Positiv Getesteten pro 100.000 Einwohner’ pro Tag oder pro Woche. Die Summe über eine Woche wird gebildet, um die Schwankungen im Testaufkommen an Wochenenden zu berücksichtigen.</p>
+<p>Für Österreich mit seinen ca. 8 Mio Einwohnern beschreiben folgende Werte die gleiche epidemiologischen Lage:</p>
 <ul>
 <li>Tages Inzidenz von <strong>1000</strong> positiven Testungen</li>
 <li><strong>Tages Inzidenz pro 100.000 Einwohner:</strong> 1000 / 80 = <strong>12.5</strong></li>
@@ -440,9 +450,10 @@ summary {
 </div>
 <div id="inzidenz-skala" class="section level3">
 <h3>Inzidenz Skala</h3>
-<p>Um die explosionsartige Verbreitung von COVID-19 (das exponentielle Wachstum) adequat darzustellen wird die Inzidenz in diesem Dashboard in stetig wachsenden Stufen dargestellt.</p>
+<p>Um die explosionsartige Verbreitung von COVID-19 (das exponentielle Wachstum) adequat darzustellen wird die Inzidenz in diesem Dashboard in <strong>explosionsartig (exponentiell) wachsenden Stufen</strong> dargestellt.</p>
 <ul>
 <li>Die verwendeten Inzidenz Stufen sind 1,2,4,8,16,32,64,128</li>
+<li><strong>Jede Inzidenz Stufe wird gleich groß dargestellt, um jede Phase der Explosion gleich gut sehen zu können</strong></li>
 </ul>
 <p>Beispiel: Bei einer Verdoppelung der Inzidenz (Fallzahlen) in 2 Wochen steigt die Inzidenz in 2 Monaten um rund 4 Stufen, also von z.B. 8 auf 128. Bei Stufe 16 funktioniert das Kontakt Tracing nicht mehr, über 64 wird es mit den Intensivstationen eng.</p>
 <p>Alle Graphiken, die Inzidenz Werte darstellen folgen diesem Stufen Schema.</p>

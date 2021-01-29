@@ -10,6 +10,14 @@ Dieses Dashboard beschäftigt sich mit der COVID-19 Epidemie in Österreich. Die
 - **Die Verbreitung erfolgt im Unterschied zur Grippe explosionsartig und nicht in Wellen.** Die Verbreitung von COVID-19 ist nicht saisonal begrenzt, sondern breitet sich bis zur Erfassung von großen Teilen der Bevölkerung immer schneller (d.h. exponentiell) aus. Erst wenn substantielle Teile der Bevölkerung von der COVID-10 Epidemie erfasst wurden ebbt die Verbreitung mangels gesunder, noch ansteckbarer Personen ab.
 - **Die wesentliche Größe zur Beschreibung des epidemiologischen Geschehens ist die Anzahl der positiv getesteten Personen, das ist die sog. 'Inzidenz'.**  Die Infektion durch das Virus selbst ist nicht beobachtbar, der Nachweis der Ansteckung kann erst nach einer substantiellen Vermehrung des Virus in der infizierten Person durch einen Test nachgewiesen werden. Damit hinken die Ergebnisse der Testungen immer um einige Tage hinter dem eigentlichen Ansteckungsgeschehen hinterher.
 
+## Technik
+
+- Die Daten werden von der **AGES** (covid19-dashboard.ages.at) bereitgestellt und vom '**Open Data Informationsportal**' (www.data.gv.at) heruntergeladen.
+- Das Dashboard ist in der **Programmiersprache 'R'** (www.r-project.org) geschrieben, und basiert auf der **'Shiny' Platform** (shiny.rstudio.com)
+- Die Anwendung wird als **Docker image** basierend auf rocker/shiny (hub.docker.com/r/rocker/shiny) verpackt und auf der **IBM Cloud Kubernetes** Platform betrieben (www.ibm.com/de-de/cloud/kubernetes-service)
+- Der **Source code liegt auf github** (github.com/at062084/COVID-19-WeatherMap). Rückmeldungen bitte ebendort (Issue anlegen)
+
+
 ## Einheiten
 
 
