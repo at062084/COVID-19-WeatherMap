@@ -16,7 +16,7 @@ Dieses Dashboard beschäftigt sich mit der COVID-19 Epidemie in Österreich. Die
  "Datenquelle: BMSGPK, **Österreichisches COVID-19 Open Data Informationsportal** [(https://www.data.gv.at/covid-19)](https://www.data.gv.at/covid-19)" heruntergeladen.
 - Das Dashboard ist in der [Programmiersprache 'R'](https://www.r-project.org) geschrieben, und basiert auf der ['Shiny' Platform](https://shiny.rstudio.com)
 - Die Anwendung wird als **Docker image** basierend auf [rocker/shiny](https://hub.docker.com/r/rocker/shiny) verpackt und auf der **[IBM Cloud Kubernetes Platform](https://www.ibm.com/de-de/cloud/kubernetes-service)** betrieben 
-- Der **[Source code liegt auf github](github.com/at062084/COVID-19-WeatherMap)**. Rückmeldungen bitte ebendort (Issue anlegen)
+- Der **[Source code liegt auf github](https://github.com/at062084/COVID-19-WeatherMap)**. Rückmeldungen bitte ebendort (Issue anlegen)
 
 
 ## Einheiten
