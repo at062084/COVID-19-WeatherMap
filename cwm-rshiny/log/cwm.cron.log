@@ -56,3 +56,23 @@
 20210127-153445.246 __cron__ Writing ./data/COVID-19-CWM-AGES-States-Curated.rda 
 20210127-153445.338 __cron__ Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features 
 20210127-153445.338 __cron__ cron: Done Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210130-191434.389 __cron__ cron: Start Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210130-191434.418 __cron__ Sourcing fun.R 
+20210130-191434.427 __cron__ Sourcing ages.R 
+20210130-191434.434 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210130-191434.505 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210130-191434.505 __cron__ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210130-191435.184 __cron__ Writing ./data/CovidFallzahlen.rda 
+20210130-191435.197 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210130-191435.220 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210130-191435.221 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210130-191435.725 __cron__ Writing ./data/CovidFaelle_Timeline.rda 
+20210130-191435.740 __cron__ Downloading CovidFaelle_Timeline_GKZ data from AGES ... 
+20210130-191435.822 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv 
+20210130-191435.823 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline_GKZ.csv 
+20210130-191438.810 __cron__ Writing ./data/CovidFaelle_Timeline_GKZ.rda 
+20210130-191439.172 __cron__ Writing ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210130-191439.300 __cron__ Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ... 
+20210130-191457.633 __cron__ Writing ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210130-191457.696 __cron__ Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features 
+20210130-191457.997 __cron__ cron: Done Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 

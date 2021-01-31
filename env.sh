@@ -69,7 +69,7 @@ echo "> nodes"
 kubectl describe nodes -n $IBM_K8S| egrep -i "name|external"
 
 POD=`kubectl get pods -n $IBM_K8S | tail -1 | awk '{print $1}'`
-ech0 "kubectl exec -n $IBM_K8S -it $POD /bin/bash"
+echo "kubectl exec -n $IBM_K8S -it $POD /bin/bash"
 
 # Some more kubectl commands
 

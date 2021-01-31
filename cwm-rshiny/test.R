@@ -46,3 +46,40 @@ dplmST <- df %>%
 ggplot(data=dplmST %>% dplyr::filter(Region=="Wien"), aes(x=Date, y=predNewConfPop)) + geom_point() + geom_line(aes(y=rm7NewConfPop))
 ggplot(data=dplmST %>% dplyr::filter(Region=="Österreich"), aes(x=Date, y=predNewConfPop)) + geom_point() + geom_line(aes(y=rm7NewConfPop))
 
+
+
+
+
+
+#lm.x <- 1:nWeatherForeCastDays
+d <- 1:nWeatherForeCastDays
+#nd.d <- data.frame(Date=c(maxDate+weeks(c(0,1,4))))
+#nd.c <- data.frame(rm7NewConfPop=1:128) # Inzidenz levels 1,2,4,8,16,32,64,128
+#lm.w <- c(1:(nWeatherForeCastDays-3),6,4,2)
+lm.w <- rep(1,nWeatherForeCastDays)
+#rowNames <- c("Heute","In einer Woche","In vier Wochen","Tage bis Verdoppelung","Tage bis/noch LockDown")
+#colNames <- (dx %>% dplyr::filter(Date==maxDate) %>% dplyr::select(Region))$Region
+
+maxDate=max(dx$Date)
+rowNames <- c("Heute","In einer Woche","In vier Wochen","Tage bis Verdoppelung")
+d <- 1:nWeatherForeCastDays
+w <- c(1:(nWeatherForeCastDays-3),6,4,2)
+nd.d <- c(0,7,28) + nWeatherForeCastDays
+nd.c <- c(8)
+dy <- data.frame(Inzidenz=rowNames, stringsAsFactors=FALSE)
+for (r in 1:length(atRegions)) {
+  c <- dx$rm7NewConfPop[dx$Region==atRegions[r]]
+  lm.d <- lm(log(c)~d, weights=w)
+  p.d <- round(exp(predict (lm.d, newdata=data.frame(d=nd.d))),1)
+  dblDays <- (round(log(2)/coef(lm.d)[2]))
+  
+  p <- c(p.d,dblDays)  
+  cn <- colnames(dy)
+  dy <- cbind(dy,p)
+  colnames(dy) <- c(cn,atRegionsShort[r])
+}
+rownames(dy) <- NULL
+dy[,c(1,6,2:5,7:11)]
+
+
+
