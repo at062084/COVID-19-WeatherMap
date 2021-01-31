@@ -110,8 +110,7 @@ dg.rfr <- reactiveFileReader(
 )
 dg <- eventReactive(dg.rfr(), {
   logMsg(paste("eventReactive reactiveFileReader:dg", cwmCountiesFile)) 
-  dg.rfr()%>%
-    dplyr::select(Date,Region,Population,newConfPop,rm7NewConfirmed,rm7NewConfPop,rm7NewTested,rm7NewConfTest,dt7rm7NewConfPop, modrm7NewConfPop) })
+  dg.rfr() })
 
 # Prediction
 cwmPredictionFile <- "./data/COVID-19-CWM-AGES-Prediction.rda"
