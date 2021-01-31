@@ -1,13 +1,4 @@
 options(error = function() traceback(2))
-
-# do some logging
-#logDir = "./log"
-#logFile <- "cwm.rshiny.log"
-#logMsg <- function(msg, sessionID="_global_") {
-#  cat(paste(format(Sys.time(), "%Y%m%d-%H%M%OS3"), sessionID, msg, "\n"), file=paste0(logDir,"/",logFile), append=TRUE)
-#  cat(paste(format(Sys.time(), "%Y%m%d-%H%M%OS3"), sessionID, msg, "\n"), file=stderr())
-#}
-
 library(dplyr)
 library(tidyr)
 library(stringr)
@@ -17,9 +8,11 @@ library(zoo)
 library(tibbletime)
 library(scales)
 library(forcats)
-options(error = function() traceback(2))
 
 
+# -------------------------------------------------------------------------------------------
+# AGES Data files
+# -------------------------------------------------------------------------------------------
 cfGKZtl <- "CovidFaelle_Timeline_GKZ.csv"  # https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv    # caAgesRead_cfGKZtl()
 cftl <- "CovidFaelle_Timeline.csv"         # https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv        # caAgesRead_cftl()
 cfz <- "CovidFallzahlen.csv"               # https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv                                                                      # caAgesRead_cfz
@@ -276,6 +269,7 @@ caAgesRead_tlrm <- function(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile=
   maxDate <- max(df$Date)
   # work all cols with rolling means by week
   rm7s <- colnames(df)[startsWith(colnames(df),"rm7")]
+  # calc mean of last, last 3, last 5 days as estimate of today, yesterday, day before yesterday
   for(d in 0:2) {
     # work all rm7 features
     for (rm7 in rm7s) {
@@ -363,7 +357,7 @@ caAgesRead_tlrm <- function(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile=
       dplyr::ungroup()
   } 
   
-  # Calculate robust regression on log transformed 
+  # Calculate regression on log transformed 
   if (bResiduals) {
     
     modLogLM <- function(Date, Count, Speed, dResFirst=as.Date("2020-07-27"), dResLast=as.Date("2020-10-19"), bPlot=FALSE, bShiftDown=FALSE) {

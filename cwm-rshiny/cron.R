@@ -14,9 +14,10 @@ logMsg <- function(msg, sessionID="__cron__") {
   cat(paste(format(Sys.time(), "%Y%m%d-%H%M%OS3"), sessionID, msg, "\n"), file=stderr())
 }
 
-slackMsg <- function (title, msg) {
+hostSystem <- system("hostname", intern=TRUE)
+slackMsg <- function (title, msg, hostName = hostSystem) {
   url <- as.character(read.csv("./secrets/slack.txt",header=FALSE)[1,1])
-  body <- list(text = paste(paste0(now()," *",title,"*: "), msg))
+  body <- list(text = paste(paste0(now()," *",title,"*: "), paste0(hostName,": ",msg)))
   r <- POST(url, content_type_json(), body = body, encode = "json")
   invisible(r)
 }

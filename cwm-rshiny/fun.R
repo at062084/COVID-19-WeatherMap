@@ -1,15 +1,4 @@
 options(error = function() traceback(2))
-
-# do some logging
-#logDir = "./log"
-#logFile <- "cwm.rshiny.log"
-#logMsg <- function(msg, sessionID="_global_") {
-#  cat(paste(format(Sys.time(), "%Y%m%d-%H%M%OS3"), sessionID, msg, "\n"), file=paste0(logDir,"/",logFile), append=TRUE)
-#  cat(paste(format(Sys.time(), "%Y%m%d-%H%M%OS3"), sessionID, msg, "\n"), file=stderr())
-#}
-
-
-logMsg("Loading libraries")
 library(shiny)
 library(lubridate)
 library(dplyr)
@@ -25,6 +14,7 @@ library(readr)
 
 # Regions characteristics. Matched. Don't mess around
 atRegions=c("Burgenland","Kärnten","Niederösterreich","Oberösterreich","Österreich","Salzburg","Steiermark","Tirol","Vorarlberg","Wien")
+atRegionsShort=c("B","K","NOe","OOe","AT","Szbg","Stmk","T","V","W")
 atShapes <- c(10,6,7,2,11,5,12,22,1,9)
 # Settings for all Region Plots: Color Blind Palette
 #cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#000000", "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#FF0000")
@@ -187,15 +177,56 @@ cwmSpreadStyle <- function(rbsPastTime=25, inRegions=1:10, yLimits=c(0.84, 1.19)
 # then add to these weights the number of days that have been used to calculate their value (7 for weekly means, 5,3,1 for shorted weekly means)
 # then subtract the minimum resulting weight from all weights (to decrease effective weight from days further in the past)
 # ------------------------------------------------------------------------------------------
+# Linear model of order nPoly on log data
+rm7PolyLog <- function(y, nPoly=2, nModelDays=length(y), modWeights=NULL, nNewData=NULL, nTransData=NULL, bDblDays=FALSE) {
+  nx=1:length(y)
+  x <- 1:nModelDays
+  y <- y[x]+0.001
+  if(is.null(modWeights)) {
+    modWeights <- c(1:(nModelDays-3),nModelDays-1,nModelDays-2,nModelDays-3) + c(rep(7,nModelDays-3), 5,3,1)
+    # make different weights more pronounced
+    modWeights <- modWeights-min(modWeights)+1
+  }
+  
+  pm <- lm(formula = log(y) ~ poly(x, nPoly, raw=TRUE), na.action="na.omit", weights=modWeights)
+
+  if(is.null(nNewData)) dn <- data.frame(x=nx) else dn <- data.frame(x=nNewData)
+  pNewData <- exp(predict(pm, newdata=dn))
+  if(bDblDays & nPoly==1) pDblDays <- log(2)/(coef(pm)[2]) else pDblDays <- NA
+  if(is.null(nTransData)) pTransData <- NA else pTransData <- (log(nTransData)-coef(pm)[1])/coef(pm)[2]
+  
+  if (!bDblDays & is.null(nTransData)) r <- pNewData else r <- list(pNewData=pNewData, pDblDays=pDblDays, pTransData=pTransData)
+  return(r)
+}
+
+# Linear model of order nPoly on lin data
+rm7PolyLin <- function(y, nPoly=2, nModelDays=length(y), modWeights=NULL, nNewData=NULL, nTransData=NULL, bDblDays=FALSE) {
+  nx=1:length(y)
+  x <- 1:nModelDays
+  y <- y[x]+0.001
+  if(is.null(modWeights)) {
+    modWeights <- c(1:(nModelDays-3),nModelDays-1,nModelDays-2,nModelDays-3) + c(rep(7,nModelDays-3), 5,3,1)
+    # make different weights more pronounced
+    modWeights <- modWeights-min(modWeights)+1
+  }
+
+  pm <- lm(formula = y ~ poly(x, nPoly, raw=TRUE), na.action="na.omit", weights=modWeights)
+  
+  if(is.null(nNewData)) dn <- data.frame(x=nx) else dn <- data.frame(x=nNewData)
+  pNewData <- (predict(pm, newdata=dn))
+  if(bDblDays & nPoly==1) pDblDays <- (2)/(coef(pm)[2]) else pDblDays <- NA
+  if(is.null(nTransData)) pTransData <- NA else pTransData <- ((nTransData)-coef(pm)[1])/coef(pm)[2]
+  
+  if (!bDblDays & is.null(nTransData)) r <- pNewData else r <- list(pNewData=pNewData, pDblDays=pDblDays, pTransData=pTransData)
+  return(r)
+}
+
 cwmAgesRm7EstimatePoly <- function(df, nPoly=2, nModelDays=10, nPredDays=7) {
   
   curDate <- max(df$Date)                      
   minDate <- curDate - days(nModelDays)+1 # Prediction interval: first day
   maxDate <- curDate + days(nPredDays) # Prediction interval: last day
 
-  weights <- c(1:(nModelDays-3),nModelDays-1,nModelDays-2,nModelDays-3) + c(rep(7,nModelDays-3), 5,3,1)
-  weights <- weights-min(weights)+1
-  
   # construct dataframe of Regions and Dates relevant to modelling
   dd <- df %>% dplyr::filter(Date>=minDate) %>% dplyr::arrange(Region,Date)
   regions <- dd %>% dplyr::filter(Date==curDate) %>% dplyr::select(Region)
@@ -207,29 +238,11 @@ cwmAgesRm7EstimatePoly <- function(df, nPoly=2, nModelDays=10, nPredDays=7) {
   # add days to predict for to dd
   dd <- predDF %>% dplyr::left_join(dd, by=c("Region","Date"))
 
-  # Linear model of order nPoly on log data
-  rm7PolyLog <- function(y, nPoly=2, nModelDays=10) {
-    nx=1:length(y)
-    x <- 1:nModelDays
-    y <- y[x]+0.001
-    pm <- lm(formula = log(y) ~ poly(x, nPoly, raw=TRUE), na.action="na.omit", weights=weights)
-    exp(predict(pm, newdata=data.frame(x=nx)))
-  }
-  
-  # Linear model of order nPoly on lin data
-  rm7PolyLin <- function(y, nPoly=2, nModelDays=10) {
-    nx=1:length(y)
-    x <- 1:nModelDays
-    y <- y[x]+0.001
-    pm <- lm(formula = y ~ poly(x, nPoly, raw=TRUE), na.action="na.omit", weights=weights)
-    predict(pm, newdata=data.frame(x=nx))
-  }
-  
   # Calc order nPoly estimate for each Region and each rm7 feature for next nPredDays from past nModelDays
   dp <- dd %>%
     dplyr::select(Date, Region, starts_with("rm7")) %>%
     dplyr::group_by(Region) %>%
-        # Log poly model for potentially exponentially growing items
+    # Log poly model for potentially exponentially growing items
     dplyr::mutate_at(vars(c(starts_with("rm7"),-rm7NewTested,-rm7NewConfTest)), rm7PolyLog, nPoly=nPoly, nModelDays=nModelDays) %>%
     # nonLog linear model for newTested
     dplyr::mutate_at(vars(rm7NewTested), rm7PolyLin, nPoly=nPoly, nModelDays=nModelDays) %>%
