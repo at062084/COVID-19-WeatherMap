@@ -1,24 +1,30 @@
 
 
 htmlWeatherMap <- "<p><b>Tages Inzidenz: Lage und Vorhersage</b></p>
-                   <p>Bedeutung der drei Symbole, von links nach rechts: <b>Aktuelle Lage, Tendenz und Prognose</b> der TagesInzidenz. 
-                      Die Tages Inzidenz ist die  Anzahl der positiv Getesteten pro Tag pro 100.000 Einwohner
+                   <p>Die Tages Inzidenz ist die  <b>Anzahl der positiv Getesteten pro Tag pro 100.000 Einwohner</b>.
+                      Von der AGES und den Medien in Österreich wird oft die '<b>Sieben Tage Inzidenz</b>' verwendet, das ist die Summe der Inzidenzen aus sieben Tagen.
+                    </p><p>
+                     Die Karte zeigt den <b>aktuellen Stand der Tages Inzidenz</b>, den <b>Trend</b>, und eine <b>Prognose</b> für die Tagesinzidenz in einer Woche.
+                     Die Prognose wird aus der <b>Entwicklung der vergangenen zehn Tage</b> abgeschätzt. 
+                     Alternative Berechnungsmethoden können auf der Seite '<b>Inzidenz Prognose</b>' ausprobiert werden.
+                     </p><p>
+                     Die <b>drei Symbole</b>, von links nach rechts, bedeuten: <b>Aktuelle Lage, Tendenz und Prognose</b> der TagesInzidenz. 
                     </p>
                    <p>
-                          <p>Wetter Symbole: Tages Inzidenz</p>
+                          <p><b>Wetter Symbole:</b> Tages Inzidenz</p>
                       <center>
                         <table>
                           <tr><th>Symbol</th><th>Tages Inzidenz</th></tr>
-                          <tr><td>Sonne </td><td> 0-4</td></tr>
-                          <tr><td>Sonne+Wolken </td><td> 4-8</td></tr>
-                          <tr><td>Sonne+Regen </td><td> 8-16</td></tr>
-                          <tr><td>Regen </td><td> 16-32</td></tr>
-                          <tr><td>Gewitter </td><td> 32 und mehr</td></tr>
+                          <tr><td>Sonne </td><td> 0-4, Stufen 0,1,2</td></tr>
+                          <tr><td>Sonne+Wolken </td><td> 4-8, Stufe 3</td></tr>
+                          <tr><td>Sonne+Regen </td><td> 8-16, Stufe 4</td></tr>
+                          <tr><td>Regen </td><td> 16-32, Stufe 5</td></tr>
+                          <tr><td>Gewitter </td><td> 32+, Stufen 6+</td></tr>
                         </table>
                       </center>
                     </p>
                     <p>
-                          <p>Tendenz Symbole: <br>Wochen bis zur Halbierung bzw. Verdoppelung</p>
+                          <p><b>Tendenz Symbole:</b> <br>Anzahl Wochen bis zur Halbierung bzw. Verdoppelung der Fallzahlen</p>
                       <center>
                         <table>
                           <tr><th>Symbol</th><th>Wochen</th></tr>
@@ -31,6 +37,9 @@ htmlWeatherMap <- "<p><b>Tages Inzidenz: Lage und Vorhersage</b></p>
                           <tr><td>Pfeil N </td><td> 0-2</td></tr>
                         </table>
                       </center>
+                    </p><p> Als <b>Grenzwert für Lockerungen</b> aus einem LockDown wurde von offizieller Seite immer wieder ein Sinken auf eine Wochen Inzidenz 
+                      von 50 genannt, d.h. eine <b>Tages Inzidenz von ca. 8</b>. Als Grenzwert für ein neuerliches <b>Inkrafttreten eines Lockdown</b> wurde am 1.2.2021 eine Wochen Inzidenz 
+                      von 200 genannt, d.h. eine <b>Tages Inzidenz ca. 32</b>.
                     </p>
                     <p><b>Anmerkung 1: Interpretation</b><br>Die AGES Daten unterscheiden nicht zwischen 'Positiv getestet im Massentest' und 'Positiv getestet bei 1450'. 
                           Damit ist die Bedeutung der Zahlen semi-definiert und ein Rückschluss auf das epidemiologische Geschehen nur eingeschränkt möglich
@@ -41,8 +50,8 @@ htmlWeatherMap <- "<p><b>Tages Inzidenz: Lage und Vorhersage</b></p>
                     </p>"
 
 htmlIncidencePrediction <- "<p><b>Berechnung und Prognose der Tages Inzidenz</b></p>
-                            <p><b>Prognose Menü (links unten) </b><li>BerechnungsTage: Anzahl der vergangenen Tage, aus denen die Prognose erstellt wird.</li>
-                                                                  <li>Berechnungsmodell:  Lineare oder quadratische Regression der logarithmierten TagesInzidenzen</li>
+                            <p><b>Prognose Menü (links unten) </b><li><b>BerechnungsTage:</b> Anzahl der vergangenen Tage, aus denen die Prognose erstellt wird.</li>
+                                                                  <li><b>Berechnungsmodell:</b>  Lineare oder quadratische Regression der logarithmierten TagesInzidenzen</li>
                             </p>
                             <p><b>Einmeldung in EMS</b><br>Die Tages Inzidenz ist die Anzahl der Positiv Getesteten pro Tag pro 100.000 Einwohner, basierend auf den Einmeldungen in das EMS  (Epidemiologisches Meldesystem) der AGES.
                                Als Zeitpunkt wird von den Ministerien der Tag der Einmeldung, von der AGES der Tag der Auswertung eines Tests herangezogen.
@@ -67,21 +76,17 @@ htmlIncidencePrediction <- "<p><b>Berechnung und Prognose der Tages Inzidenz</b>
 "
 
 htmlIncidenceStates <- "<p><b>Historie der Inzidenz in Bundesländern</b></p>
-                        <p><b>Ansteckung und explosionsartige Vermehrung</b><br>
+                        <p><b>Gestzmäßigkeit der Ansteckung</b><br>
                            Die Übertragung von COVID-19 erfolgt im wesentlichen durch die Atemluft. Viren werden beim Ausatmen an die Umwelt abgegeben, und beim Einatmen aufgenommen.
                            Jede infizierte Person infiziert weitere Personen, die immer mehr weitere Personen anstecken. Die Ausbreitung der Epidemie erfolgt in immer größerem Tempo.
-                           Man spricht von 'exponentiellem Wachstum'. Diese Art von Wachstum wird in den Anfangsphasen kaum wahrgenommen, erreicht aber in kurzer Zeit unüberschaubare Ausmasse.
+                           Man spricht von 'b>exponentiellem Wachstum</b>'. Diese Art von Wachstum wird in den Anfangsphasen kaum wahrgenommen, erreicht aber in kurzer Zeit unüberschaubare Ausmasse.
                            Das liegt daran, dass die Anzahl der infizierten Personen sich in gleichen Zeitraum verdoppelt bzw. verzehnfacht. 
-                           So hat sich z.B. am Anfang der Epidemie Anfang März 2020 die Anzahl der positv getesteten Personen in einer Woche verzehnfacht. 
-                          </p>
-                          <p><b>Beispiel Meereswellen</b><br>Führt man sich dieses Verhalten anhand von z.B. Wellen am Meer vor Augen, dann ergibt sich folgendes Bild:
-                           Ausgangslage sind Anfang der ersten Woche <b>1cm</b> hohen Wellen. Anfang der zweiten Woche fallen die <b>10cm</b> Wellen nicht auf.
-                           Die <b>1m</b> hohen Wellen in der dritten Woche sorgen für Badespass. In der vierten Woche hinterlassen die <b>10m</b> hohen Wellen ein Bild der Verwüstung
-                          </p>
-                          <p><b>Exponentielles Wachstum</b><br>Gleichwohl lässt sich die bevorstehende Katastrophe bereits in den Anfangsphasen absehen, 
+                           </p>
+                          <p><b>Vorhersehbarkeit</b><br>Gleichwohl lässt sich die bevorstehende Katastrophe bereits in den Anfangsphasen erkennen, 
                            wenn man den explosionsartigen Charakter der Vermehrung miteinberechnet.
                            Dazu ist es notwendig den Zeitraum bis zur <b>Verdoppelung der Fallzahlen</b> zu beachten, und daraus die künftige Entwicklung abzuschätzen. 
-                           Die Einordnung der Tagesinzidenz erfolgt in diesem Dashboard daher in einen 'Verdoppelungsraster', also Inzidenz = [1,2,4,8,16,32,64,128], statt in die übliche lineare [0,10,20,30,40,50,...,100] Skala.
+                           Die Einordnung der Tagesinzidenz erfolgt in diesem Dashboard daher in einen 'Verdoppelungsraster' mit den <b>acht Inzidenz Stufen</b> 
+                           [0,1,2,4,8,16,32,64,128], statt in die übliche lineare [0,10,20,30,40,50,...,100] Skala.
                         </p>
                         <p> Im <b>Menü links</b> kann zwischen der 'linearen' (ORF und Ministerium Darstellung) und der 'logarithmischen' (Verdoppelung) Darstellung umgeschaltet werden.
                         </p> 
@@ -90,10 +95,16 @@ htmlIncidenceStates <- "<p><b>Historie der Inzidenz in Bundesländern</b></p>
 htmlIncidenceCounties <- "<p><b>Historie der Inzidenz in Bezirken</b></p>
                           <p>Die Einmeldungen der Fallzahlen, d.h. der positiv Getesteten, in des EMS erfolgt auf Bezirksebene. 
                              Österreich ist in 90 Bezirke eingeteilt, wobei Wien in den von AGES veröffentlichten Daten als ein Bezirk geführt wird.
-                          </p><p>
-                             Auffällig ist die Änderung des Verhaltens in den letzten beiden Oktober Wochen. 
+                          </p><p>Auffällige Zeitbereiche sind zunächst der <b>Begin der Epidemie</b> Anfang März 2020, 
+                          in dem sich die Zahl der Erkrankungen in <b>einer Woche verzehnfacht</b> hat. 
+                          </p>
+                          <p><b>Vergleich Meereswellen</b><br>Führt man sich dieses Verhalten anhand von z.B. Wellen am Meer vor Augen, dann ergibt sich folgendes Bild:
+                           Ausgangslage sind Anfang der ersten Woche <b>1cm</b> hohe Wellen. Anfang der zweiten Woche sind die Wellen <b>10cm</b>hoch, 
+                           Anfang der dritten Woche <b>1m</b>. In der vierten Woche hinterlassen die <b>10m</b> hohen Wellen ein Bild der Verwüstung
+                          </p><p>Dieses Verhalten lässt sich in den Monaten August bis Oktober beobachten. Näheres dazu siehe '<b>Rückblick 2020</b>.
+                          </p><p> Weitere Auffälligkeit ist die <b>Änderung des Verhaltens</b> in den letzten beiden Oktober Wochen. 
                             Die Inzidenz steigt von grob 4-32 Mitte Oktober um 2 Stufen auf 16-128 Anfang November. Das entspricht in etwa einer Verdoppelung innerhalb einer Woche.
-                            Mögliche Erklärung könnte das Zusammenbrechen des Contact-Tracing sein. Ab der ersten November Woche werden die Auswirkungen des Lockdown durch das Abflachen der Kurven sichtbar
+                            Mögliche Erklärung könnte das <b>Zusammenbrechen des Contact-Tracing</b> sein. Ab der ersten November Woche werden die Auswirkungen des Lockdown durch das Abflachen der Kurven sichtbar
                           </p>"
 
 htmlChangeRateStates <- "<p><b>Ausbreitungsgeschwindigkeit</b></p>
