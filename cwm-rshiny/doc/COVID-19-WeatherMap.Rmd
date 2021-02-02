@@ -18,6 +18,12 @@ Dieses Dashboard beschäftigt sich mit der COVID-19 Epidemie in Österreich. Die
 - Die Anwendung wird als **Docker image** basierend auf [rocker/shiny](https://hub.docker.com/r/rocker/shiny) verpackt und auf der **[IBM Cloud Kubernetes Platform](https://www.ibm.com/de-de/cloud/kubernetes-service)** betrieben 
 - Der **[Source code liegt auf github](https://github.com/at062084/COVID-19-WeatherMap)**. Rückmeldungen bitte ebendort (Issue anlegen)
 
+## Über den Autor
+
+- Bsc in 'Data Engineering, Statistics & Visual Computing', TU-Wien, 2016
+- Data Scientist, IT Infrastructure Architect
+- https://www.linkedin.com/in/strehl-thomas-122867110
+
 
 ## Einheiten
 
