@@ -188,9 +188,7 @@ ui <- fluidPage(
     
     # Sidebar panel for inputs ----
     sidebarPanel(width=2,
-      #p("COVID-19-WeatherMap", align = "left", style="color:darkred"),
       p("CWM-V0.9.5-20210201"),
-#      tableOutput("secTime"),
       
       fluidRow(
         column(6,
@@ -209,41 +207,32 @@ ui <- fluidPage(
                            "Vorarlberg"), 
             selected = c("Österreich","Wien","Kärnten"))),
         column(6,
-          actionButton("abUpdate", "Update Region"))),
+          actionButton("abUpdate", "Update"))),
 
-        fluidRow(        
-             radioButtons("rbsPastTime",
-              width="220px",
-              label="Zeitaum",
-            choices = list("1 Monat" = "4",
-                           "2 Monate" = "9",
-                           "3 Monate" = "13",
-                           "4 Monate" = "18",
-                           "5 Monate" = "22",
-                           "6 Monate" = "26",
-                           "12 Monate"= "53"),
-            selected="13")),
-
-      fluidRow(
-        checkboxInput("cbLogScale", label="LogScale", value=TRUE, width="220px")),
-      
+        fluidRow(
+          checkboxInput("cbLogScale", label="LogScale", value=TRUE, width="220px")),
+        
+      fluidRow( 
+        sliderInput("sldPastTime",
+                    width="220px",
+                    label="ZeitRaum (Monate)",
+                    min=1, max=12, step=1, value=3)),
       
         fluidRow( 
-          hr(style = "border-top: 1px solid #777777;"),
+          hr(style = "border-top: 3px solid #777777;"),
           sliderInput("sldModelDays",
                        width="220px",
-                       label="BerechnungsTage",
+                       label="Prognose: BerechnungsTage",
                        min=7, max=28, step=7, value=14)),
       fluidRow(        
         radioButtons("rbsModelOrder",
                      width="220px",
-                     label="BerechnungsModel",
-                     choices = list("Linear" = "1",
-                                    "Quadratisch" = "2"),
+                     label="Prognose: BerechnungsModel",
+                     choices = list("Linear (Gerade)" = "1",
+                                    "Quadratisch (Parabel)" = "2"),
                      selected="1")),
-      
-
   ),
+
 
     # Main panel for displaying outputs ----
     mainPanel(width=10,
@@ -254,7 +243,7 @@ ui <- fluidPage(
        tabPanel("COVID Lage und Aussichten",
                  h4("Lage und Aussichten Bundesländer", align = "left", style="color:gray"),
                  p("[Menüauswahl: keine]", align = "left", style="color:green"),
-                fluidRow(column(width=9,  leafletOutput(outputId = "lftWeatherMap", height="50vh"),
+                fluidRow(column(width=9,  leafletOutput(outputId = "lftWeatherMap", height="60vh"),
                                           DT::dataTableOutput(outputId = "dtoWeatherMap")),
                                     column(width=3, htmlOutput(outputId="hlpWeatherMap")))),
                             
@@ -323,14 +312,14 @@ server <- function(input, output, session) {
   
   # states by Time
   df.past <- reactive({
-    logMsg(" reactive df.past rbsPastTime", sessionID)
-    return(df() %>% dplyr::filter(Date > max(Date)-weeks(as.integer(input$rbsPastTime))))
+    logMsg(" reactive df.past sldPastTime", sessionID)
+    return(df() %>% dplyr::filter(Date > max(Date)-months(as.integer(input$sldPastTime))))
   })
   
   # counties by Time
   dg.past <- reactive({
-    logMsg(" reactive dg.past rbsPastTime", sessionID)
-    return(dg() %>% dplyr::filter(Date > max(Date)-weeks(as.integer(input$rbsPastTime))))
+    logMsg(" reactive dg.past sldPastTime", sessionID)
+    return(dg() %>% dplyr::filter(Date > max(Date)-months(as.integer(input$sldPastTime))))
   })
 
   # state history by regions
@@ -432,7 +421,7 @@ server <- function(input, output, session) {
     dp <- cwmAgesRm7EstimatePoly(dk, nModelDays=input$sldModelDays+3, nPoly=as.integer(input$rbsModelOrder), nPredDays=28)
 
     ggplot(data=dp, aes(x=Date, y=rm7NewConfPop, color=Region, shape=Region)) + 
-      cwmConfPopStyle(rbsPastTime=5, cbLogScale=input$cbLogScale, inRegions=inRegions, xLimits=c(max(dk$Date)-weeks(6), max(dp$Date)+days(1))) +
+      cwmConfPopStyle(sldPastTime=1, cbLogScale=input$cbLogScale, inRegions=inRegions, xLimits=c(max(dk$Date)-weeks(6), max(dp$Date)+days(1))) +
       geom_line(linetype=2, size=1) + 
       geom_line(data=dk, aes(x=Date, y=1), size=1.0, color="green") +
       geom_line(data=dk, aes(x=Date, y=2), size=1.0, color="orange") +
@@ -465,7 +454,7 @@ server <- function(input, output, session) {
     dp <- df.past() %>% dplyr::filter(Region %in% inRegions)
     
     ggplot(dp, aes(x=Date, y=rm7NewConfPop, color=Region, shape=Region))+
-      cwmConfPopStyle(rbsPastTime=input$rbsPastTime, cbLogScale=input$cbLogScale, inRegions=inRegions) +
+      cwmConfPopStyle(sldPastTime=input$sldPastTime, cbLogScale=input$cbLogScale, inRegions=inRegions) +
       geom_point(size=2)+geom_line()+
       geom_point(data=dp %>% dplyr::filter(Date==max(Date)), size=4)+
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Positiv Getestete pro 100.000 Einw. seit ", min(dp$Date), ".  Basisdaten: AGES"))
@@ -486,7 +475,7 @@ server <- function(input, output, session) {
     dp <- dg.past() %>% dplyr::filter(newConfPop>0, Region %in% inRegions)
     
     ggplot(dp, aes(x=Date, y=newConfPop, group=CountyID))+
-      cwmConfPopStyle(rbsPastTime=input$rbsPastTime, cbLogScale=input$cbLogScale, inRegions=inRegions[inRegions!="Österreich"], yLimits=c(.5,256)) +
+      cwmConfPopStyle(sldPastTime=input$sldPastTime, cbLogScale=input$cbLogScale, inRegions=inRegions[inRegions!="Österreich"], yLimits=c(.5,256)) +
       geom_line(size=.25, aes(color=Region))+
       ggtitle(paste0("COVID-19 Österreich, Bundesländer und Bezirke: Positiv Getestete pro 100.000 Einw. seit ", min(dp$Date), ".  Basisdaten: AGES"))
   })
@@ -507,7 +496,7 @@ server <- function(input, output, session) {
     #dp <- df %>% dplyr::filter(dt7rm7NewConfPop<1.20, dt7rm7NewConfPop>.85)
     
     ggplot(dp, aes(x=Date, y=dt7rm7NewConfPop, color=Region, shape=Region))+
-      cwmSpreadStyle(rbsPastTime=input$rbsPastTime, inRegions=inRegions) +
+      cwmSpreadStyle(sldPastTime=input$sldPastTime, inRegions=inRegions) +
       geom_line(size=.75) +
       geom_point(size=2) + 
       geom_point(data=dp %>% dplyr::filter(Date==max(Date)), size=4)+
@@ -526,7 +515,7 @@ server <- function(input, output, session) {
     input$abUpdate
     inRegions <- isolate(input$cbgRegion)
     ggplot(de.regions(), aes(x=Date, y=rm7NewConfPop, color=Region, shape=Region))+
-      cwmConfPopStyle(rbsPastTime=5, cbLogScale=input$cbLogScale, inRegions=inRegions) +
+      cwmConfPopStyle(sldPastTime=1, cbLogScale=input$cbLogScale, inRegions=inRegions) +
       geom_point(size=2)+geom_line()+
       geom_line(aes(y=modrm7NewConfPop)) +
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: TagesInzidenz: Positiv getestete pro Tag pro 100.000 Einwohner.  Basisdaten: AGES"))
@@ -547,7 +536,7 @@ server <- function(input, output, session) {
     dp <- de.regions()  %>% dplyr::filter(dt7rm7NewConfPop<1.19, dt7rm7NewConfPop>.84)
     
     ggplot(dp, aes(x=Date, y=dt7rm7NewConfPop, color=Region, shape=Region))+
-      cwmSpreadStyle(rbsPastTime=5, inRegions=inRegions) +
+      cwmSpreadStyle(sldPastTime=1, inRegions=inRegions) +
       #scale_y_continuous(limits=c(yLimMin,yLimMax), breaks=exp(log(2)/dblDays), labels=dblDays, position="right") +
       geom_line(size=.75) +
       geom_point(size=2) + 

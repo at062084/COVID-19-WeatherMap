@@ -85,11 +85,11 @@ mapNUTSAT <- function () {
 # ----------------------------------------------------------------------------------------------
 # Standard ggplot style for newConfPop~Date
 # ----------------------------------------------------------------------------------------------
-cwmConfPopStyle <- function(rbsPastTime=25, cbLogScale=TRUE, inRegions=1:10, xLimits=c(NULL,NULL), yLimits=c(yLimMin, yLimMax), yLabel="Positive/100.000 Einwohnern") {
+cwmConfPopStyle <- function(sldPastTime=3, cbLogScale=TRUE, inRegions=1:10, xLimits=c(NULL,NULL), yLimits=c(yLimMin, yLimMax), yLabel="Positive/100.000 Einwohnern") {
   
   # Process left side menu user interactions
   trans <- ifelse(cbLogScale, "log10", "identity")
-  if(as.integer(rbsPastTime)<15) {
+  if(as.integer(sldPastTime)<=3) {
     rvBreaks="1 weeks"
     rvLabels="%d.%m"
   } else {
@@ -125,12 +125,12 @@ cwmConfPopStyle <- function(rbsPastTime=25, cbLogScale=TRUE, inRegions=1:10, xLi
 # ----------------------------------------------------------------------------------------------
 # Standard ggplot style for dt7ConfPop~Date
 # ----------------------------------------------------------------------------------------------
-cwmSpreadStyle <- function(rbsPastTime=25, inRegions=1:10, yLimits=c(0.84, 1.19)) {
+cwmSpreadStyle <- function(sldPastTime=3, inRegions=1:10, yLimits=c(0.84, 1.19)) {
 
   sSize=.5
   
   # Process left side menu user interactions
-   if(as.integer(rbsPastTime)<15) {
+   if(as.integer(sldPastTime)<=3) {
     rvBreaks="1 weeks"
     rvLabels="%d.%m"
   } else {
