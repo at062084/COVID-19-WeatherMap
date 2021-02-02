@@ -43,3 +43,74 @@ tsc: Refined TSC clocksource calibration: 1999.999 MHz
 
 
 
+# 2020-02-01
+https://cloud.ibm.com/docs/containers?topic=containers-ingress-types
+https://kubernetes.github.io/ingress-nginx/examples/affinity/cookie/
+# podID taken from k8s dashboard -> pods -> kube-sytem -> (several restarts) -> public-crbp1g35gf0bfdrpfel34g-alb1-598cb94554-pth8c
+# ingress-nginx-controller-873061567-4n3k2 -n kube-system -- cat /etc/nginx/nginx.conf
+# ingress-nginx-controller-873061567-4n3k2 -n kube-system -- cat /etc/nginx/ngcin.d/cwmnamespace-cwm-ingress.conf
+# root         1     0 TS   19 Jan29 ?        00:05:56 /nginx-ingress -v=3 --nginx-configmaps=kube-system/ibm-cloud-provider-ingress-cm -logtostderr=true
+nginx version: nginx/1.17.7
+
+Info on ingress:
+nginx-ingress
+Image registry.eu-de.bluemix.net/armada-master/ingress:2424
+ALB_ID public-crbp1g35gf0bfdrpfel34g-alb1
+ALB_ID_LB public-crbp1g35gf0bfdrpfel34g-alb1
+ARMADA_CLUSTER_ID bp1g35gf0bfdrpfel34g
+ARMADA_POD_NAME public-crbp1g35gf0bfdrpfel34g-alb1-598cb94554-pth8c
+INGRESS_IMAGE registry.eu-de.bluemix.net/armada-master/ingress:2424
+INGRESS_RESOURCE_CREATION_RATE 3 bytes
+INGRESS_RESOURCE_TIMEOUT 2 bytes
+SECURED_NAMESPACE ibm-cert-store
+Arguments
+-v=3
+--nginx-configmaps=kube-system/ibm-cloud-provider-ingress-cm
+-logtostderr=true
+
+sysctl
+Image registry.eu-de.bluemix.net/armada-master/alpine:3.6
+Commands
+sh
+-c
+sysctl -e -w fs.file-max=6000000;  sysctl -e -w fs.nr_open=10000000;  sysctl -e -w net.core.rmem_max=16777216;  sysctl -e -w net.core.wmem_max=16777216;  sysctl -e -w net.core.rmem_default=12582912;  sysctl -e -w net.core.wmem_default=12582912;  sysctl -e -w net.core.optmem_max=25165824;  sysctl -e -w net.core.netdev_max_backlog=262144;  sysctl -e -w net.core.somaxconn=32768;  sysctl -e -w net.core.rps_sock_flow_entries=32768;  sysctl -e -w net.ipv4.ip_local_port_range="1025 65535";  sysctl -e -w net.ipv4.tcp_rmem="8192 262144 16777216";  sysctl -e -w net.ipv4.tcp_wmem="8192 262144 16777216";  sysctl -e -w net.ipv4.udp_rmem_min=16384;  sysctl -e -w net.ipv4.udp_wmem_min=16384;  sysctl -e -w net.ipv4.ip_no_pmtu_disc=0;  sysctl -e -w net.ipv4.route.flush=1;  sysctl -e -w net.ipv4.tcp_dsack=1;  sysctl -e -w net.ipv4.tcp_sack=1;  sysctl -e -w net.ipv4.tcp_fack=1;  sysctl -e -w net.ipv4.tcp_max_tw_buckets=1440000;  sysctl -e -w net.ipv4.tcp_tw_recycle=0;  sysctl -e -w net.ipv4.tcp_tw_reuse=1;  sysctl -e -w net.ipv4.tcp_frto=0;  sysctl -e -w net.ipv4.tcp_syncookies=1;  sysctl -e -w net.ipv4.tcp_max_syn_backlog=32768;  sysctl -e -w net.ipv4.tcp_synack_retries=2;  sysctl -e -w net.ipv4.tcp_syn_retries=3;  sysctl -e -w net.ipv4.tcp_fin_timeout=5;  sysctl -e -w net.ipv4.tcp_retries2=5;  sysctl -e -w net.ipv4.tcp_no_metrics_save=1;  sysctl -e -w net.ipv4.tcp_moderate_rcvbuf=1;  sysctl -e -w net.ipv4.tcp_timestamps=1;  sysctl -e -w net.ipv4.tcp_keepalive_time=300;  sysctl -e -w net.ipv4.tcp_keepalive_intvl=30;  sysctl -e -w net.ipv4.tcp_keepalive_probes=6;  sysctl -e -w net.ipv4.tcp_slow_start_after_idle=0;  sysctl -e -w net.ipv4.tcp_window_scaling=1;  sysctl -e -w net.ipv4.tcp_low_latency=1;  sysctl -e -w net.ipv4.tcp_max_orphans=262144;  sysctl -e -w net.nf_conntrack_max=9145728;  sysctl -e -w net.netfilter.nf_conntrack_max=9145728;  sysctl -e -w net.netfilter.nf_conntrack_tcp_timeout_time_wait=10;  sysctl -e -w net.netfilter.nf_conntrack_tcp_timeout_fin_wait=10;  sysctl -e -w net.netfilter.nf_conntrack_tcp_timeout_close_wait=30;  sysctl -e -w net.netfilter.nf_conntrack_tcp_loose=1;  sysctl -e -w net.ipv4.tcp_rfc1337=1; exit 0;
+
+
+/etc/nginx/ngcin.d/cwmnamespace-cwm-ingress.conf
+# cat cwmnamespace-cwm-ingress.conf | awk 'NF>0'
+  upstream cwmnamespace-cwm-ingress-rep-k8s-cluster.eu-de.containers.appdomain.cloud-cwm-rshiny-service {
+    server 172.30.126.41:3838  ;
+    keepalive 64;
+  }
+  server {
+    listen 80;
+        listen 443 ssl;
+        ssl_certificate /etc/nginx/ssl/cwmnamespace-rep-k8s-cluster-48a40589c62cd829903b0d7849def5a2-0000.pem;
+        ssl_certificate_key /etc/nginx/ssl/cwmnamespace-rep-k8s-cluster-48a40589c62cd829903b0d7849def5a2-0000.pem;
+  server_name rep-k8s-cluster.eu-de.containers.appdomain.cloud;
+    if ($http_x_forwarded_proto = 'http') {
+      return 301 https://$host$request_uri;
+    }
+    if ($scheme = http) {
+      return 301 https://$host$request_uri;
+    }
+        location  / {
+              proxy_http_version 1.1;
+              proxy_set_header Upgrade $http_upgrade;
+              proxy_set_header Connection $connection_upgrade;
+              proxy_set_header "x-global-k8fdic-transaction-id" $request_id;
+              more_clear_headers "x-global-k8fdic-transaction-id";
+              proxy_connect_timeout 60s;
+              proxy_read_timeout 60s;
+              client_max_body_size 1m;
+                proxy_set_header Host $host;
+              proxy_set_header X-Real-IP $remote_addr;
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Host $host;
+              proxy_set_header X-Forwarded-Port $server_port;
+              proxy_set_header X-Forwarded-Proto https;
+              proxy_buffering on;
+                        proxy_pass http://cwmnamespace-cwm-ingress-rep-k8s-cluster.eu-de.containers.appdomain.cloud-cwm-rshiny-service;
+        }
+  }
+
