@@ -83,3 +83,46 @@ dy[,c(1,6,2:5,7:11)]
 
 
 
+
+# Generate a test data frame for handling of last three days
+
+# daily under/over reporting (independent of absolute numbers)
+p <- c(0.8,1,1.5,1.4,1.0,0.8,0.5) 
+mean(p)
+# four weeks plus three days
+d <- as.Date("2021-01-04") + days(c(0:30)) 
+# true test results
+e <- exp((0:30)*.25) 
+# reported test results
+c <- e * p 
+# data frame
+dc <- data.frame(Date=d, epiConfirmed=e, newConfirmed=c) %>%
+  dplyr::mutate(k=c(rep(p,4),p[1:3])) %>%
+  dplyr::mutate(rm7NewConfirmed = rollmean(newConfirmed, 7, align="center", na.pad=TRUE)) %>%
+  dplyr::mutate(k7 = rm7NewConfirmed/newConfirmed)
+
+m <- lm(formula=log(newConfirmed)~Date, data=dc)
+ggplot(data=dc, aes(x=Date, y=epiConfirmed)) + 
+  geom_line() + 
+  geom_point(aes(y=newConfirmed)) + 
+  geom_line(aes(y=newConfirmed),size=.25) + 
+  scale_x_date(date_labels="%a", date_breaks="1 day") +
+  scale_y_continuous(trans="log10")  + 
+  geom_line(aes(y=rm7NewConfirmed),size=.25, col="red") + 
+  geom_point(aes(y=rm7NewConfirmed),col="red") +
+  geom_line(aes(y=exp(predict(m))), col="green") +
+  geom_line(aes(y=newConfirmed/k), col="magenta") + 
+  geom_line(aes(y=newConfirmed*k7), col="cyan") 
+
+ggplot(data=dc, aes(x=Date, y=rm7NewConfirmed/epiConfirmed)) +
+  geom_line() + 
+  scale_y_continuous(trans="log10")  
+
+ggplot(data=dc, aes(x=Date, y=newConfirmed/rm7NewConfirmed)) + 
+  geom_line() + geom_point() + scale_y_continuous(limits=c(0,2)) +
+  geom_point(aes(y=k), colour="red")  
+
+# --> k7 = rm7NewConfirmed/newConfirmed
+# --> rm7NewConfirmed = newConfirmed*k7
+
+
