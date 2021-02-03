@@ -197,7 +197,7 @@ ui <- fluidPage(
     
     # Sidebar panel for inputs ----
     sidebarPanel(width=2,
-      p("CWM-V0.9.8-20210203"),
+      p("CWM-V0.9.9-20210203"),
       
       fluidRow(
         column(6,
@@ -214,7 +214,7 @@ ui <- fluidPage(
                            "Salzburg", 
                            "Tirol", 
                            "Vorarlberg"), 
-            selected = c("Österreich","Wien","Kärnten"))),
+            selected = c("Österreich","Wien","Niederösterreich","Burgenland","Kärnten"))),
         column(6,
           actionButton("abUpdate", "Update"))),
 
