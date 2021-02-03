@@ -57,8 +57,9 @@ RUN sudo chown -R shiny:shiny /srv/shiny-server \
     && perl -p -i -e s/101:/101:shiny/g /etc/group \
     && perl -p -i -e s/:27:/:27:shiny/g /etc/group \
     && echo "shiny ALL=NOPASSWD: /usr/sbin/cron" >>/etc/sudoers \
-    && echo "shiny ALL=NOPASSWD: /usr/bin/echo" >>/etc/sudoers \
-    && echo "shiny ALL=NOPASSWD: /usr/sbin/service" >>/etc/sudoers
+    && echo "shiny ALL=NOPASSWD: /usr/sbin/service" >>/etc/sudoers \
+    && echo "14 14 * * * shiny cd /srv/shiny-server/COVID-19-WeatherMap && /usr/local/bin/Rscript ./cron.R" >> /etc/crontab \
+    && echo "23 23 * * * shiny cd /srv/shiny-server/COVID-19-WeatherMap && /usr/local/bin/Rscript ./cron.R" >> /etc/crontab
 
 # Pass Kubernetes variable if available
 ENV APPLICATION_LOGS_TO_STDOUT=${APPLICATION_LOGS_TO_STDOUT}
