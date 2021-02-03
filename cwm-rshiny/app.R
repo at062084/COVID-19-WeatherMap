@@ -74,11 +74,11 @@ nModelDays=13
 #cron_clear(ask=FALSE)
 #cron_add(cmd, id='AGES-14', at = '14:14')
 #cron_add(cmd, id='AGES-22', at = '22:22')
-logMsg("Define cron job for data retrieval from AGES")
-cronCMD14="14 14 * * * shiny cd /srv/shiny-server/COVID-19-WeatherMap %% /usr/local/bin/Rscript ./cron.R"
-cronCMD23="23 23 * * * shiny cd /srv/shiny-server/COVID-19-WeatherMap %% /usr/local/bin/Rscript ./cron.R"
-system2("sudo",paste("Echo",cronCMD14,">> /etc/crontab"))
-system2("sudo",paste("Echo",cronCMD23,">> /etc/crontab"))
+#logMsg("Define cron job for data retrieval from AGES")
+#cronCMD14="14 14 * * * shiny cd /srv/shiny-server/COVID-19-WeatherMap %% /usr/local/bin/Rscript ./cron.R"
+#cronCMD23="23 23 * * * shiny cd /srv/shiny-server/COVID-19-WeatherMap %% /usr/local/bin/Rscript ./cron.R"
+#system2("sudo",paste("Echo",cronCMD14,">> /etc/crontab"))
+#system2("sudo",paste("Echo",cronCMD23,">> /etc/crontab"))
 logMsg("Starting service cron")
 system2("sudo","service cron start")
 #  }
