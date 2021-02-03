@@ -68,6 +68,8 @@ caAgesRead_cfGKZtl <- function(csvFile="CovidFaelle_Timeline_GKZ.csv", bSave=TRU
   logMsg(paste("Writing", rdaFile))
   if (bSave) saveRDS(db, file=rdaFile)  
   
+  return(db)
+  
   #Capitals=c("Wien","Eisenstadt","Sankt Pölten(Land)","Linz(Stadt)","Klagenfurth Stadt","Graz(Stadt)","Salzburg(Stadt)","Innsbruck-Stadt","Feldkirch")
   #Big10Cities=c("Wien","Graz(Stadt)","Linz(Stadt)","Baden","Vöcklabruck","Bregenz","Innsbruck-Stadt","Mödling","Amstetten","Kufstein")
   #dc <- df %>%
@@ -169,7 +171,7 @@ caAgesRead_cfz <- function(csvFile="CovidFallzahlen.csv", bSave=TRUE) {
 caAgesRead_tlrm <- function(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile="./data/CovidFallzahlen.rda", bPlot=FALSE, bSave=TRUE,
                             nRm7Days=7, bDt7=TRUE, nDt7Days=7, bLpr=TRUE, nLprDays=19,
                             bResiduals=TRUE, dResFirst=as.Date("2020-07-27"), dResLast=as.Date("2020-11-16"), bShiftDown=TRUE,
-                            bDOWCorrection=TRUE, nDOWCorrectionWeeks=5,
+                            bDOWCorrection=TRUE, nDOWCorrectionWeeks=4,
                             bPredict=TRUE, nPolyDays=7, nPoly=2,
                             bEstimate=FALSE, bCompleteCases=FALSE) {
   
@@ -249,8 +251,6 @@ caAgesRead_tlrm <- function(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile=
   if (bDOWCorrection) {
     # Estimate actual newConfirmed based on over/under reports of last nWeeks 
     dq <- cwmAgesRm7DOWCorrection(df, nWeeks=nDOWCorrectionWeeks) %>%
-      dplyr::arrange(Date, Region) %>%
-      dplyr::filter(Date>max(Date)-days(3)) %>%
       dplyr::arrange(Region,Date)
     
     # patch newConfirmed with dowNewConfirmed. This relies on same sort order: Region,Date    
@@ -265,24 +265,51 @@ caAgesRead_tlrm <- function(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile=
   # d-1 = mean(last 3)
   # d-0 = last
   
-  # work last three days
+  # New variant as of 2020-02-03:
+  # 1.) patch NA's of rm7* cols of last three days with new* features
+  # 2.) calc rm7 (day-2) as mean of rm7 of last 5 days (includes two actural rm7)
+  # 3.) calc rm7 (day-1) as mean of rm7 of last 3 days (include one actual and the previously calculated)
+  # 4.) leave rm7 od today as is (just DOW corrected new) or original value for other features
+  
+  patch531 <- function(new,rm7) {
+    if (length(new)==5) return(mean(c(rm7[1:2],new[3:5])))
+    if (length(new)==3) return(mean(c(rm7[1],new[2:3])))
+    if (length(new)==1) return(new[1])
+    return(NULL)
+  }
+  
+  # Calculate rm7 of last three days
   maxDate <- max(df$Date)
   # work all cols with rolling means by week
   rm7s <- colnames(df)[startsWith(colnames(df),"rm7")]
-  # calc mean of last, last 3, last 5 days as estimate of today, yesterday, day before yesterday
-  for(d in 0:2) {
-    # work all rm7 features
+  # calc mean of last 5 days, last 3 days and last day as estimate of day before yesterday, yesterday, today (in this order)
+  for(d in c(2,1,0)) {
     for (rm7 in rm7s) {
       # select item for all regions
-      df[df$Date==maxDate-days(d),rm7] <- df %>% 
-                                             dplyr::filter(Date>=maxDate-days(d*2)) %>% 
-                                             dplyr::select(Region,x=paste0(tolower(substr(!!rm7, 4,4)),substr(!!rm7,5,100))) %>% 
-                                             dplyr::group_by(Region)  %>%
-                                             dplyr::summarize(rm7=mean(x)) %>%
-                                             dplyr::ungroup() %>% 
-                                             dplyr::select(rm7)
+      #r <- df %>% 
+      #  dplyr::filter(Date>=maxDate-days(d*2)) %>% 
+      #  dplyr::select(Region,x=paste0(tolower(substr(!!rm7, 4,4)),substr(!!rm7,5,100))) %>% 
+      #  dplyr::group_by(Region)  %>%
+      #  dplyr::summarize(rm7=mean(x)) %>%
+      #  dplyr::ungroup() %>% 
+      #  dplyr::select(rm7)
+      
+      # incremental build of rm7 from available rm7 and new
+      s <- df %>% 
+        dplyr::filter(Date>=maxDate-days(d*2)) %>% 
+        dplyr::select(Region,x=paste0(tolower(substr(!!rm7, 4,4)),substr(!!rm7,5,100)),y=!!rm7) %>% 
+        dplyr::group_by(Region)  %>%
+        dplyr::summarise(rm7=patch531(x,y))  %>%
+        dplyr::ungroup() %>% 
+        dplyr::select(rm7)
+
+      df[df$Date==(maxDate-days(d)),rm7] <- s 
     }
   }
+  
+  # recalc rm7ConfPop
+  df <- df %>% dplyr::mutate(rm7NewConfPop=rm7NewConfirmed/Population*100000)
+  
     
   # Update 2020-01-24: This is obsoleted by above strategy of 'shorted week weekly means'
   # patch rm7* NA's with predicts from lm poly model
@@ -292,7 +319,6 @@ caAgesRead_tlrm <- function(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile=
     dp <- cwmAgesRm7EstimatePoly(df, nPoly=nPoly, nModelDays=nPolyDays+3, nPredDays=0) %>%
       dplyr::arrange(Date, Region) 
 
-    
     ggplot(dp, aes(x=Date, y=rm7NewConfirmed))+geom_line() +
       geom_point(data=df%>%dplyr::filter(Date>=min(dp$Date)), aes(x=Date, y=newConfirmed), color="red") +
       geom_line(data=df%>%dplyr::filter(Date>=min(dp$Date)), aes(x=Date, y=rm7NewConfirmed), color="black", size=.5) +

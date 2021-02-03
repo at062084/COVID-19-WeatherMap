@@ -15,11 +15,11 @@ htmlWeatherMap <- "<p><b>Tages Inzidenz: Lage und Vorhersage</b></p>
                       <center>
                         <table>
                           <tr><th>Symbol</th><th>Tages Inzidenz</th></tr>
-                          <tr><td>Sonne </td><td> 0-4, Stufen 0,1,2</td></tr>
-                          <tr><td>Sonne+Wolken </td><td> 4-8, Stufe 3</td></tr>
-                          <tr><td>Sonne+Regen </td><td> 8-16, Stufe 4</td></tr>
-                          <tr><td>Regen </td><td> 16-32, Stufe 5</td></tr>
-                          <tr><td>Gewitter </td><td> 32+, Stufen 6+</td></tr>
+                          <tr><td>Sonne </td><td align='right'> 0-4, Stufen 0,1,2</td></tr>
+                          <tr><td>Sonne+Wolken </td><td align='right'> 4-8, Stufe 3</td></tr>
+                          <tr><td>Sonne+Regen </td><td align='right'> 8-16, Stufe 4</td></tr>
+                          <tr><td>Regen </td><td align='right'> 16-32, Stufe 5</td></tr>
+                          <tr><td>Gewitter </td><td align='right'> 32+, Stufen 6+</td></tr>
                         </table>
                       </center>
                     </p>
@@ -28,13 +28,13 @@ htmlWeatherMap <- "<p><b>Tages Inzidenz: Lage und Vorhersage</b></p>
                       <center>
                         <table>
                           <tr><th>Symbol</th><th>Wochen</th></tr>
-                          <tr><td>Pfeil S </td><td> 0-2</td></tr>
-                          <tr><td>Pfeil SSE </td><td> 2-4</td></tr>
-                          <tr><td>Pfeil ESE </td><td> 4-8 </td></tr>
-                          <tr><td>Pfeil E </td><td> mehr als 8</td></tr>
-                          <tr><td>Pfeil ENE </td><td> 4-8</td></tr>
-                          <tr><td>Pfeil NNE </td><td> 2-4</td></tr>
-                          <tr><td>Pfeil N </td><td> 0-2</td></tr>
+                          <tr><td>Pfeil S </td><td align='right'> 0-2</td></tr>
+                          <tr><td>Pfeil SSE </td><td align='right'> 2-4</td></tr>
+                          <tr><td>Pfeil ESE </td><td align='right'> 4-8 </td></tr>
+                          <tr><td>Pfeil E </td><td align='right'> mehr als 8</td></tr>
+                          <tr><td>Pfeil ENE </td><td align='right'> 4-8</td></tr>
+                          <tr><td>Pfeil NNE </td><td align='right'> 2-4</td></tr>
+                          <tr><td>Pfeil N </td><td align='right'> 0-2</td></tr>
                         </table>
                       </center>
                     </p><p> Als <b>Grenzwert für Lockerungen</b> aus einem LockDown wurde von offizieller Seite immer wieder ein Sinken auf eine Wochen Inzidenz 

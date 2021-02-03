@@ -37,6 +37,12 @@ mapNUTSAT <- function () {
   mapNUTS2 <- geojsonio::geojson_read(x="./maps/nuts_rg_60m_2013_lvl_2.geojson", what="sp") %>% dplyr::filter(startsWith(NUTS_ID,"AT"))
   mapNUTS3 <- geojsonio::geojson_read(x="./maps/nuts_rg_60m_2013_lvl_3.geojson", what="sp") %>% dplyr::filter(startsWith(NUTS_ID,"AT"))
   
+  # Construct NUTS0 as a micropoligon in the center of NUTS1
+  mapNUTS0 <- mapNUTS1 %>% dplyr::filter(NUTS_ID=="AT2")
+  mapNUTS0$NUTS_ID <- "AT0"
+  mapNUTS0@polygons[[1]]@Polygons[[1]]@coords <- matrix(c(cxNUTS[1]+1.5+c(-.75,+.75,+.75,-.75,-.75),cyNUTS[1]+.05+c(-.25,-.25,+.25,+.25,-.25)),ncol=2)
+  mapNUTS0@polygons[[1]]@plotOrder <- as.integer(10)
+  
   # Box Centers.  Center of AT2: will be used as Center for AT
   cxNUTS <- vector()
   cyNUTS <- vector()
@@ -49,12 +55,12 @@ mapNUTSAT <- function () {
   
   # Mapping from NUTS2 to Region
   NUTS_AT <- data.frame(
-    NUTS_ID=c("AT2","AT11","AT12","AT13","AT21","AT22","AT31","AT32","AT33","AT34"),
+    NUTS_ID=c("AT0","AT11","AT12","AT13","AT21","AT22","AT31","AT32","AT33","AT34"),
     Region= c("Österreich", "Burgenland","Niederösterreich","Wien", "Kärnten","Steiermark", "Oberösterreich","Salzburg","Tirol","Vorarlberg"),
     stringsAsFactors=FALSE)
   
   # Add features Region and Center 
-  mapNUTS <- rbind(mapNUTS1[2,],mapNUTS2) %>% 
+  mapNUTS <- rbind(mapNUTS0,mapNUTS2) %>% 
     dplyr::left_join(NUTS_AT, by="NUTS_ID") %>% 
     dplyr::mutate(cxNUTS=cxNUTS, cyNUTS=cyNUTS)
   
@@ -262,7 +268,7 @@ cwmAgesRm7EstimatePoly <- function(df, nPoly=2, nModelDays=10, nPredDays=7) {
 # AGES Estimate of rm7 data for past three days based on estimate of over/under reports depending on day of week
 # Currently implemented for newConfirmed only. TODO: Calculate for all rm7* features
 # --------------------------------------------------------------------------------------------------------
-cwmAgesRm7DOWCorrection <- function(df, nWeeks=5, bPlot=FALSE) {
+cwmAgesRm7DOWCorrection <- function(df, nWeeks=4, bPlot=FALSE) {
   # estimate the weekly rolling mean for today and the past two days by 
   # compensating the over/under estimation as the mean in the past three weeks
   begDate <- max(df$Date) - weeks(nWeeks) - days(3)
@@ -273,19 +279,44 @@ cwmAgesRm7DOWCorrection <- function(df, nWeeks=5, bPlot=FALSE) {
     dplyr::filter(Date > begDate) %>%
     dplyr::mutate(WeekDay=wday(Date, week_start=getOption("lubridate.week.start",1))) %>%
     dplyr::mutate(WeekNo=as.character(isoweek(Date)))
+
+  # --> kCorr = rm7NewConfirmed/newConfirmed
+  # --> rm7NewConfirmed = newConfirmed*kCorr
   
-  dff <- dft %>% dplyr::filter(Date<endDate) %>%
-    dplyr::mutate(proNewConfirmed=newConfirmed/rm7NewConfirmed)
-    
-    
-  # plot 
+  dff <- dft %>% dplyr::filter(Date<=endDate) %>%
+    dplyr::mutate(proNewConfirmed=rm7NewConfirmed/newConfirmed)
+ 
+  # through away one outlyer if more than three weeks
+  dowFactorCalc <- function(n){
+    if(length(n)<=3) return(mean(n))
+    d <- n-mean(n)
+    n <- n[which (abs(d)!=max(abs(d)))]
+    return(mean(n))
+  }
+  
+  # extract correction factor for the last three days from the same week days on the  nWeeks before
+  estWeekDays <- dft %>% dplyr::filter(Date>endDate) %>% dplyr::select(WeekDay) %>% dplyr::distinct()
+  estWeekDays <- as.data.frame(estWeekDays)[,1]
+  dof <- dff %>% 
+    dplyr::filter(Date<=endDate) %>%
+    dplyr::filter(WeekDay %in% estWeekDays) %>%
+    dplyr::group_by(Region,WeekDay) %>% 
+    dplyr::summarize(dowFactor=dowFactorCalc(proNewConfirmed)) %>%
+    dplyr::ungroup()
+  
+  dow <- dof %>%
+    # add Date colum back
+    dplyr::inner_join (dft %>% dplyr::filter(Date>endDate) %>% dplyr::select(Date,Region,WeekDay,newConfirmed,rm7NewConfirmed), by=c("WeekDay","Region")) %>%
+    dplyr::select(Date, Region, WeekDay, rm7NewConfirmed, newConfirmed, dowFactor) %>%
+    dplyr::mutate(dowNewConfirmed=round(newConfirmed*dowFactor)) %>%
+    dplyr::select(Date, Region, newConfirmed, dowNewConfirmed, WeekDay, dowFactor)
+  
+  
   if (bPlot) {
     ggplot(data=dft, aes(x=Date, y=newConfirmed, group=Region, color=Region)) + geom_point() + geom_line(size=0.5) +
       geom_line(aes(y=rm7NewConfirmed), size=2) +
       facet_wrap(.~Region, nrow=2, scales="free_y")
-  }
-  
-  if (bPlot) {
+
     dfq <- dft %>% 
       dplyr::filter(Date<=endDate) %>%
       dplyr::group_by(Region,WeekDay) %>% 
@@ -300,30 +331,6 @@ cwmAgesRm7DOWCorrection <- function(df, nWeeks=5, bPlot=FALSE) {
       geom_point(data=dfq, aes(x=WeekDay, y=meanProNewConfirmed, size=5, col="red"), inherit.aes=FALSE)+
       facet_wrap(.~Region, nrow=2)
   }
-  
-  # though away one outlyer
-  dowFactorCalc <- function(n){
-    d <- n-mean(n)
-    n <- n[which (abs(d)!=max(abs(d)))]
-    return(mean(n))
-  }
-  
-  # extract correction factor for the last three days from the same week days on the three weeks before
-  estWeekDays <- dft %>% dplyr::filter(Date>endDate) %>% dplyr::select(WeekDay) %>% dplyr::distinct()
-  estWeekDays <- as.data.frame(estWeekDays)[,1]
-  dof <- dff %>% 
-    dplyr::filter(Date<=endDate) %>%
-    dplyr::filter(WeekDay %in% estWeekDays) %>%
-    dplyr::group_by(Region,WeekDay) %>% 
-    dplyr::summarize(dowFactor=dowFactorCalc(proNewConfirmed)) %>%
-    dplyr::ungroup()
-    
-  dow <- dof %>%
-    # add Date colum back
-    dplyr::inner_join (dft %>% dplyr::filter(Date>endDate) %>% dplyr::select(Date,Region,WeekDay,newConfirmed), by=c("WeekDay","Region")) %>%
-    dplyr::select(Date, Region, WeekDay, newConfirmed, dowFactor) %>%
-    dplyr::mutate(dowNewConfirmed=round(newConfirmed/dowFactor)) %>%
-    dplyr::select(Date, Region, newConfirmed, dowNewConfirmed, WeekDay, dowFactor)
   
   # let the caller handle the estimates
   return(dow)    

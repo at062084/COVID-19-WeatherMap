@@ -65,19 +65,23 @@ nModelDays=13
 # Define cron job to retrieve new data from AGES
 # -----------------------------------------------------------
 #if(0==1) {
-logMsg("Define cron job for data retrieval from AGES")
-cronJobDir <- "/srv/shiny-server/COVID-19-WeatherMap"
+#cronJobDir <- "/srv/shiny-server/COVID-19-WeatherMap"
 #cronJobDir <- "/home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny"
-cronJobFile <- paste0(cronJobDir,"/cron.R")
-cronJobLog <-paste0(cronJobDir,"/log/cwm.cron.log")  
-cmd <- cron_rscript(rscript=cronJobFile, rscript_log=cronJobLog, log_timestamp=TRUE, workdir=cronJobDir)
-cmd
-cron_clear(ask=FALSE)
-cron_add(cmd, id='AGES-14', at = '14:14')
-cron_add(cmd, id='AGES-22', at = '22:22')
+#cronJobFile <- paste0(cronJobDir,"/cron.R")
+#cronJobLog <-paste0(cronJobDir,"/log/cwm.cron.log")  
+#cmd <- cron_rscript(rscript=cronJobFile, rscript_log=cronJobLog, log_timestamp=TRUE, workdir=cronJobDir)
+#cmd
+#cron_clear(ask=FALSE)
+#cron_add(cmd, id='AGES-14', at = '14:14')
+#cron_add(cmd, id='AGES-22', at = '22:22')
+logMsg("Define cron job for data retrieval from AGES")
+cronCMD14="14 14 * * * shiny cd /srv/shiny-server/COVID-19-WeatherMap %% /usr/local/bin/Rscript ./cron.R"
+cronCMD23="23 23 * * * shiny cd /srv/shiny-server/COVID-19-WeatherMap %% /usr/local/bin/Rscript ./cron.R"
+system2("sudo",paste("Echo",cronCMD14,">> /etc/crontab"))
+system2("sudo",paste("Echo",cronCMD23,">> /etc/crontab"))
 logMsg("Starting service cron")
 system2("sudo","service cron start")
-#}
+#  }
 # -----------------------------------------------------------
 # Reactiv File Poller: Monitor for new files created by cron
 # -----------------------------------------------------------
@@ -111,6 +115,11 @@ dg.rfr <- reactiveFileReader(
 dg <- eventReactive(dg.rfr(), {
   logMsg(paste("eventReactive reactiveFileReader:dg", cwmCountiesFile)) 
   dg.rfr() })
+dg.today <- eventReactive(dg(), {
+  logMsg(paste("eventReactive reactiveFileReader:dg.today", cwmCountiesFile)) 
+  dg() %>% dplyr::filter(Date==max(Date)) %>% 
+    dplyr::mutate(TagesInzidenz=round(newConfPop,1)) %>%
+    dplyr::select(Date, Region, County, Population, TagesInzidenz)})
 
 # Prediction
 cwmPredictionFile <- "./data/COVID-19-CWM-AGES-Prediction.rda"
@@ -216,7 +225,7 @@ ui <- fluidPage(
         sliderInput("sldPastTime",
                     width="220px",
                     label="ZeitRaum (Monate)",
-                    min=1, max=12, step=1, value=3)),
+                    min=1, max=12, step=1, value=6)),
       
         fluidRow( 
           hr(style = "border-top: 3px solid #777777;"),
@@ -262,7 +271,8 @@ ui <- fluidPage(
           tabPanel("Inzidenz Bezirke",
                  h4("TagesInzidenz Bezirke", align = "left", style="color:gray"),
                  p("[Menüauswahl: Region,Zeitbereich,LogScale]", align = "left", style="color:green"),
-                 fluidRow(column(width=9, plotOutput(outputId = "ggpIncidenceCounties", height="75vh")),
+                 fluidRow(column(width=9, plotOutput(outputId = "ggpIncidenceCounties", height="75vh"),
+                                          DT::dataTableOutput(outputId = "dtoIncidenceCounties")),
                           column(width=3, htmlOutput(outputId="hlpIncidenceCounties")))),
         
 
@@ -362,26 +372,50 @@ server <- function(input, output, session) {
     nWeatherForeCastDays=nWeatherForeCastDays # same as slider=7 for incidence prediction (3 is automatically added to slider reading)
     # days from today back nWeatherForeCastDays days
     dh <- df.past() %>% dplyr::filter(Date>max(Date)-days(nWeatherForeCastDays)) %>% dplyr::select(Date, Region, dt7rm7NewConfPop,starts_with("rm7")) # Past days for forecast
+    da <- dh %>% dplyr::filter(Date==max(Date)-days(3)) %>% dplyr::select(Region, rm7AGESNewConfPop=rm7NewConfPop)
+    
     # model prediction for today
     dq <- cwmAgesRm7EstimatePoly(dh, nModelDays=nWeatherForeCastDays, nPredDays=0, nPoly=1) %>%
       dplyr::filter(Date==max(dh$Date))
     # model predicition for next week
     dm <- cwmAgesRm7EstimatePoly(dh, nModelDays=nWeatherForeCastDays, nPredDays=7, nPoly=1) %>%
       dplyr::filter(Date==max(Date))
-    
+    # number of days till inzidenz doubles
+    dt2 <- dh %>% 
+      dplyr::group_by(Region) %>% 
+      dplyr::summarise(dblDays=rm7PolyLog(rm7NewConfPop, nPoly=1, nModelDays=nWeatherForeCastDays, nNewData=1, bDblDays=TRUE)$pDblDays) %>%
+      dplyr::ungroup()
     
     pMapNUTS <- mapNUTS %>% 
       # construct single row with all required fields. merges data for today and forecast
       dplyr::left_join(dm, by="Region") %>%
+      dplyr::left_join(da, by="Region") %>%
+      dplyr::left_join(dt2, by="Region") %>%
       dplyr::left_join(dq, by="Region", suffix = c(".f", ".c")) %>%
       dplyr::left_join(dh %>% dplyr::select(Date, Region,dt7rm7NewConfPop) %>% dplyr::filter(Date==max(Date)) %>% dplyr::select(-Date), by="Region") %>%
       dplyr::mutate(idxCurConfPop=.bincode(rm7NewConfPop.c,binForeCast), 
                     idxDblConfPop=.bincode((rm7NewConfPop.c+(rm7NewConfPop.f-rm7NewConfPop.c)/7)/rm7NewConfPop.c,binDblDays), 
                     idxForConfPop=.bincode(rm7NewConfPop.f,binForeCast))
-    
+    # need to plot 'Österreich' last
+    pMapNUTS <- rbind(pMapNUTS[1,],pMapNUTS[2,],pMapNUTS[3,],pMapNUTS[4,],pMapNUTS[6,],pMapNUTS[7,],pMapNUTS[8,],pMapNUTS[9,],pMapNUTS[10,],pMapNUTS[5,])
+
+    #<tr><td>WochenInzidenz heute:  </td><td align='right'> %g</td></tr>
+    #<tr><td>WochenInzidenz nächste Woche:  </td><td align='right'> %g </td></tr>
+    #round(pMapNUTS$rm7NewConfPop.c*7), round(pMapNUTS$rm7NewConfPop.f*7), 
+      
     labWeatherMap <- sprintf(
-      "<strong>%s</strong><br/>TagesInzidenz: %g pro 100000<br>Änderung seit letzer Woche: %g%%<br>Prognose nächste Woche: %g",
-      pMapNUTS$Region, round(pMapNUTS$rm7NewConfPop.c,2), round(pMapNUTS$dt7rm7NewConfPop,2), round(pMapNUTS$rm7NewConfPop.f,2)) %>% lapply(htmltools::HTML)
+      "<table>
+          <tr><td><strong>%s</strong></td><td align='right'> %s </td></tr>
+          <tr><td>TagesInzidenz AGES (ca.): </td><td align='right'> %g</td></tr>
+          <tr><td>TagesInzidenz heute: </td><td align='right'> %g</td></tr>
+          <tr><td>TagesInzidenz nächste Woche: </td><td align='right'>  %g </td></tr>
+          <tr><td>Tage bis Inzidenz %s:  </td><td align='right'> %g </td></tr>
+        </table>
+        <small><i>Alle Werte berechnet auf Basis der letzten 10 Tage</i></small>",
+        pMapNUTS$Region, format(pMapNUTS$Date.c,"%a, %d.%m"),
+        round(pMapNUTS$rm7AGESNewConfPop,1),
+        round(pMapNUTS$rm7NewConfPop.c,1), round(pMapNUTS$rm7NewConfPop.f,1), 
+        ifelse(pMapNUTS$dblDays>0,"Verdoppelung","Halbierung"),round(abs(pMapNUTS$dblDays))) %>% lapply(htmltools::HTML)
   
     leaflet(pMapNUTS, options=leafletOptions(minZoom=7, maxZoom=7, zoomControl=FALSE, dragging=FALSE, zoom=7, )) %>%
       #addTiles(group="DefaultMap", options=providerTileOptions(minZoom=6, maxZoom=8)) %>%
@@ -465,7 +499,10 @@ server <- function(input, output, session) {
   # TagesInzidenz Bezirke
   # -------------------------------------------
   output$hlpIncidenceCounties <- renderText({ htmlIncidenceCounties })
-  
+
+  # Values, and Prediction of Incodence, Time to/outof Lockdown
+  output$dtoIncidenceCounties <- DT::renderDataTable({ dg.today() })
+    
   output$ggpIncidenceCounties <- renderPlot({
     logMsg("  output renderPlot ggpIncidenceCounties", sessionID)
     options(warn=-1)
