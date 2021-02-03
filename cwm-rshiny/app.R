@@ -197,7 +197,7 @@ ui <- fluidPage(
     
     # Sidebar panel for inputs ----
     sidebarPanel(width=2,
-      p("CWM-V0.9.11-20210203"),
+      p("CWM-V0.9.12-20210203"),
       
       fluidRow(
         column(6,
