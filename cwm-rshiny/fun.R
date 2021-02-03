@@ -37,12 +37,6 @@ mapNUTSAT <- function () {
   mapNUTS2 <- geojsonio::geojson_read(x="./maps/nuts_rg_60m_2013_lvl_2.geojson", what="sp") %>% dplyr::filter(startsWith(NUTS_ID,"AT"))
   mapNUTS3 <- geojsonio::geojson_read(x="./maps/nuts_rg_60m_2013_lvl_3.geojson", what="sp") %>% dplyr::filter(startsWith(NUTS_ID,"AT"))
   
-  # Construct NUTS0 as a micropoligon in the center of NUTS1
-  mapNUTS0 <- mapNUTS1 %>% dplyr::filter(NUTS_ID=="AT2")
-  mapNUTS0$NUTS_ID <- "AT0"
-  mapNUTS0@polygons[[1]]@Polygons[[1]]@coords <- matrix(c(cxNUTS[1]+1.5+c(-.75,+.75,+.75,-.75,-.75),cyNUTS[1]+.05+c(-.25,-.25,+.25,+.25,-.25)),ncol=2)
-  mapNUTS0@polygons[[1]]@plotOrder <- as.integer(10)
-  
   # Box Centers.  Center of AT2: will be used as Center for AT
   cxNUTS <- vector()
   cyNUTS <- vector()
@@ -52,7 +46,13 @@ mapNUTSAT <- function () {
     cxNUTS[i+1] <- mean(bbox(mapNUTS2[i,])[1,])
     cyNUTS[i+1] <- mean(bbox(mapNUTS2[i,])[2,])
   }
-  
+
+  # Construct NUTS0 as a micropoligon in the center of NUTS1
+  mapNUTS0 <- mapNUTS1 %>% dplyr::filter(NUTS_ID=="AT2")
+  mapNUTS0$NUTS_ID <- "AT0"
+  mapNUTS0@polygons[[1]]@Polygons[[1]]@coords <- matrix(c(cxNUTS[1]+1.5+c(-.75,+.75,+.75,-.75,-.75),cyNUTS[1]+.05+c(-.25,-.25,+.25,+.25,-.25)),ncol=2)
+  mapNUTS0@polygons[[1]]@plotOrder <- as.integer(10)
+
   # Mapping from NUTS2 to Region
   NUTS_AT <- data.frame(
     NUTS_ID=c("AT0","AT11","AT12","AT13","AT21","AT22","AT31","AT32","AT33","AT34"),
