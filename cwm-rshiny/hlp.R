@@ -49,6 +49,8 @@ htmlWeatherMap <- "<p><b>Tages Inzidenz: Lage und Vorhersage</b></p>
                                      Details und alternative Berechnungmethoden siehe 'Inzidenz Prognose'
                     </p>"
 
+htmlWeatherMapCounties <- "htmlWeatherMapCounties"
+
 htmlIncidencePrediction <- "<p><b>Berechnung und Prognose der Tages Inzidenz</b></p>
                             <p><b>Prognose Menü (links unten) </b><li><b>BerechnungsTage:</b> Anzahl der vergangenen Tage, aus denen die Prognose erstellt wird.</li>
                                                                   <li><b>Berechnungsmodell:</b>  Lineare oder quadratische Regression der logarithmierten TagesInzidenzen</li>

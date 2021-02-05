@@ -28,8 +28,33 @@ yLimMax <- 128
 # Setings for cwmSpreadStyle
 dblXDays <- c(1:7,10,14,21,28,56,Inf,-56,-28,-21,-14,-10,-7,-6,-5,-4,-3,-2,-1)
 
+#levConfPop <- round(c(0,10^seq(0,2,by=0.2),1000),1)
+# bins for rm7ConfPop
+binConfPop <- c(0,1,1.4,2,2.8,4,5.6,8,11,16,22,32,45,64,90,128,512)
+palConfPop <- c(brewer.pal(9,"Greens")[c(7,6,5,4)], brewer.pal(9,"YlOrRd"), "#404040", brewer.pal(9,"Greys")[c(8,9)])
+colConfPop <- colorBin(palette=palConfPop, domain=0:256, bins=binConfPop)
 
 
+# http://data.opendataportal.at/dataset/geojson-daten-osterreich
+# https://github.com/ginseng666/GeoJSON-TopoJSON-Austria
+mapBezirke <- geojsonio::geojson_read(x="./maps/bezirke_95_geo.json", what="sp")
+
+mapATCounties <- function() {
+
+  di <- data.frame(RegionID=as.character(1:9), 
+                   Region=c("Burgenland","Kärnten","Niederösterreich","Oberösterreich","Salzburg","Steiermark","Tirol","Vorarlberg","Wien"), stringsAsFactors=FALSE)
+  
+  mapCounties <- geojsonio::geojson_read(x="./maps/bezirke_999_geo.json", what="sp") %>%
+    # remove Bezirke Wien
+    dplyr::filter(as.integer(iso)<=900) %>%
+    dplyr::rename(County=name, CountyID=iso) %>%
+    dplyr::mutate(RegionID=(str_sub(as.character(CountyID),1,1)), CountyNR=(str_sub(as.character(CountyID),2,3))) %>%
+    dplyr::left_join(di, by="RegionID") %>% 
+    dplyr::mutate(CountyID=as.character(CountyID)) %>%
+    dplyr::select("Region","RegionID","County","CountyID","CountyNR")
+
+  return(mapCounties)
+}
 
 mapNUTSAT <- function () {
   # Austria NUTS poligons for NUTS1, NUTS2 and NUTS3

@@ -13,7 +13,7 @@ logMsg <- function(msg, sessionID="_global_") {
 
 hostSystem <- system("hostname", intern=TRUE)
 slackMsg <- function (title, msg, hostName = hostSystem) {
-  url <- as.character(read.csv("./secrets/slack.txt",header=FALSE)[1,1])
+  url <- as.character(read.csv("../secrets/slack.txt",header=FALSE)[1,1])
   body <- list(text = paste(paste0(now()," *",title,"*: "), paste0(hostName,": ",msg)))
   r <- POST(url, content_type_json(), body = body, encode = "json")
   invisible(r)
@@ -80,7 +80,7 @@ nModelDays=13
 #system2("sudo",paste("Echo",cronCMD14,">> /etc/crontab"))
 #system2("sudo",paste("Echo",cronCMD23,">> /etc/crontab"))
 logMsg("Starting service cron")
-system2("sudo","service cron start")
+#system2("sudo","service cron start")
 #  }
 # -----------------------------------------------------------
 # Reactiv File Poller: Monitor for new files created by cron
@@ -119,7 +119,8 @@ dg.today <- eventReactive(dg(), {
   logMsg(paste("eventReactive reactiveFileReader:dg.today", cwmCountiesFile)) 
   dg() %>% dplyr::filter(Date==max(Date)) %>% 
     dplyr::mutate(TagesInzidenz=round(newConfPop,1)) %>%
-    dplyr::select(Date, Region, County, Population, TagesInzidenz)})
+    dplyr::mutate(CountyID=as.character(CountyID)) %>%
+    dplyr::select(Date, Region, County, CountyID, Population, TagesInzidenz)})
 
 # Prediction
 cwmPredictionFile <- "./data/COVID-19-CWM-AGES-Prediction.rda"
@@ -158,6 +159,7 @@ df.pred <- eventReactive(df(), {
 logMsg("Constructing global data structures")
 # Poligon geoJson structure
 mapNUTS <- mapNUTSAT()
+mapCounties <- mapATCounties()
 
 # Weather Icons
 iconSizeWeather=40
@@ -249,14 +251,22 @@ ui <- fluidPage(
       
       tabsetPanel(type = "tabs",
  
-       tabPanel("COVID Lage und Aussichten",
+       tabPanel("Karte Bundesländer",
                  h4("Lage und Aussichten Bundesländer", align = "left", style="color:gray"),
                  p("[Menüauswahl: keine]", align = "left", style="color:green"),
                 fluidRow(column(width=9,  leafletOutput(outputId = "lftWeatherMap", height="60vh"),
                                           DT::dataTableOutput(outputId = "dtoWeatherMap")),
                                     column(width=3, htmlOutput(outputId="hlpWeatherMap")))),
-                            
-        tabPanel("Inzidenz Prognose",
+ 
+       tabPanel("Karte Bezirke",
+                h4("Lage und Aussichten Bezirke", align = "left", style="color:gray"),
+                p("[Menüauswahl: keine]", align = "left", style="color:green"),
+                fluidRow(column(width=9,  leafletOutput(outputId = "lftWeatherMapCounties", height="60vh"),
+                                DT::dataTableOutput(outputId = "dtoWeatherMapCounties")),
+                         column(width=3, htmlOutput(outputId="hlpWeatherMapCounties")))),
+       
+                                  
+        tabPanel("Prognose Bundesländer",
                  h4("Prognose TagesInzidenz", align = "left", style="color:gray"),
                  p("[Menüauswahl: Region,LogScale,BerechnungsTage,BerechnungsModell]", align = "left", style="color:green"),
                  fluidRow(column(width=8, plotOutput(outputId = "ggpIncidencePrediciton", height="75vh")),
@@ -342,7 +352,7 @@ server <- function(input, output, session) {
 
   
   # -------------------------------------------
-  # Weather Map
+  # Weather Map BundesLänder
   # -------------------------------------------
   output$hlpWeatherMap <- renderText({ htmlWeatherMap })
 
@@ -372,13 +382,16 @@ server <- function(input, output, session) {
     nWeatherForeCastDays=nWeatherForeCastDays # same as slider=7 for incidence prediction (3 is automatically added to slider reading)
     # days from today back nWeatherForeCastDays days
     dh <- df.past() %>% dplyr::filter(Date>max(Date)-days(nWeatherForeCastDays)) %>% dplyr::select(Date, Region, dt7rm7NewConfPop,starts_with("rm7")) # Past days for forecast
+    # Pick data for AGES (rm7 three days ago) 
     da <- dh %>% dplyr::filter(Date==max(Date)-days(3)) %>% dplyr::select(Region, rm7AGESNewConfPop=rm7NewConfPop)
-    
     # model prediction for today
     dq <- cwmAgesRm7EstimatePoly(dh, nModelDays=nWeatherForeCastDays, nPredDays=0, nPoly=1) %>%
       dplyr::filter(Date==max(dh$Date))
     # model predicition for next week
     dm <- cwmAgesRm7EstimatePoly(dh, nModelDays=nWeatherForeCastDays, nPredDays=7, nPoly=1) %>%
+      dplyr::filter(Date==max(Date))
+    # model predicition for next month
+    do <- cwmAgesRm7EstimatePoly(dh, nModelDays=nWeatherForeCastDays, nPredDays=28, nPoly=1) %>%
       dplyr::filter(Date==max(Date))
     # number of days till inzidenz doubles
     dt2 <- dh %>% 
@@ -392,9 +405,11 @@ server <- function(input, output, session) {
       dplyr::left_join(da, by="Region") %>%
       dplyr::left_join(dt2, by="Region") %>%
       dplyr::left_join(dq, by="Region", suffix = c(".f", ".c")) %>%
+      dplyr::left_join(do, by="Region") %>%
       dplyr::left_join(dh %>% dplyr::select(Date, Region,dt7rm7NewConfPop) %>% dplyr::filter(Date==max(Date)) %>% dplyr::select(-Date), by="Region") %>%
       dplyr::mutate(idxCurConfPop=.bincode(rm7NewConfPop.c,binForeCast), 
                     idxDblConfPop=.bincode((rm7NewConfPop.c+(rm7NewConfPop.f-rm7NewConfPop.c)/7)/rm7NewConfPop.c,binDblDays), 
+                    idxMonConfPop=.bincode(rm7NewConfPop,binForeCast),
                     idxForConfPop=.bincode(rm7NewConfPop.f,binForeCast))
     # need to plot 'Österreich' last
     pMapNUTS <- rbind(pMapNUTS[1,],pMapNUTS[2,],pMapNUTS[3,],pMapNUTS[4,],pMapNUTS[6,],pMapNUTS[7,],pMapNUTS[8,],pMapNUTS[9,],pMapNUTS[10,],pMapNUTS[5,])
@@ -422,7 +437,16 @@ server <- function(input, output, session) {
       addPolygons(stroke=TRUE, weight=3, color="black",
                   fill=TRUE, fillOpacity = 1, fillColor=palConfPop[.bincode(pMapNUTS$rm7NewConfPop.c,binConfPop)],
                   label=labWeatherMap, 
-                  labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="15px"), group="NUTS2") %>%
+                  labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="15px"), group="Stand Heute") %>%
+      addPolygons(stroke=TRUE, weight=3, color="black",
+                  fill=TRUE, fillOpacity = 1, fillColor=palConfPop[.bincode(pMapNUTS$rm7NewConfPop.f,binConfPop)],
+                  label=labWeatherMap, 
+                  labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="15px"), group="Prognose kommende Woche") %>%
+      addPolygons(stroke=TRUE, weight=3, color="black",
+                  fill=TRUE, fillOpacity = 1, fillColor=palConfPop[.bincode(pMapNUTS$rm7NewConfPop,binConfPop)],
+                  label=labWeatherMap, 
+                  labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="15px"), group="Prognose kommendes Monat") %>%
+      addLayersControl(baseGroups=c("Stand Heute","Prognose kommende Woche","Prognose kommendes Monat"), options=layersControlOptions(collapsed=FALSE)) %>%
       addMarkers(lng=~cxNUTS-.35, lat=~cyNUTS, icon=~iconsWeather[idxCurConfPop], group="Incidence") %>%
       addMarkers(lng=~cxNUTS, lat=~cyNUTS, icon=~iconsDirection[idxDblConfPop], group="Trend",
                  label=labWeatherMap, labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="15px")) %>%
@@ -438,7 +462,99 @@ server <- function(input, output, session) {
   # idxDblConfPop=.bincode(dt7rm7NewConfPop,binDblDays), 
   #dp <- df.past() %>% dplyr::filter(Date==max(Date)) %>% dplyr::select(Date, Region, dt7rm7NewConfPop,starts_with("rm7"))# Today
   
+
+  # -------------------------------------------
+  # Weather Map Bezirke
+  # -------------------------------------------
+  output$hlpWeatherMapCounties <- renderText({ htmlWeatherMapCounties })
+  
+  # Values, and Prediction of Incodence, Time to/outof Lockdown
+  output$dtoWeatherMapCounties <- DT::renderDataTable({ dg.today() })
+  # options=list(pageLength=8, lengthChange=FALSE) 
+  
+  # WeatherMap
+  output$lftWeatherMapCounties <- renderLeaflet({
+    logMsg("  output renderPlot lftWeatherMapCounties", sessionID)
+    options(warn=-1)
     
+    # today's data for weathermap
+    # nWeatherForeCastDays=nWeatherForeCastDays # same as slider=7 for incidence prediction (3 is automatically added to slider reading)
+    # days from today back nWeatherForeCastDays days
+    dh <- dg.past() %>% 
+      dplyr::filter(Date>max(Date)-days(nWeatherForeCastDays)) %>% 
+      # need have County in field Region for subsequent calculations
+      dplyr::rename(State=Region, Region=County)
+    
+    # Pick data for AGES (rm7 three days ago) 
+    #da <- dh %>% dplyr::filter(Date==max(Date)-days(3)) %>% dplyr::select(Region, rm7AGESNewConfPop=rm7NewConfPop)
+    # model prediction for today
+    dq <- cwmAgesRm7EstimatePoly(dh, nModelDays=nWeatherForeCastDays, nPredDays=0, nPoly=1) %>%
+      dplyr::filter(Date==max(dh$Date)) %>% dplyr::rename(County=Region) %>% dplyr::select(County, rm7NewConfPop)
+    # model predicition for next week
+    dm <- cwmAgesRm7EstimatePoly(dh, nModelDays=nWeatherForeCastDays, nPredDays=7, nPoly=1) %>%
+      dplyr::filter(Date==max(Date)) %>% dplyr::rename(County=Region) %>% dplyr::select(County, rm7NewConfPop)
+    # model predicition for next month
+    do <- cwmAgesRm7EstimatePoly(dh, nModelDays=nWeatherForeCastDays, nPredDays=28, nPoly=1) %>%
+      dplyr::filter(Date==max(Date)) %>% dplyr::rename(County=Region) %>% dplyr::select(County, rm7NewConfPop)
+    # number of days till inzidenz doubles
+    #dt2 <- dh %>% 
+    #  dplyr::group_by(CountyID) %>% 
+    #  dplyr::summarise(dblDays=rm7PolyLog(rm7NewConfPop, nPoly=1, nModelDays=nWeatherForeCastDays, nNewData=1, bDblDays=TRUE)$pDblDays) %>%
+    #  dplyr::ungroup()
+    
+    # AGES compliant
+    pMapCounties <- mapCounties %>% 
+      dplyr::left_join(dq, by="County") %>%
+      dplyr::left_join(dm, by="County", suffix = c(".c", ".f")) %>%
+      dplyr::left_join(do, by="County") #%>%
+        #dplyr::left_join(dh %>% dplyr::select(Date, Region,dt7rm7NewConfPop) %>% dplyr::filter(Date==max(Date)) %>% dplyr::select(-Date), by=c("iso"="CountyID")) %>%
+       # dplyr::mutate(idxCurConfPop=.bincode(rm7NewConfPop.c,binForeCast), 
+      #              idxMonConfPop=.bincode(rm7NewConfPop,binForeCast),
+      #              idxForConfPop=.bincode(rm7NewConfPop.f,binForeCast)) #%>%
+#     #               idxDblConfPop=.bincode((rm7NewConfPop.c+(rm7NewConfPop.f-rm7NewConfPop.c)/7)/rm7NewConfPop.c,binDblDays), 
+      #dplyr::rename(County=Region, Region=State) # undo renames for above calculations and joins
+    
+    labWeatherMapCounties <- sprintf(
+      "<table>
+          <tr><td><strong>%s</strong></td><td align='right'> %s </td></tr>
+          <tr><td>TagesInzidenz heute: </td><td align='right'> %g</td></tr>
+          <tr><td>Prognose kommende Woche: </td><td align='right'>  %g </td></tr>
+          <tr><td>Prognose nächstes Monat: </td><td align='right'>  %g </td></tr>
+        </table>,
+        <small><i>Alle Werte berechnet auf Basis der letzten 10 Tage</i></small>",
+      pMapCounties$County, format(max(dh$Date),"%a, %d.%m"),
+      round(pMapCounties$rm7NewConfPop.c,1), 
+      round(pMapCounties$rm7NewConfPop.f,1), 
+      round(pMapCounties$rm7NewConfPop,1))  %>% lapply(htmltools::HTML)
+    
+    #, options=leafletOptions(minZoom=7, maxZoom=7, zoomControl=FALSE, dragging=FALSE, zoom=7)
+    leaflet(pMapCounties, options=leafletOptions(minZoom=7, maxZoom=7, zoomControl=FALSE, dragging=FALSE)) %>%
+      #addTiles(group="DefaultMap", options=providerTileOptions(minZoom=6, maxZoom=8)) %>%
+      addPolygons(stroke=TRUE, weight=1, color="black",
+                  fill=TRUE, fillOpacity = 1, fillColor=palConfPop[.bincode(pMapCounties$rm7NewConfPop.c,binConfPop)],
+                  label=labWeatherMapCounties, 
+                  labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="15px"), group="Stand Heute") %>%
+      addPolygons(stroke=TRUE, weight=1, color="black",
+                  fill=TRUE, fillOpacity = 1, fillColor=palConfPop[.bincode(pMapCounties$rm7NewConfPop.f,binConfPop)],
+                  label=labWeatherMapCounties, 
+                  labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="15px"), group="Prognose kommende Woche") %>%
+      addPolygons(stroke=TRUE, weight=1, color="black",
+                  fill=TRUE, fillOpacity = 1, fillColor=palConfPop[.bincode(pMapCounties$rm7NewConfPop,binConfPop)],
+                  label=labWeatherMapCounties, 
+                  labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="15px"), group="Prognose kommendes Monat") %>%
+      addLayersControl(baseGroups=c("Stand Heute","Prognose kommende Woche","Prognose kommendes Monat"), options=layersControlOptions(collapsed=FALSE)) %>%
+      addLegend(pal=colConfPop, values=~rm7NewConfPop.f, position="bottomright", opacity=1, title="Incidence") # %>%
+      #setView(lng=pMapCounties$cxNUTS[1]-3, lat=pMapCounties$cyNUTS[1], zoom=7)
+  })
+  #addPolygons(data=mapNUTS1, stroke = TRUE, smoothFactor = 0, color="black", fillOpacity = 0, fillColor="None", weight=10, group="AT1") %>%
+  #addPolygons(data=mapNUTS3, stroke = TRUE, smoothFactor = 0, fillOpacity = 0, fillColor="none", weight=1, group="AT3") %>%
+  #addMarkers(lng=~cxNUTS, lat=~cyNUTS, group="Trend", label=atRegions, popup=~Region) %>%
+  #addLayersControl(overlayGroups=c("AT1","AT3"), options=layersControlOptions(collapsed=FALSE)) %>%
+  #hideGroup(c("AT1","AT3","Markers"))
+  # idxDblConfPop=.bincode(dt7rm7NewConfPop,binDblDays), 
+  #dp <- df.past() %>% dplyr::filter(Date==max(Date)) %>% dplyr::select(Date, Region, dt7rm7NewConfPop,starts_with("rm7"))# Today
+  
+  
   # -------------------------------------------
   # Prediction TagesInzidenz
   # -------------------------------------------
