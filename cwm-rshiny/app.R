@@ -45,43 +45,16 @@ source("ages.R", local=TRUE)
 # --------------------------------------------------------------------------------------------------------------------------
 # Global section. Data available to all sessions
 # --------------------------------------------------------------------------------------------------------------------------
-# today's data for weathermap
-nWeatherForeCastDays=13 # same as slider=7 for incidence prediction (3 is automatically added to slider reading)
-nModelDays=13
 
-# Global constants
-#dblDays <- c(1:7,10,14,21,28,50,100,Inf,-100,-50,-28,-21,-14,-10,-7,-6,-5,-4,-3,-2,-1)
-#popBreaks <- c(0,1,2,5,10,15,20,25,seq(30,150,by=10))
-#popLogBreaks <- (c(.1,.2,.5,1,2,5,10,20,50,100))
-#logBreaks=c(seq(.1,1,by=.1),seq(1,10,by=1),seq(10,100,by=10),seq(100,1000,by=100),seq(1000,10000,by=1000))
-#logBreaks=c(seq(.1,1,by=.1),seq(1,10,by=1),seq(10,100,by=10),seq(100,1000,by=100),seq(1000,10000,by=1000),seq(10000,100000,by=10000))
-#nModelDays=28
-#nPredDays=14
-#yLimMax <- 128
-#julDate <- as.Date("2020-07-01")
-#trans="log10"
 
 # -----------------------------------------------------------
 # Define cron job to retrieve new data from AGES
 # -----------------------------------------------------------
-#if(0==1) {
-#cronJobDir <- "/srv/shiny-server/COVID-19-WeatherMap"
-#cronJobDir <- "/home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny"
-#cronJobFile <- paste0(cronJobDir,"/cron.R")
-#cronJobLog <-paste0(cronJobDir,"/log/cwm.cron.log")  
-#cmd <- cron_rscript(rscript=cronJobFile, rscript_log=cronJobLog, log_timestamp=TRUE, workdir=cronJobDir)
-#cmd
-#cron_clear(ask=FALSE)
-#cron_add(cmd, id='AGES-14', at = '14:14')
-#cron_add(cmd, id='AGES-22', at = '22:22')
-#logMsg("Define cron job for data retrieval from AGES")
-#cronCMD14="14 14 * * * shiny cd /srv/shiny-server/COVID-19-WeatherMap %% /usr/local/bin/Rscript ./cron.R"
-#cronCMD23="23 23 * * * shiny cd /srv/shiny-server/COVID-19-WeatherMap %% /usr/local/bin/Rscript ./cron.R"
-#system2("sudo",paste("Echo",cronCMD14,">> /etc/crontab"))
-#system2("sudo",paste("Echo",cronCMD23,">> /etc/crontab"))
-logMsg("Starting service cron")
-#system2("sudo","service cron start")
-#  }
+if(0==1) {
+  logMsg("Starting service cron")
+  system2("sudo","service cron start")
+}
+
 # -----------------------------------------------------------
 # Reactiv File Poller: Monitor for new files created by cron
 # -----------------------------------------------------------
@@ -97,7 +70,7 @@ df.rfr <- reactiveFileReader(
 df <- eventReactive(df.rfr(), {
   logMsg(paste("eventReactive reactiveFileReader:df", cwmStatesFile)) 
   df.rfr() %>%
-    dplyr::select(Date,Region,Population,newConfPop,rm7NewConfirmed,rm7NewConfPop,rm7NewTested,rm7NewConfTest,dt7rm7NewConfPop,modrm7NewConfPop) })
+    dplyr::select(Date,Region,RegionID,Population,newConfPop,rm7NewConfirmed,rm7NewConfPop,rm7NewTested,rm7NewConfTest,dt7rm7NewConfPop,modrm7NewConfPop) })
 # timeframe for '2020 history'
 de <- eventReactive(df.rfr(), {
   logMsg(paste("eventReactive reactiveFileReader:de", cwmStatesFile)) 
@@ -118,9 +91,8 @@ dg <- eventReactive(dg.rfr(), {
 dg.today <- eventReactive(dg(), {
   logMsg(paste("eventReactive reactiveFileReader:dg.today", cwmCountiesFile)) 
   dg() %>% dplyr::filter(Date==max(Date)) %>% 
-    dplyr::mutate(TagesInzidenz=round(newConfPop,1)) %>%
-    dplyr::mutate(CountyID=as.character(CountyID)) %>%
-    dplyr::select(Date, Region, County, CountyID, Population, TagesInzidenz)})
+    dplyr::mutate(rm7NewConfPop=round(rm7NewConfPop,1)) %>%
+    dplyr::select(Date, Region, County, Population, TagesInzidenz=rm7NewConfPop)})
 
 # Prediction
 cwmPredictionFile <- "./data/COVID-19-CWM-AGES-Prediction.rda"
@@ -218,7 +190,7 @@ ui <- fluidPage(
                            "Vorarlberg"), 
             selected = c("Österreich","Wien","Niederösterreich","Burgenland","Kärnten"))),
         column(6,
-          actionButton("abUpdate", "Update"))),
+          actionButton("abUpdate", "Anzeigen"))),
 
         fluidRow(
           checkboxInput("cbLogScale", label="LogScale", value=TRUE, width="220px")),
@@ -365,25 +337,13 @@ server <- function(input, output, session) {
     logMsg("  output renderPlot lftWeatherMap", sessionID)
     options(warn=-1)
     
-    #levConfPop <- round(c(0,10^seq(0,2,by=0.2),1000),1)
-    # bins for rm7ConfPop
-    binConfPop <- c(0,1,1.4,2,2.8,4,5.6,8,11,16,22,32,45,64,90,128,512)
-    palConfPop <- c(brewer.pal(9,"Greens")[c(7,6,5,4)], brewer.pal(9,"YlOrRd"), "#404040", brewer.pal(9,"Greys")[c(8,9)])
-    colConfPop <- colorBin(palette=palConfPop, domain=0:256, bins=binConfPop)
-    
-    # 7 icons: bins for dt* 
-    dblDays <- c(1,14,28,56,-56,-28,-14,-1)
-    binDblDays <- sort(round(exp(log(2)/dblDays),3))
-    
-    # 5 Icons
-    binForeCast <- c(0,4,8,16,32,Inf)
-    
-    # today's data for weathermap
-    nWeatherForeCastDays=nWeatherForeCastDays # same as slider=7 for incidence prediction (3 is automatically added to slider reading)
     # days from today back nWeatherForeCastDays days
-    dh <- df.past() %>% dplyr::filter(Date>max(Date)-days(nWeatherForeCastDays)) %>% dplyr::select(Date, Region, dt7rm7NewConfPop,starts_with("rm7")) # Past days for forecast
+    dh <- df.past() %>% 
+      dplyr::filter(Date>max(Date)-days(nWeatherForeCastDays)) %>% 
+      dplyr::select(Date, Region, RegionID, dt7rm7NewConfPop,starts_with("rm7")) %>% 
+      dplyr::mutate(locID=RegionID) # added so cwmAgesRm7EstimatePoly know what to look for (RegionID or CountyID)
     # Pick data for AGES (rm7 three days ago) 
-    da <- dh %>% dplyr::filter(Date==max(Date)-days(3)) %>% dplyr::select(Region, rm7AGESNewConfPop=rm7NewConfPop)
+    da <- dh %>% dplyr::filter(Date==max(Date)-days(3)) %>% dplyr::select(starts_with("Region"), rm7AGESNewConfPop=rm7NewConfPop)
     # model prediction for today
     dq <- cwmAgesRm7EstimatePoly(dh, nModelDays=nWeatherForeCastDays, nPredDays=0, nPoly=1) %>%
       dplyr::filter(Date==max(dh$Date))
@@ -395,29 +355,26 @@ server <- function(input, output, session) {
       dplyr::filter(Date==max(Date))
     # number of days till inzidenz doubles
     dt2 <- dh %>% 
-      dplyr::group_by(Region) %>% 
+      dplyr::group_by(RegionID) %>% 
       dplyr::summarise(dblDays=rm7PolyLog(rm7NewConfPop, nPoly=1, nModelDays=nWeatherForeCastDays, nNewData=1, bDblDays=TRUE)$pDblDays) %>%
       dplyr::ungroup()
     
     pMapNUTS <- mapNUTS %>% 
       # construct single row with all required fields. merges data for today and forecast
-      dplyr::left_join(dm, by="Region") %>%
-      dplyr::left_join(da, by="Region") %>%
-      dplyr::left_join(dt2, by="Region") %>%
-      dplyr::left_join(dq, by="Region", suffix = c(".f", ".c")) %>%
-      dplyr::left_join(do, by="Region") %>%
-      dplyr::left_join(dh %>% dplyr::select(Date, Region,dt7rm7NewConfPop) %>% dplyr::filter(Date==max(Date)) %>% dplyr::select(-Date), by="Region") %>%
+      dplyr::left_join(dm, by="RegionID") %>%
+      dplyr::left_join(da, by="RegionID") %>%
+      dplyr::left_join(dt2, by="RegionID") %>%
+      dplyr::left_join(dq, by="RegionID", suffix = c(".f", ".c")) %>%
+      dplyr::left_join(do, by="RegionID") %>%
+      dplyr::left_join(dh %>% dplyr::select(Date, RegionID,dt7rm7NewConfPop) %>% dplyr::filter(Date==max(Date)) %>% dplyr::select(-Date), by="RegionID") %>%
       dplyr::mutate(idxCurConfPop=.bincode(rm7NewConfPop.c,binForeCast), 
-                    idxDblConfPop=.bincode((rm7NewConfPop.c+(rm7NewConfPop.f-rm7NewConfPop.c)/7)/rm7NewConfPop.c,binDblDays), 
+                    idxDblConfPop=.bincode((rm7NewConfPop.c+(rm7NewConfPop.f-rm7NewConfPop.c)/7)/rm7NewConfPop.c,binDblDays),
                     idxMonConfPop=.bincode(rm7NewConfPop,binForeCast),
                     idxForConfPop=.bincode(rm7NewConfPop.f,binForeCast))
     # need to plot 'Österreich' last
     pMapNUTS <- rbind(pMapNUTS[1,],pMapNUTS[2,],pMapNUTS[3,],pMapNUTS[4,],pMapNUTS[6,],pMapNUTS[7,],pMapNUTS[8,],pMapNUTS[9,],pMapNUTS[10,],pMapNUTS[5,])
+                     
 
-    #<tr><td>WochenInzidenz heute:  </td><td align='right'> %g</td></tr>
-    #<tr><td>WochenInzidenz nächste Woche:  </td><td align='right'> %g </td></tr>
-    #round(pMapNUTS$rm7NewConfPop.c*7), round(pMapNUTS$rm7NewConfPop.f*7), 
-      
     labWeatherMap <- sprintf(
       "<table>
           <tr><td><strong>%s</strong></td><td align='right'> %s </td></tr>
@@ -454,14 +411,6 @@ server <- function(input, output, session) {
       addLegend(pal=colConfPop, values=~rm7NewConfPop.c, position="bottomright", opacity=1, title="Incidence") %>%
       setView(lng=pMapNUTS$cxNUTS[1]-3, lat=pMapNUTS$cyNUTS[1], zoom=7)
   })
-  #addPolygons(data=mapNUTS1, stroke = TRUE, smoothFactor = 0, color="black", fillOpacity = 0, fillColor="None", weight=10, group="AT1") %>%
-  #addPolygons(data=mapNUTS3, stroke = TRUE, smoothFactor = 0, fillOpacity = 0, fillColor="none", weight=1, group="AT3") %>%
-  #addMarkers(lng=~cxNUTS, lat=~cyNUTS, group="Trend", label=atRegions, popup=~Region) %>%
-  #addLayersControl(overlayGroups=c("AT1","AT3"), options=layersControlOptions(collapsed=FALSE)) %>%
-  #hideGroup(c("AT1","AT3","Markers"))
-  # idxDblConfPop=.bincode(dt7rm7NewConfPop,binDblDays), 
-  #dp <- df.past() %>% dplyr::filter(Date==max(Date)) %>% dplyr::select(Date, Region, dt7rm7NewConfPop,starts_with("rm7"))# Today
-  
 
   # -------------------------------------------
   # Weather Map Bezirke
@@ -482,37 +431,25 @@ server <- function(input, output, session) {
     # days from today back nWeatherForeCastDays days
     dh <- dg.past() %>% 
       dplyr::filter(Date>max(Date)-days(nWeatherForeCastDays)) %>% 
-      # need have County in field Region for subsequent calculations
-      dplyr::rename(State=Region, Region=County)
+      dplyr::mutate(locID=CountyID) # added so cwmAgesRm7EstimatePoly know what to look for (RegionID or CountyID)
     
     # Pick data for AGES (rm7 three days ago) 
     #da <- dh %>% dplyr::filter(Date==max(Date)-days(3)) %>% dplyr::select(Region, rm7AGESNewConfPop=rm7NewConfPop)
     # model prediction for today
     dq <- cwmAgesRm7EstimatePoly(dh, nModelDays=nWeatherForeCastDays, nPredDays=0, nPoly=1) %>%
-      dplyr::filter(Date==max(dh$Date)) %>% dplyr::rename(County=Region) %>% dplyr::select(County, rm7NewConfPop)
+      dplyr::filter(Date==max(dh$Date)) %>% dplyr::select(CountyID, rm7NewConfPop)
     # model predicition for next week
     dm <- cwmAgesRm7EstimatePoly(dh, nModelDays=nWeatherForeCastDays, nPredDays=7, nPoly=1) %>%
-      dplyr::filter(Date==max(Date)) %>% dplyr::rename(County=Region) %>% dplyr::select(County, rm7NewConfPop)
+      dplyr::filter(Date==max(Date))  %>% dplyr::select(CountyID, rm7NewConfPop)
     # model predicition for next month
     do <- cwmAgesRm7EstimatePoly(dh, nModelDays=nWeatherForeCastDays, nPredDays=28, nPoly=1) %>%
-      dplyr::filter(Date==max(Date)) %>% dplyr::rename(County=Region) %>% dplyr::select(County, rm7NewConfPop)
-    # number of days till inzidenz doubles
-    #dt2 <- dh %>% 
-    #  dplyr::group_by(CountyID) %>% 
-    #  dplyr::summarise(dblDays=rm7PolyLog(rm7NewConfPop, nPoly=1, nModelDays=nWeatherForeCastDays, nNewData=1, bDblDays=TRUE)$pDblDays) %>%
-    #  dplyr::ungroup()
+      dplyr::filter(Date==max(Date)) %>% dplyr::select(CountyID, rm7NewConfPop)
     
     # AGES compliant
     pMapCounties <- mapCounties %>% 
-      dplyr::left_join(dq, by="County") %>%
-      dplyr::left_join(dm, by="County", suffix = c(".c", ".f")) %>%
-      dplyr::left_join(do, by="County") #%>%
-        #dplyr::left_join(dh %>% dplyr::select(Date, Region,dt7rm7NewConfPop) %>% dplyr::filter(Date==max(Date)) %>% dplyr::select(-Date), by=c("iso"="CountyID")) %>%
-       # dplyr::mutate(idxCurConfPop=.bincode(rm7NewConfPop.c,binForeCast), 
-      #              idxMonConfPop=.bincode(rm7NewConfPop,binForeCast),
-      #              idxForConfPop=.bincode(rm7NewConfPop.f,binForeCast)) #%>%
-#     #               idxDblConfPop=.bincode((rm7NewConfPop.c+(rm7NewConfPop.f-rm7NewConfPop.c)/7)/rm7NewConfPop.c,binDblDays), 
-      #dplyr::rename(County=Region, Region=State) # undo renames for above calculations and joins
+      dplyr::left_join(dq, by="CountyID") %>%
+      dplyr::left_join(dm, by="CountyID", suffix = c(".c", ".f")) %>%
+      dplyr::left_join(do, by="CountyID") #%>%
     
     labWeatherMapCounties <- sprintf(
       "<table>
@@ -543,18 +480,9 @@ server <- function(input, output, session) {
                   label=labWeatherMapCounties, 
                   labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="15px"), group="Prognose kommendes Monat") %>%
       addLayersControl(baseGroups=c("Stand Heute","Prognose kommende Woche","Prognose kommendes Monat"), options=layersControlOptions(collapsed=FALSE)) %>%
-      addLegend(pal=colConfPop, values=~rm7NewConfPop.f, position="bottomright", opacity=1, title="Incidence") # %>%
-      #setView(lng=pMapCounties$cxNUTS[1]-3, lat=pMapCounties$cyNUTS[1], zoom=7)
+      addLegend(pal=colConfPop, values=~rm7NewConfPop.f, position="bottomright", opacity=1, title="Incidence") 
   })
-  #addPolygons(data=mapNUTS1, stroke = TRUE, smoothFactor = 0, color="black", fillOpacity = 0, fillColor="None", weight=10, group="AT1") %>%
-  #addPolygons(data=mapNUTS3, stroke = TRUE, smoothFactor = 0, fillOpacity = 0, fillColor="none", weight=1, group="AT3") %>%
-  #addMarkers(lng=~cxNUTS, lat=~cyNUTS, group="Trend", label=atRegions, popup=~Region) %>%
-  #addLayersControl(overlayGroups=c("AT1","AT3"), options=layersControlOptions(collapsed=FALSE)) %>%
-  #hideGroup(c("AT1","AT3","Markers"))
-  # idxDblConfPop=.bincode(dt7rm7NewConfPop,binDblDays), 
-  #dp <- df.past() %>% dplyr::filter(Date==max(Date)) %>% dplyr::select(Date, Region, dt7rm7NewConfPop,starts_with("rm7"))# Today
-  
-  
+ 
   # -------------------------------------------
   # Prediction TagesInzidenz
   # -------------------------------------------
@@ -567,7 +495,9 @@ server <- function(input, output, session) {
     # react on Update button
     input$abUpdate
     inRegions <- isolate(input$cbgRegion)
-    dk <- df.past() %>% dplyr::filter(Region %in% inRegions)
+    dk <- df.past() %>% dplyr::filter(Region %in% inRegions) %>%
+      dplyr::mutate(locID=RegionID) # added so cwmAgesRm7EstimatePoly know what to look for (RegionID or CountyID)
+    
     dp <- cwmAgesRm7EstimatePoly(dk, nModelDays=input$sldModelDays+3, nPoly=as.integer(input$rbsModelOrder), nPredDays=28)
 
     ggplot(data=dp, aes(x=Date, y=rm7NewConfPop, color=Region, shape=Region)) + 
@@ -625,9 +555,9 @@ server <- function(input, output, session) {
     
     input$abUpdate
     inRegions <- isolate(input$cbgRegion)
-    dp <- dg.past() %>% dplyr::filter(newConfPop>0, Region %in% inRegions)
+    dp <- dg.past() %>% dplyr::filter(rm7NewConfPop>0, Region %in% inRegions)
     
-    ggplot(dp, aes(x=Date, y=newConfPop, group=CountyID))+
+    ggplot(dp, aes(x=Date, y=rm7NewConfPop, group=CountyID))+
       cwmConfPopStyle(sldPastTime=input$sldPastTime, cbLogScale=input$cbLogScale, inRegions=inRegions[inRegions!="Österreich"], yLimits=c(.5,256)) +
       geom_line(size=.25, aes(color=Region))+
       ggtitle(paste0("COVID-19 Österreich, Bundesländer und Bezirke: Positiv Getestete pro 100.000 Einw. seit ", min(dp$Date), ".  Basisdaten: AGES"))

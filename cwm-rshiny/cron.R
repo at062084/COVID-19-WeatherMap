@@ -4,8 +4,8 @@ library(httr)
 library(lubridate)
 
 options(error = function() traceback(2))
-setwd("/srv/shiny-server/COVID-19-WeatherMap")
-#setwd("/home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny")
+#setwd("/srv/shiny-server/COVID-19-WeatherMap")
+setwd("/home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny")
 
 logDir = "./log"
 logFile <- "cwm.cron.log"
@@ -16,7 +16,7 @@ logMsg <- function(msg, sessionID="__cron__") {
 
 hostSystem <- system("hostname", intern=TRUE)
 slackMsg <- function (title, msg, hostName = hostSystem) {
-  url <- as.character(read.csv("./secrets/slack.txt",header=FALSE)[1,1])
+  url <- as.character(read.csv("../secrets/slack.txt",header=FALSE)[1,1])
   body <- list(text = paste(paste0(now()," *",title,"*: "), paste0(hostName,": ",msg)))
   r <- POST(url, content_type_json(), body = body, encode = "json")
   invisible(r)

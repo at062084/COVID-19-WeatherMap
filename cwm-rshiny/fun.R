@@ -28,16 +28,18 @@ yLimMax <- 128
 # Setings for cwmSpreadStyle
 dblXDays <- c(1:7,10,14,21,28,56,Inf,-56,-28,-21,-14,-10,-7,-6,-5,-4,-3,-2,-1)
 
-#levConfPop <- round(c(0,10^seq(0,2,by=0.2),1000),1)
-# bins for rm7ConfPop
+# WeatherMaps
+nWeatherForeCastDays=10 # same as slider=7 for incidence prediction (3 is automatically added to slider reading)
+nModelDays=10
 binConfPop <- c(0,1,1.4,2,2.8,4,5.6,8,11,16,22,32,45,64,90,128,512)
 palConfPop <- c(brewer.pal(9,"Greens")[c(7,6,5,4)], brewer.pal(9,"YlOrRd"), "#404040", brewer.pal(9,"Greys")[c(8,9)])
 colConfPop <- colorBin(palette=palConfPop, domain=0:256, bins=binConfPop)
+dblDays <- c(1,14,28,56,-56,-28,-14,-1)
+binDblDays <- sort(round(exp(log(2)/dblDays),3))
+binForeCast <- c(0,4,8,16,32,Inf)
 
 
-# http://data.opendataportal.at/dataset/geojson-daten-osterreich
-# https://github.com/ginseng666/GeoJSON-TopoJSON-Austria
-mapBezirke <- geojsonio::geojson_read(x="./maps/bezirke_95_geo.json", what="sp")
+
 
 mapATCounties <- function() {
 
@@ -82,6 +84,7 @@ mapNUTSAT <- function () {
   NUTS_AT <- data.frame(
     NUTS_ID=c("AT0","AT11","AT12","AT13","AT21","AT22","AT31","AT32","AT33","AT34"),
     Region= c("Österreich", "Burgenland","Niederösterreich","Wien", "Kärnten","Steiermark", "Oberösterreich","Salzburg","Tirol","Vorarlberg"),
+    RegionID=c(10,1,3,9,2,6,4,5,7,8),
     stringsAsFactors=FALSE)
   
   # Add features Region and Center 
@@ -89,7 +92,7 @@ mapNUTSAT <- function () {
     dplyr::left_join(NUTS_AT, by="NUTS_ID") %>% 
     dplyr::mutate(cxNUTS=cxNUTS, cyNUTS=cyNUTS)
   
-  # Patch Wien, Niederösterreich and Burgenland center coords for better position of WeatherMap icons
+  # Patch center coords for better position of WeatherMap icons
   mapNUTS$cxNUTS[mapNUTS$Region=="Österreich"]       = mapNUTS$cxNUTS[mapNUTS$Region=="Österreich"] +1.5
   mapNUTS$cyNUTS[mapNUTS$Region=="Österreich"]       = mapNUTS$cyNUTS[mapNUTS$Region=="Österreich"] +.05
   mapNUTS$cxNUTS[mapNUTS$Region=="Wien"]             = mapNUTS$cxNUTS[mapNUTS$Region=="Wien"]
@@ -252,27 +255,32 @@ rm7PolyLin <- function(y, nPoly=2, nModelDays=length(y), modWeights=NULL, nNewDa
   return(r)
 }
 
+# Prediction on rm7* features group by "locID": this field MUST be provided in df (usually a copy of RegionID or CountyID)
 cwmAgesRm7EstimatePoly <- function(df, nPoly=2, nModelDays=10, nPredDays=7) {
   
-  curDate <- max(df$Date)                      
-  minDate <- curDate - days(nModelDays)+1 # Prediction interval: first day
-  maxDate <- curDate + days(nPredDays) # Prediction interval: last day
+  curDate <- max(df$Date)                 # last day in dataset                   
+  minDate <- curDate - days(nModelDays)+1 # go back nModelDays for Model
+  #maxDate <- curDate + days(nPredDays)    # Number of days to predict from last day in dataset
 
   # construct dataframe of Regions and Dates relevant to modelling
-  dd <- df %>% dplyr::filter(Date>=minDate) %>% dplyr::arrange(Region,Date)
-  regions <- dd %>% dplyr::filter(Date==curDate) %>% dplyr::select(Region)
-  predRegions=rep(regions$Region,each=(nModelDays+nPredDays))
-  predDate=seq.Date(minDate,maxDate,1)
-  predDates=rep(predDate,nrow(regions))
-  predDF <- data.frame(Date=predDates, Region=predRegions, stringsAsFactors=FALSE) %>% dplyr::arrange(Region,Date)
-  
-  # add days to predict for to dd
-  dd <- predDF %>% dplyr::left_join(dd, by=c("Region","Date"))
+  dd <- df %>% 
+    #dplyr::mutate(locID=RegionID) %>%
+    dplyr::filter(Date>=minDate) %>%
+    dplyr::select(Date, locID, starts_with("Region"), starts_with("County"), starts_with("rm7")) %>% 
+    dplyr::arrange(locID,Date)
 
-  # Calc order nPoly estimate for each Region and each rm7 feature for next nPredDays from past nModelDays
-  dp <- dd %>%
-    dplyr::select(Date, Region, starts_with("rm7")) %>%
-    dplyr::group_by(Region) %>%
+  # Append rows for each locID for every prediction day (fill features with copy of last day)
+  if(nPredDays > 0) {
+    dd.append <- dd %>% dplyr::filter(Date==curDate)
+    for (k in 1:nPredDays) {
+      dd.append$Date=curDate+days(k)
+      dd <- rbind(dd,dd.append)
+    }
+  }
+  
+  # Calc order nPoly estimate for each locID and each rm7 feature for next nPredDays from past nModelDays
+  dd <- dd %>%
+    dplyr::group_by(locID) %>%
     # Log poly model for potentially exponentially growing items
     dplyr::mutate_at(vars(c(starts_with("rm7"),-rm7NewTested,-rm7NewConfTest)), rm7PolyLog, nPoly=nPoly, nModelDays=nModelDays) %>%
     # nonLog linear model for newTested
@@ -283,7 +291,7 @@ cwmAgesRm7EstimatePoly <- function(df, nPoly=2, nModelDays=10, nPredDays=7) {
   
   #dp %>% dplyr::filter(Region=="Wien", Date > max(Date)-days(10)) %>% dplyr::select(Date, Region, rm7NewConfPop)
   
-  return(dp)
+  return(dd)
 }
 
 

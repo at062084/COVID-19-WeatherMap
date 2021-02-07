@@ -126,3 +126,147 @@ ggplot(data=dc, aes(x=Date, y=newConfirmed/rm7NewConfirmed)) +
 # --> rm7NewConfirmed = newConfirmed*k7
 
 
+# create 2d color palette
+n=16
+x=1:n
+y=1:n
+mc <- matrix(rep(x,n), nrow=n)*n-1-matrix(rep(seq(n-1,0,by=-1),n),nrow=n)
+mr <- t(mc)
+as.vector(mc)
+
+
+cp <- rgb(as.vector(255-mc),as.vector(mr),0,maxColorValue=255)
+g <- expand.grid(x,y)
+
+hcl <- hcl(0:255)
+ts <- cbind(g,i=1:256,hcl)
+
+
+
+ggplot(data=ts, aes(x=Var1, y=Var2, color=i)) + 
+  scale_color_manual(values=cp) +
+  geom_point(aes(color=hcl), size=5) +  
+  theme(legend.position = "none")
+
+nx <- 19
+ny <- 11
+g <- expand.grid(x=seq(0,100, length.out=nx),y=seq(0,240,length.out=ny))
+c <- hcl(h=g$y,c=50,l=sqrt(g$x*100))
+xyz <- data.frame(g,i=as.factor(1:(nx*ny)))
+ggplot(data=xyz, aes(x=100-x, y=240-y, color=i)) + 
+  scale_color_manual(values=c) +
+  geom_point(aes(color=i), size=10) +  
+  theme(legend.position = "none")
+
+
+pal <- function(col, border = "light gray", ...) {
+  n <- length(col)
+  plot(0, 0, type="n", xlim = c(0, 1), ylim = c(0, 1),
+  axes = FALSE, xlab = "", ylab = "", ...)
+  rect(0:(n-1)/n, 0, 1:n/n, 1, col = col, border = border)
+}
+
+
+
+#Capitals=c("Wien","Eisenstadt","Sankt Pölten(Land)","Linz(Stadt)","Klagenfurth Stadt","Graz(Stadt)","Salzburg(Stadt)","Innsbruck-Stadt","Feldkirch")
+#Big10Cities=c("Wien","Graz(Stadt)","Linz(Stadt)","Baden","Vöcklabruck","Bregenz","Innsbruck-Stadt","Mödling","Amstetten","Kufstein")
+#dc <- df %>%
+#  dplyr::mutate(regionBigCity=Region %in% Big10Cities, regionCapital=Region %in% Capitals) %>%
+#  dplyr::group_by(regionBigCity, Date) %>%
+#  dplyr::summarize(cityConfPop = sum(newConfirmed)/sum(Population)*100000) %>%
+#  dplyr::ungroup()
+
+
+#ggplot(data=dfrm, aes(x=Date, y=newConfirmed/Population*1000000, color=Region)) + 
+#  geom_line() + 
+#  scale_x_date(limits=c(as.Date(strptime("2020-08-01",format="%Y-%m-%d")),NA), 
+#               date_breaks="1 weeks", date_labels="%a.%d.%m") +
+#  scale_y_continuous(limits=c(0,500)) + 
+#  ggtitle("AGES Bezirke Timeline: Wien")
+
+
+#cronJobDir <- "/srv/shiny-server/COVID-19-WeatherMap"
+#cronJobDir <- "/home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny"
+#cronJobFile <- paste0(cronJobDir,"/cron.R")
+#cronJobLog <-paste0(cronJobDir,"/log/cwm.cron.log")  
+#cmd <- cron_rscript(rscript=cronJobFile, rscript_log=cronJobLog, log_timestamp=TRUE, workdir=cronJobDir)
+#cmd
+#cron_clear(ask=FALSE)
+#cron_add(cmd, id='AGES-14', at = '14:14')
+#cron_add(cmd, id='AGES-22', at = '22:22')
+#logMsg("Define cron job for data retrieval from AGES")
+#cronCMD14="14 14 * * * shiny cd /srv/shiny-server/COVID-19-WeatherMap %% /usr/local/bin/Rscript ./cron.R"
+#cronCMD23="23 23 * * * shiny cd /srv/shiny-server/COVID-19-WeatherMap %% /usr/local/bin/Rscript ./cron.R"
+#system2("sudo",paste("Echo",cronCMD14,">> /etc/crontab"))
+#system2("sudo",paste("Echo",cronCMD23,">> /etc/crontab"))
+
+
+#<tr><td>WochenInzidenz heute:  </td><td align='right'> %g</td></tr>
+#<tr><td>WochenInzidenz nächste Woche:  </td><td align='right'> %g </td></tr>
+#round(pMapNUTS$rm7NewConfPop.c*7), round(pMapNUTS$rm7NewConfPop.f*7), 
+
+#addPolygons(data=mapNUTS1, stroke = TRUE, smoothFactor = 0, color="black", fillOpacity = 0, fillColor="None", weight=10, group="AT1") %>%
+#addPolygons(data=mapNUTS3, stroke = TRUE, smoothFactor = 0, fillOpacity = 0, fillColor="none", weight=1, group="AT3") %>%
+#addMarkers(lng=~cxNUTS, lat=~cyNUTS, group="Trend", label=atRegions, popup=~Region) %>%
+#addLayersControl(overlayGroups=c("AT1","AT3"), options=layersControlOptions(collapsed=FALSE)) %>%
+#hideGroup(c("AT1","AT3","Markers"))
+# idxDblConfPop=.bincode(dt7rm7NewConfPop,binDblDays), 
+#dp <- df.past() %>% dplyr::filter(Date==max(Date)) %>% dplyr::select(Date, Region, dt7rm7NewConfPop,starts_with("rm7"))# Today
+
+#dplyr::left_join(dh %>% dplyr::select(Date, Region,dt7rm7NewConfPop) %>% dplyr::filter(Date==max(Date)) %>% dplyr::select(-Date), by=c("iso"="CountyID")) %>%
+# dplyr::mutate(idxCurConfPop=.bincode(rm7NewConfPop.c,binForeCast), 
+#              idxMonConfPop=.bincode(rm7NewConfPop,binForeCast),
+#              idxForConfPop=.bincode(rm7NewConfPop.f,binForeCast)) #%>%
+#     #               idxDblConfPop=.bincode((rm7NewConfPop.c+(rm7NewConfPop.f-rm7NewConfPop.c)/7)/rm7NewConfPop.c,binDblDays), 
+#dplyr::rename(County=Region, Region=State) # undo renames for above calculations and joins
+
+# number of days till inzidenz doubles
+#dt2 <- dh %>% 
+#  dplyr::group_by(CountyID) %>% 
+#  dplyr::summarise(dblDays=rm7PolyLog(rm7NewConfPop, nPoly=1, nModelDays=nWeatherForeCastDays, nNewData=1, bDblDays=TRUE)$pDblDays) %>%
+#  dplyr::ungroup()
+
+#addPolygons(data=mapNUTS1, stroke = TRUE, smoothFactor = 0, color="black", fillOpacity = 0, fillColor="None", weight=10, group="AT1") %>%
+#addPolygons(data=mapNUTS3, stroke = TRUE, smoothFactor = 0, fillOpacity = 0, fillColor="none", weight=1, group="AT3") %>%
+#addMarkers(lng=~cxNUTS, lat=~cyNUTS, group="Trend", label=atRegions, popup=~Region) %>%
+#addLayersControl(overlayGroups=c("AT1","AT3"), options=layersControlOptions(collapsed=FALSE)) %>%
+#hideGroup(c("AT1","AT3","Markers"))
+# idxDblConfPop=.bincode(dt7rm7NewConfPop,binDblDays), 
+#dp <- df.past() %>% dplyr::filter(Date==max(Date)) %>% dplyr::select(Date, Region, dt7rm7NewConfPop,starts_with("rm7"))# Today
+
+
+
+
+
+# Global constants
+#dblDays <- c(1:7,10,14,21,28,50,100,Inf,-100,-50,-28,-21,-14,-10,-7,-6,-5,-4,-3,-2,-1)
+#popBreaks <- c(0,1,2,5,10,15,20,25,seq(30,150,by=10))
+#popLogBreaks <- (c(.1,.2,.5,1,2,5,10,20,50,100))
+#logBreaks=c(seq(.1,1,by=.1),seq(1,10,by=1),seq(10,100,by=10),seq(100,1000,by=100),seq(1000,10000,by=1000))
+#logBreaks=c(seq(.1,1,by=.1),seq(1,10,by=1),seq(10,100,by=10),seq(100,1000,by=100),seq(1000,10000,by=1000),seq(10000,100000,by=10000))
+#nModelDays=28
+#nPredDays=14
+#yLimMax <- 128
+#julDate <- as.Date("2020-07-01")
+#trans="log10"
+
+
+
+# http://data.opendataportal.at/dataset/geojson-daten-osterreich
+# https://github.com/ginseng666/GeoJSON-TopoJSON-Austria
+# mapBezirke <- geojsonio::geojson_read(x="./maps/bezirke_95_geo.json", what="sp")
+
+
+
+#locIDs <- dd %>% dplyr::filter(Date==curDate) %>% dplyr::select(locID)
+#predRegions=rep(locIDs$locID,each=(nModelDays+nPredDays))
+#predDate=seq.Date(minDate,maxDate,1)
+#predDates=rep(predDate,nrow(locIDs))
+#predDF <- data.frame(Date=predDates, locID=predRegions, stringsAsFactors=FALSE) %>% dplyr::arrange(locID,Date)
+
+# add days to predict for to dd
+#dd <- predDF %>% dplyr::left_join(dd, by=c("locID","Date"))
+
+
+
+

@@ -36,71 +36,44 @@ caAgesRead_cfGKZtl <- function(csvFile="CovidFaelle_Timeline_GKZ.csv", nRm7Days=
   
   df <- read.csv(dskFile, stringsAsFactors=FALSE, sep=";") %>% 
     dplyr::mutate(Stamp=as.POSIXct(Time, format="%d.%m.%Y %H:%M:%S"), Date=date(Stamp)) %>%
-    dplyr::rename(RegionID=GKZ, Region=Bezirk, Population=AnzEinwohner) %>%
-    dplyr::rename(newConfirmed=AnzahlFaelle, sumConfirmed=AnzahlFaelleSum, rmaConfirmed=AnzahlFaelle7Tage) %>%
+    dplyr::rename(Region=Bezirk, Population=AnzEinwohner) %>%
+    dplyr::rename(newConfirmed=AnzahlFaelle, sumConfirmed=AnzahlFaelleSum, rmaNewConfirmed=AnzahlFaelle7Tage) %>%
     dplyr::rename(newDeaths=AnzahlTotTaeglich, sumDeaths=AnzahlTotSum) %>%
     dplyr::rename(newRecovered=AnzahlGeheiltTaeglich, sumRecovered=AnzahlGeheiltSum) %>%
-    dplyr::mutate(newConfPop = newConfirmed/Population*100000) %>%
-    dplyr::select(-SiebenTageInzidenzFaelle, -Time) %>% dplyr::select(11,12,2,1,3,4,6,13,9,7,5,10,8) 
+    dplyr::mutate(RegionID=as.character(GKZ), newConfPop = newConfirmed/Population*100000, rmaNewConfPop=as.numeric(str_replace(SiebenTageInzidenzFaelle,",","."))) %>%
+    dplyr::select(-Time, -SiebenTageInzidenzFaelle, -GKZ)
 
   rdaFile <- "./data/CovidFaelle_Timeline_GKZ.rda"   
   logMsg(paste("Writing", rdaFile))
   if (bSave) saveRDS(df, file=rdaFile)  
-  
-  # apply rolling mean to 'new*' cols
-  #db <- df %>%
-  #  dplyr::arrange(Date, Region) %>%
-  #  dplyr::group_by(Region) %>%
-  #  dplyr::mutate_at(vars(starts_with("new")), rollmean, k=7, fill=NA, align="right") %>%
-  #  dplyr::ungroup()
 
-  # apply rolling mean to 'new*' cols. Leaves the last three days with NA's
+  # Add Region,RegionID to County
+  di <- data.frame(RegionID=as.character(1:9), 
+                   Region=c("Burgenland","Kärnten","Niederösterreich","Oberösterreich","Salzburg","Steiermark","Tirol","Vorarlberg","Wien"), stringsAsFactors=FALSE)
+  
+  # apply rolling mean to 'new*' cols. Leaves the last three days with NA's --> right align, so we get closer to AGES figures
   # some dummy cols so downstream filter don't get confused
   db <- df %>%
-    dplyr::arrange(Region, Date) %>%
-    dplyr::group_by(Region) %>%
+    dplyr::rename(County=Region, CountyID=RegionID) %>%
+    dplyr::mutate(RegionID=str_sub(CountyID,1,1), CountyNR=str_sub(CountyID,2,3)) %>%
+    dplyr::left_join(di, by="RegionID") %>% 
+    dplyr::arrange(CountyID, Date) %>%
+    dplyr::group_by(CountyID) %>%
     dplyr::mutate(rm7NewConfirmed=(rollmean(newConfirmed, k=nRm7Days, align="right", fill=NA))) %>%
     dplyr::mutate(rm7NewRecovered=(rollmean(newRecovered, k=nRm7Days, align="right", fill=NA))) %>%
     dplyr::mutate(rm7NewDeaths=(rollmean(newDeaths, k=nRm7Days, align="right", fill=NA))) %>%
     dplyr::mutate(rm7NewConfPop=(rollmean(newConfPop, k=nRm7Days, align="right", fill=NA))) %>%
     dplyr::mutate(rm7NewTested=rm7NewConfirmed) %>% 
     dplyr::mutate(rm7NewConfTest=1) %>%
-    #dplyr::mutate(rm7CurConfirmed=(rollmean(curConfirmed, k=nRm7Days, align="right", fill=NA))) %>%
-    #dplyr::mutate(rm7CurHospital=(rollmean(curHospital, k=nRm7Days, align="right", fill=NA))) %>%
-    #dplyr::mutate(rm7CurICU=(rollmean(curICU, k=nRm7Days, align="right", fill=NA))) %>%
-    #dplyr::mutate_at(vars(starts_with("new")), rollmean, k=nRm7Days, align="right", fill=NA) %>%
-    dplyr::ungroup() 
-  
-  di <- data.frame(RegionID=as.character(1:9), 
-                   Region=c("Burgenland","Kärnten","Niederösterreich","Oberösterreich","Salzburg","Steiermark","Tirol","Vorarlberg","Wien"), stringsAsFactors=FALSE)
-  db <- db %>%
-    dplyr::rename(County=Region, CountyID=RegionID) %>%
-    dplyr::mutate(RegionID=(str_sub(as.character(CountyID),1,1)), CountyNR=(str_sub(as.character(CountyID),2,3))) %>%
-    dplyr::left_join(di, by="RegionID") %>% 
-    dplyr::mutate(CountyID=as.character(CountyID)) %>%
+    dplyr::ungroup()%>%
     dplyr::select(Date,Region,RegionID,County,CountyID,CountyNR,Population, starts_with("rma"), starts_with("new"), starts_with("rm7"), starts_with("sum"))
   
+
   rdaFile <- "./data/COVID-19-CWM-AGES-Counties-Curated.rda"   
   logMsg(paste("Writing", rdaFile))
   if (bSave) saveRDS(db, file=rdaFile)  
   
   return(db)
-  
-  #Capitals=c("Wien","Eisenstadt","Sankt Pölten(Land)","Linz(Stadt)","Klagenfurth Stadt","Graz(Stadt)","Salzburg(Stadt)","Innsbruck-Stadt","Feldkirch")
-  #Big10Cities=c("Wien","Graz(Stadt)","Linz(Stadt)","Baden","Vöcklabruck","Bregenz","Innsbruck-Stadt","Mödling","Amstetten","Kufstein")
-  #dc <- df %>%
-  #  dplyr::mutate(regionBigCity=Region %in% Big10Cities, regionCapital=Region %in% Capitals) %>%
-  #  dplyr::group_by(regionBigCity, Date) %>%
-  #  dplyr::summarize(cityConfPop = sum(newConfirmed)/sum(Population)*100000) %>%
-  #  dplyr::ungroup()
-  
-  
-  #ggplot(data=dfrm, aes(x=Date, y=newConfirmed/Population*1000000, color=Region)) + 
-  #  geom_line() + 
-  #  scale_x_date(limits=c(as.Date(strptime("2020-08-01",format="%Y-%m-%d")),NA), 
-  #               date_breaks="1 weeks", date_labels="%a.%d.%m") +
-  #  scale_y_continuous(limits=c(0,500)) + 
-  #  ggtitle("AGES Bezirke Timeline: Wien")
 }
 
 # -------------------------------------------------------------------------------------------
@@ -116,18 +89,15 @@ caAgesRead_cftl <- function(csvFile="CovidFaelle_Timeline.csv", bSave=TRUE) {
   logMsg(paste("Storing AGES data to", dskFile))
   cmd <- paste(webFile, "-O", dskFile)
   system2("wget", cmd)
-  
+
   dc <- read.csv(dskFile, stringsAsFactors=FALSE, sep=";") %>% 
     dplyr::mutate(Stamp=as.POSIXct(Time, format="%d.%m.%Y %H:%M:%S"), Date=date(Stamp)) %>%
-    dplyr::rename(RegionID=BundeslandID, Region=Bundesland, Population=AnzEinwohner) %>%
     dplyr::rename(newConfirmed=AnzahlFaelle, newRecovered=AnzahlGeheiltTaeglich, newDeaths=AnzahlTotTaeglich) %>%
-    dplyr::rename(sumConfirmed=AnzahlFaelleSum, sumRecovered=AnzahlGeheiltSum, sumDeaths=AnzahlTotSum) %>%
-    dplyr::mutate(curConfirmed=sumConfirmed-sumRecovered-sumDeaths) %>%
-    dplyr::select(-SiebenTageInzidenzFaelle, -Time, -AnzahlFaelle7Tage) %>% 
-    dplyr::select(11,10,2,1,3,4,8,6,5,9,7,12)
-  #str(dc)
-  #summary(dc)
-  
+    dplyr::rename(sumConfirmed=AnzahlFaelleSum, sumRecovered=AnzahlGeheiltSum, sumDeaths=AnzahlTotSum, rmaNewConfirmed=AnzahlFaelle7Tage) %>%
+    dplyr::rename(Region=Bundesland, RegionID=BundeslandID, Population=AnzEinwohner) %>%
+    dplyr::mutate(curConfirmed=sumConfirmed-sumRecovered-sumDeaths, rmaNewConfPop=as.numeric(str_replace(SiebenTageInzidenzFaelle,",","."))) %>%
+    dplyr::select(Date,Region,RegionID,Population, starts_with("cur"), starts_with("new"), starts_with("rma"), starts_with("sum"))
+
   rdaFile <- "./data/CovidFaelle_Timeline.rda"   
   logMsg(paste("Writing", rdaFile))
   if (bSave) saveRDS(dc, file=rdaFile)  
@@ -201,7 +171,7 @@ caAgesRead_tlrm <- function(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile=
   jointDate <- min(max(dc$Date), max(dt$Date))
   
   # Join 'Confirmed' and 'Tested' datasets
-  dj <- dc %>% left_join(dt, by=c("Date","RegionID", "Stamp","Region")) 
+  dj <- dc %>% left_join(dt, by=c("Date","RegionID", "Region")) 
   
   # Add col for Month and Week
   df <- dj %>% 
