@@ -268,5 +268,48 @@ pal <- function(col, border = "light gray", ...) {
 #dd <- predDF %>% dplyr::left_join(dd, by=c("locID","Date"))
 
 
+df.modelx <- eventReactive(df(), {
+  logMsg(paste("eventReactive reactiveFileReader:modelx", cwmPredictionFile)) 
+  
+  # days from today back nWeatherForeCastDays days
+  dh <- df() %>% 
+    dplyr::filter(Date>max(Date-3-nModelDaysMonth)) %>%
+    dplyr::mutate(locID=RegionID) # added so cwmAgesRm7EstimatePoly know what to look for (RegionID or CountyID)
+  # Pick data for AGES (rm7 three days ago) 
+  da <- dh %>% dplyr::filter(Date==max(Date)) %>% dplyr::select(starts_with("Region"), rmaNewConfPop)
+  # model prediction for today
+  dq <- cwmAgesRm7EstimatePoly(dh, nModelDays=nModelDaysWeek, nPredDays=0, nPoly=1) %>%
+    dplyr::filter(Date==max(dh$Date))
+  # model predicition for next week
+  dm <- cwmAgesRm7EstimatePoly(dh, nModelDays=nModelDaysWeek, nPredDays=nForeCastDaysWeek, nPoly=1) %>%
+    dplyr::filter(Date==max(Date))
+  # model predicition for next month
+  do <- cwmAgesRm7EstimatePoly(dh, nModelDays=nModelDaysMonth, nPredDays=nForeCastDaysMonth, nPoly=1) %>%
+    dplyr::filter(Date==max(Date))
+  # number of days till inzidenz doubles
+  dt2 <- dh %>% 
+    dplyr::arrange(RegionID, Date) %>%
+    dplyr::group_by(RegionID) %>% 
+    dplyr::summarise(dblDays=rm7PolyLog(rm7NewConfPop, nPoly=1, nModelDays=nModelDaysWeek, bDblDays=TRUE)$pDblDays) %>%
+    dplyr::ungroup()
+  
+  dz <- da %>%
+    dplyr::left_join(dq, by="RegionID") %>%
+    dplyr::left_join(dm, by="RegionID", suffix = c(".c", ".f")) %>%
+    dplyr::left_join(do, by="RegionID") %>%
+    dplyr::left_join(dt2, by="RegionID")
+  
+  # Add to geojson structure
+  pMapNUTS <- mapNUTS %>% 
+    dplyr::left_join(dz, by="RegionID") %>%
+    #    dplyr::left_join(dh %>% dplyr::select(Date, RegionID,dt7rm7NewConfPop) %>% dplyr::filter(Date==max(Date)) %>% dplyr::select(-Date), by="RegionID") %>%
+    dplyr::mutate(idxCurConfPop=.bincode(rm7NewConfPop.c,binForeCast), 
+                  idxDblConfPop=.bincode((rm7NewConfPop.c+(rm7NewConfPop.f-rm7NewConfPop.c)/7)/rm7NewConfPop.c,binDblDays),
+                  idxMonConfPop=.bincode(rm7NewConfPop,binForeCast),
+                  idxForConfPop=.bincode(rm7NewConfPop.f,binForeCast))
+  # need to plot 'Österreich' last
+  pMapNUTS <- rbind(pMapNUTS[1,],pMapNUTS[2,],pMapNUTS[3,],pMapNUTS[4,],pMapNUTS[6,],pMapNUTS[7,],pMapNUTS[8,],pMapNUTS[9,],pMapNUTS[10,],pMapNUTS[5,])
+  return(pMapNUTS)
+})
 
 

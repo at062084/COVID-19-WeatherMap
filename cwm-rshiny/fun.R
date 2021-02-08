@@ -12,13 +12,7 @@ library(geojsonsf)
 library(spdplyr)
 library(readr)
 
-# Regions characteristics. Matched. Don't mess around
-atRegions=c("Burgenland","Kärnten","Niederösterreich","Oberösterreich","Österreich","Salzburg","Steiermark","Tirol","Vorarlberg","Wien")
-atRegionsShort=c("B","K","NOe","OOe","AT","Szbg","Stmk","T","V","W")
-atShapes <- c(10,6,7,2,11,5,12,22,1,9)
-# Settings for all Region Plots: Color Blind Palette
-#cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#000000", "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#FF0000")
-cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#444444", "#F0D042", "#0072B2", "#D55E00", "#CC79A7", "#C40000")
+
 
 # Settings for cwmConfPopStyle
 popBreaksAll <- c(0,1,2,3,4,5,6,7,8,9,10,12,15,seq(20,100,by=10),120,150,200,300,400,500)
@@ -29,6 +23,7 @@ yLimMax <- 128
 dblXDays <- c(1:7,10,14,21,28,56,Inf,-56,-28,-21,-14,-10,-7,-6,-5,-4,-3,-2,-1)
 
 # WeatherMaps
+nModelDaysPrediction = 10
 nModelDaysWeek = 14
 nModelDaysMonth = 14
 nModelDaysQuater = 56
@@ -48,17 +43,39 @@ dblDays <- c(1,14,28,56,-56,-28,-14,-1)
 binDblDays <- sort(round(exp(log(2)/dblDays),3))
 binForeCast <- c(0,4,8,16,32,Inf)
 
+# ----------------------------------------------------------------------------------
+# Geo data (from OpenData*)
 
-mapATRegions <- geojsonio::geojson_read(x="./maps/laender_999_geo.json", what="sp")
-mapATCounties <- geojsonio::geojson_read(x="./maps/bezirke_999_geo.json", what="sp")
+# OBSOLETE: Regions characteristics. Matched. Don't mess around
+atRegions=c("Burgenland","Kärnten","Niederösterreich","Oberösterreich","Österreich","Salzburg","Steiermark","Tirol","Vorarlberg","Wien")
+atRegionsShort=c("B","K","NOe","OOe","AT","Szbg","Stmk","T","V","W")
+atShapes <- c(10,6,7,2,11,5,12,22,1,9)
+# Settings for all Region Plots: Color Blind Palette
+#cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#000000", "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#FF0000")
+cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#444444", "#F0D042", "#0072B2", "#D55E00", "#CC79A7", "#C40000")
+# ----------------------------------------------------------------------------------
 
+datATRegions <- data.frame(
+  NUTS_ID=c("AT0","AT11","AT12","AT13","AT21","AT22","AT31","AT32","AT33","AT34"),
+  Region= c("Österreich", "Burgenland","Niederösterreich","Wien", "Kärnten","Steiermark", "Oberösterreich","Salzburg","Tirol","Vorarlberg"),
+  RegionS=c("AT","B","NOe","W","K","Stmk","OOe","Szbg","T","V"),
+  RegionID=as.character(c(10,1,3,9,2,6,4,5,7,8)), stringsAsFactors=FALSE) %>% 
+  dplyr::arrange(Region) %>%
+  dplyr::mutate(Shape=c(10,6,7,2,11,5,12,22,1,9)) %>% 
+  dplyr::mutate(Palette=c("#999999", "#E69F00", "#56B4E9", "#009E73", "#444444", "#F0D042", "#0072B2", "#D55E00", "#CC79A7", "#C40000")
+)
 
-mapATCounties <- function() {
+# Bundesländer
+funATRegions <- function() {
+  geo <- geojsonio::geojson_read(x="./maps/laender_999_geo.json", what="sp") %>%
+    dplyr::rename(Region=name, RegionID=iso)
+  return(geo)
+}
 
-  di <- data.frame(RegionID=as.character(1:9), 
-                   Region=c("Burgenland","Kärnten","Niederösterreich","Oberösterreich","Salzburg","Steiermark","Tirol","Vorarlberg","Wien"), stringsAsFactors=FALSE)
-  
-  mapCounties <- geojsonio::geojson_read(x="./maps/bezirke_999_geo.json", what="sp") %>%
+# Bezirke
+funATCounties <- function() {
+  di <- datATRegions %>% dplyr::select(RegionID, Region, Palette)
+  geo <- geojsonio::geojson_read(x="./maps/bezirke_999_geo.json", what="sp") %>%
     # remove Bezirke Wien
     dplyr::filter(as.integer(iso)<=900) %>%
     dplyr::rename(County=name, CountyID=iso) %>%
@@ -66,11 +83,12 @@ mapATCounties <- function() {
     dplyr::left_join(di, by="RegionID") %>% 
     dplyr::mutate(CountyID=as.character(CountyID)) %>%
     dplyr::select("Region","RegionID","County","CountyID","CountyNR")
-
-  return(mapCounties)
+  return(geo)
 }
 
-mapNUTSAT <- function () {
+
+# Bundsländer für die aktuelle Wetterkarte, mit geoLocations der Icons
+funNUTSAT <- function () {
   # Austria NUTS poligons for NUTS1, NUTS2 and NUTS3
   mapNUTS1 <- geojsonio::geojson_read(x="./maps/nuts_rg_60m_2013_lvl_1.geojson", what="sp") %>% dplyr::filter(startsWith(NUTS_ID,"AT"))
   mapNUTS2 <- geojsonio::geojson_read(x="./maps/nuts_rg_60m_2013_lvl_2.geojson", what="sp") %>% dplyr::filter(startsWith(NUTS_ID,"AT"))
@@ -127,6 +145,36 @@ mapNUTSAT <- function () {
 
   return(mapNUTS)  
 }
+
+cwm.model <- function(dx, dg=datATRegions, locID="Region", colID="RegionS") {
+  maxDate=max(dx$Date)
+  n <- nModelDaysPrediction + c(0,nForeCastDaysWeek,nForeCastDaysMonth)
+  t <- c(32,16,8,4)
+  rowNames <- c("Date", "AGES", "Heute","In einer Woche","In vier Wochen", "ÄnderungVortag","dblDays","Tage bis Verdoppelung","Tage bis   Halbierung", paste0("Tage bis Inzidenz=",t))
+  rowIDs <- c("Date","rmaNewConfPop","rm7NewConfPop.0","rm7NewConfPop.7","rm7NewConfPop.28","dtDay", "dblDays", "DblDays","HalfDays",paste0("rm7NewConfPop",t))
+  dy <- data.frame(Inzidenz=rowNames, stringsAsFactors=FALSE)
+  rownames(dy) <- rowIDs
+  for (r in 1:(dim(dg)[1])) {
+    # idx <- dx$Region==dg$Region[r]
+    idx <- dx[,locID]==as.character(dg[r,locID])
+    y <- dx$rm7NewConfPop[idx]
+    p <- rm7PolyLog(y, nPoly=1, nNewData=n, nTransData=t, bDblDays=TRUE)
+    p$pTransData[p$pTransData<0] <- NA
+    q <- c(as.numeric(maxDate),
+           round(dx$rmaNewConfPop[idx & dx$Date==maxDate]/7,1),
+           round(p$pNewData,1),
+           round(exp(log(2)/p$pDblDays),3),
+           round(p$pDblDays),
+           ifelse(p$pDblDays>=0,round(p$pDblDays),NA), 
+           ifelse(p$pDblDays<=0,-round(p$pDblDays),NA), 
+           round(p$pTransData))
+    cn <- colnames(dy)
+    dy <- cbind(dy,(q))
+    colnames(dy) <- c(cn,dg[r,colID])
+  } 
+  return (dy)
+}
+
 
 # ----------------------------------------------------------------------------------------------
 # Standard ggplot style for newConfPop~Date
