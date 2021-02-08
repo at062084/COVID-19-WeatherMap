@@ -29,8 +29,18 @@ yLimMax <- 128
 dblXDays <- c(1:7,10,14,21,28,56,Inf,-56,-28,-21,-14,-10,-7,-6,-5,-4,-3,-2,-1)
 
 # WeatherMaps
-nWeatherForeCastDays=10 # same as slider=7 for incidence prediction (3 is automatically added to slider reading)
-nModelDays=10
+nModelDaysWeek = 14
+nModelDaysMonth = 14
+nModelDaysQuater = 56
+nForeCastDaysWeek =  7 
+nForeCastDaysMonth = 28 
+nForeCastDaysQuater = 91 
+nModelDaysCountyWeek = 14
+nModelDaysCountyMonth = 14
+nModelDaysCountyQuater = 56
+nForeCastDaysCountyWeek =  7
+nForeCastDaysCountyMonth = 28
+nForeCastDaysCountyQuater = 91
 binConfPop <- c(0,1,1.4,2,2.8,4,5.6,8,11,16,22,32,45,64,90,128,512)
 palConfPop <- c(brewer.pal(9,"Greens")[c(7,6,5,4)], brewer.pal(9,"YlOrRd"), "#404040", brewer.pal(9,"Greys")[c(8,9)])
 colConfPop <- colorBin(palette=palConfPop, domain=0:256, bins=binConfPop)
@@ -39,6 +49,8 @@ binDblDays <- sort(round(exp(log(2)/dblDays),3))
 binForeCast <- c(0,4,8,16,32,Inf)
 
 
+mapATRegions <- geojsonio::geojson_read(x="./maps/laender_999_geo.json", what="sp")
+mapATCounties <- geojsonio::geojson_read(x="./maps/bezirke_999_geo.json", what="sp")
 
 
 mapATCounties <- function() {
@@ -84,7 +96,7 @@ mapNUTSAT <- function () {
   NUTS_AT <- data.frame(
     NUTS_ID=c("AT0","AT11","AT12","AT13","AT21","AT22","AT31","AT32","AT33","AT34"),
     Region= c("Österreich", "Burgenland","Niederösterreich","Wien", "Kärnten","Steiermark", "Oberösterreich","Salzburg","Tirol","Vorarlberg"),
-    RegionID=c(10,1,3,9,2,6,4,5,7,8),
+    RegionID=as.character(c(10,1,3,9,2,6,4,5,7,8)),
     stringsAsFactors=FALSE)
   
   # Add features Region and Center 
@@ -256,7 +268,7 @@ rm7PolyLin <- function(y, nPoly=2, nModelDays=length(y), modWeights=NULL, nNewDa
 }
 
 # Prediction on rm7* features group by "locID": this field MUST be provided in df (usually a copy of RegionID or CountyID)
-cwmAgesRm7EstimatePoly <- function(df, nPoly=2, nModelDays=10, nPredDays=7) {
+cwmAgesRm7EstimatePoly <- function(df, nPoly=2, nModelDays=10, nPredDays=7, modWeights=NULL) {
   
   curDate <- max(df$Date)                 # last day in dataset                   
   minDate <- curDate - days(nModelDays)+1 # go back nModelDays for Model
@@ -271,7 +283,10 @@ cwmAgesRm7EstimatePoly <- function(df, nPoly=2, nModelDays=10, nPredDays=7) {
 
   # Append rows for each locID for every prediction day (fill features with copy of last day)
   if(nPredDays > 0) {
-    dd.append <- dd %>% dplyr::filter(Date==curDate)
+    # MUST set future data to NA, so that rm7PolyLog,rm7PolyLin will ignore when modelling across the complete data frame !!!
+    dd.append <- dd %>% 
+      dplyr::filter(Date==curDate) %>% 
+      dplyr::mutate_at(vars(c(starts_with("rm7"),starts_with("rma"))), function(x){NA})
     for (k in 1:nPredDays) {
       dd.append$Date=curDate+days(k)
       dd <- rbind(dd,dd.append)
@@ -282,9 +297,10 @@ cwmAgesRm7EstimatePoly <- function(df, nPoly=2, nModelDays=10, nPredDays=7) {
   dd <- dd %>%
     dplyr::group_by(locID) %>%
     # Log poly model for potentially exponentially growing items
-    dplyr::mutate_at(vars(c(starts_with("rm7"),-rm7NewTested,-rm7NewConfTest)), rm7PolyLog, nPoly=nPoly, nModelDays=nModelDays) %>%
+    dplyr::mutate_at(vars(c(starts_with("rm7"),-rm7NewTested,-rm7NewConfTest)), rm7PolyLog, nPoly=nPoly, nModelDays=nModelDays, modWeights=modWeights) %>%
+    #dplyr::mutate_at(vars(c(starts_with("rma"))), rm7PolyLog, nPoly=nPoly, nModelDays=nModelDays) %>%
     # nonLog linear model for newTested
-    dplyr::mutate_at(vars(rm7NewTested), rm7PolyLin, nPoly=nPoly, nModelDays=nModelDays) %>%
+    dplyr::mutate_at(vars(rm7NewTested), rm7PolyLin, nPoly=nPoly, nModelDays=nModelDays, modWeights=modWeights) %>%
     # Calc newConfProp from estimated Confirmed and Tested
     dplyr::mutate(rm7NewConfTest = rm7NewConfirmed/rm7NewTested) %>%
     dplyr::ungroup() 
