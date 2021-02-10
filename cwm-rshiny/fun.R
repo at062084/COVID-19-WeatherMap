@@ -179,7 +179,7 @@ cwm.model <- function(dx, dg=datATRegions, locID="Region", colID="RegionS") {
 # ----------------------------------------------------------------------------------------------
 # Standard ggplot style for newConfPop~Date
 # ----------------------------------------------------------------------------------------------
-cwmConfPopStyle <- function(sldPastTime=3, cbLogScale=TRUE, inRegions=1:10, xLimits=c(NULL,NULL), yLimits=c(yLimMin, yLimMax), yLabel="Positive/100.000 Einwohnern") {
+cwmConfPopStyle <- function(sldPastTime=3, cbLogScale=TRUE, inRegions="Österreich", xLimits=c(NULL,NULL), yLimits=c(yLimMin, yLimMax), yLabel="Positive/100.000 Einwohnern") {
   
   # Process left side menu user interactions
   trans <- ifelse(cbLogScale, "log10", "identity")

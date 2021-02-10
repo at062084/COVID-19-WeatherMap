@@ -287,15 +287,26 @@ ui <- fluidPage(
      # h1("COVID-19-WeatherMap", align = "left"),
       
       tabsetPanel(type = "tabs",
- 
-       tabPanel("Karte Bundesländer",
+
+        tabPanel("FrontPage",
+                 h4("COVID-19 Wetterkarte und StufenModell", align = "left", style="color:gray"),
+#                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
+                 fluidRow(column(width=6, htmlOutput(outputId="htmlFrontPageTop")),
+                          column(width=6, leafletOutput(outputId = "lftFrontPage", height="40vh"))
+                          ),
+                 p("", align = "center", style="color:green"),
+                 fluidRow(column(width=6, plotOutput(outputId="ggpFrontPage", height="40vh")),
+                          column(width=6, htmlOutput(outputId = "htmlFrontPageBot"))
+                          )),
+                 
+       tabPanel("Bundesländer",
                  h4("Lage und Aussichten Bundesländer", align = "left", style="color:gray"),
                  p("[Menüauswahl: keine]", align = "left", style="color:green"),
                 fluidRow(column(width=9,  leafletOutput(outputId = "lftWeatherMap", height="60vh"),
                                           DT::dataTableOutput(outputId = "dtoWeatherMap")),
                                     column(width=3, htmlOutput(outputId="hlpWeatherMap")))),
  
-       tabPanel("Karte Bezirke",
+       tabPanel("Bezirke",
                 h4("Lage und Aussichten Bezirke", align = "left", style="color:gray"),
                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
                 fluidRow(column(width=9,  leafletOutput(outputId = "lftWeatherMapCounties", height="60vh"),
@@ -303,7 +314,7 @@ ui <- fluidPage(
                          column(width=3, htmlOutput(outputId="hlpWeatherMapCounties")))),
        
                                   
-        tabPanel("Prognose Bundesländer",
+        tabPanel("Prognose",
                  h4("Prognose TagesInzidenz", align = "left", style="color:gray"),
                  p("[Menüauswahl: Region,LogScale,BerechnungsTage,BerechnungsModell]", align = "left", style="color:green"),
                  fluidRow(column(width=8, plotOutput(outputId = "ggpIncidencePrediciton", height="75vh")),
@@ -323,7 +334,7 @@ ui <- fluidPage(
                           column(width=3, htmlOutput(outputId="hlpIncidenceCounties")))),
         
 
-        tabPanel("Ausbreitungsgeschwindigkeit",
+        tabPanel("Geschwindigkeit",
                  h4("Änderung der TagesInzidenz in % vom Vortag", align = "left", style="color:gray"),
                  p("[Menüauswahl: Region,Zeitbereich]", align = "left", style="color:green"),
                  fluidRow(column(width=9, plotOutput(outputId = "ggpChangeRateStates", height="75vh")),
@@ -386,7 +397,45 @@ server <- function(input, output, session) {
     return(de() %>% dplyr::filter(Region %in% isolate(input$cbgRegion)))
   })
   
+  
 
+  # -------------------------------------------
+  # FrontPage
+  # -------------------------------------------
+  output$htmlFrontPageTop <- renderText({ htmlFrontPageTop })
+  output$htmlFrontPageBot <- renderText({ htmlFrontPageBot })
+  
+  output$lftFrontPage <- renderLeaflet({
+    logMsg("  output renderPlot lftFrontPage", sessionID)
+    options(warn=-1)
+
+    # Depend on reactive file reader
+    pMapNUTS <- df.map()
+    
+    # Depend on reactive file reader
+    leaflet(pMapNUTS, options=leafletOptions(minZoom=6, maxZoom=6, zoomControl=FALSE, dragging=FALSE, zoom=6)) %>%
+      addTiles(group="DefaultMap", options=providerTileOptions(minZoom=6, maxZoom=6)) %>%
+      addPolygons(stroke=TRUE, weight=3, color="black",
+                  fill=TRUE, fillOpacity = 1, fillColor=palConfPop[.bincode(pMapNUTS$rm7NewConfPop.0,binConfPop)]) %>%
+      addMarkers(lng=~cxNUTS, lat=~cyNUTS, icon=~iconsWeather[idxCurConfPop], group="Incidence") %>%
+      setView(lng=pMapNUTS$cxNUTS[1]-3, lat=pMapNUTS$cyNUTS[1], zoom=6)
+  })
+  
+  output$ggpFrontPage <- renderPlot({
+    logMsg("  output renderPlot ggpFrontPage", sessionID)
+    options(warn=-1)
+    
+    popSteps=c(1,2,4,8,16,32,64,128)
+    dp <- df() %>% dplyr::filter(Date>as.Date("2020-07-04"), Region=="Österreich") %>% dplyr::select(Date, Region, rm7NewConfPop)
+    
+    ggplot(dp, aes(x=Date, y=rm7NewConfPop, color=Region, shape=Region))+
+      cwmConfPopStyle(sldPastTime=6, cbLogScale=TRUE, inRegions="Österreich") +
+      scale_x_date(date_breaks="1 months", date_labels="%b") +
+      scale_y_continuous(limits=c(1,128), breaks=popSteps, position="right",  trans="log10") +
+      theme(legend.position="none") +
+      geom_point(size=.5)+geom_line()+
+      ggtitle(paste0("COVID-19 Österreich:  TagesInzidenz: Stufenmodell seit ", min(dp$Date), ".   Basisdaten: AGES"))
+  })
   
   # -------------------------------------------
   # Weather Map BundesLänder
@@ -394,7 +443,9 @@ server <- function(input, output, session) {
   output$hlpWeatherMap <- renderText({ htmlWeatherMap })
 
   # Values, and Prediction of Incodence, Time to/outof Lockdown
-  output$dtoWeatherMap <- DT::renderDataTable({ df.model() %>% dplyr::filter(! Inzidenz %in% c("Date","dtDay","dblDays")) })
+  output$dtoWeatherMap <- DT::renderDataTable({ df.model() %>% 
+      dplyr::mutate(ID=(1:n())-1) %>% 
+      dplyr::filter(! Inzidenz %in% c("Date","dtDay","dblDays")) }, options=list(pageLength=11, dom='t'))
   # options=list(pageLength=8, lengthChange=FALSE) 
   
   # WeatherMap
@@ -451,14 +502,15 @@ server <- function(input, output, session) {
   
   # Values, and Prediction of Incodence, Time to/outof Lockdown
   output$dtoWeatherMapCounties <- DT::renderDataTable({ dg.map()@data %>% 
+                                      dplyr::mutate(ID=(1:n())-1) %>%
                                       dplyr::rename(AGES=rmaNewConfPop,
                                                     Heute=rm7NewConfPop.0, Woche=rm7NewConfPop.7, Monat=rm7NewConfPop.28,
                                                     Änderung=dtDay, TageDoppelt=DblDays, TageHälfte=HalfDays, 
-                                                    TageEndeLockDown=rm7NewConfPop8, TageBeginLockDown=rm7NewConfPop32) %>%
+                                                    EndeLockDownTage=rm7NewConfPop8, BeginLockDownTage=rm7NewConfPop32) %>%
                                       dplyr::select(Region,County,AGES,
                                                     Heute, Woche, Monat,
                                                     Änderung, TageDoppelt, TageHälfte, 
-                                                    TageEndeLockDown, TageBeginLockDown) })
+                                                    EndeLockDownTage, BeginLockDownTage) }, options=list(pageLength=94, dom='t'))
   # options=list(pageLength=8, lengthChange=FALSE) 
   
   # WeatherMap
@@ -575,7 +627,16 @@ server <- function(input, output, session) {
   output$hlpIncidenceCounties <- renderText({ htmlIncidenceCounties })
 
   # Values, and Prediction of Incodence, Time to/outof Lockdown
-  output$dtoIncidenceCounties <- DT::renderDataTable({ dg.today() })
+  output$dtoIncidenceCounties <- DT::renderDataTable({ dg.map()@data %>% 
+      dplyr::mutate(ID=(1:n())-1) %>%
+      dplyr::rename(AGES=rmaNewConfPop,
+                    Heute=rm7NewConfPop.0, Woche=rm7NewConfPop.7, Monat=rm7NewConfPop.28,
+                    Änderung=dtDay, TageDoppelt=DblDays, TageHälfte=HalfDays, 
+                    EndeLockDownTage=rm7NewConfPop8, BeginLockDownTage=rm7NewConfPop32) %>%
+      dplyr::select(Region,County,AGES,
+                    Heute, Woche, Monat,
+                    Änderung, TageDoppelt, TageHälfte, 
+                    EndeLockDownTage, BeginLockDownTage) }, options=list(pageLength=94, dom='t'))
     
   output$ggpIncidenceCounties <- renderPlot({
     logMsg("  output renderPlot ggpIncidenceCounties", sessionID)

@@ -1,4 +1,41 @@
 
+htmlFrontPageTop <- "<p>
+                       Dieses Dashboard beschäftigt sich mit der <b>Entwicklung der TagesInzidenz</b> der COVID-19 Pandemie in Österreich, 
+                       basierend auf den Einmeldungen im EMS (Epidemiologisches Melde System) der AGES. Es verfolgt drei <b>Ziele</b>:
+                     </p>
+                     <p>
+                     <li>Vermittlung des aktuellen Standes, der Tendenz sowie einer Prognose der TagesInzidenz in Form einer <b>Wetterkarte</b>
+                         (Punkte 'Bundesländer' und 'Bezirke')</li>
+                     <li>Motivation den bisherigen Verlauf der Pandemie besser als <b>Stufenmodell</b> denn in Form von Wellen zu verstehen
+                         (Punkte 'Inzidenz Bundesländer und Bezirke')</li>
+                     <li>Eine Darstellungsform für die Inzidenz Zahlen zu etablieren, die dem <b>exponentiellen Charakter der Verbreitung</b> angemessen ist
+                         (Stufen mit jeweils doppelter TagesInzidenz) </li>
+                      </p><p>
+                        Unterschiedliche Varianten für die <b>Prognose der Inzidenz</b> auf Bundesländer Ebene können interaktiv unter Punkt 'Prognose' gerechnet werden.
+                        Parallel zum Stufenmodell werden unter Punkt '<b>Geschwindigkeit</b>' die Ausbreitungsschübe  betrachtet.
+                        Der '<b>Rückblick 2020</b>' motiviert die Möglichkeit einer mittelfristigen Prognose bei gegebenem Verhalten in der Bevölkerung.
+                      </p>
+                    "
+
+
+
+htmlFrontPageBot <- "<h4>Bedienungsanleitung</h4>
+                    <p>Das Menü auf der linken Seite ermöglicht es Einfluss auf verschiedene Darstellungen zu nehmen
+                    </p>
+                    <p>
+                     <li>Welche Controls für eine Graphik aktiv sind steht unter 'Menüauswahl' jeweils oben links</li>
+                     <li>Die Auswahl der Bundesländer ist jeweils mit dem Button 'Anzeigen' zu bestätigen</li>
+                     <li>Die beiden 'Prognose' Controls gelten nur für den Punkt 'Prognose'</li>
+                    </p>
+                    <p> Die Skala für die Inzidenz ist in Stufen mit jeweils doppelter Inzidenz geteilt, mit Werten von 1,2,4,8,16,32,64,128, pro Tag und 100.000 Einwohner, 
+                       wobei eine <b>WochenInzidenz von 50</b> einer <b>TagesInzidenz von 7</b> entspricht, bzw. ca. GesamtInzidenz von 560 für ganz Österreich.
+                    </p>
+                    <p> Die Ermittlung der <b>tatsächlichen Inzidenz</b> ist wegen der starken Schwankungen und Verzögerungen bei den Einmeldungen in das EMS nicht eindeutig.
+                        In diesem Dashboard wird für die tagesaktuellen Werte und Prognosen ein 
+                        gewichtetes lineares Modell der logarithmierten Inzidenz aus den letzten zehn Tagen herangezogen.
+                    </p>
+                    "
+
 
 htmlWeatherMap <- "<p><b>Tages Inzidenz: Lage und Vorhersage</b></p>
                    <p>Die Tages Inzidenz ist die  <b>Anzahl der positiv Getesteten pro Tag pro 100.000 Einwohner</b>.
