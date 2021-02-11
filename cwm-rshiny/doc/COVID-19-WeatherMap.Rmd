@@ -10,6 +10,22 @@ Dieses Dashboard beschäftigt sich mit der COVID-19 Epidemie in Österreich. Die
 - **Die Verbreitung erfolgt im Unterschied zur Grippe explosionsartig und nicht in Wellen.** Die Verbreitung von COVID-19 ist nicht saisonal begrenzt, sondern breitet sich bis zur Erfassung von großen Teilen der Bevölkerung immer schneller (d.h. exponentiell) aus. Erst wenn substantielle Teile der Bevölkerung von der COVID-10 Epidemie erfasst wurden ebbt die Verbreitung mangels gesunder, noch ansteckbarer Personen ab.
 - **Die wesentliche Größe zur Beschreibung des epidemiologischen Geschehens ist die Anzahl der positiv getesteten Personen, das ist die sog. 'Inzidenz'.**  Die Infektion durch das Virus selbst ist nicht beobachtbar, der Nachweis der Ansteckung kann erst nach einer substantiellen Vermehrung des Virus in der infizierten Person durch einen Test nachgewiesen werden. Damit hinken die Ergebnisse der Testungen immer um einige Tage hinter dem eigentlichen Ansteckungsgeschehen hinterher.
 
+## RoadMap
+
+- Diese erste Version des Dashboard beschäftigt sich ausschließlich mit der **Inzidenz**, d.h. der Anzahl der als positiv gestestet in das EMS eingemeldeten Personen.
+Die tatsächliche Prevalenz der Krankheit in der Bevölkerung wird dadurch nur unzulänglich beschrieben.
+- In der nächsten Version wird der **Anteil der positiv Getesteten an der Gesamtanzahl der Getesteten** beleuchtet werden.
+Mit der Einführung der Berufsgruppen-, Massen-, Frei-, Zutritts- und ähnlichen Tests ist die Abgrenzung zwischen Tests an symptomatischen und symptomfreien Personen 
+auf Basis der von AGES veröffentlichten Daten nicht möglich. Geplant ist daher die Untersuchung der Daten bis Dezember 2020.
+- Eine dritte Version könnte sich mit der Abschätzung von **Ausbreitungsparametern anhand von Modellen** beschäftigen. 
+  Der Initale Ausbruch der Epidemie in Österreich Anfang März 2020 wird dazu ein erster Ansatz sein. 
+
+## Über den Autor
+
+- Bsc in 'Data Engineering, Statistics & Visual Computing', TU-Wien, 2016
+- Data Scientist, IT Infrastructure Architect
+- https://www.linkedin.com/in/strehl-thomas-122867110
+
 ## Technik
 
 - Die Daten werden von der **[AGES](https://covid19-dashboard.ages.at)** bereitgestellt und heruntergeladen von der
@@ -17,12 +33,6 @@ Dieses Dashboard beschäftigt sich mit der COVID-19 Epidemie in Österreich. Die
 - Das Dashboard ist in der [Programmiersprache 'R'](https://www.r-project.org) geschrieben, und basiert auf der ['Shiny' Platform](https://shiny.rstudio.com)
 - Die Anwendung wird als **Docker image** basierend auf [rocker/shiny](https://hub.docker.com/r/rocker/shiny) verpackt und auf der **[IBM Cloud Kubernetes Platform](https://www.ibm.com/de-de/cloud/kubernetes-service)** betrieben 
 - Der **[Source code liegt auf github](https://github.com/at062084/COVID-19-WeatherMap)**. Rückmeldungen bitte ebendort (Issue anlegen)
-
-## Über den Autor
-
-- Bsc in 'Data Engineering, Statistics & Visual Computing', TU-Wien, 2016
-- Data Scientist, IT Infrastructure Architect
-- https://www.linkedin.com/in/strehl-thomas-122867110
 
 
 ## Einheiten
@@ -48,7 +58,7 @@ Für Österreich mit seinen ca. 8 Mio Einwohnern beschreiben folgende Werte die 
 
 Um die explosionsartige Verbreitung von COVID-19 (das exponentielle Wachstum) adequat darzustellen wird die Inzidenz in diesem Dashboard in **explosionsartig (exponentiell) wachsenden Stufen** dargestellt. 
 
-- Die verwendeten Inzidenz Stufen sind 1,2,4,8,16,32,64,128
+- Die verwendeten Inzidenz Stufen sind 0,1,2,4,8,16,32,64,128
 - **Jede Inzidenz Stufe wird gleich groß dargestellt, um jede Phase der Explosion gleich gut sehen zu können**
 
 Beispiel: Bei einer Verdoppelung der Inzidenz (Fallzahlen) in 2 Wochen steigt die Inzidenz in 2 Monaten um rund 4 Stufen, also von z.B. 8 auf 128. Bei Stufe 16 funktioniert das Kontakt Tracing nicht mehr, über 64 wird es mit den Intensivstationen eng. 
@@ -65,29 +75,13 @@ Das Farbschema der ECDC sieht folgende Werte vor
 - Stufe 3: 15 orange
 - Stufe 4: 20 rot
 
-
 # Erläuterungen zu den Graphiken
 
 ## COVID-19 Lage und Prognose
 
 ### Wetter Icons
 
-- ![image](../www/iconWeather-Sun.png) Inzidenz unter 4 
-- ![image](../www/iconWeather-Sun-Cloud.png) Inzidenz 4-8 
-- ![image](../www/iconWeather-Rain.png) Inzidenz 8-16 
-- ![image](../www/iconWeather-Rain.png) Inzidenz 16-32 
-- ![image](../www/iconWeather-Thunder.png) Inzidenz über 32 
-
 ### Trend Icons
-
-- ![image](../www/iconDirection-S.png) Halbierung der Inzidenz in weniger als 2 Wochen
-- ![image](../www/iconDirection-SSE.png) Halbierung der Inzidenz in 2-4 Wochen
-- ![image](../www/iconDirection-ESE.png) Halbierung der Inzidenz in 4-8 Woche
-- ![image](../www/iconDirection-E.png) Halbierung / Verdoppelung in mehr als 8 Wochen
-- ![image](../www/iconDirection-ENE.png) Verdoppelung in 4-8  Wochen
-- ![image](../www/iconDirection-NNE.png) Verdoppelung in 2-4 Wochen
-- ![image](../www/iconDirection-N.png) Verdoppelung in weniger als 2 Wochen
-
 
 ## Prognose
 

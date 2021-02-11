@@ -4148,3 +4148,1948 @@
 20210203-172808.699 b8b8cfb6   output renderPlot ggpExpDatedt7ConfPop 
 20210203-172809.434 b8b8cfb6   output  renderPlot ggpExpConfPopdt7ConfPop 
 20210203-172833.610 b8b8cfb6   output renderPlot lftWeatherMap 
+20210205-130901.832 _global_ Loading libraries 
+20210205-130902.239 _global_ Sourcing fun.R 
+20210205-130902.680 _global_ Sourcing hlp.R 
+20210205-130902.729 _global_ Sourcing ages.R 
+20210205-130902.928 _global_ Starting service cron 
+20210205-130903.049 _global_ Constructing global data structures 
+20210205-130905.510 f5044103 Server WeatherMap app.R 
+20210205-130905.655 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210205-130905.696 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210205-130905.842 f5044103   output renderPlot lftWeatherMap 
+20210205-130905.852 f5044103  reactive df.past sldPastTime 
+20210205-131104.199 _global_ Loading libraries 
+20210205-131104.202 _global_ Sourcing fun.R 
+20210205-131104.603 _global_ Sourcing hlp.R 
+20210205-131104.608 _global_ Sourcing ages.R 
+20210205-131104.614 _global_ Starting service cron 
+20210205-131104.646 _global_ Constructing global data structures 
+20210205-131105.814 bc9c7cb1 Server WeatherMap app.R 
+20210205-131105.974 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210205-131105.990 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210205-131106.046 bc9c7cb1   output renderPlot lftWeatherMap 
+20210205-131106.048 bc9c7cb1  reactive df.past sldPastTime 
+20210205-131914.139 _global_ Loading libraries 
+20210205-131914.141 _global_ Sourcing fun.R 
+20210205-131914.450 _global_ Sourcing hlp.R 
+20210205-131914.454 _global_ Sourcing ages.R 
+20210205-131914.461 _global_ Starting service cron 
+20210205-131914.488 _global_ Constructing global data structures 
+20210205-131915.692 18bc04c9 Server WeatherMap app.R 
+20210205-131915.834 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210205-131915.850 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210205-131915.905 18bc04c9   output renderPlot lftWeatherMap 
+20210205-131915.909 18bc04c9  reactive df.past sldPastTime 
+20210205-132052.337 18bc04c9   output renderPlot ggpIncidencePrediciton 
+20210205-132106.025 18bc04c9   output renderPlot ggpIncidencePrediciton 
+20210205-132232.110 18bc04c9   output renderPlot ggpIncidencePrediciton 
+20210205-132249.644 18bc04c9   output renderPlot ggpIncidencePrediciton 
+20210205-132258.763 18bc04c9   output renderPlot ggpIncidencePrediciton 
+20210205-132304.842 18bc04c9   output renderPlot ggpIncidencePrediciton 
+20210205-132309.013 18bc04c9   output renderPlot ggpIncidencePrediciton 
+20210205-132315.124 18bc04c9   output renderPlot ggpIncidencePrediciton 
+20210205-132418.760 18bc04c9   output renderPlot ggpIncidencePrediciton 
+20210205-135541.437 _global_ Loading libraries 
+20210205-135541.438 _global_ Sourcing fun.R 
+20210205-135541.741 _global_ Sourcing hlp.R 
+20210205-135541.746 _global_ Sourcing ages.R 
+20210205-135541.755 _global_ Starting service cron 
+20210205-135541.789 _global_ Constructing global data structures 
+20210205-135544.108 b8a369e2 Server WeatherMap app.R 
+20210205-135544.214 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210205-135544.226 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210205-135544.264 b8a369e2   output renderPlot lftWeatherMap 
+20210205-135544.266 b8a369e2  reactive df.past sldPastTime 
+20210205-135558.376 b8a369e2   output renderPlot lftWeatherMapCounties 
+20210205-135618.631 _global_ Loading libraries 
+20210205-135618.634 _global_ Sourcing fun.R 
+20210205-135619.074 _global_ Sourcing hlp.R 
+20210205-135619.080 _global_ Sourcing ages.R 
+20210205-135619.089 _global_ Starting service cron 
+20210205-135619.118 _global_ Constructing global data structures 
+20210205-135620.270 92995a2a Server WeatherMap app.R 
+20210205-135620.419 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210205-135620.482 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210205-135620.539 92995a2a   output renderPlot lftWeatherMap 
+20210205-135620.542 92995a2a  reactive df.past sldPastTime 
+20210205-135622.709 92995a2a   output renderPlot lftWeatherMapCounties 
+20210205-135731.102 _global_ Loading libraries 
+20210205-135731.104 _global_ Sourcing fun.R 
+20210205-135731.424 _global_ Sourcing hlp.R 
+20210205-135731.429 _global_ Sourcing ages.R 
+20210205-135731.436 _global_ Starting service cron 
+20210205-135731.463 _global_ Constructing global data structures 
+20210205-135732.617 8348ab6b Server WeatherMap app.R 
+20210205-135732.770 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210205-135732.786 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210205-135732.841 8348ab6b   output renderPlot lftWeatherMap 
+20210205-135732.845 8348ab6b  reactive df.past sldPastTime 
+20210205-135735.166 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210205-135735.167 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210205-135735.305 8348ab6b   output renderPlot lftWeatherMapCounties 
+20210205-140032.033 _global_ Loading libraries 
+20210205-140032.034 _global_ Sourcing fun.R 
+20210205-140032.365 _global_ Sourcing hlp.R 
+20210205-140032.372 _global_ Sourcing ages.R 
+20210205-140032.379 _global_ Starting service cron 
+20210205-140032.404 _global_ Constructing global data structures 
+20210205-140034.697 e2c84756 Server WeatherMap app.R 
+20210205-140034.845 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210205-140034.862 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210205-140035.010 e2c84756   output renderPlot lftWeatherMap 
+20210205-140035.013 e2c84756  reactive df.past sldPastTime 
+20210205-140040.980 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210205-140040.981 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210205-140041.026 e2c84756   output renderPlot lftWeatherMapCounties 
+20210205-140209.281 _global_ Loading libraries 
+20210205-140209.283 _global_ Sourcing fun.R 
+20210205-140209.679 _global_ Sourcing hlp.R 
+20210205-140209.683 _global_ Sourcing ages.R 
+20210205-140209.689 _global_ Starting service cron 
+20210205-140209.725 _global_ Constructing global data structures 
+20210205-140210.865 c359fa4a Server WeatherMap app.R 
+20210205-140210.981 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210205-140210.995 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210205-140211.037 c359fa4a   output renderPlot lftWeatherMap 
+20210205-140211.039 c359fa4a  reactive df.past sldPastTime 
+20210205-140213.358 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210205-140213.360 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210205-140213.480 c359fa4a   output renderPlot lftWeatherMapCounties 
+20210205-140512.004 _global_ Loading libraries 
+20210205-140512.005 _global_ Sourcing fun.R 
+20210205-140512.336 _global_ Sourcing hlp.R 
+20210205-140512.340 _global_ Sourcing ages.R 
+20210205-140512.347 _global_ Starting service cron 
+20210205-140512.373 _global_ Constructing global data structures 
+20210205-140514.049 72684df5 Server WeatherMap app.R 
+20210205-140514.157 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210205-140514.169 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210205-140514.208 72684df5   output renderPlot lftWeatherMap 
+20210205-140514.209 72684df5  reactive df.past sldPastTime 
+20210205-140516.727 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210205-140516.729 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210205-140516.756 72684df5   output renderPlot lftWeatherMapCounties 
+20210205-140632.420 _global_ Loading libraries 
+20210205-140632.423 _global_ Sourcing fun.R 
+20210205-140632.847 _global_ Sourcing hlp.R 
+20210205-140632.852 _global_ Sourcing ages.R 
+20210205-140632.858 _global_ Starting service cron 
+20210205-140632.885 _global_ Constructing global data structures 
+20210205-140634.044 acd525cd Server WeatherMap app.R 
+20210205-140634.174 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210205-140634.186 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210205-140634.225 acd525cd   output renderPlot lftWeatherMap 
+20210205-140634.227 acd525cd  reactive df.past sldPastTime 
+20210205-140635.892 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210205-140635.894 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210205-140635.936 acd525cd   output renderPlot lftWeatherMapCounties 
+20210205-140812.157 _global_ Loading libraries 
+20210205-140812.160 _global_ Sourcing fun.R 
+20210205-140812.487 _global_ Sourcing hlp.R 
+20210205-140812.491 _global_ Sourcing ages.R 
+20210205-140812.503 _global_ Starting service cron 
+20210205-140812.532 _global_ Constructing global data structures 
+20210205-140813.624 fb2de4e8 Server WeatherMap app.R 
+20210205-140813.736 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210205-140813.748 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210205-140813.807 fb2de4e8   output renderPlot lftWeatherMap 
+20210205-140813.809 fb2de4e8  reactive df.past sldPastTime 
+20210205-140816.125 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210205-140816.126 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210205-140816.148 fb2de4e8   output renderPlot lftWeatherMapCounties 
+20210205-140902.515 _global_ Loading libraries 
+20210205-140902.516 _global_ Sourcing fun.R 
+20210205-140903.000 _global_ Sourcing hlp.R 
+20210205-140903.010 _global_ Sourcing ages.R 
+20210205-140903.020 _global_ Starting service cron 
+20210205-140903.298 _global_ Constructing global data structures 
+20210205-140904.330 ffa6b0d8 Server WeatherMap app.R 
+20210205-140904.523 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210205-140904.541 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210205-140904.599 ffa6b0d8   output renderPlot lftWeatherMap 
+20210205-140904.604 ffa6b0d8  reactive df.past sldPastTime 
+20210205-140907.145 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210205-140907.146 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210205-140907.168 ffa6b0d8   output renderPlot lftWeatherMapCounties 
+20210205-142045.276 _global_ Loading libraries 
+20210205-142045.278 _global_ Sourcing fun.R 
+20210205-142045.706 _global_ Sourcing hlp.R 
+20210205-142045.715 _global_ Sourcing ages.R 
+20210205-142045.731 _global_ Starting service cron 
+20210205-142045.785 _global_ Constructing global data structures 
+20210205-142048.700 1494432d Server WeatherMap app.R 
+20210205-142048.806 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210205-142048.818 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210205-142048.856 1494432d   output renderPlot lftWeatherMap 
+20210205-142048.858 1494432d  reactive df.past sldPastTime 
+20210205-142055.477 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210205-142055.478 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210205-142055.501 1494432d   output renderPlot lftWeatherMapCounties 
+20210205-142243.676 1494432d   output renderPlot ggpIncidenceStates 
+20210205-142337.700 1494432d   output renderPlot ggpIncidenceStates 
+20210205-142415.572 1494432d   output renderPlot ggpIncidenceCounties 
+20210205-142415.574 1494432d  reactive dg.past sldPastTime 
+20210205-181717.718 _global_ Loading libraries 
+20210205-181717.721 _global_ Sourcing fun.R 
+20210205-181718.078 _global_ Sourcing hlp.R 
+20210205-181718.087 _global_ Sourcing ages.R 
+20210205-181718.100 _global_ Starting service cron 
+20210205-181718.134 _global_ Constructing global data structures 
+20210205-181720.780 79360188 Server WeatherMap app.R 
+20210205-181720.889 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210205-181720.908 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210205-181720.951 79360188   output renderPlot lftWeatherMap 
+20210205-181720.953 79360188  reactive df.past sldPastTime 
+20210205-181734.986 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210205-181734.988 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210205-181735.086 79360188   output renderPlot lftWeatherMapCounties 
+20210205-181735.088 79360188  reactive dg.past sldPastTime 
+20210205-182300.242 _global_ Loading libraries 
+20210205-182300.244 _global_ Sourcing fun.R 
+20210205-182300.593 _global_ Sourcing hlp.R 
+20210205-182300.601 _global_ Sourcing ages.R 
+20210205-182300.613 _global_ Starting service cron 
+20210205-182300.651 _global_ Constructing global data structures 
+20210205-182303.198 96e874d8 Server WeatherMap app.R 
+20210205-182303.338 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210205-182303.358 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210205-182303.453 96e874d8   output renderPlot lftWeatherMap 
+20210205-182303.458 96e874d8  reactive df.past sldPastTime 
+20210205-182312.044 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210205-182312.046 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210205-182312.073 96e874d8   output renderPlot lftWeatherMapCounties 
+20210205-182312.074 96e874d8  reactive dg.past sldPastTime 
+20210205-182637.164 96e874d8   output renderPlot ggpIncidenceCounties 
+20210205-182659.423 96e874d8   output renderPlot ggpIncidenceStates 
+20210205-182706.433 96e874d8   output renderPlot ggpIncidencePrediciton 
+20210205-191054.631 _global_ Loading libraries 
+20210205-191054.636 _global_ Sourcing fun.R 
+20210205-191055.104 _global_ Sourcing hlp.R 
+20210205-191055.113 _global_ Sourcing ages.R 
+20210205-191055.125 _global_ Starting service cron 
+20210205-191055.166 _global_ Constructing global data structures 
+20210205-191057.695 6ffd3285 Server WeatherMap app.R 
+20210205-191057.817 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210205-191057.829 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210205-191058.022 6ffd3285   output renderPlot lftWeatherMap 
+20210205-191058.025 6ffd3285  reactive df.past sldPastTime 
+20210205-191118.699 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210205-191118.700 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210205-191118.721 6ffd3285   output renderPlot lftWeatherMapCounties 
+20210205-191118.723 6ffd3285  reactive dg.past sldPastTime 
+20210205-191547.516 6ffd3285   output renderPlot ggpIncidencePrediciton 
+20210205-191602.538 6ffd3285   output renderPlot ggpIncidencePrediciton 
+20210205-191605.991 6ffd3285   output renderPlot ggpIncidencePrediciton 
+20210205-191628.925 6ffd3285   output renderPlot ggpIncidenceStates 
+20210205-191631.290 6ffd3285   output renderPlot ggpIncidenceCounties 
+20210205-191651.749 6ffd3285   output renderPlot ggpChangeRateStates 
+20210205-191658.502 6ffd3285   output renderPlot ggpExpDateConfPop 
+20210205-191658.506 6ffd3285  reactive de.regions cbgRegion 
+20210205-191658.509 _global_ eventReactive reactiveFileReader:de ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210205-191659.442 6ffd3285   output renderPlot ggpExpDatedt7ConfPop 
+20210205-191700.501 6ffd3285   output  renderPlot ggpExpConfPopdt7ConfPop 
+20210205-191851.254 6ffd3285   output renderPlot ggpIncidencePrediciton 
+20210205-191900.458 6ffd3285   output renderPlot ggpIncidencePrediciton 
+20210205-191905.546 6ffd3285   output renderPlot ggpIncidencePrediciton 
+20210205-191931.790 6ffd3285   output renderPlot ggpIncidencePrediciton 
+20210205-191931.792 6ffd3285  reactive df.past sldPastTime 
+20210205-191939.369 6ffd3285   output renderPlot ggpIncidencePrediciton 
+20210205-191939.373 6ffd3285  reactive df.past sldPastTime 
+20210205-191941.843 6ffd3285   output renderPlot ggpIncidencePrediciton 
+20210205-191946.459 6ffd3285   output renderPlot ggpIncidencePrediciton 
+20210205-192147.148 6ffd3285   output renderPlot lftWeatherMapCounties 
+20210205-192147.149 6ffd3285  reactive dg.past sldPastTime 
+20210207-000203.715 _global_ Loading libraries 
+20210207-000203.741 _global_ Sourcing fun.R 
+20210207-000204.082 _global_ Sourcing hlp.R 
+20210207-000204.132 _global_ Sourcing ages.R 
+20210207-000204.206 _global_ Constructing global data structures 
+20210207-000206.564 d8ae5ed6 Server WeatherMap app.R 
+20210207-000206.753 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-000206.769 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-000206.866 d8ae5ed6   output renderPlot lftWeatherMap 
+20210207-000206.867 d8ae5ed6  reactive df.past sldPastTime 
+20210207-000336.591 _global_ Loading libraries 
+20210207-000336.594 _global_ Sourcing fun.R 
+20210207-000336.874 _global_ Sourcing hlp.R 
+20210207-000336.878 _global_ Sourcing ages.R 
+20210207-000336.902 _global_ Constructing global data structures 
+20210207-000337.844 8b21d016 Server WeatherMap app.R 
+20210207-000337.964 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-000337.978 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-000338.050 8b21d016   output renderPlot lftWeatherMap 
+20210207-000338.051 8b21d016  reactive df.past sldPastTime 
+20210207-000507.316 _global_ Loading libraries 
+20210207-000507.318 _global_ Sourcing fun.R 
+20210207-000507.538 _global_ Sourcing hlp.R 
+20210207-000507.542 _global_ Sourcing ages.R 
+20210207-000507.571 _global_ Constructing global data structures 
+20210207-000508.378 6de6a396 Server WeatherMap app.R 
+20210207-000508.490 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-000508.503 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-000508.556 6de6a396   output renderPlot lftWeatherMap 
+20210207-000508.558 6de6a396  reactive df.past sldPastTime 
+20210207-001632.785 _global_ Loading libraries 
+20210207-001632.786 _global_ Sourcing fun.R 
+20210207-001633.085 _global_ Sourcing hlp.R 
+20210207-001633.091 _global_ Sourcing ages.R 
+20210207-001633.123 _global_ Constructing global data structures 
+20210207-001635.169 3e487609 Server WeatherMap app.R 
+20210207-001635.286 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-001635.328 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-001635.378 3e487609   output renderPlot lftWeatherMap 
+20210207-001635.379 3e487609  reactive df.past sldPastTime 
+20210207-002754.772 _global_ Loading libraries 
+20210207-002754.776 _global_ Sourcing fun.R 
+20210207-002755.024 _global_ Sourcing hlp.R 
+20210207-002755.028 _global_ Sourcing ages.R 
+20210207-002755.080 _global_ Constructing global data structures 
+20210207-002757.287 852e619e Server WeatherMap app.R 
+20210207-002757.387 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-002757.399 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-002757.449 852e619e   output renderPlot lftWeatherMap 
+20210207-002757.450 852e619e  reactive df.past sldPastTime 
+20210207-002851.646 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-002851.647 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-002851.668 852e619e   output renderPlot lftWeatherMapCounties 
+20210207-002851.669 852e619e  reactive dg.past sldPastTime 
+20210207-002944.700 852e619e   output renderPlot ggpIncidencePrediciton 
+20210207-002945.159 852e619e   output renderPlot ggpIncidencePrediciton 
+20210207-002949.452 852e619e   output renderPlot ggpIncidenceStates 
+20210207-002956.260 852e619e   output renderPlot ggpIncidenceCounties 
+20210207-003001.926 852e619e   output renderPlot ggpChangeRateStates 
+20210207-003004.511 852e619e   output renderPlot ggpExpDateConfPop 
+20210207-003004.513 852e619e  reactive de.regions cbgRegion 
+20210207-003004.515 _global_ eventReactive reactiveFileReader:de ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-003005.199 852e619e   output renderPlot ggpExpDatedt7ConfPop 
+20210207-003006.113 852e619e   output  renderPlot ggpExpConfPopdt7ConfPop 
+20210207-014136.939 _global_ Loading libraries 
+20210207-014136.942 _global_ Sourcing fun.R 
+20210207-014136.967 _global_ Sourcing hlp.R 
+20210207-014136.974 _global_ Sourcing ages.R 
+20210207-014137.001 _global_ Constructing global data structures 
+20210207-014139.244 3b8f2c03 Server WeatherMap app.R 
+20210207-014139.334 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-014139.398 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-014139.500 3b8f2c03   output renderPlot lftWeatherMap 
+20210207-014139.503 3b8f2c03  reactive df.past sldPastTime 
+20210207-014218.104 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-014218.105 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-014218.126 3b8f2c03   output renderPlot lftWeatherMapCounties 
+20210207-014218.127 3b8f2c03  reactive dg.past sldPastTime 
+20210207-014754.035 _global_ Loading libraries 
+20210207-014754.038 _global_ Sourcing fun.R 
+20210207-014754.067 _global_ Sourcing hlp.R 
+20210207-014754.075 _global_ Sourcing ages.R 
+20210207-014754.151 _global_ Constructing global data structures 
+20210207-014755.130 50e35683 Server WeatherMap app.R 
+20210207-014755.242 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-014755.261 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-014755.299 50e35683   output renderPlot lftWeatherMap 
+20210207-014755.300 50e35683  reactive df.past sldPastTime 
+20210207-014800.443 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-014800.444 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-014800.463 50e35683   output renderPlot lftWeatherMapCounties 
+20210207-014800.464 50e35683  reactive dg.past sldPastTime 
+20210207-014917.647 50e35683   output renderPlot ggpIncidenceCounties 
+20210207-014927.686 50e35683   output renderPlot ggpIncidenceCounties 
+20210207-014927.689 50e35683  reactive dg.past sldPastTime 
+20210207-014940.101 50e35683   output renderPlot ggpIncidenceCounties 
+20210207-014940.107 50e35683  reactive dg.past sldPastTime 
+20210207-015123.589 _global_ Loading libraries 
+20210207-015123.590 _global_ Sourcing fun.R 
+20210207-015123.597 _global_ Sourcing hlp.R 
+20210207-015123.600 _global_ Sourcing ages.R 
+20210207-015123.621 _global_ Constructing global data structures 
+20210207-015125.816 4d95d285 Server WeatherMap app.R 
+20210207-015125.922 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-015125.947 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-015126.016 4d95d285   output renderPlot lftWeatherMap 
+20210207-015126.017 4d95d285  reactive df.past sldPastTime 
+20210207-015135.506 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-015135.507 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-015135.526 4d95d285   output renderPlot lftWeatherMapCounties 
+20210207-015135.527 4d95d285  reactive dg.past sldPastTime 
+20210207-015155.334 _global_ Loading libraries 
+20210207-015155.335 _global_ Sourcing fun.R 
+20210207-015155.342 _global_ Sourcing hlp.R 
+20210207-015155.345 _global_ Sourcing ages.R 
+20210207-015155.370 _global_ Constructing global data structures 
+20210207-015156.389 4704af4c Server WeatherMap app.R 
+20210207-015156.489 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-015156.499 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-015156.621 4704af4c   output renderPlot lftWeatherMap 
+20210207-015156.622 4704af4c  reactive df.past sldPastTime 
+20210207-015158.714 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-015158.715 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-015158.734 4704af4c   output renderPlot lftWeatherMapCounties 
+20210207-015158.735 4704af4c  reactive dg.past sldPastTime 
+20210207-015513.885 4704af4c   output renderPlot ggpIncidenceCounties 
+20210207-015519.540 4704af4c   output renderPlot ggpIncidenceCounties 
+20210207-015519.543 4704af4c  reactive dg.past sldPastTime 
+20210207-015551.063 4704af4c   output renderPlot ggpIncidenceCounties 
+20210207-015551.065 4704af4c  reactive dg.past sldPastTime 
+20210207-015558.531 4704af4c   output renderPlot ggpChangeRateStates 
+20210207-015558.533 4704af4c  reactive df.past sldPastTime 
+20210207-015603.532 4704af4c   output renderPlot ggpChangeRateStates 
+20210207-015603.537 4704af4c  reactive df.past sldPastTime 
+20210207-015615.806 4704af4c   output renderPlot ggpChangeRateStates 
+20210207-015635.976 4704af4c   output renderPlot ggpExpDateConfPop 
+20210207-015635.978 4704af4c  reactive de.regions cbgRegion 
+20210207-015635.980 _global_ eventReactive reactiveFileReader:de ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-015636.836 4704af4c   output renderPlot ggpExpDatedt7ConfPop 
+20210207-015637.707 4704af4c   output  renderPlot ggpExpConfPopdt7ConfPop 
+20210207-015646.957 4704af4c   output renderPlot lftWeatherMap 
+20210207-015757.922 4704af4c   output renderPlot ggpIncidencePrediciton 
+20210207-015810.842 4704af4c   output renderPlot ggpIncidencePrediciton 
+20210207-015820.377 4704af4c   output renderPlot ggpIncidencePrediciton 
+20210207-015820.380 4704af4c  reactive df.past sldPastTime 
+20210207-015825.298 4704af4c   output renderPlot ggpIncidencePrediciton 
+20210207-015825.302 4704af4c  reactive df.past sldPastTime 
+20210207-015828.412 4704af4c   output renderPlot ggpIncidencePrediciton 
+20210207-122916.884 _global_ Loading libraries 
+20210207-122916.885 _global_ Sourcing fun.R 
+20210207-122916.893 _global_ Sourcing hlp.R 
+20210207-122916.897 _global_ Sourcing ages.R 
+20210207-122916.923 _global_ Constructing global data structures 
+20210207-122919.072 4d103f66 Server WeatherMap app.R 
+20210207-122919.173 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-122919.211 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-122919.257 4d103f66   output renderPlot lftWeatherMap 
+20210207-122919.258 4d103f66  reactive df.past sldPastTime 
+20210207-122940.478 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-122940.479 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-122940.498 4d103f66   output renderPlot lftWeatherMapCounties 
+20210207-122940.499 4d103f66  reactive dg.past sldPastTime 
+20210207-125559.144 _global_ Loading libraries 
+20210207-125559.145 _global_ Sourcing fun.R 
+20210207-125559.151 _global_ Sourcing hlp.R 
+20210207-125559.155 _global_ Sourcing ages.R 
+20210207-125559.180 _global_ Constructing global data structures 
+20210207-125601.446 9ed5bf48 Server WeatherMap app.R 
+20210207-125601.547 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-125601.562 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-125601.600 9ed5bf48   output renderPlot lftWeatherMap 
+20210207-125601.601 9ed5bf48  reactive df.past sldPastTime 
+20210207-125614.015 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-125614.025 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-125614.045 9ed5bf48   output renderPlot lftWeatherMapCounties 
+20210207-125614.046 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-125844.008 _global_ Loading libraries 
+20210207-125844.009 _global_ Sourcing fun.R 
+20210207-125844.016 _global_ Sourcing hlp.R 
+20210207-125844.019 _global_ Sourcing ages.R 
+20210207-125844.046 _global_ Constructing global data structures 
+20210207-125844.985 792600ba Server WeatherMap app.R 
+20210207-125845.118 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-125845.134 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-125845.182 792600ba   output renderPlot lftWeatherMap 
+20210207-125845.183 792600ba  reactive df.past sldPastTime 
+20210207-125846.706 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-125846.717 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-125846.738 792600ba   output renderPlot lftWeatherMapCounties 
+20210207-125846.739 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-130434.220 _global_ Loading libraries 
+20210207-130434.223 _global_ Sourcing fun.R 
+20210207-130434.245 _global_ Sourcing hlp.R 
+20210207-130434.252 _global_ Sourcing ages.R 
+20210207-130434.282 _global_ Constructing global data structures 
+20210207-130435.311 9a2660c8 Server WeatherMap app.R 
+20210207-130435.482 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-130435.497 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-130435.543 9a2660c8   output renderPlot lftWeatherMap 
+20210207-130435.544 9a2660c8  reactive df.past sldPastTime 
+20210207-130437.945 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-130438.011 9a2660c8   output renderPlot lftWeatherMapCounties 
+20210207-130553.168 _global_ Loading libraries 
+20210207-130553.169 _global_ Sourcing fun.R 
+20210207-130553.177 _global_ Sourcing hlp.R 
+20210207-130553.180 _global_ Sourcing ages.R 
+20210207-130553.208 _global_ Constructing global data structures 
+20210207-130554.210 92c39712 Server WeatherMap app.R 
+20210207-130554.328 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-130554.344 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-130554.382 92c39712   output renderPlot lftWeatherMap 
+20210207-130554.383 92c39712  reactive df.past sldPastTime 
+20210207-130556.159 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-130556.193 92c39712   output renderPlot lftWeatherMapCounties 
+20210207-130811.615 _global_ Loading libraries 
+20210207-130811.616 _global_ Sourcing fun.R 
+20210207-130811.623 _global_ Sourcing hlp.R 
+20210207-130811.627 _global_ Sourcing ages.R 
+20210207-130811.655 _global_ Constructing global data structures 
+20210207-130812.669 a843e301 Server WeatherMap app.R 
+20210207-130812.848 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-130812.862 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-130812.904 a843e301   output renderPlot lftWeatherMap 
+20210207-130812.906 a843e301  reactive df.past sldPastTime 
+20210207-130814.505 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-130814.516 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-130814.536 a843e301   output renderPlot lftWeatherMapCounties 
+20210207-130814.538 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-130924.317 _global_ Loading libraries 
+20210207-130924.318 _global_ Sourcing fun.R 
+20210207-130924.325 _global_ Sourcing hlp.R 
+20210207-130924.329 _global_ Sourcing ages.R 
+20210207-130924.356 _global_ Constructing global data structures 
+20210207-130925.480 4146a316 Server WeatherMap app.R 
+20210207-130925.647 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-130925.669 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-130925.730 4146a316   output renderPlot lftWeatherMap 
+20210207-130925.731 4146a316  reactive df.past sldPastTime 
+20210207-130927.778 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-130927.789 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-130927.810 4146a316   output renderPlot lftWeatherMapCounties 
+20210207-130927.811 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-131312.158 _global_ Loading libraries 
+20210207-131312.159 _global_ Sourcing fun.R 
+20210207-131312.166 _global_ Sourcing hlp.R 
+20210207-131312.170 _global_ Sourcing ages.R 
+20210207-131312.250 _global_ Constructing global data structures 
+20210207-131313.381 a1887a8f Server WeatherMap app.R 
+20210207-131313.542 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-131313.559 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-131313.646 a1887a8f   output renderPlot lftWeatherMap 
+20210207-131313.648 a1887a8f  reactive df.past sldPastTime 
+20210207-131315.955 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-131315.967 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-131315.984 a1887a8f   output renderPlot lftWeatherMapCounties 
+20210207-131315.986 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-131601.632 _global_ Loading libraries 
+20210207-131601.633 _global_ Sourcing fun.R 
+20210207-131601.640 _global_ Sourcing hlp.R 
+20210207-131601.643 _global_ Sourcing ages.R 
+20210207-131601.670 _global_ Constructing global data structures 
+20210207-131602.701 82d5e3e0 Server WeatherMap app.R 
+20210207-131602.796 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-131602.811 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-131602.890 82d5e3e0   output renderPlot lftWeatherMap 
+20210207-131602.892 82d5e3e0  reactive df.past sldPastTime 
+20210207-131606.945 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-131606.957 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-131606.977 82d5e3e0   output renderPlot lftWeatherMapCounties 
+20210207-131606.979 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-131743.908 82d5e3e0   output renderPlot ggpIncidencePrediciton 
+20210207-131751.709 82d5e3e0   output renderPlot ggpIncidenceStates 
+20210207-131755.852 82d5e3e0   output renderPlot ggpIncidenceCounties 
+20210207-131755.856 82d5e3e0  reactive dg.past sldPastTime 
+20210207-131800.763 82d5e3e0   output renderPlot ggpChangeRateStates 
+20210207-131803.799 82d5e3e0   output renderPlot ggpExpDateConfPop 
+20210207-131803.801 82d5e3e0  reactive de.regions cbgRegion 
+20210207-131803.804 _global_ eventReactive reactiveFileReader:de ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-131805.015 82d5e3e0   output renderPlot ggpExpDatedt7ConfPop 
+20210207-131805.832 82d5e3e0   output  renderPlot ggpExpConfPopdt7ConfPop 
+20210207-131854.834 82d5e3e0   output renderPlot ggpChangeRateStates 
+20210207-131854.837 82d5e3e0  reactive df.past sldPastTime 
+20210207-131917.866 82d5e3e0   output renderPlot ggpIncidenceStates 
+20210207-131922.959 82d5e3e0   output renderPlot ggpIncidencePrediciton 
+20210207-131935.502 82d5e3e0   output renderPlot ggpIncidencePrediciton 
+20210207-131945.960 82d5e3e0   output renderPlot ggpIncidencePrediciton 
+20210207-131956.486 82d5e3e0   output renderPlot ggpIncidencePrediciton 
+20210207-132004.094 82d5e3e0   output renderPlot ggpIncidencePrediciton 
+20210207-132010.273 82d5e3e0   output renderPlot ggpIncidencePrediciton 
+20210207-132018.486 82d5e3e0   output renderPlot ggpIncidencePrediciton 
+20210207-132023.090 82d5e3e0   output renderPlot ggpIncidencePrediciton 
+20210207-132026.498 82d5e3e0   output renderPlot ggpIncidencePrediciton 
+20210207-132032.052 82d5e3e0   output renderPlot ggpIncidencePrediciton 
+20210207-132036.058 82d5e3e0   output renderPlot ggpIncidencePrediciton 
+20210207-132045.778 82d5e3e0   output renderPlot ggpIncidencePrediciton 
+20210207-132052.194 82d5e3e0   output renderPlot ggpIncidencePrediciton 
+20210207-132057.874 82d5e3e0   output renderPlot ggpIncidencePrediciton 
+20210207-132106.141 82d5e3e0   output renderPlot ggpIncidencePrediciton 
+20210207-132112.878 82d5e3e0   output renderPlot ggpIncidencePrediciton 
+20210207-132125.051 82d5e3e0   output renderPlot ggpIncidencePrediciton 
+20210207-132129.892 82d5e3e0   output renderPlot ggpIncidencePrediciton 
+20210207-132153.324 82d5e3e0   output renderPlot ggpIncidencePrediciton 
+20210207-132209.684 82d5e3e0   output renderPlot ggpIncidencePrediciton 
+20210207-132219.198 82d5e3e0   output renderPlot ggpIncidencePrediciton 
+20210207-132253.336 82d5e3e0   output renderPlot ggpIncidencePrediciton 
+20210207-132338.302 82d5e3e0   output renderPlot ggpIncidencePrediciton 
+20210207-132403.914 82d5e3e0   output renderPlot lftWeatherMap 
+20210207-154640.761 82d5e3e0   output renderPlot lftWeatherMap 
+20210207-154640.762 82d5e3e0  reactive df.past sldPastTime 
+20210207-154642.787 82d5e3e0   output renderPlot ggpIncidencePrediciton 
+20210207-154649.804 82d5e3e0   output renderPlot ggpIncidenceStates 
+20210207-154652.714 82d5e3e0   output renderPlot ggpIncidenceCounties 
+20210207-154652.717 82d5e3e0  reactive dg.past sldPastTime 
+20210207-154726.378 82d5e3e0   output renderPlot ggpChangeRateStates 
+20210207-154731.934 82d5e3e0   output renderPlot ggpChangeRateStates 
+20210207-154731.937 82d5e3e0  reactive df.past sldPastTime 
+20210207-154735.433 82d5e3e0   output renderPlot ggpIncidencePrediciton 
+20210207-161202.709 _global_ Loading libraries 
+20210207-161202.712 _global_ Sourcing fun.R 
+20210207-161202.742 _global_ Sourcing hlp.R 
+20210207-161202.749 _global_ Sourcing ages.R 
+20210207-161202.798 _global_ Constructing global data structures 
+20210207-161204.062 ddf2faf1 Server WeatherMap app.R 
+20210207-161204.221 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-161204.237 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-161204.301 ddf2faf1   output renderPlot lftWeatherMap 
+20210207-161204.303 ddf2faf1  reactive df.past sldPastTime 
+20210207-161207.553 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-161207.565 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-161207.586 ddf2faf1   output renderPlot lftWeatherMapCounties 
+20210207-161207.588 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-165542.008 _global_ Loading libraries 
+20210207-165542.011 _global_ Sourcing fun.R 
+20210207-165542.141 _global_ Sourcing hlp.R 
+20210207-165542.147 _global_ Sourcing ages.R 
+20210207-165542.187 _global_ Constructing global data structures 
+20210207-165544.456 18349dc7 Server WeatherMap app.R 
+20210207-165544.546 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-165544.559 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-165544.643 18349dc7   output renderPlot lftWeatherMap 
+20210207-165544.644 18349dc7  reactive df.past sldPastTime 
+20210207-165552.714 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-165552.727 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-165552.748 18349dc7   output renderPlot lftWeatherMapCounties 
+20210207-165552.750 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-170107.536 _global_ Loading libraries 
+20210207-170107.537 _global_ Sourcing fun.R 
+20210207-170107.640 _global_ Sourcing hlp.R 
+20210207-170107.644 _global_ Sourcing ages.R 
+20210207-170107.672 _global_ Constructing global data structures 
+20210207-170109.070 56826597 Server WeatherMap app.R 
+20210207-170109.173 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-170109.184 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-170109.226 56826597   output renderPlot lftWeatherMap 
+20210207-170109.227 56826597  reactive df.past sldPastTime 
+20210207-170112.112 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-170112.125 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-170112.149 56826597   output renderPlot lftWeatherMapCounties 
+20210207-170112.151 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-170209.799 _global_ Loading libraries 
+20210207-170209.802 _global_ Sourcing fun.R 
+20210207-170209.889 _global_ Sourcing hlp.R 
+20210207-170209.893 _global_ Sourcing ages.R 
+20210207-170209.973 _global_ Constructing global data structures 
+20210207-170211.007 539884c4 Server WeatherMap app.R 
+20210207-170211.108 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-170211.120 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-170211.252 539884c4   output renderPlot lftWeatherMap 
+20210207-170211.253 539884c4  reactive df.past sldPastTime 
+20210207-170212.654 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-170212.665 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-170212.683 539884c4   output renderPlot lftWeatherMapCounties 
+20210207-170212.685 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-170320.866 _global_ Loading libraries 
+20210207-170320.868 _global_ Sourcing fun.R 
+20210207-170320.977 _global_ Sourcing hlp.R 
+20210207-170320.980 _global_ Sourcing ages.R 
+20210207-170321.025 _global_ Constructing global data structures 
+20210207-170321.950 3154adf4 Server WeatherMap app.R 
+20210207-170322.054 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-170322.071 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-170322.116 3154adf4   output renderPlot lftWeatherMap 
+20210207-170322.117 3154adf4  reactive df.past sldPastTime 
+20210207-170323.600 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-170323.612 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-170323.632 3154adf4   output renderPlot lftWeatherMapCounties 
+20210207-170323.634 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-170418.928 _global_ Loading libraries 
+20210207-170418.931 _global_ Sourcing fun.R 
+20210207-170419.055 _global_ Sourcing hlp.R 
+20210207-170419.060 _global_ Sourcing ages.R 
+20210207-170419.091 _global_ Constructing global data structures 
+20210207-170420.093 02cf44c2 Server WeatherMap app.R 
+20210207-170420.194 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-170420.212 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-170420.260 02cf44c2   output renderPlot lftWeatherMap 
+20210207-170420.303 02cf44c2  reactive df.past sldPastTime 
+20210207-170422.302 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-170422.312 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-170422.333 02cf44c2   output renderPlot lftWeatherMapCounties 
+20210207-170422.334 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-170902.474 _global_ Loading libraries 
+20210207-170902.477 _global_ Sourcing fun.R 
+20210207-170902.559 _global_ Sourcing hlp.R 
+20210207-170902.562 _global_ Sourcing ages.R 
+20210207-170902.584 _global_ Constructing global data structures 
+20210207-170903.623 d0b2a4d7 Server WeatherMap app.R 
+20210207-170903.739 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-170903.825 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-170903.970 d0b2a4d7   output renderPlot lftWeatherMap 
+20210207-170903.971 d0b2a4d7  reactive df.past sldPastTime 
+20210207-170907.045 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-170907.083 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-170907.108 d0b2a4d7   output renderPlot lftWeatherMapCounties 
+20210207-170907.109 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-171018.146 _global_ Loading libraries 
+20210207-171018.149 _global_ Sourcing fun.R 
+20210207-171018.227 _global_ Sourcing hlp.R 
+20210207-171018.230 _global_ Sourcing ages.R 
+20210207-171018.252 _global_ Constructing global data structures 
+20210207-171019.176 bc84579c Server WeatherMap app.R 
+20210207-171019.276 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-171019.347 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-171019.529 bc84579c   output renderPlot lftWeatherMap 
+20210207-171019.530 bc84579c  reactive df.past sldPastTime 
+20210207-171021.470 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-171021.484 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-171021.511 bc84579c   output renderPlot lftWeatherMapCounties 
+20210207-171021.513 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-171149.999 _global_ Loading libraries 
+20210207-171150.000 _global_ Sourcing fun.R 
+20210207-171150.068 _global_ Sourcing hlp.R 
+20210207-171150.072 _global_ Sourcing ages.R 
+20210207-171150.095 _global_ Constructing global data structures 
+20210207-171151.188 9926b30f Server WeatherMap app.R 
+20210207-171151.300 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210207-171151.365 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210207-171151.473 9926b30f   output renderPlot lftWeatherMap 
+20210207-171151.474 9926b30f  reactive df.past sldPastTime 
+20210207-171152.641 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-171152.653 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210207-171152.676 9926b30f   output renderPlot lftWeatherMapCounties 
+20210207-171152.677 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210208-001101.598 _global_ Loading libraries 
+20210208-001101.599 _global_ Sourcing fun.R 
+20210208-001101.659 _global_ Sourcing hlp.R 
+20210208-001101.663 _global_ Sourcing ages.R 
+20210208-001101.687 _global_ Constructing global data structures 
+20210208-001103.957 c3314490 Server WeatherMap app.R 
+20210208-001104.147 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210208-001104.169 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210208-001104.285 c3314490   output renderPlot lftWeatherMap 
+20210208-001104.287 c3314490  reactive df.past sldPastTime 
+20210208-001111.962 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210208-001111.974 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210208-001111.995 c3314490   output renderPlot lftWeatherMapCounties 
+20210208-001111.997 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210208-001214.607 _global_ Loading libraries 
+20210208-001214.610 _global_ Sourcing fun.R 
+20210208-001214.690 _global_ Sourcing hlp.R 
+20210208-001214.694 _global_ Sourcing ages.R 
+20210208-001214.717 _global_ Constructing global data structures 
+20210208-001215.802 7b598b0b Server WeatherMap app.R 
+20210208-001215.901 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210208-001215.912 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210208-001215.964 7b598b0b   output renderPlot lftWeatherMap 
+20210208-001215.965 7b598b0b  reactive df.past sldPastTime 
+20210208-001218.656 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210208-001218.668 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210208-001218.689 7b598b0b   output renderPlot lftWeatherMapCounties 
+20210208-001218.691 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210208-002009.540 _global_ Loading libraries 
+20210208-002009.542 _global_ Sourcing fun.R 
+20210208-002009.598 _global_ Sourcing hlp.R 
+20210208-002009.602 _global_ Sourcing ages.R 
+20210208-002009.626 _global_ Constructing global data structures 
+20210208-002011.762 359aab96 Server WeatherMap app.R 
+20210208-002011.940 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210208-002011.955 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210208-002012.000 359aab96   output renderPlot lftWeatherMap 
+20210208-002012.001 359aab96  reactive df.past sldPastTime 
+20210208-002015.042 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210208-002015.053 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210208-002015.073 359aab96   output renderPlot lftWeatherMapCounties 
+20210208-002015.074 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210208-010357.997 _global_ Loading libraries 
+20210208-010357.999 _global_ Sourcing fun.R 
+20210208-010358.058 _global_ Sourcing hlp.R 
+20210208-010358.063 _global_ Sourcing ages.R 
+20210208-010358.087 _global_ Constructing global data structures 
+20210208-010400.290 3daa7e3a Server WeatherMap app.R 
+20210208-010400.456 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210208-010400.470 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210208-010400.516 3daa7e3a   output renderPlot lftWeatherMap 
+20210208-010400.518 _global_ eventReactive reactiveFileReader:model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210208-010627.776 _global_ Loading libraries 
+20210208-010627.777 _global_ Sourcing fun.R 
+20210208-010627.836 _global_ Sourcing hlp.R 
+20210208-010627.840 _global_ Sourcing ages.R 
+20210208-010627.868 _global_ Constructing global data structures 
+20210208-010628.764 bd0ae114 Server WeatherMap app.R 
+20210208-010628.927 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210208-010629.007 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210208-010629.083 bd0ae114   output renderPlot lftWeatherMap 
+20210208-010629.085 _global_ eventReactive reactiveFileReader:model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210208-010906.913 _global_ Loading libraries 
+20210208-010906.914 _global_ Sourcing fun.R 
+20210208-010906.966 _global_ Sourcing hlp.R 
+20210208-010906.969 _global_ Sourcing ages.R 
+20210208-010906.993 _global_ Constructing global data structures 
+20210208-010908.038 12bbcd2b Server WeatherMap app.R 
+20210208-010908.132 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210208-010908.142 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210208-010908.194 12bbcd2b   output renderPlot lftWeatherMap 
+20210208-010908.196 _global_ eventReactive reactiveFileReader:model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210208-011157.127 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210208-011157.138 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210208-011157.159 12bbcd2b   output renderPlot lftWeatherMapCounties 
+20210208-011157.160 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210208-011329.126 12bbcd2b   output renderPlot ggpIncidencePrediciton 
+20210208-011329.131 12bbcd2b  reactive df.past sldPastTime 
+20210208-011353.704 12bbcd2b   output renderPlot ggpIncidencePrediciton 
+20210208-011401.014 12bbcd2b   output renderPlot ggpIncidencePrediciton 
+20210208-011408.938 12bbcd2b   output renderPlot ggpIncidencePrediciton 
+20210208-011417.468 12bbcd2b   output renderPlot ggpIncidencePrediciton 
+20210208-011429.297 12bbcd2b   output renderPlot ggpIncidencePrediciton 
+20210208-011440.821 12bbcd2b   output renderPlot ggpIncidencePrediciton 
+20210208-011958.485 _global_ Loading libraries 
+20210208-011958.486 _global_ Sourcing fun.R 
+20210208-011958.544 _global_ Sourcing hlp.R 
+20210208-011958.547 _global_ Sourcing ages.R 
+20210208-011958.573 _global_ Constructing global data structures 
+20210208-011959.840 9298d2d5 Server WeatherMap app.R 
+20210208-011959.944 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210208-011959.957 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210208-012000.005 9298d2d5   output renderPlot lftWeatherMap 
+20210208-012000.006 _global_ eventReactive reactiveFileReader:model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210208-014131.282 _global_ Loading libraries 
+20210208-014131.286 _global_ Sourcing fun.R 
+20210208-014131.457 _global_ Sourcing hlp.R 
+20210208-014131.462 _global_ Sourcing ages.R 
+20210208-014131.503 _global_ Constructing global data structures 
+20210208-014133.700 cf1cec41 Server WeatherMap app.R 
+20210208-014133.792 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210208-014133.806 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210208-014133.843 cf1cec41   output renderPlot lftWeatherMap 
+20210208-014133.844 _global_ eventReactive reactiveFileReader:model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210208-014449.736 _global_ Loading libraries 
+20210208-014449.740 _global_ Sourcing fun.R 
+20210208-014449.852 _global_ Sourcing hlp.R 
+20210208-014449.857 _global_ Sourcing ages.R 
+20210208-014449.898 _global_ Constructing global data structures 
+20210208-014450.913 1aaecebe Server WeatherMap app.R 
+20210208-014451.078 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210208-014451.092 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210208-014451.136 1aaecebe   output renderPlot lftWeatherMap 
+20210208-014451.137 _global_ eventReactive reactiveFileReader:model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210208-014632.335 _global_ Loading libraries 
+20210208-014632.336 _global_ Sourcing fun.R 
+20210208-014632.394 _global_ Sourcing hlp.R 
+20210208-014632.397 _global_ Sourcing ages.R 
+20210208-014632.424 _global_ Constructing global data structures 
+20210208-014633.517 4fcc778b Server WeatherMap app.R 
+20210208-014633.769 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210208-014633.802 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210208-014633.936 4fcc778b   output renderPlot lftWeatherMap 
+20210208-014633.940 _global_ eventReactive reactiveFileReader:model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210208-015356.454 _global_ Loading libraries 
+20210208-015356.460 _global_ Sourcing fun.R 
+20210208-015356.532 _global_ Sourcing hlp.R 
+20210208-015356.535 _global_ Sourcing ages.R 
+20210208-015356.565 _global_ Constructing global data structures 
+20210208-015357.714 fd37d799 Server WeatherMap app.R 
+20210208-015357.819 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210208-015357.831 _global_ eventReactive reactiveFileReader:df.pred ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210208-015357.886 fd37d799   output renderPlot lftWeatherMap 
+20210208-015357.888 _global_ eventReactive reactiveFileReader:model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210208-015544.110 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210208-015544.121 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210208-015544.140 fd37d799   output renderPlot lftWeatherMapCounties 
+20210208-015544.142 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210208-015603.872 fd37d799   output renderPlot ggpIncidencePrediciton 
+20210208-015603.877 fd37d799  reactive df.past sldPastTime 
+20210208-015607.147 fd37d799   output renderPlot ggpIncidenceStates 
+20210208-015609.769 fd37d799   output renderPlot ggpIncidenceCounties 
+20210208-015609.771 fd37d799  reactive dg.past sldPastTime 
+20210208-015616.051 fd37d799   output renderPlot ggpChangeRateStates 
+20210208-015618.517 fd37d799   output renderPlot ggpExpDateConfPop 
+20210208-015618.519 fd37d799  reactive de.regions cbgRegion 
+20210208-015618.521 _global_ eventReactive reactiveFileReader:de ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210208-015619.286 fd37d799   output renderPlot ggpExpDatedt7ConfPop 
+20210208-015620.104 fd37d799   output  renderPlot ggpExpConfPopdt7ConfPop 
+20210208-191407.714 _global_ Loading libraries 
+20210208-191407.715 _global_ Sourcing fun.R 
+20210208-191407.868 _global_ Sourcing hlp.R 
+20210208-191407.875 _global_ Sourcing ages.R 
+20210208-191407.945 _global_ Constructing geo data structures 
+20210208-191410.465 e49dc5db Server WeatherMap app.R 
+20210208-191410.618 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210208-191410.632 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210208-191410.690 e49dc5db   output renderPlot lftWeatherMap 
+20210208-191410.692 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-001032.480 _global_ Loading libraries 
+20210209-001032.482 _global_ Sourcing fun.R 
+20210209-001032.492 _global_ Sourcing hlp.R 
+20210209-001032.537 _global_ Sourcing ages.R 
+20210209-001032.591 _global_ Constructing geo data structures 
+20210209-001035.068 58105e2b Server WeatherMap app.R 
+20210209-001035.207 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-001035.217 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-001035.299 58105e2b   output renderPlot lftWeatherMap 
+20210209-001035.302 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-001303.929 _global_ Loading libraries 
+20210209-001303.930 _global_ Sourcing fun.R 
+20210209-001303.939 _global_ Sourcing hlp.R 
+20210209-001303.942 _global_ Sourcing ages.R 
+20210209-001303.967 _global_ Constructing geo data structures 
+20210209-001304.784 18af6ba1 Server WeatherMap app.R 
+20210209-001304.929 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-001304.939 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-001305.002 18af6ba1   output renderPlot lftWeatherMap 
+20210209-001305.004 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-001511.929 _global_ Loading libraries 
+20210209-001511.931 _global_ Sourcing fun.R 
+20210209-001511.941 _global_ Sourcing hlp.R 
+20210209-001511.944 _global_ Sourcing ages.R 
+20210209-001511.949 _global_ Constructing geo data structures 
+20210209-001512.753 e662418f Server WeatherMap app.R 
+20210209-001512.873 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-001512.893 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-001512.982 e662418f   output renderPlot lftWeatherMap 
+20210209-001512.984 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-001828.644 e662418f   output renderPlot lftWeatherMapCounties 
+20210209-002056.814 _global_ Loading libraries 
+20210209-002056.816 _global_ Sourcing fun.R 
+20210209-002056.825 _global_ Sourcing hlp.R 
+20210209-002056.828 _global_ Sourcing ages.R 
+20210209-002056.833 _global_ Constructing geo data structures 
+20210209-002057.823 ec54cd63 Server WeatherMap app.R 
+20210209-002057.936 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-002057.975 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-002058.039 ec54cd63   output renderPlot lftWeatherMap 
+20210209-002058.040 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-002100.646 ec54cd63   output renderPlot lftWeatherMapCounties 
+20210209-002100.747 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210209-002100.766 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-002101.047 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-002140.335 _global_ Loading libraries 
+20210209-002140.337 _global_ Sourcing fun.R 
+20210209-002140.363 _global_ Sourcing hlp.R 
+20210209-002140.368 _global_ Sourcing ages.R 
+20210209-002140.375 _global_ Constructing geo data structures 
+20210209-002141.734 4f4de73f Server WeatherMap app.R 
+20210209-002141.867 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-002141.879 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-002141.920 4f4de73f   output renderPlot lftWeatherMap 
+20210209-002141.921 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-002143.646 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210209-002143.657 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-002143.924 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-002143.962 4f4de73f   output renderPlot lftWeatherMapCounties 
+20210209-002235.016 _global_ Loading libraries 
+20210209-002235.017 _global_ Sourcing fun.R 
+20210209-002235.026 _global_ Sourcing hlp.R 
+20210209-002235.030 _global_ Sourcing ages.R 
+20210209-002235.034 _global_ Constructing geo data structures 
+20210209-002235.935 fb39be0e Server WeatherMap app.R 
+20210209-002236.101 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-002236.114 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-002236.156 fb39be0e   output renderPlot lftWeatherMap 
+20210209-002236.158 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-002237.499 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210209-002237.511 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-002237.761 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-002237.850 fb39be0e   output renderPlot lftWeatherMapCounties 
+20210209-002342.090 _global_ Loading libraries 
+20210209-002342.091 _global_ Sourcing fun.R 
+20210209-002342.101 _global_ Sourcing hlp.R 
+20210209-002342.104 _global_ Sourcing ages.R 
+20210209-002342.109 _global_ Constructing geo data structures 
+20210209-002343.357 bb7e246a Server WeatherMap app.R 
+20210209-002343.482 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-002343.494 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-002343.534 bb7e246a   output renderPlot lftWeatherMap 
+20210209-002343.535 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-002353.431 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210209-002353.443 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-002353.757 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-002353.804 bb7e246a   output renderPlot lftWeatherMapCounties 
+20210209-002437.692 _global_ Loading libraries 
+20210209-002437.693 _global_ Sourcing fun.R 
+20210209-002437.703 _global_ Sourcing hlp.R 
+20210209-002437.706 _global_ Sourcing ages.R 
+20210209-002437.711 _global_ Constructing geo data structures 
+20210209-002438.553 08ba3a28 Server WeatherMap app.R 
+20210209-002438.714 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-002438.725 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-002438.763 08ba3a28   output renderPlot lftWeatherMap 
+20210209-002438.764 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-002441.428 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210209-002441.439 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-002441.697 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-002441.741 08ba3a28   output renderPlot lftWeatherMapCounties 
+20210209-002514.556 _global_ Loading libraries 
+20210209-002514.557 _global_ Sourcing fun.R 
+20210209-002514.567 _global_ Sourcing hlp.R 
+20210209-002514.571 _global_ Sourcing ages.R 
+20210209-002514.576 _global_ Constructing geo data structures 
+20210209-002515.551 592e187c Server WeatherMap app.R 
+20210209-002515.712 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-002515.724 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-002515.764 592e187c   output renderPlot lftWeatherMap 
+20210209-002515.766 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-002517.127 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210209-002517.153 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-002517.364 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-002517.464 592e187c   output renderPlot lftWeatherMapCounties 
+20210209-003739.111 _global_ Loading libraries 
+20210209-003739.113 _global_ Sourcing fun.R 
+20210209-003739.143 _global_ Sourcing hlp.R 
+20210209-003739.148 _global_ Sourcing ages.R 
+20210209-003739.154 _global_ Constructing geo data structures 
+20210209-003741.271 b888fa43 Server WeatherMap app.R 
+20210209-003741.372 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-003741.383 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-003741.423 b888fa43   output renderPlot lftWeatherMap 
+20210209-003741.425 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-003844.543 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210209-003844.564 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-003844.889 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-003844.960 b888fa43   output renderPlot lftWeatherMapCounties 
+20210209-003917.119 _global_ Loading libraries 
+20210209-003917.120 _global_ Sourcing fun.R 
+20210209-003917.130 _global_ Sourcing hlp.R 
+20210209-003917.134 _global_ Sourcing ages.R 
+20210209-003917.140 _global_ Constructing geo data structures 
+20210209-003918.029 dd8ce9a8 Server WeatherMap app.R 
+20210209-003918.149 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-003918.163 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-003918.203 dd8ce9a8   output renderPlot lftWeatherMap 
+20210209-003918.204 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-003921.367 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210209-003921.389 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-003921.665 dd8ce9a8   output renderPlot lftWeatherMapCounties 
+20210209-003921.667 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-004823.105 _global_ Loading libraries 
+20210209-004823.106 _global_ Sourcing fun.R 
+20210209-004823.115 _global_ Sourcing hlp.R 
+20210209-004823.119 _global_ Sourcing ages.R 
+20210209-004823.124 _global_ Constructing geo data structures 
+20210209-004825.586 fed71fe9 Server WeatherMap app.R 
+20210209-004825.754 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-004825.767 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-004825.850 fed71fe9   output renderPlot lftWeatherMap 
+20210209-004825.852 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-004831.986 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210209-004831.998 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-004832.249 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-004832.296 fed71fe9   output renderPlot lftWeatherMapCounties 
+20210209-004930.283 _global_ Loading libraries 
+20210209-004930.288 _global_ Sourcing fun.R 
+20210209-004930.312 _global_ Sourcing hlp.R 
+20210209-004930.316 _global_ Sourcing ages.R 
+20210209-004930.323 _global_ Constructing geo data structures 
+20210209-004931.315 135673f8 Server WeatherMap app.R 
+20210209-004931.516 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-004931.529 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-004931.571 135673f8   output renderPlot lftWeatherMap 
+20210209-004931.573 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-004934.286 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210209-004934.298 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-004934.595 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-004934.646 135673f8   output renderPlot lftWeatherMapCounties 
+20210209-005108.281 _global_ Loading libraries 
+20210209-005108.283 _global_ Sourcing fun.R 
+20210209-005108.310 _global_ Sourcing hlp.R 
+20210209-005108.316 _global_ Sourcing ages.R 
+20210209-005108.323 _global_ Constructing geo data structures 
+20210209-005109.285 9fac99dc Server WeatherMap app.R 
+20210209-005109.391 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-005109.406 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-005109.456 9fac99dc   output renderPlot lftWeatherMap 
+20210209-005109.457 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-005110.905 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210209-005110.915 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-005111.175 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-005111.227 9fac99dc   output renderPlot lftWeatherMapCounties 
+20210209-005249.013 9fac99dc   output renderPlot ggpIncidencePrediciton 
+20210209-005249.017 9fac99dc  reactive df.past sldPastTime 
+20210209-005251.963 9fac99dc   output renderPlot ggpIncidenceStates 
+20210209-005255.130 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210209-005255.166 9fac99dc   output renderPlot ggpIncidenceCounties 
+20210209-005255.168 9fac99dc  reactive dg.past sldPastTime 
+20210209-005258.525 9fac99dc   output renderPlot ggpChangeRateStates 
+20210209-005308.541 9fac99dc   output renderPlot ggpExpDateConfPop 
+20210209-005308.544 9fac99dc  reactive de.regions cbgRegion 
+20210209-005308.546 _global_ eventReactive reactiveFileReader:de ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-005309.327 9fac99dc   output renderPlot ggpExpDatedt7ConfPop 
+20210209-005310.009 9fac99dc   output  renderPlot ggpExpConfPopdt7ConfPop 
+20210209-005340.245 9fac99dc   output renderPlot ggpIncidencePrediciton 
+20210209-005345.779 9fac99dc   output renderPlot ggpIncidencePrediciton 
+20210209-005356.541 9fac99dc   output renderPlot ggpIncidencePrediciton 
+20210209-005410.997 9fac99dc   output renderPlot ggpIncidencePrediciton 
+20210209-005417.886 9fac99dc   output renderPlot ggpIncidencePrediciton 
+20210209-005434.868 9fac99dc   output renderPlot ggpIncidencePrediciton 
+20210209-005444.573 9fac99dc   output renderPlot ggpIncidencePrediciton 
+20210209-005504.499 9fac99dc   output renderPlot ggpIncidencePrediciton 
+20210209-005514.828 9fac99dc   output renderPlot ggpIncidencePrediciton 
+20210209-005523.612 9fac99dc   output renderPlot ggpIncidencePrediciton 
+20210209-005527.285 9fac99dc   output renderPlot ggpIncidencePrediciton 
+20210209-005531.263 9fac99dc   output renderPlot ggpIncidencePrediciton 
+20210209-005534.334 9fac99dc   output renderPlot ggpIncidencePrediciton 
+20210209-172820.031 _global_ Loading libraries 
+20210209-172820.031 _global_ Sourcing fun.R 
+20210209-172820.043 _global_ Sourcing hlp.R 
+20210209-172820.048 _global_ Sourcing ages.R 
+20210209-172820.054 _global_ Constructing geo data structures 
+20210209-172822.830 a89c0ebc Server WeatherMap app.R 
+20210209-172823.019 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-172823.143 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-172823.260 a89c0ebc   output renderPlot lftWeatherMap 
+20210209-172823.263 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-173306.245 _global_ Loading libraries 
+20210209-173306.247 _global_ Sourcing fun.R 
+20210209-173306.268 _global_ Sourcing hlp.R 
+20210209-173306.274 _global_ Sourcing ages.R 
+20210209-173306.286 _global_ Constructing geo data structures 
+20210209-173307.758 33f1c476 Server WeatherMap app.R 
+20210209-173307.873 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-173307.885 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-173307.995 33f1c476   output renderPlot lftWeatherMap 
+20210209-173307.998 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-173348.947 _global_ Loading libraries 
+20210209-173348.948 _global_ Sourcing fun.R 
+20210209-173348.966 _global_ Sourcing hlp.R 
+20210209-173348.972 _global_ Sourcing ages.R 
+20210209-173348.982 _global_ Constructing geo data structures 
+20210209-173350.269 d27e5f0c Server WeatherMap app.R 
+20210209-173350.480 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-173350.505 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-173350.575 d27e5f0c   output renderPlot lftWeatherMap 
+20210209-173350.577 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-173455.940 _global_ Loading libraries 
+20210209-173455.941 _global_ Sourcing fun.R 
+20210209-173455.956 _global_ Sourcing hlp.R 
+20210209-173455.962 _global_ Sourcing ages.R 
+20210209-173455.973 _global_ Constructing geo data structures 
+20210209-173457.326 c5736acc Server WeatherMap app.R 
+20210209-173457.451 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-173457.462 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-173457.629 c5736acc   output renderPlot lftWeatherMap 
+20210209-173457.631 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-174043.214 _global_ Loading libraries 
+20210209-174043.216 _global_ Sourcing fun.R 
+20210209-174043.235 _global_ Sourcing hlp.R 
+20210209-174043.240 _global_ Sourcing ages.R 
+20210209-174043.246 _global_ Constructing geo data structures 
+20210209-174044.930 70c33822 Server WeatherMap app.R 
+20210209-174045.087 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-174045.099 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-174045.185 70c33822   output renderPlot lftWeatherMap 
+20210209-174045.228 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-174210.704 _global_ Loading libraries 
+20210209-174210.708 _global_ Sourcing fun.R 
+20210209-174210.734 _global_ Sourcing hlp.R 
+20210209-174210.740 _global_ Sourcing ages.R 
+20210209-174210.793 _global_ Constructing geo data structures 
+20210209-174212.504 e6e06ba0 Server WeatherMap app.R 
+20210209-174212.651 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-174212.665 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-174212.711 e6e06ba0   output renderPlot lftWeatherMap 
+20210209-174212.713 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-174230.667 _global_ Loading libraries 
+20210209-174230.668 _global_ Sourcing fun.R 
+20210209-174230.694 _global_ Sourcing hlp.R 
+20210209-174230.698 _global_ Sourcing ages.R 
+20210209-174230.705 _global_ Constructing geo data structures 
+20210209-174232.109 f8506143 Server WeatherMap app.R 
+20210209-174232.235 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-174232.248 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-174232.385 f8506143   output renderPlot lftWeatherMap 
+20210209-174232.390 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-174343.072 _global_ Loading libraries 
+20210209-174343.073 _global_ Sourcing fun.R 
+20210209-174343.087 _global_ Sourcing hlp.R 
+20210209-174343.091 _global_ Sourcing ages.R 
+20210209-174343.098 _global_ Constructing geo data structures 
+20210209-174344.537 c846c64f Server WeatherMap app.R 
+20210209-174344.859 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-174344.886 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-174344.948 c846c64f   output renderPlot lftWeatherMap 
+20210209-174344.950 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-174411.376 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210209-174411.392 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-174411.794 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-174411.936 c846c64f   output renderPlot lftWeatherMapCounties 
+20210209-174803.190 _global_ Loading libraries 
+20210209-174803.191 _global_ Sourcing fun.R 
+20210209-174803.207 _global_ Sourcing hlp.R 
+20210209-174803.211 _global_ Sourcing ages.R 
+20210209-174803.218 _global_ Constructing geo data structures 
+20210209-174804.787 6a27ac72 Server WeatherMap app.R 
+20210209-174804.995 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-174805.021 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-174805.128 6a27ac72   output renderPlot lftWeatherMap 
+20210209-174805.131 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-174809.281 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210209-174809.305 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-174809.728 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-174809.824 6a27ac72   output renderPlot lftWeatherMapCounties 
+20210209-174832.934 _global_ Loading libraries 
+20210209-174832.935 _global_ Sourcing fun.R 
+20210209-174832.961 _global_ Sourcing hlp.R 
+20210209-174832.966 _global_ Sourcing ages.R 
+20210209-174832.974 _global_ Constructing geo data structures 
+20210209-174834.526 c1dce832 Server WeatherMap app.R 
+20210209-174834.673 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-174834.695 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-174834.814 c1dce832   output renderPlot lftWeatherMap 
+20210209-174834.819 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-174836.371 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210209-174836.389 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-174836.761 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-174836.847 c1dce832   output renderPlot lftWeatherMapCounties 
+20210209-174925.305 _global_ Loading libraries 
+20210209-174925.306 _global_ Sourcing fun.R 
+20210209-174925.326 _global_ Sourcing hlp.R 
+20210209-174925.332 _global_ Sourcing ages.R 
+20210209-174925.344 _global_ Constructing geo data structures 
+20210209-174926.837 85788cf2 Server WeatherMap app.R 
+20210209-174927.009 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-174927.020 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-174927.237 85788cf2   output renderPlot lftWeatherMap 
+20210209-174927.239 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-174933.841 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210209-174933.859 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-174934.348 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-174934.456 85788cf2   output renderPlot lftWeatherMapCounties 
+20210209-175121.561 85788cf2   output renderPlot ggpIncidencePrediciton 
+20210209-175121.565 85788cf2  reactive df.past sldPastTime 
+20210209-175158.228 85788cf2   output renderPlot ggpIncidenceStates 
+20210209-175208.871 _global_ eventReactive reactiveFileReader:dg.today ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210209-175208.916 85788cf2   output renderPlot ggpIncidenceCounties 
+20210209-175208.918 85788cf2  reactive dg.past sldPastTime 
+20210209-175248.126 85788cf2   output renderPlot ggpChangeRateStates 
+20210209-175452.813 85788cf2   output renderPlot ggpExpDateConfPop 
+20210209-175452.817 85788cf2  reactive de.regions cbgRegion 
+20210209-175452.820 _global_ eventReactive reactiveFileReader:de ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-175453.754 85788cf2   output renderPlot ggpExpDatedt7ConfPop 
+20210209-175454.657 85788cf2   output  renderPlot ggpExpConfPopdt7ConfPop 
+20210209-181617.340 85788cf2   output renderPlot ggpIncidenceStates 
+20210209-181617.355 85788cf2  reactive df.past sldPastTime 
+20210209-232839.424 _global_ Loading libraries 
+20210209-232839.425 _global_ Sourcing fun.R 
+20210209-232839.439 _global_ Sourcing hlp.R 
+20210209-232839.444 _global_ Sourcing ages.R 
+20210209-232839.451 _global_ Constructing geo data structures 
+20210209-232840.989 6d3e7898 Server WeatherMap app.R 
+20210209-232841.170 6d3e7898   output renderPlot lftFrontPage 
+20210209-232841.191 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-232841.209 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-232841.254 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-232943.180 _global_ Loading libraries 
+20210209-232943.181 _global_ Sourcing fun.R 
+20210209-232943.196 _global_ Sourcing hlp.R 
+20210209-232943.203 _global_ Sourcing ages.R 
+20210209-232943.213 _global_ Constructing geo data structures 
+20210209-232944.836 32c99867 Server WeatherMap app.R 
+20210209-232945.063 32c99867   output renderPlot lftFrontPage 
+20210209-232945.092 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-232945.124 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-232945.238 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-233105.333 _global_ Loading libraries 
+20210209-233105.334 _global_ Sourcing fun.R 
+20210209-233105.353 _global_ Sourcing hlp.R 
+20210209-233105.359 _global_ Sourcing ages.R 
+20210209-233105.369 _global_ Constructing geo data structures 
+20210209-233106.870 8c65e4a7 Server WeatherMap app.R 
+20210209-233107.227 8c65e4a7   output renderPlot lftFrontPage 
+20210209-233107.245 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-233107.267 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-233107.324 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-233238.033 _global_ Loading libraries 
+20210209-233238.036 _global_ Sourcing fun.R 
+20210209-233238.069 _global_ Sourcing hlp.R 
+20210209-233238.076 _global_ Sourcing ages.R 
+20210209-233238.089 _global_ Constructing geo data structures 
+20210209-233239.663 af443be7 Server WeatherMap app.R 
+20210209-233239.987 af443be7   output renderPlot lftFrontPage 
+20210209-233240.016 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-233240.050 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-233240.176 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-233603.856 _global_ Loading libraries 
+20210209-233603.857 _global_ Sourcing fun.R 
+20210209-233603.871 _global_ Sourcing hlp.R 
+20210209-233603.875 _global_ Sourcing ages.R 
+20210209-233603.881 _global_ Constructing geo data structures 
+20210209-233605.505 843c00de Server WeatherMap app.R 
+20210209-233605.887 843c00de   output renderPlot lftFrontPage 
+20210209-233605.906 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-233605.926 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-233605.982 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-234119.365 _global_ Loading libraries 
+20210209-234119.367 _global_ Sourcing fun.R 
+20210209-234119.392 _global_ Sourcing hlp.R 
+20210209-234119.398 _global_ Sourcing ages.R 
+20210209-234119.405 _global_ Constructing geo data structures 
+20210209-234120.963 090279d6 Server WeatherMap app.R 
+20210209-234121.165 090279d6   output renderPlot lftFrontPage 
+20210209-234121.194 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-234121.211 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-234121.263 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-234203.408 _global_ Loading libraries 
+20210209-234203.409 _global_ Sourcing fun.R 
+20210209-234203.424 _global_ Sourcing hlp.R 
+20210209-234203.428 _global_ Sourcing ages.R 
+20210209-234203.435 _global_ Constructing geo data structures 
+20210209-234206.433 82f5552a Server WeatherMap app.R 
+20210209-234206.645 82f5552a   output renderPlot lftFrontPage 
+20210209-234206.669 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-234206.692 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-234206.757 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-234229.909 _global_ Loading libraries 
+20210209-234229.912 _global_ Sourcing fun.R 
+20210209-234229.942 _global_ Sourcing hlp.R 
+20210209-234229.949 _global_ Sourcing ages.R 
+20210209-234229.960 _global_ Constructing geo data structures 
+20210209-234232.898 14a3e2f5 Server WeatherMap app.R 
+20210209-234233.064 14a3e2f5   output renderPlot lftFrontPage 
+20210209-234233.122 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-234233.141 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-234233.192 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-234439.131 _global_ Loading libraries 
+20210209-234439.132 _global_ Sourcing fun.R 
+20210209-234439.146 _global_ Sourcing hlp.R 
+20210209-234439.150 _global_ Sourcing ages.R 
+20210209-234439.158 _global_ Constructing geo data structures 
+20210209-234442.049 8d6196ed Server WeatherMap app.R 
+20210209-234442.288 8d6196ed   output renderPlot lftFrontPage 
+20210209-234442.314 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-234442.344 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-234442.397 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-234658.450 _global_ Loading libraries 
+20210209-234658.451 _global_ Sourcing fun.R 
+20210209-234658.464 _global_ Sourcing hlp.R 
+20210209-234658.468 _global_ Sourcing ages.R 
+20210209-234658.474 _global_ Constructing geo data structures 
+20210209-234659.923 dec984fe Server WeatherMap app.R 
+20210209-234700.116 dec984fe   output renderPlot lftFrontPage 
+20210209-234700.133 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-234700.150 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-234700.198 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-234732.366 _global_ Loading libraries 
+20210209-234732.368 _global_ Sourcing fun.R 
+20210209-234732.383 _global_ Sourcing hlp.R 
+20210209-234732.387 _global_ Sourcing ages.R 
+20210209-234732.394 _global_ Constructing geo data structures 
+20210209-234805.550 _global_ Loading libraries 
+20210209-234805.551 _global_ Sourcing fun.R 
+20210209-234805.572 _global_ Sourcing hlp.R 
+20210209-234805.579 _global_ Sourcing ages.R 
+20210209-234805.589 _global_ Constructing geo data structures 
+20210209-234823.135 _global_ Loading libraries 
+20210209-234823.136 _global_ Sourcing fun.R 
+20210209-234823.148 _global_ Sourcing hlp.R 
+20210209-234823.153 _global_ Sourcing ages.R 
+20210209-234823.162 _global_ Constructing geo data structures 
+20210209-234824.681 6f9fb57e Server WeatherMap app.R 
+20210209-234825.065 6f9fb57e   output renderPlot lftFrontPage 
+20210209-234825.093 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-234825.109 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-234825.148 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-234905.796 _global_ Loading libraries 
+20210209-234905.797 _global_ Sourcing fun.R 
+20210209-234905.815 _global_ Sourcing hlp.R 
+20210209-234905.821 _global_ Sourcing ages.R 
+20210209-234905.832 _global_ Constructing geo data structures 
+20210209-234907.249 096e4df3 Server WeatherMap app.R 
+20210209-234907.469 096e4df3   output renderPlot lftFrontPage 
+20210209-234907.488 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-234907.508 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-234907.571 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-234907.699 096e4df3   output renderPlot pltFrontPage 
+20210209-235108.891 _global_ Loading libraries 
+20210209-235108.893 _global_ Sourcing fun.R 
+20210209-235108.913 _global_ Sourcing hlp.R 
+20210209-235108.919 _global_ Sourcing ages.R 
+20210209-235108.930 _global_ Constructing geo data structures 
+20210209-235110.371 575888cc Server WeatherMap app.R 
+20210209-235110.556 575888cc   output renderPlot lftFrontPage 
+20210209-235110.574 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-235110.596 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-235110.635 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-235110.733 575888cc   output renderPlot ggpFrontPage 
+20210209-235439.639 _global_ Loading libraries 
+20210209-235439.640 _global_ Sourcing fun.R 
+20210209-235439.655 _global_ Sourcing hlp.R 
+20210209-235439.659 _global_ Sourcing ages.R 
+20210209-235439.666 _global_ Constructing geo data structures 
+20210209-235441.155 4f651338 Server WeatherMap app.R 
+20210209-235441.454 4f651338   output renderPlot lftFrontPage 
+20210209-235441.473 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-235441.496 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-235441.636 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-235441.719 4f651338   output renderPlot ggpFrontPage 
+20210209-235747.120 _global_ Loading libraries 
+20210209-235747.121 _global_ Sourcing fun.R 
+20210209-235747.134 _global_ Sourcing hlp.R 
+20210209-235747.138 _global_ Sourcing ages.R 
+20210209-235747.145 _global_ Constructing geo data structures 
+20210209-235748.541 5c893fd0 Server WeatherMap app.R 
+20210209-235748.805 5c893fd0   output renderPlot lftFrontPage 
+20210209-235748.824 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-235748.840 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-235748.876 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-235748.989 5c893fd0   output renderPlot ggpFrontPage 
+20210209-235845.512 _global_ Loading libraries 
+20210209-235845.515 _global_ Sourcing fun.R 
+20210209-235845.542 _global_ Sourcing hlp.R 
+20210209-235845.550 _global_ Sourcing ages.R 
+20210209-235845.565 _global_ Constructing geo data structures 
+20210209-235847.162 54c94506 Server WeatherMap app.R 
+20210209-235847.301 54c94506   output renderPlot lftFrontPage 
+20210209-235847.326 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-235847.343 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-235847.403 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-235847.539 54c94506   output renderPlot ggpFrontPage 
+20210209-235904.339 _global_ Loading libraries 
+20210209-235904.340 _global_ Sourcing fun.R 
+20210209-235904.353 _global_ Sourcing hlp.R 
+20210209-235904.360 _global_ Sourcing ages.R 
+20210209-235904.369 _global_ Constructing geo data structures 
+20210209-235905.823 21bdd615 Server WeatherMap app.R 
+20210209-235906.032 21bdd615   output renderPlot lftFrontPage 
+20210209-235906.051 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210209-235906.069 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-235906.124 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210209-235906.176 21bdd615   output renderPlot ggpFrontPage 
+20210210-000112.820 21bdd615   output renderPlot ggpIncidenceStates 
+20210210-000112.826 21bdd615  reactive df.past sldPastTime 
+20210210-000117.078 21bdd615   output renderPlot lftWeatherMap 
+20210210-000119.405 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210210-000119.422 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-000119.877 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-000119.941 21bdd615   output renderPlot lftWeatherMapCounties 
+20210210-000123.674 21bdd615   output renderPlot ggpIncidencePrediciton 
+20210210-000253.078 _global_ Loading libraries 
+20210210-000253.079 _global_ Sourcing fun.R 
+20210210-000253.091 _global_ Sourcing hlp.R 
+20210210-000253.095 _global_ Sourcing ages.R 
+20210210-000253.100 _global_ Constructing geo data structures 
+20210210-000254.511 a0158165 Server WeatherMap app.R 
+20210210-000254.692 a0158165   output renderPlot lftFrontPage 
+20210210-000254.710 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-000254.725 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-000254.775 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-000254.910 a0158165   output renderPlot ggpFrontPage 
+20210210-000329.638 _global_ Loading libraries 
+20210210-000329.642 _global_ Sourcing fun.R 
+20210210-000329.664 _global_ Sourcing hlp.R 
+20210210-000329.672 _global_ Sourcing ages.R 
+20210210-000329.686 _global_ Constructing geo data structures 
+20210210-000331.169 d9be9c35 Server WeatherMap app.R 
+20210210-000331.350 d9be9c35   output renderPlot lftFrontPage 
+20210210-000331.420 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-000331.446 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-000331.490 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-000331.559 d9be9c35   output renderPlot ggpFrontPage 
+20210210-000417.811 _global_ Loading libraries 
+20210210-000417.812 _global_ Sourcing fun.R 
+20210210-000417.995 _global_ Sourcing hlp.R 
+20210210-000418.003 _global_ Sourcing ages.R 
+20210210-000418.020 _global_ Constructing geo data structures 
+20210210-000419.296 76a9f3c9 Server WeatherMap app.R 
+20210210-000419.575 76a9f3c9   output renderPlot lftFrontPage 
+20210210-000419.593 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-000419.659 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-000419.714 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-000419.764 76a9f3c9   output renderPlot ggpFrontPage 
+20210210-000446.638 _global_ Loading libraries 
+20210210-000446.639 _global_ Sourcing fun.R 
+20210210-000446.657 _global_ Sourcing hlp.R 
+20210210-000446.664 _global_ Sourcing ages.R 
+20210210-000446.675 _global_ Constructing geo data structures 
+20210210-000448.311 f77e78f0 Server WeatherMap app.R 
+20210210-000448.614 f77e78f0   output renderPlot lftFrontPage 
+20210210-000448.640 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-000448.746 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-000449.086 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-000449.161 f77e78f0   output renderPlot ggpFrontPage 
+20210210-000516.784 _global_ Loading libraries 
+20210210-000516.786 _global_ Sourcing fun.R 
+20210210-000516.802 _global_ Sourcing hlp.R 
+20210210-000516.807 _global_ Sourcing ages.R 
+20210210-000516.816 _global_ Constructing geo data structures 
+20210210-000518.374 156f9e69 Server WeatherMap app.R 
+20210210-000518.593 156f9e69   output renderPlot lftFrontPage 
+20210210-000518.611 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-000518.629 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-000518.747 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-000518.813 156f9e69   output renderPlot ggpFrontPage 
+20210210-000557.193 _global_ Loading libraries 
+20210210-000557.195 _global_ Sourcing fun.R 
+20210210-000557.209 _global_ Sourcing hlp.R 
+20210210-000557.213 _global_ Sourcing ages.R 
+20210210-000557.220 _global_ Constructing geo data structures 
+20210210-000558.896 835c8aa6 Server WeatherMap app.R 
+20210210-000559.293 835c8aa6   output renderPlot lftFrontPage 
+20210210-000559.317 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-000559.337 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-000559.381 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-000559.428 835c8aa6   output renderPlot ggpFrontPage 
+20210210-000609.995 _global_ Loading libraries 
+20210210-000609.997 _global_ Sourcing fun.R 
+20210210-000610.009 _global_ Sourcing hlp.R 
+20210210-000610.015 _global_ Sourcing ages.R 
+20210210-000610.027 _global_ Constructing geo data structures 
+20210210-000611.457 5f352de4 Server WeatherMap app.R 
+20210210-000611.697 5f352de4   output renderPlot lftFrontPage 
+20210210-000611.719 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-000611.739 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-000611.829 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-000611.887 5f352de4   output renderPlot ggpFrontPage 
+20210210-000717.889 _global_ Loading libraries 
+20210210-000717.891 _global_ Sourcing fun.R 
+20210210-000717.909 _global_ Sourcing hlp.R 
+20210210-000717.915 _global_ Sourcing ages.R 
+20210210-000717.925 _global_ Constructing geo data structures 
+20210210-000719.608 7fe6b756 Server WeatherMap app.R 
+20210210-000719.767 7fe6b756   output renderPlot lftFrontPage 
+20210210-000719.784 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-000719.797 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-000719.901 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-000719.965 7fe6b756   output renderPlot ggpFrontPage 
+20210210-001043.806 _global_ Loading libraries 
+20210210-001043.808 _global_ Sourcing fun.R 
+20210210-001043.833 _global_ Sourcing hlp.R 
+20210210-001043.843 _global_ Sourcing ages.R 
+20210210-001043.854 _global_ Constructing geo data structures 
+20210210-001045.349 19ebb387 Server WeatherMap app.R 
+20210210-001045.551 19ebb387   output renderPlot lftFrontPage 
+20210210-001045.571 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-001045.765 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-001045.881 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-001046.046 19ebb387   output renderPlot ggpFrontPage 
+20210210-001104.584 _global_ Loading libraries 
+20210210-001104.586 _global_ Sourcing fun.R 
+20210210-001104.601 _global_ Sourcing hlp.R 
+20210210-001104.606 _global_ Sourcing ages.R 
+20210210-001104.613 _global_ Constructing geo data structures 
+20210210-001106.052 967c31f5 Server WeatherMap app.R 
+20210210-001106.294 967c31f5   output renderPlot lftFrontPage 
+20210210-001106.346 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-001106.385 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-001106.540 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-001106.599 967c31f5   output renderPlot ggpFrontPage 
+20210210-001400.748 _global_ Loading libraries 
+20210210-001400.749 _global_ Sourcing fun.R 
+20210210-001400.762 _global_ Sourcing hlp.R 
+20210210-001400.766 _global_ Sourcing ages.R 
+20210210-001400.773 _global_ Constructing geo data structures 
+20210210-001402.219 0ec348b0 Server WeatherMap app.R 
+20210210-001402.434 0ec348b0   output renderPlot lftFrontPage 
+20210210-001402.464 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-001402.482 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-001402.533 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-001402.702 0ec348b0   output renderPlot ggpFrontPage 
+20210210-001419.174 _global_ Loading libraries 
+20210210-001419.176 _global_ Sourcing fun.R 
+20210210-001419.199 _global_ Sourcing hlp.R 
+20210210-001419.205 _global_ Sourcing ages.R 
+20210210-001419.216 _global_ Constructing geo data structures 
+20210210-001420.763 dbc40588 Server WeatherMap app.R 
+20210210-001421.011 dbc40588   output renderPlot lftFrontPage 
+20210210-001421.035 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-001421.056 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-001422.624 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-001422.699 dbc40588   output renderPlot ggpFrontPage 
+20210210-001542.191 _global_ Loading libraries 
+20210210-001542.193 _global_ Sourcing fun.R 
+20210210-001542.209 _global_ Sourcing hlp.R 
+20210210-001542.214 _global_ Sourcing ages.R 
+20210210-001542.220 _global_ Constructing geo data structures 
+20210210-001543.699 538adbfc Server WeatherMap app.R 
+20210210-001543.840 538adbfc   output renderPlot lftFrontPage 
+20210210-001543.858 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-001543.876 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-001544.003 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-001544.066 538adbfc   output renderPlot ggpFrontPage 
+20210210-001624.093 _global_ Loading libraries 
+20210210-001624.094 _global_ Sourcing fun.R 
+20210210-001624.114 _global_ Sourcing hlp.R 
+20210210-001624.121 _global_ Sourcing ages.R 
+20210210-001624.132 _global_ Constructing geo data structures 
+20210210-001625.724 5ddefff8 Server WeatherMap app.R 
+20210210-001625.855 5ddefff8   output renderPlot lftFrontPage 
+20210210-001625.935 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-001625.969 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-001626.040 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-001626.096 5ddefff8   output renderPlot ggpFrontPage 
+20210210-003840.372 _global_ Loading libraries 
+20210210-003840.374 _global_ Sourcing fun.R 
+20210210-003840.398 _global_ Sourcing hlp.R 
+20210210-003840.405 _global_ Sourcing ages.R 
+20210210-003840.417 _global_ Constructing geo data structures 
+20210210-003842.016 cad2e88c Server WeatherMap app.R 
+20210210-003842.262 cad2e88c   output renderPlot lftFrontPage 
+20210210-003842.282 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-003842.300 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-003842.416 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-003842.488 cad2e88c   output renderPlot ggpFrontPage 
+20210210-005931.132 _global_ Loading libraries 
+20210210-005931.133 _global_ Sourcing fun.R 
+20210210-005931.147 _global_ Sourcing hlp.R 
+20210210-005931.152 _global_ Sourcing ages.R 
+20210210-005931.158 _global_ Constructing geo data structures 
+20210210-005932.670 cc5194e8 Server WeatherMap app.R 
+20210210-005932.836 cc5194e8   output renderPlot lftFrontPage 
+20210210-005932.855 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-005932.883 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-005933.000 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-005933.064 cc5194e8   output renderPlot ggpFrontPage 
+20210210-010429.096 b8e4e0dd Server WeatherMap app.R 
+20210210-010429.278 b8e4e0dd   output renderPlot lftFrontPage 
+20210210-010429.336 b8e4e0dd   output renderPlot ggpFrontPage 
+20210210-010453.802 915e800a Server WeatherMap app.R 
+20210210-010454.088 915e800a   output renderPlot lftFrontPage 
+20210210-010454.122 915e800a   output renderPlot ggpFrontPage 
+20210210-010530.320 _global_ Loading libraries 
+20210210-010530.323 _global_ Sourcing fun.R 
+20210210-010530.343 _global_ Sourcing hlp.R 
+20210210-010530.350 _global_ Sourcing ages.R 
+20210210-010530.358 _global_ Constructing geo data structures 
+20210210-010533.731 ddecc069 Server WeatherMap app.R 
+20210210-010533.910 ddecc069   output renderPlot lftFrontPage 
+20210210-010534.027 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-010534.058 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-010534.246 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-010534.331 ddecc069   output renderPlot ggpFrontPage 
+20210210-010609.525 4b64a18a Server WeatherMap app.R 
+20210210-010609.819 4b64a18a   output renderPlot lftFrontPage 
+20210210-010609.866 4b64a18a   output renderPlot ggpFrontPage 
+20210210-010618.512 _global_ Loading libraries 
+20210210-010618.517 _global_ Sourcing fun.R 
+20210210-010618.542 _global_ Sourcing hlp.R 
+20210210-010618.549 _global_ Sourcing ages.R 
+20210210-010618.561 _global_ Constructing geo data structures 
+20210210-010621.578 06abea47 Server WeatherMap app.R 
+20210210-010621.828 06abea47   output renderPlot lftFrontPage 
+20210210-010621.860 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-010621.894 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-010622.058 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-010622.146 06abea47   output renderPlot ggpFrontPage 
+20210210-011039.193 06abea47   output renderPlot lftWeatherMap 
+20210210-012017.077 f322fe43 Server WeatherMap app.R 
+20210210-012017.365 f322fe43   output renderPlot lftFrontPage 
+20210210-012017.400 f322fe43   output renderPlot ggpFrontPage 
+20210210-012025.947 _global_ Loading libraries 
+20210210-012025.948 _global_ Sourcing fun.R 
+20210210-012025.968 _global_ Sourcing hlp.R 
+20210210-012025.974 _global_ Sourcing ages.R 
+20210210-012025.985 _global_ Constructing geo data structures 
+20210210-012028.979 53b7ae56 Server WeatherMap app.R 
+20210210-012029.108 53b7ae56   output renderPlot lftFrontPage 
+20210210-012029.126 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-012029.142 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-012029.184 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-012029.347 53b7ae56   output renderPlot ggpFrontPage 
+20210210-013120.288 _global_ Loading libraries 
+20210210-013120.290 _global_ Sourcing fun.R 
+20210210-013120.307 _global_ Sourcing hlp.R 
+20210210-013120.315 _global_ Sourcing ages.R 
+20210210-013120.324 _global_ Constructing geo data structures 
+20210210-013123.257 b773a780 Server WeatherMap app.R 
+20210210-013123.400 b773a780   output renderPlot lftFrontPage 
+20210210-013123.418 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-013123.430 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-013123.463 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-013123.595 b773a780   output renderPlot ggpFrontPage 
+20210210-013247.388 _global_ Loading libraries 
+20210210-013247.389 _global_ Sourcing fun.R 
+20210210-013247.402 _global_ Sourcing hlp.R 
+20210210-013247.407 _global_ Sourcing ages.R 
+20210210-013247.415 _global_ Constructing geo data structures 
+20210210-013250.487 e156e9fd Server WeatherMap app.R 
+20210210-013250.730 e156e9fd   output renderPlot lftFrontPage 
+20210210-013250.748 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-013250.777 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-013250.898 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-013250.968 e156e9fd   output renderPlot ggpFrontPage 
+20210210-013634.848 e156e9fd   output renderPlot lftWeatherMap 
+20210210-013639.235 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210210-013639.277 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-013639.849 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-013639.912 e156e9fd   output renderPlot lftWeatherMapCounties 
+20210210-013645.127 e156e9fd   output renderPlot ggpIncidencePrediciton 
+20210210-013645.136 e156e9fd  reactive df.past sldPastTime 
+20210210-013653.559 e156e9fd   output renderPlot ggpIncidenceStates 
+20210210-013657.910 e156e9fd   output renderPlot ggpIncidenceCounties 
+20210210-013657.913 e156e9fd  reactive dg.past sldPastTime 
+20210210-013705.241 e156e9fd   output renderPlot ggpChangeRateStates 
+20210210-013714.323 e156e9fd   output renderPlot ggpExpDateConfPop 
+20210210-013714.328 e156e9fd  reactive de.regions cbgRegion 
+20210210-013714.334 _global_ eventReactive reactiveFileReader:de ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-013715.608 e156e9fd   output renderPlot ggpExpDatedt7ConfPop 
+20210210-013716.804 e156e9fd   output  renderPlot ggpExpConfPopdt7ConfPop 
+20210210-140342.468 _global_ Loading libraries 
+20210210-140342.469 _global_ Sourcing fun.R 
+20210210-140342.483 _global_ Sourcing hlp.R 
+20210210-140342.488 _global_ Sourcing ages.R 
+20210210-140342.494 _global_ Constructing geo data structures 
+20210210-140345.944 1f4974cc Server WeatherMap app.R 
+20210210-140346.332 1f4974cc   output renderPlot lftFrontPage 
+20210210-140346.359 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-140346.825 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-140346.878 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-140346.949 1f4974cc   output renderPlot ggpFrontPage 
+20210210-140708.896 _global_ Loading libraries 
+20210210-140708.898 _global_ Sourcing fun.R 
+20210210-140708.922 _global_ Sourcing hlp.R 
+20210210-140708.929 _global_ Sourcing ages.R 
+20210210-140708.940 _global_ Constructing geo data structures 
+20210210-140710.543 c5dd32bc Server WeatherMap app.R 
+20210210-140711.214 c5dd32bc   output renderPlot lftFrontPage 
+20210210-140711.231 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-140711.247 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-140711.290 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-140711.335 c5dd32bc   output renderPlot ggpFrontPage 
+20210210-140738.974 _global_ Loading libraries 
+20210210-140738.975 _global_ Sourcing fun.R 
+20210210-140738.989 _global_ Sourcing hlp.R 
+20210210-140738.994 _global_ Sourcing ages.R 
+20210210-140739.004 _global_ Constructing geo data structures 
+20210210-140740.616 e34c3622 Server WeatherMap app.R 
+20210210-140740.963 e34c3622   output renderPlot lftFrontPage 
+20210210-140740.983 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-140741.012 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-140741.078 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-140741.163 e34c3622   output renderPlot ggpFrontPage 
+20210210-141353.642 e34c3622   output renderPlot lftWeatherMap 
+20210210-141357.421 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210210-141357.437 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-141357.949 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-141358.022 e34c3622   output renderPlot lftWeatherMapCounties 
+20210210-143836.974 _global_ Loading libraries 
+20210210-143836.975 _global_ Sourcing fun.R 
+20210210-143836.992 _global_ Sourcing hlp.R 
+20210210-143836.999 _global_ Sourcing ages.R 
+20210210-143837.009 _global_ Constructing geo data structures 
+20210210-143838.986 cf63f7eb Server WeatherMap app.R 
+20210210-143839.332 cf63f7eb   output renderPlot lftFrontPage 
+20210210-143839.349 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-143839.364 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-143839.401 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-143839.451 cf63f7eb   output renderPlot ggpFrontPage 
+20210210-143841.848 cf63f7eb   output renderPlot ggpIncidenceStates 
+20210210-143841.858 cf63f7eb  reactive df.past sldPastTime 
+20210210-143845.699 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210210-143845.717 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-143846.348 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-143846.421 cf63f7eb   output renderPlot lftWeatherMapCounties 
+20210210-145842.015 cf63f7eb   output renderPlot ggpIncidencePrediciton 
+20210210-145859.456 cf63f7eb   output renderPlot ggpIncidenceCounties 
+20210210-145859.459 cf63f7eb  reactive dg.past sldPastTime 
+20210210-145921.532 cf63f7eb   output renderPlot ggpChangeRateStates 
+20210210-145929.189 cf63f7eb   output renderPlot ggpExpDateConfPop 
+20210210-145929.192 cf63f7eb  reactive de.regions cbgRegion 
+20210210-145929.196 _global_ eventReactive reactiveFileReader:de ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-145930.767 cf63f7eb   output renderPlot ggpExpDatedt7ConfPop 
+20210210-145931.822 cf63f7eb   output  renderPlot ggpExpConfPopdt7ConfPop 
+20210210-145945.661 cf63f7eb   output renderPlot lftWeatherMap 
+20210210-150312.333 _global_ Loading libraries 
+20210210-150312.334 _global_ Sourcing fun.R 
+20210210-150312.351 _global_ Sourcing hlp.R 
+20210210-150340.175 _global_ Loading libraries 
+20210210-150340.176 _global_ Sourcing fun.R 
+20210210-150340.191 _global_ Sourcing hlp.R 
+20210210-150416.337 _global_ Loading libraries 
+20210210-150416.339 _global_ Sourcing fun.R 
+20210210-150416.372 _global_ Sourcing hlp.R 
+20210210-150416.382 _global_ Sourcing ages.R 
+20210210-150416.400 _global_ Constructing geo data structures 
+20210210-150418.260 995e754b Server WeatherMap app.R 
+20210210-150418.407 995e754b   output renderPlot lftFrontPage 
+20210210-150418.425 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-150418.441 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-150418.485 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-150418.735 995e754b   output renderPlot ggpFrontPage 
+20210210-150421.743 995e754b   output renderPlot lftWeatherMap 
+20210210-150438.467 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210210-150438.494 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-150439.143 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-150439.220 995e754b   output renderPlot lftWeatherMapCounties 
+20210210-150734.980 _global_ Loading libraries 
+20210210-150734.981 _global_ Sourcing fun.R 
+20210210-150734.995 _global_ Sourcing hlp.R 
+20210210-150735.000 _global_ Sourcing ages.R 
+20210210-150735.007 _global_ Constructing geo data structures 
+20210210-150736.727 c516c39b Server WeatherMap app.R 
+20210210-150737.054 c516c39b   output renderPlot lftFrontPage 
+20210210-150737.072 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-150737.094 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-150737.140 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-150737.210 c516c39b   output renderPlot ggpFrontPage 
+20210210-150740.660 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210210-150740.675 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-150741.159 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-150741.234 c516c39b   output renderPlot lftWeatherMapCounties 
+20210210-150753.108 c516c39b   output renderPlot lftWeatherMap 
+20210210-151015.662 5c9b61e3 Server WeatherMap app.R 
+20210210-151015.841 5c9b61e3   output renderPlot lftFrontPage 
+20210210-151015.891 5c9b61e3   output renderPlot ggpFrontPage 
+20210210-151018.042 5c9b61e3   output renderPlot lftWeatherMap 
+20210210-151048.851 5c9b61e3   output renderPlot lftWeatherMapCounties 
+20210210-151053.738 5c9b61e3   output renderPlot ggpIncidencePrediciton 
+20210210-151053.747 5c9b61e3  reactive df.past sldPastTime 
+20210210-151102.387 5c9b61e3   output renderPlot ggpIncidenceStates 
+20210210-151107.982 5c9b61e3   output renderPlot ggpIncidenceCounties 
+20210210-151107.986 5c9b61e3  reactive dg.past sldPastTime 
+20210210-151117.289 5c9b61e3   output renderPlot ggpIncidenceCounties 
+20210210-151124.756 5c9b61e3   output renderPlot ggpIncidenceCounties 
+20210210-151130.611 5c9b61e3   output renderPlot ggpIncidenceCounties 
+20210210-151139.012 5c9b61e3   output renderPlot ggpIncidenceCounties 
+20210210-151151.065 5c9b61e3   output renderPlot ggpIncidenceCounties 
+20210210-151203.602 5c9b61e3   output renderPlot ggpIncidenceCounties 
+20210210-151203.606 5c9b61e3  reactive dg.past sldPastTime 
+20210210-233651.652 63e84950 Server WeatherMap app.R 
+20210210-233651.816 63e84950   output renderPlot lftFrontPage 
+20210210-233651.860 63e84950   output renderPlot ggpFrontPage 
+20210210-233655.906 63e84950   output renderPlot lftWeatherMap 
+20210210-233710.688 _global_ Loading libraries 
+20210210-233710.689 _global_ Sourcing fun.R 
+20210210-233710.709 _global_ Sourcing hlp.R 
+20210210-233710.716 _global_ Sourcing ages.R 
+20210210-233710.728 _global_ Constructing geo data structures 
+20210210-233714.554 f523cdd6 Server WeatherMap app.R 
+20210210-233714.992 f523cdd6   output renderPlot lftFrontPage 
+20210210-233715.020 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210210-233715.058 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-233715.145 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-233715.522 f523cdd6   output renderPlot ggpFrontPage 
+20210210-233718.132 f523cdd6   output renderPlot lftWeatherMap 
+20210210-233808.703 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210210-233808.723 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-233809.275 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210210-233809.360 f523cdd6   output renderPlot lftWeatherMapCounties 
+20210210-234550.393 f523cdd6   output renderPlot ggpIncidencePrediciton 
+20210210-234550.407 f523cdd6  reactive df.past sldPastTime 
+20210211-000953.640 _global_ Loading libraries 
+20210211-000953.641 _global_ Sourcing fun.R 
+20210211-000953.664 _global_ Sourcing hlp.R 
+20210211-000953.671 _global_ Sourcing ages.R 
+20210211-000953.683 _global_ Constructing geo data structures 
+20210211-000956.952 b34e797a Server WeatherMap app.R 
+20210211-000957.417 b34e797a   output renderPlot lftFrontPage 
+20210211-000957.441 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210211-000957.465 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210211-000957.659 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210211-000957.737 b34e797a   output renderPlot ggpFrontPage 
+20210211-001000.919 b34e797a   output renderPlot ggpIncidenceStates 
+20210211-001000.925 b34e797a  reactive df.past sldPastTime 
+20210211-001003.087 b34e797a   output renderPlot ggpIncidencePrediciton 
+20210211-001050.006 _global_ Loading libraries 
+20210211-001050.008 _global_ Sourcing fun.R 
+20210211-001050.023 _global_ Sourcing hlp.R 
+20210211-001050.028 _global_ Sourcing ages.R 
+20210211-001050.042 _global_ Constructing geo data structures 
+20210211-001053.174 ffe8da27 Server WeatherMap app.R 
+20210211-001053.338 ffe8da27   output renderPlot lftFrontPage 
+20210211-001053.360 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210211-001053.379 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210211-001053.851 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210211-001054.141 ffe8da27   output renderPlot ggpFrontPage 
+20210211-001057.411 ffe8da27   output renderPlot ggpIncidencePrediciton 
+20210211-001057.417 ffe8da27  reactive df.past sldPastTime 
+20210211-001437.967 _global_ Loading libraries 
+20210211-001437.968 _global_ Sourcing fun.R 
+20210211-001437.985 _global_ Sourcing hlp.R 
+20210211-001437.993 _global_ Sourcing ages.R 
+20210211-001438.002 _global_ Constructing geo data structures 
+20210211-001441.307 5b4a7e4b Server WeatherMap app.R 
+20210211-001441.849 5b4a7e4b   output renderPlot lftFrontPage 
+20210211-001441.870 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210211-001441.893 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210211-001442.161 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210211-001442.392 5b4a7e4b   output renderPlot ggpFrontPage 
+20210211-001445.509 5b4a7e4b   output renderPlot ggpIncidencePrediciton 
+20210211-001445.516 5b4a7e4b  reactive df.past sldPastTime 
+20210211-001811.550 5b4a7e4b   output renderPlot ggpIncidenceStates 
+20210211-001911.825 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210211-001911.843 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210211-001912.486 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210211-001912.574 5b4a7e4b   output renderPlot ggpIncidenceCounties 
+20210211-001912.577 5b4a7e4b  reactive dg.past sldPastTime 
+20210211-001932.643 5b4a7e4b   output renderPlot ggpExpDateConfPop 
+20210211-001932.647 5b4a7e4b  reactive de.regions cbgRegion 
+20210211-001932.650 _global_ eventReactive reactiveFileReader:de ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210211-001933.853 5b4a7e4b   output renderPlot ggpExpDatedt7ConfPop 
+20210211-001934.954 5b4a7e4b   output  renderPlot ggpExpConfPopdt7ConfPop 
+20210211-004932.157 _global_ Loading libraries 
+20210211-004932.159 _global_ Sourcing fun.R 
+20210211-004932.180 _global_ Sourcing hlp.R 
+20210211-004932.187 _global_ Sourcing ages.R 
+20210211-004932.198 _global_ Constructing geo data structures 
+20210211-004935.284 dbfcb6ba Server WeatherMap app.R 
+20210211-004935.821 dbfcb6ba   output renderPlot lftFrontPage 
+20210211-004935.840 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210211-004935.857 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210211-004935.909 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210211-004936.011 dbfcb6ba   output renderPlot ggpFrontPage 
+20210211-004938.377 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210211-004938.391 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210211-004938.961 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210211-004939.034 dbfcb6ba   output renderPlot ggpIncidenceCounties 
+20210211-004939.038 dbfcb6ba  reactive dg.past sldPastTime 
+20210211-004941.130 dbfcb6ba   output renderPlot ggpIncidenceStates 
+20210211-004941.133 dbfcb6ba  reactive df.past sldPastTime 
+20210211-005631.669 dbfcb6ba   output renderPlot ggpIncidenceCounties 
+20210211-005631.673 dbfcb6ba  reactive dg.past sldPastTime 
+20210211-010543.675 dbfcb6ba   output renderPlot ggpChangeRateStates 
+20210211-010543.678 dbfcb6ba  reactive df.past sldPastTime 
+20210211-010646.101 dbfcb6ba   output renderPlot ggpChangeRateStates 
+20210211-010646.104 dbfcb6ba  reactive df.past sldPastTime 
+20210211-010653.437 dbfcb6ba   output renderPlot ggpExpDateConfPop 
+20210211-010653.444 dbfcb6ba  reactive de.regions cbgRegion 
+20210211-010653.447 _global_ eventReactive reactiveFileReader:de ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210211-010654.719 dbfcb6ba   output renderPlot ggpExpDatedt7ConfPop 
+20210211-010655.741 dbfcb6ba   output  renderPlot ggpExpConfPopdt7ConfPop 
+20210211-012828.110 _global_ Loading libraries 
+20210211-012828.112 _global_ Sourcing fun.R 
+20210211-012828.125 _global_ Sourcing hlp.R 
+20210211-012828.130 _global_ Sourcing ages.R 
+20210211-012828.137 _global_ Constructing geo data structures 
+20210211-012831.423 24410b7e Server WeatherMap app.R 
+20210211-012831.631 24410b7e   output renderPlot lftFrontPage 
+20210211-012831.655 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210211-012831.672 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210211-012832.122 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210211-012832.183 24410b7e   output renderPlot ggpFrontPage 
+20210211-012842.342 24410b7e   output renderPlot lftWeatherMap 
+20210211-012846.737 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210211-012846.756 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210211-012847.310 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210211-012847.979 24410b7e   output renderPlot lftWeatherMapCounties 
+20210211-013104.402 24410b7e   output renderPlot ggpIncidencePrediciton 
+20210211-013104.412 24410b7e  reactive df.past sldPastTime 
+20210211-013218.728 24410b7e   output renderPlot ggpIncidenceStates 
+20210211-013428.615 24410b7e   output renderPlot ggpIncidenceCounties 
+20210211-013428.618 24410b7e  reactive dg.past sldPastTime 
+20210211-014012.628 24410b7e   output renderPlot ggpChangeRateStates 
+20210211-014014.663 24410b7e   output renderPlot ggpExpDateConfPop 
+20210211-014014.666 24410b7e  reactive de.regions cbgRegion 
+20210211-014014.669 _global_ eventReactive reactiveFileReader:de ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210211-014015.960 24410b7e   output renderPlot ggpExpDatedt7ConfPop 
+20210211-014017.503 24410b7e   output  renderPlot ggpExpConfPopdt7ConfPop 
+20210211-014105.166 _global_ Loading libraries 
+20210211-014105.168 _global_ Sourcing fun.R 
+20210211-014105.188 _global_ Sourcing hlp.R 
+20210211-014105.194 _global_ Sourcing ages.R 
+20210211-014105.204 _global_ Constructing geo data structures 
+20210211-014108.674 ca6cc1f8 Server WeatherMap app.R 
+20210211-014109.116 ca6cc1f8   output renderPlot lftFrontPage 
+20210211-014109.138 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210211-014109.159 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210211-014109.217 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210211-014109.278 ca6cc1f8   output renderPlot ggpFrontPage 
+20210211-014113.563 ca6cc1f8   output renderPlot lftWeatherMap 
+20210211-014121.751 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210211-014121.768 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210211-014122.310 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210211-014122.383 ca6cc1f8   output renderPlot lftWeatherMapCounties 
+20210211-014129.794 ca6cc1f8   output renderPlot ggpIncidencePrediciton 
+20210211-014129.801 ca6cc1f8  reactive df.past sldPastTime 
+20210211-014143.801 ca6cc1f8   output renderPlot ggpIncidenceStates 
+20210211-014251.771 ca6cc1f8   output renderPlot ggpIncidenceCounties 
+20210211-014251.776 ca6cc1f8  reactive dg.past sldPastTime 
+20210211-014319.090 ca6cc1f8   output renderPlot ggpChangeRateStates 
+20210211-014321.785 ca6cc1f8   output renderPlot ggpExpDateConfPop 
+20210211-014321.788 ca6cc1f8  reactive de.regions cbgRegion 
+20210211-014321.790 _global_ eventReactive reactiveFileReader:de ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210211-014322.947 ca6cc1f8   output renderPlot ggpExpDatedt7ConfPop 
+20210211-014324.052 ca6cc1f8   output  renderPlot ggpExpConfPopdt7ConfPop 
+20210211-014636.791 _global_ Loading libraries 
+20210211-014636.792 _global_ Sourcing fun.R 
+20210211-014636.805 _global_ Sourcing hlp.R 
+20210211-014636.810 _global_ Sourcing ages.R 
+20210211-014636.817 _global_ Constructing geo data structures 
+20210211-014640.019 a5a7794e Server WeatherMap app.R 
+20210211-014640.376 a5a7794e   output renderPlot lftFrontPage 
+20210211-014640.394 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210211-014640.410 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210211-014640.467 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210211-014640.545 a5a7794e   output renderPlot ggpFrontPage 
