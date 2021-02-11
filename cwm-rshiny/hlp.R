@@ -160,36 +160,37 @@ htmlIncidenceStates <- "<p><b>Historie der Inzidenz in Bundesländern</b></p>
                            Jede infizierte Person infiziert weitere Personen, die immer mehr weitere Personen anstecken. Es kommt zum Multiplikationseffekt.
                            Man spricht von '<b>exponentiellem Wachstum</b>'.
                            </p><p>
-                             Diese Art von Wachstum wird in den Anfangsphasen kaum wahrgenommen, erreicht aber in kurzer Zeit unüberschaubare Ausmasse.
-                             Das liegt daran, dass die Anzahl der infizierten Personen sich in gleichen Zeiträumen verdoppelt bzw. verzehnfacht. 
+                             Diese Art von Wachstum wird in den Anfangsphasen kaum wahrgenommen, kann aber in kurzer Zeit unüberschaubare Ausmasse annehmen.
+                             Das liegt daran, dass sich bei exponentielem Wachstum die Anzahl der infizierten Personen sich in gleichen Zeiträumen verdoppelt bzw. verzehnfacht. 
                            </p>
                            <p><b>Stufen Modell:</b> Für die Darstellung der Inzidenz wird daher ein Stufen Modell gewählt, wobei jede Stufe doppelt so hoch ist wie die vorangegangene.
-                           Die Stufen werden von 0 bis 8 durchnumḿeriert, mit <br><b>Stufe 0 Inzidenz 0-1, <br>Stufe 1 Inzidenz 1-2, <br>Stufe 2 Inzidenz 2-4, usw</b><br>
-                           Die Nummer der Stufe entspricht der 2er Potenz der Inzidenz, 2^0, 2^1, 2^2, 2^3,...2^8=256.<br> 
+                           Die Stufen werden von 0 bis 8 durchnummeriert, mit <br><b>Stufe 0 = Inzidenz 0-1, <br>Stufe 1 = Inzidenz 1-2, <br>Stufe = 2 Inzidenz 2-4</b>, usw<br>
+                           Die Nummer der Stufe entspricht der 2er Potenz der Inzidenz, 2^0=1, 2^1=2, 2^2=4, 2^3=8,...,2^8=256.<br> 
                            Diese Darstellung bietet den Vorteil, dass die Steigerung auch bei niedrigen Inzidenz Werten am Anfang der Ausbreitung gut sichtbar wird.
                            </p>
                            <p>Wird für nebenstehende Graphik ein Zeitraum ab Juli oder August 2020 gewählt, dann ist die Gültigkeit des Stufenmodells für den Zeitraum bis Mitte November offensichtlich.
                            Gleichzeitig wird offensichtlich, daß die sog. <b>'Zweite Welle' nur die (vorhersehbare) Fortsetzung der Entwicklung seit Anfang August</b> ist.
                            In diesem Zeitraum steigt die Inzidenz im Schnitt in ca. 3 Wochen auf das Doppelte, bzw in ca. 10 Wochen auf das zehnfache.
                            </p>
-                        <p> Dieser Zusammenhang verschwindet, wenn im <b>Menü links</b> auf die <b>'lineare' Darstellung</b> (verwendet von z.B. ORF und Ministerium) umgeschaltet wird.
+                        <p> Dieser Zusammenhang verschwindet, wenn im <b>Menü links</b> das Häckchen bei <b>LogScale</b> (verwendet von z.B. ORF und Ministerium) entfernt.
                         </p> 
                          "
 
 htmlIncidenceCounties <- "<p><b>Historie der Inzidenz in Bezirken</b></p>
                           <p>Österreich ist in 90 Bezirke eingeteilt, wobei Wien in den von AGES veröffentlichten Daten als ein Bezirk geführt wird.
                           </p><p>Auffällige Zeitbereiche sind zunächst der <b>Begin der Epidemie</b> Anfang März 2020, 
-                          in dem sich die Zahl der Erkrankungen in <b>einer Woche verzehnfacht</b> hat. 
+                          in dem sich die Zahl der Erkrankungen in <b>einer Woche verzehnfacht</b> hat (Zeitraum im Menü links auf z.B. 12 Monate stellen). 
                           </p><p>
-                            Dann von Anfang August bis Anfang November dann das durch Abstandsregeln verlangsamte exponentielle Wachstum, 
-                            mit einer Verzehnfachung der Inzidenz in ca. 10 Wochen.
+                            Dann von Anfang August bis Anfang November das durch Abstandsregeln verlangsamte exponentielle Wachstum, 
+                            mit einer<b>Verzehnfachung der Inzidenz in ca. 10 Wochen</b>.
                           </p><p> 
                             Weitere Auffälligkeit ist die <b>Änderung des Verhaltens</b> in den letzten beiden Oktober Wochen. 
                             Die Inzidenz in diesem Zeitraum um zwei Stufen. Das entspricht einer Verdoppelung innerhalb einer Woche.
                             Mögliche Erklärung könnte das <b>Zusammenbrechen des Contact-Tracing</b> sein. Ab der ersten November Woche werden die Auswirkungen des Lockdown sichtbar.
                           </p>
                           <p>
-                            <b>Aktuelle Entwicklung</b>: Seit Ende Dezember 2020 hat sich die Inzidenz um nur knapp eine halbe Stufe veringert. <b>Der nächste Lockdown ist also vorprogrammiert</b>.
+                            <b>Aktuelle Entwicklung</b>: Seit Ende Dezember 2020 hat sich die Inzidenz um nur knapp eine halbe Stufe veringert.
+                            Wenn die neuen Massnahmen nicht nachhaltig gegen die Öffnung und die Mutationen gewinnen, ist der <b>nächste Lockdown vorprogrammiert</b>.
                           </p>"
 
 htmlChangeRateStates <- "<p><b>Ausbreitungsgeschwindigkeit</b></p>
@@ -209,6 +210,8 @@ htmlChangeRateStates <- "<p><b>Ausbreitungsgeschwindigkeit</b></p>
 htmlExponential <- "<p><b>Rückblick 2020</b></p>
                     <p>
                       Die drei Graphiken auf dieser Seie gehen der Frage nach, was aus der Entwicklung der <b>Inzidenz Zahlen im Sommer und Herbst 2020</b> abgeleitet werden kann.
+                    </p>
+                    <p> Die nebenstehenden Darstellungen werden übersichtlicher, wenn nur sehr wenige Bundesländer ausgewählt sind (z.B. Österreich und ein Bundesland)
                     </p>
                     <p><b>Inzidenz</b><br><p>
                       Aus der ersten Graphik wird deutlich, dass seit Ende Juli die <b>Fallzahlen gleichmäßig steigen</b>, mit einigen Abweichungen, aber in allen Bundesländern ähnlich.

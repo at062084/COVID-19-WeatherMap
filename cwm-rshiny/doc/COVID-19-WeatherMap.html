@@ -425,16 +425,16 @@ summary {
 <h2>RoadMap</h2>
 <ul>
 <li>Diese erste Version des Dashboard beschäftigt sich ausschließlich mit der <strong>Inzidenz</strong>, d.h. der Anzahl der als positiv gestestet in das EMS eingemeldeten Personen. Die tatsächliche Prevalenz der Krankheit in der Bevölkerung wird dadurch nur unzulänglich beschrieben.</li>
-<li>In der nächsten Version wird der <strong>Anteil der positiv Getesteten and der Gesamtanzahl der Getesteten</strong> beleuchtet werden. Mit der Einführung der Berufsgruppen-, Massen-, Frei-, Zutritts- und ähnlichen Tests ist die Abgrenzung zwischen Tests an symptomatischen und symptomfreien Personen auf Basis der von AGES veröffentlichten Daten nicht möglich. Geplant ist daher die Untersuchung der Daten bis Dezember 2020.</li>
+<li>In der nächsten Version wird der <strong>Anteil der positiv Getesteten an der Gesamtanzahl der Getesteten</strong> beleuchtet werden. Mit der Einführung der Berufsgruppen-, Massen-, Frei-, Zutritts- und ähnlichen Tests ist die Abgrenzung zwischen Tests an symptomatischen und symptomfreien Personen auf Basis der von AGES veröffentlichten Daten nicht möglich. Geplant ist daher die Untersuchung der Daten bis Dezember 2020.</li>
 <li>Eine dritte Version könnte sich mit der Abschätzung von <strong>Ausbreitungsparametern anhand von Modellen</strong> beschäftigen. Der Initale Ausbruch der Epidemie in Österreich Anfang März 2020 wird dazu ein erster Ansatz sein.</li>
 </ul>
 </div>
 <div id="über-den-autor" class="section level2">
 <h2>Über den Autor</h2>
 <ul>
-<li>Bsc in ‘Data Engineering, Statistics &amp; Visual Computing’, TU-Wien, 2016</li>
-<li>Data Scientist, IT Infrastructure Architect</li>
-<li><a href="https://www.linkedin.com/in/strehl-thomas-122867110" class="uri">https://www.linkedin.com/in/strehl-thomas-122867110</a></li>
+<li>Berufsbild: Data Scientist, IT Infrastructure Architect</li>
+<li>Berufsbegleitend individuelles Bsc in ‘Data Engineering, Statistics &amp; Visual Computing’, TU-Wien, 2016</li>
+<li>Kontakt: <a href="https://www.linkedin.com/in/strehl-thomas-122867110" class="uri">https://www.linkedin.com/in/strehl-thomas-122867110</a></li>
 </ul>
 </div>
 <div id="technik" class="section level2">
@@ -443,7 +443,7 @@ summary {
 <li>Die Daten werden von der <strong><a href="https://covid19-dashboard.ages.at">AGES</a></strong> bereitgestellt und heruntergeladen von der</li>
 <li>“Datenquelle: BMSGPK, <strong>Österreichisches COVID-19 Open Data Informationsportal</strong> <a href="https://www.data.gv.at/covid-19">(https://www.data.gv.at/covid-19)</a>”</li>
 <li>Das Dashboard ist in der <a href="https://www.r-project.org">Programmiersprache ‘R’</a> geschrieben, und basiert auf der <a href="https://shiny.rstudio.com">‘Shiny’ Platform</a></li>
-<li>Die Anwendung wird als <strong>Docker image</strong> basierend auf <a href="https://hub.docker.com/r/rocker/shiny">rocker/shiny</a> verpackt und auf der <strong><a href="https://www.ibm.com/de-de/cloud/kubernetes-service">IBM Cloud Kubernetes Platform</a></strong> betrieben</li>
+<li>Die Anwendung wird als <strong>Docker image</strong> basierend auf <a href="https://hub.docker.com/r/rocker/shiny">rocker/shiny</a> verpackt und auf der <strong><a href="https://www.ibm.com/de-de/cloud/kubernetes-service">IBM Cloud Kubernetes Platform</a></strong> betrieben. Massnahmen für die Skalierung der shiny Platform in der Cloud sind in Arbeit.</li>
 <li>Der <strong><a href="https://github.com/at062084/COVID-19-WeatherMap">Source code liegt auf github</a></strong>. Rückmeldungen bitte ebendort (Issue anlegen)</li>
 </ul>
 </div>
@@ -485,27 +485,6 @@ summary {
 <li>Stufe 4: 20 rot</li>
 </ul>
 </div>
-</div>
-</div>
-<div id="erläuterungen-zu-den-graphiken" class="section level1">
-<h1>Erläuterungen zu den Graphiken</h1>
-<div id="covid-19-lage-und-prognose" class="section level2">
-<h2>COVID-19 Lage und Prognose</h2>
-<div id="wetter-icons" class="section level3">
-<h3>Wetter Icons</h3>
-</div>
-<div id="trend-icons" class="section level3">
-<h3>Trend Icons</h3>
-</div>
-</div>
-<div id="prognose" class="section level2">
-<h2>Prognose</h2>
-</div>
-<div id="inzidenz-bundesländer" class="section level2">
-<h2>Inzidenz Bundesländer</h2>
-</div>
-<div id="inzidenz-bezirke" class="section level2">
-<h2>Inzidenz Bezirke</h2>
 </div>
 </div>
 

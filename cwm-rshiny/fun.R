@@ -243,7 +243,7 @@ cwmSpreadStyle <- function(sldPastTime=3, inRegions=1:10, yLimits=c(0.84, 1.19))
           axis.text = element_text(size=12), axis.title.x=element_blank()),
     scale_shape_manual(values=regShapes),
     scale_x_date(date_breaks=rvBreaks, date_labels=rvLabels,  sec.axis=dup_axis()),
-    scale_y_continuous(limits=yLimits, breaks=exp(log(2)/dblXDays), labels=dblXDays, position="right",
+    scale_y_continuous(limits=yLimits, breaks=exp(log(2)/dblXDays), labels=dblXDays, position="right", name="Tage bis Verdoppelung/Halbierung der Inzidenz",
                        sec.axis=dup_axis(labels=as.character(round((exp(log(2)/dblXDays)-1)*100,1)), name="Tägliche Steigerungsrate [%]")),
     scale_fill_manual(values=regPalette),
     scale_color_manual(values=regPalette),

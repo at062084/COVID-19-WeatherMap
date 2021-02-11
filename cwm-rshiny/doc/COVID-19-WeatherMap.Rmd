@@ -22,16 +22,16 @@ auf Basis der von AGES veröffentlichten Daten nicht möglich. Geplant ist daher
 
 ## Über den Autor
 
-- Bsc in 'Data Engineering, Statistics & Visual Computing', TU-Wien, 2016
-- Data Scientist, IT Infrastructure Architect
-- https://www.linkedin.com/in/strehl-thomas-122867110
+- Berufsbild: Data Scientist, IT Infrastructure Architect
+- Berufsbegleitend individuelles Bsc in 'Data Engineering, Statistics & Visual Computing', TU-Wien, 2016
+- Kontakt: https://www.linkedin.com/in/strehl-thomas-122867110
 
 ## Technik
 
 - Die Daten werden von der **[AGES](https://covid19-dashboard.ages.at)** bereitgestellt und heruntergeladen von der
 - "Datenquelle: BMSGPK, **Österreichisches COVID-19 Open Data Informationsportal** [(https://www.data.gv.at/covid-19)](https://www.data.gv.at/covid-19)"
 - Das Dashboard ist in der [Programmiersprache 'R'](https://www.r-project.org) geschrieben, und basiert auf der ['Shiny' Platform](https://shiny.rstudio.com)
-- Die Anwendung wird als **Docker image** basierend auf [rocker/shiny](https://hub.docker.com/r/rocker/shiny) verpackt und auf der **[IBM Cloud Kubernetes Platform](https://www.ibm.com/de-de/cloud/kubernetes-service)** betrieben 
+- Die Anwendung wird als **Docker image** basierend auf [rocker/shiny](https://hub.docker.com/r/rocker/shiny) verpackt und auf der **[IBM Cloud Kubernetes Platform](https://www.ibm.com/de-de/cloud/kubernetes-service)** betrieben. Massnahmen für die Skalierung der shiny Platform in der Cloud sind in Arbeit.
 - Der **[Source code liegt auf github](https://github.com/at062084/COVID-19-WeatherMap)**. Rückmeldungen bitte ebendort (Issue anlegen)
 
 
@@ -75,19 +75,6 @@ Das Farbschema der ECDC sieht folgende Werte vor
 - Stufe 3: 15 orange
 - Stufe 4: 20 rot
 
-# Erläuterungen zu den Graphiken
-
-## COVID-19 Lage und Prognose
-
-### Wetter Icons
-
-### Trend Icons
-
-## Prognose
-
-## Inzidenz Bundesländer
-
-## Inzidenz Bezirke
 
 
 

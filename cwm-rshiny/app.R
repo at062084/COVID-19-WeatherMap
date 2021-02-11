@@ -22,10 +22,10 @@ slackMsg <- function (title, msg, hostName = hostSystem) {
 }
 slackMsg(title="COVID-19-WeatherMap",msg=paste("Start shiny global section in app.R"))
 
-if(0==1) {
+#if(0==1) {
   logMsg("Starting service cron")
   system2("sudo","service cron start")
-}
+#}
 
 # -----------------------------------------------------------
 # Libraries, functions and globals
