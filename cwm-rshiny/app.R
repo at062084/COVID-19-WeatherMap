@@ -304,13 +304,13 @@ ui <- fluidPage(
                  p("[Menüauswahl: keine]", align = "left", style="color:green"),
                 fluidRow(column(width=9,  leafletOutput(outputId = "lftWeatherMap", height="60vh"),
                                           DT::dataTableOutput(outputId = "dtoWeatherMap")),
-                                    column(width=3, htmlOutput(outputId="hlpWeatherMap")))),
+                         column(width=3, htmlOutput(outputId="hlpWeatherMap")))),
  
        tabPanel("Bezirke",
                 h4("Lage und Aussichten Bezirke", align = "left", style="color:gray"),
                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
                 fluidRow(column(width=9,  leafletOutput(outputId = "lftWeatherMapCounties", height="60vh"),
-                                DT::dataTableOutput(outputId = "dtoWeatherMapCounties")),
+                                          DT::dataTableOutput(outputId = "dtoWeatherMapCounties")),
                          column(width=3, htmlOutput(outputId="hlpWeatherMapCounties")))),
        
                                   
@@ -397,7 +397,7 @@ server <- function(input, output, session) {
     return(de() %>% dplyr::filter(Region %in% isolate(input$cbgRegion)))
   })
   
-  
+  highlight = highlightOptions(weight=5, bringToFront=TRUE)
 
   # -------------------------------------------
   # FrontPage
@@ -418,6 +418,8 @@ server <- function(input, output, session) {
       addPolygons(stroke=TRUE, weight=3, color="black",
                   fill=TRUE, fillOpacity = 1, fillColor=palConfPop[.bincode(pMapNUTS$rm7NewConfPop.0,binConfPop)]) %>%
       addMarkers(lng=~cxNUTS, lat=~cyNUTS, icon=~iconsWeather[idxCurConfPop], group="Incidence") %>%
+      addLabelOnlyMarkers(lng=11, lat=48.5, label=paste("Daten mit Stand von",format(pMapNUTS$Date[1],"%a., %d. %b %Y")), 
+                          labelOptions = labelOptions(noHide=T, direction='top', textsize='10pt', style=list('color'='white', 'background'='#444444'))) %>%
       setView(lng=pMapNUTS$cxNUTS[1]-3, lat=pMapNUTS$cyNUTS[1], zoom=6)
   })
   
@@ -468,7 +470,7 @@ server <- function(input, output, session) {
           <tr><td>Tage bis Inzidenz %s:  </td><td align='right'> %g </td></tr>
         </table>",
       pMapNUTS$Region, format(pMapNUTS$Date,"%a, %d.%m"),
-      round(pMapNUTS$rmaNewConfPop,1),  nModelDaysWeek, 
+      round(pMapNUTS$rmaNewConfPop,1),  nModelDaysPrediction, 
       round(pMapNUTS$rm7NewConfPop.0,1), round(pMapNUTS$rm7NewConfPop.7,1), round(pMapNUTS$rm7NewConfPop.28,1),
       ifelse(pMapNUTS$dblDays>0,"Verdoppelung","Halbierung"), round(abs(pMapNUTS$dblDays))) %>% lapply(htmltools::HTML)
   
@@ -477,21 +479,26 @@ server <- function(input, output, session) {
       addPolygons(stroke=TRUE, weight=3, color="black",
                   fill=TRUE, fillOpacity = 1, fillColor=palConfPop[.bincode(pMapNUTS$rm7NewConfPop.0,binConfPop)],
                   label=labWeatherMap, 
-                  labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="15px"), group="Stand Heute") %>%
+                  labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="12px"), group="Stand Heute",
+                  highlight = highlightOptions(weight=5, bringToFront=FALSE)) %>%
       addPolygons(stroke=TRUE, weight=3, color="black",
                   fill=TRUE, fillOpacity = 1, fillColor=palConfPop[.bincode(pMapNUTS$rm7NewConfPop.7,binConfPop)],
                   label=labWeatherMap, 
-                  labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="15px"), group="Prognose kommende Woche") %>%
+                  labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="12px"), group="Prognose kommende Woche",
+                  highlight = highlightOptions(weight=5, bringToFront=FALSE)) %>%
       addPolygons(stroke=TRUE, weight=3, color="black",
                   fill=TRUE, fillOpacity = 1, fillColor=palConfPop[.bincode(pMapNUTS$rm7NewConfPop.28,binConfPop)],
                   label=labWeatherMap, 
-                  labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="15px"), group="Prognose kommendes Monat") %>%
+                  labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="12px"), group="Prognose kommendes Monat",
+                  highlight = highlightOptions(weight=5, bringToFront=FALSE)) %>%
       addLayersControl(baseGroups=c("Stand Heute","Prognose kommende Woche","Prognose kommendes Monat"), options=layersControlOptions(collapsed=FALSE)) %>%
       addMarkers(lng=~cxNUTS-.35, lat=~cyNUTS, icon=~iconsWeather[idxCurConfPop], group="Incidence") %>%
       addMarkers(lng=~cxNUTS, lat=~cyNUTS, icon=~iconsDirection[idxDblConfPop], group="Trend",
                  label=labWeatherMap, labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="15px")) %>%
       addMarkers(lng=~cxNUTS+.35, lat=~cyNUTS, icon=~iconsWeather[idxForConfPop], group="ForeCast") %>%
       addLegend(pal=colConfPop, values=~rm7NewConfPop.0, position="bottomright", opacity=1, title="Incidence") %>%
+      addLabelOnlyMarkers(lng=11, lat=48.5, label=paste("Daten mit Stand von",format(pMapNUTS$Date[1],"%a., %d. %b %Y")), 
+                          labelOptions = labelOptions(noHide=T, direction='top', textsize='10pt', style=list('color'='white', 'background'='#444444'))) %>%
       setView(lng=pMapNUTS$cxNUTS[1]-3, lat=pMapNUTS$cyNUTS[1], zoom=7)
   })
 
@@ -509,8 +516,7 @@ server <- function(input, output, session) {
                                                     EndeLockDownTage=rm7NewConfPop8, BeginLockDownTage=rm7NewConfPop32) %>%
                                       dplyr::select(Region,County,AGES,
                                                     Heute, Woche, Monat,
-                                                    Änderung, TageDoppelt, TageHälfte, 
-                                                    EndeLockDownTage, BeginLockDownTage) }, options=list(pageLength=94, dom='t'))
+                                                    Änderung, TageDoppelt, TageHälfte) }, options=list(pageLength=94, dom='t'))
   # options=list(pageLength=8, lengthChange=FALSE) 
   
   # WeatherMap
@@ -533,7 +539,7 @@ server <- function(input, output, session) {
         </table>",
       pMapCounties$County, format(pMapCounties$Date,"%a, %d.%m"),
       round(pMapCounties$rmaNewConfPop,1), 
-      nModelDaysCountyWeek,
+      nModelDaysPrediction,
       round(pMapCounties$rm7NewConfPop.0,1), round(pMapCounties$rm7NewConfPop.7,1), round(pMapCounties$rm7NewConfPop.28,1),
       ifelse(pMapCounties$dblDays>0,"Verdoppelung","Halbierung"), abs(round(pMapCounties$dblDays)))  %>% 
       lapply(htmltools::HTML)
@@ -548,18 +554,23 @@ server <- function(input, output, session) {
       addPolygons(stroke=TRUE, weight=1, color="black",
                   fill=TRUE, fillOpacity = 1, fillColor=palConfPop[.bincode(pMapCounties$rm7NewConfPop.0,binConfPop)],
                   label=labWeatherMapCounties, 
-                  labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="15px"), group="Stand Heute") %>%
+                  labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="12px"), group="Stand Heute",
+                  highlight = highlightOptions(weight=3, bringToFront=FALSE)) %>%
       addPolygons(stroke=TRUE, weight=1, color="black",
                   fill=TRUE, fillOpacity = 1, fillColor=palConfPop[.bincode(pMapCounties$rm7NewConfPop.7,binConfPop)],
                   label=labWeatherMapCounties, 
-                  labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="15px"), group="Prognose kommende Woche") %>%
+                  labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="12px"), group="Prognose kommende Woche",
+                  highlight = highlightOptions(weight=3, bringToFront=FALSE)) %>%
       addPolygons(stroke=TRUE, weight=1, color="black",
                   fill=TRUE, fillOpacity = 1, fillColor=palConfPop[.bincode(pMapCounties$rm7NewConfPop.28,binConfPop)],
                   label=labWeatherMapCounties, 
-                  labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="15px"), group="Prognose kommendes Monat") %>%
+                  labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="12px"), group="Prognose kommendes Monat",
+                  highlight = highlightOptions(weight=3, bringToFront=FALSE)) %>%
       addPolygons(data=mapATRegions, stroke = TRUE,  weight=3, color="black", smoothFactor = 0, fillOpacity = 0, fillColor="none", group="Bundesländer") %>%
       addLayersControl(baseGroups=c("Stand Heute","Prognose kommende Woche","Prognose kommendes Monat"), 
                         options=layersControlOptions(collapsed=FALSE)) %>%
+      addLabelOnlyMarkers(lng=11, lat=48.5, label=paste("Daten mit Stand von",format(pMapCounties$Date[1],"%a., %d. %b %Y")), 
+                          labelOptions = labelOptions(noHide=T, direction='top', textsize='10pt', style=list('color'='white', 'background'='#444444'))) %>%
       addLegend(pal=colConfPop, values=~rm7NewConfPop.0, position="bottomright", opacity=1, title="Incidence") 
   })
  
@@ -628,15 +639,16 @@ server <- function(input, output, session) {
 
   # Values, and Prediction of Incodence, Time to/outof Lockdown
   output$dtoIncidenceCounties <- DT::renderDataTable({ dg.map()@data %>% 
+      dplyr::arrange(Region, County) %>%
       dplyr::mutate(ID=(1:n())-1) %>%
       dplyr::rename(AGES=rmaNewConfPop,
                     Heute=rm7NewConfPop.0, Woche=rm7NewConfPop.7, Monat=rm7NewConfPop.28,
                     Änderung=dtDay, TageDoppelt=DblDays, TageHälfte=HalfDays, 
-                    EndeLockDownTage=rm7NewConfPop8, BeginLockDownTage=rm7NewConfPop32) %>%
-      dplyr::select(Region,County,AGES,
+                    Inzidenz8=rm7NewConfPop8, Inzidenz32=rm7NewConfPop32) %>%
+      dplyr::select(ID,Region,County,AGES,
                     Heute, Woche, Monat,
                     Änderung, TageDoppelt, TageHälfte, 
-                    EndeLockDownTage, BeginLockDownTage) }, options=list(pageLength=94, dom='t'))
+                    Inzidenz8, Inzidenz32) }, options=list(pageLength=94, dom='t'))
     
   output$ggpIncidenceCounties <- renderPlot({
     logMsg("  output renderPlot ggpIncidenceCounties", sessionID)
