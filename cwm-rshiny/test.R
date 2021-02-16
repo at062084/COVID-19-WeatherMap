@@ -313,3 +313,134 @@ df.modelx <- eventReactive(df(), {
 })
 
 
+ggplot(data=df %>% dplyr::filter(rm7NewConfTest>0.001, Date>as.Date("2020-10-01"), Date<as.Date("2021-02-15")) %>%
+         dplyr::filter(Region=="Salzburg"), 
+       aes(x=Date, y=rm7NewTested/10, color=Region)) + 
+  geom_line(col="blue", size=.25) +
+  geom_point(col="blue", size=.25) +
+  geom_point(aes(y=rm7NewConfirmed), size=0.5, col="red") +
+  geom_line(aes(y=rm7NewConfirmed), size=0.5, col="red") +
+  scale_x_date(date_breaks="1 weeks", date_labels="%d.%m") +
+  scale_y_continuous(trans="log10")
+
+
+ggplot(data=dt %>% dplyr::filter(Date>as.Date("2020-12-14"), Date<as.Date("2021-02-15")),
+       aes(x=Date, y=sumTested, color=Region)) + 
+  scale_x_date(date_breaks="1 weeks", date_labels="%d.%m") +
+  geom_line(size=.25) +
+  geom_point(size=.25)
+  
+  
+ggplot(data=df %>% dplyr::filter(rm7NewConfTest>0.001, Date>as.Date("2020-08-01"), Date<as.Date("2021-02-15")) %>% 
+         dplyr::filter(Region=="Wien"),
+       aes(x=rm7NewTested, y=rm7NewConfTest*100, color=Region)) + geom_path() + geom_point() +
+  scale_x_continuous(limits=c(0,NA), trans="identity") +
+  scale_y_continuous(limits=c(0,NA), trans="identity")
+
+bmsgpk <- read.csv("/home/at062084/DataEngineering/COVID-19/COVID-19-Austria/bmsgpk/data/COVID-19-austria.csv")
+ggplot (data=bmsgpk %>% dplyr::mutate(Date=as.Date(Stamp)) %>% dplyr::filter(Status=="Tested"), aes(x=Date, y=AT)) + 
+  geom_line(col="red") + 
+  geom_line(data=bmsgpk %>% dplyr::mutate(Date=as.Date(Stamp)) %>% dplyr::filter(Status=="Tested_PCR"),aes(y=AT), col="blue") + 
+  geom_line(data=bmsgpk %>% dplyr::mutate(Date=as.Date(Stamp)) %>% dplyr::filter(Status=="Tested_AG"), aes(y=AT), col="green")
+
+ggplot (data=bmsgpk %>% dplyr::mutate(Date=as.Date(Stamp)), aes(x=Date, y=AT, group=Status, col=Status)) + geom_line()
+  
+bm <- bmsgpk %>% 
+  dplyr::mutate(Date=as.Date(Stamp)) %>%
+  dplyr::select(-Stamp) %>%
+  group_by(Date,Status) %>% 
+  summarize_all(first) %>% 
+  dplyr::ungroup() %>% 
+  tidyr::gather(key=Region, value=Count, "AT":"W") %>%
+  tidyr::spread(key=Status, value=Count, fill=NA, drop=FALSE) %>%
+  dplyr::arrange(Region, Date) %>%
+  dplyr::group_by(Region) %>%
+  dplyr::mutate(newConfirmed=rollmean(Confirmed-lag(Confirmed),7, align="center", fill=NA)) %>%
+  dplyr::mutate(newTested=rollmean(Tested-lag(Tested),7, align="center", fill=NA)) %>%
+  dplyr::mutate(newTested_PCR=rollmean(Tested_PCR-lag(Tested_PCR),7, align="center", fill=NA)) %>%
+  dplyr::mutate(newTested_AG=rollmean(Tested_AG-lag(Tested_AG),7, align="center", fill=NA)) %>%
+  dplyr::ungroup()
+  
+ggplot(data=bm %>% dplyr::filter(Region=="AT", Date > as.Date("2020-10-01")), aes(x=Date, y=newTested)) + geom_line(col="blue") +
+  geom_line(aes(y=newTested_PCR), col="cyan") + 
+  geom_line(aes(y=newTested_AG), col="magenta")  +
+  #geom_line(aes(y=Confirmed*10), col="red") +
+  geom_line(aes(y=newConfirmed/newTested*1000000), col="green") +
+  geom_line(aes(y=newConfirmed*10), col="black")
+
+
+# Mutations
+library(lubridate)
+library(stringr)
+library(readr)
+library(dplyr)
+library(xml2)
+library(rvest)
+library(ggplot2)
+
+# get html page from bmsgpk
+ts=format(now(),"%Y%m%d-%H%M")
+url <- "https://www.ages.at/themen/krankheitserreger/coronavirus/sars-cov-2-varianten-in-oesterreich"
+mutFile <- paste0("./html/COVID-19-austria.mutations.",ts,".html")
+logMsg(paste("Scraping", url))
+logMsg(paste("Dumping page to", mutFile))
+cmd <- paste(url, "-O", mutFile)
+system2("wget", cmd)
+
+#xpathTable <- "/html/body/div[3]/div/div/div/div[2]/main/div[2]/table"
+#xt <- xml2::xml_find_all(html, xpathTable)
+
+logMsg(paste("Parsing dump in", mutFile))
+html <- xml2::read_html(mutFile)
+
+logMsg(paste("Extracting Status table in Bundesländer"))
+tables <- rvest::html_table(html, dec=",", fill=TRUE)
+
+mutRegionS <- c("AT","B","K","NOe","OOe","Szbg","Stmk","T","V","W")
+mutRegion <- c("Österreich","Burgenland","Kärnten","Niederösterreich","Oberösterreich","Salzburg","Steiermark","Tirol","Vorarlberg","Wien")
+
+# initialize
+df <- as.data.frame(tables[[2]]) %>% mutate(Region=mutRegion[2])
+str(df)
+for(t in 3:10) {
+  dt <- as.data.frame(tables[[t]]) %>% mutate(Region=mutRegion[t])
+  df <- rbind(df,dt)
+}
+#df <- df %>% dplyr::select(Region, Fälle, starts_with("KW"))
+dg <- df %>% 
+  tidyr::gather(key=Week, value=Count, starts_with("KW")) %>% 
+  dplyr::mutate(Date=as.Date("2021-01-04") + weeks(as.integer(substr(Week,3,4)))) %>%
+  dplyr::select(Date, Region, Status=Fälle, Count, -Week)
+
+
+# Add sum over all Regions as 'Österreich'
+ds <- dg %>% 
+  dplyr::group_by(Date, Status) %>% 
+  summarize(Count=sum(Count)) %>% 
+  dplyr::ungroup() %>% 
+  dplyr::mutate(Region="Österreich") %>%
+  dplyr::select(Date, Region, Status, Count)
+str(ds)  
+dg  <- rbind(dg,ds)
+str(dg)  
+
+
+mutStates <- levels(factor(dg$Status))
+dk <- dg
+dk$Status <- factor(dk$Status, levels=mutStates[c(3,6,1,2,5,4,7,8)])
+ggplot(data=dk, aes(x=Date, y=Count, color=Region, shape=Region)) + geom_line() + geom_point() +
+  facet_wrap(.~Status, nrow=2, scales="free_y") +
+  scale_x_date(date_breaks="1 weeks", date_labels="%d.%m") +
+  scale_y_continuous()
+
+# dynamic selection of mutations
+idx <-  !is.na(str_match(mutStates, "positiv")) | !is.na(str_match(mutStates, "bestätigt"))| !is.na(str_match(mutStates, "gesamt"))
+fltStatus <- mutStates[idx]
+ggplot(data=dg %>% dplyr::filter(Status %in% fltStatus), aes(x=Date, y=Count, color=Status, shape=Status)) + geom_line() + geom_point() +
+  facet_wrap(.~Region, nrow=2, scales="free_y") +
+    scale_x_date(date_breaks="1 weeks", date_labels="%d.%m") +
+    scale_y_continuous()
+
+
+  
+  

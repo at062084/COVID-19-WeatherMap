@@ -110,7 +110,15 @@ sysctl -e -w fs.file-max=6000000;  sysctl -e -w fs.nr_open=10000000;  sysctl -e 
               proxy_set_header X-Forwarded-Port $server_port;
               proxy_set_header X-Forwarded-Proto https;
               proxy_buffering on;
-                        proxy_pass http://cwmnamespace-cwm-ingress-rep-k8s-cluster.eu-de.containers.appdomain.cloud-cwm-rshiny-service;
+              proxy_pass http://cwmnamespace-cwm-ingress-rep-k8s-cluster.eu-de.containers.appdomain.cloud-cwm-rshiny-service;
         }
   }
+
+
+
+
+https://nextstrain.org/community/narratives/bergthalerlab/SARSCoV2/Generalaudience3/de
+Error fetching one of the datasets. Using the YAML-defined dataset (/community/jgenger/SARS-CoV-2-project/NextstrainAustriav19wIDs) instead.
+Could not fetch dataset "//nextstrain.org/community/jgenger/SARS-CoV-2-project/NextstrainAustriav19wIDs". Make sure this dataset exists and is spelled correctly. Error details: status: undefined; message: The requested URL does not exist. (Not Found)
+
 
