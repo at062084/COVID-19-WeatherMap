@@ -164,7 +164,7 @@ htmlIncidenceStates <- "<p><b>Historie der Inzidenz in Bundesländern</b></p>
                              Das liegt daran, dass sich bei exponentielem Wachstum die Anzahl der infizierten Personen sich in gleichen Zeiträumen verdoppelt bzw. verzehnfacht. 
                            </p>
                            <p><b>Stufen Modell:</b> Für die Darstellung der Inzidenz wird daher ein Stufen Modell gewählt, wobei jede Stufe doppelt so hoch ist wie die vorangegangene.
-                           Die Stufen werden von 0 bis 8 durchnummeriert, mit <br><b>Stufe 0 = Inzidenz 0-1, <br>Stufe 1 = Inzidenz 1-2, <br>Stufe = 2 Inzidenz 2-4</b>, usw<br>
+                           Die Stufen werden von 0 bis 8 durchnummeriert, mit <br><b>Stufe 0 = Inzidenz 0-1, <br>Stufe 1 = Inzidenz 1-2, <br>Stufe 2 = Inzidenz 2-4</b>, usw<br>
                            Die Nummer der Stufe entspricht der 2er Potenz der Inzidenz, 2^0=1, 2^1=2, 2^2=4, 2^3=8,...,2^8=256.<br> 
                            Diese Darstellung bietet den Vorteil, dass die Steigerung auch bei niedrigen Inzidenz Werten am Anfang der Ausbreitung gut sichtbar wird.
                            </p>

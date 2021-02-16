@@ -10,6 +10,73 @@ library(scales)
 library(forcats)
 
 
+# Mutations
+library(lubridate)
+library(stringr)
+library(readr)
+library(dplyr)
+library(xml2)
+library(rvest)
+library(ggplot2)
+
+
+# -------------------------------------------------------------------------------------------
+# AGES Web Pages
+# -------------------------------------------------------------------------------------------
+# Mutations
+caAgesRead_Mutations <- function(csvFile="COVID-19-AGES-Mutations.csv", bSave=TRUE) {
+  
+  ts=format(now(),"%Y%m%d")
+  url <- "https://www.ages.at/themen/krankheitserreger/coronavirus/sars-cov-2-varianten-in-oesterreich"
+  mutFile <- paste0("./html/COVID-19-austria.mutations.",ts,".html")
+  logMsg(paste("Scraping", url))
+  logMsg(paste("Dumping page to", mutFile))
+  cmd <- paste(url, "-O", mutFile)
+  system2("wget", cmd)
+  
+  logMsg(paste("Parsing dump in", mutFile))
+  html <- xml2::read_html(mutFile)
+  
+  logMsg(paste("Extracting tables"))
+  tables <- rvest::html_table(html, dec=",", fill=TRUE)
+  idx <- seq(4,19,by=2)
+  # mutRegionS <- c("AT","B","K","NOe","OOe","Szbg","Stmk","T","V","W")
+  mutRegion <- c("Österreich","Burgenland","Kärnten","Niederösterreich","Oberösterreich","Salzburg","Steiermark","Tirol","Vorarlberg","Wien")
+  
+  # initialize
+  df <- as.data.frame(tables[[2]]) %>% mutate(Region=mutRegion[2])
+  
+  for(t in 1:length(idx)) {
+    dt <- as.data.frame(tables[[idx[t]]]) %>% mutate(Region=mutRegion[t+2])
+    df <- rbind(df,dt)
+  }
+
+  logMsg(paste("Writing", csvFile))
+  if (bSave) write.csv(df, file=csvFile)  
+  
+  # Convert KW* string to Date
+  dg <- df %>% 
+    tidyr::gather(key=Week, value=Count, starts_with("KW")) %>% 
+    dplyr::mutate(Date=as.Date("2021-01-04") + weeks(as.integer(substr(Week,3,4)))) %>%
+    dplyr::select(Date, Region, Status=Fälle, Count, -Week)
+  
+  # Add sum over all Regions as 'Österreich'
+  ds <- dg %>% 
+    dplyr::group_by(Date, Status) %>% 
+    summarize(Count=sum(Count)) %>% 
+    dplyr::ungroup() %>% 
+    dplyr::mutate(Region="Österreich") %>%
+    dplyr::select(Date, Region, Status, Count)
+  dg  <- rbind(dg,ds)
+  
+  rdaFile <- "./data/COVID-19-CWM-AGES-States-Mutations.rda"   
+  logMsg(paste("Writing", rdaFile))
+  if (bSave) saveRDS(dg, file=rdaFile)  
+
+  return(dg)
+}
+
+
 # -------------------------------------------------------------------------------------------
 # AGES Data files
 # -------------------------------------------------------------------------------------------

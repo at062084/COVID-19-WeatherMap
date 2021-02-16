@@ -40,6 +40,8 @@ dc <- caAgesRead_cftl()
 logMsg("Downloading CovidFaelle_Timeline_GKZ data from AGES ...","__cron__")
 db <- caAgesRead_cfGKZtl()
 
+logMsg("Scraping Mutations data from AGES ...","__cron__")
+dm <-caAgesRead_Mutations()
 
 # Construct working data frame 
 logMsg("Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ...","__cron__")

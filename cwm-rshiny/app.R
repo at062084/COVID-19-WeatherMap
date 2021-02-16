@@ -15,7 +15,7 @@ logMsg <- function(msg, sessionID="_global_") {
 
 hostSystem <- system("hostname", intern=TRUE)
 slackMsg <- function (title, msg, hostName = hostSystem) {
-  url <- as.character(read.csv("./secrets/slack.txt",header=FALSE)[1,1])
+  url <- as.character(read.csv("../secrets/slack.txt",header=FALSE)[1,1])
   body <- list(text = paste(paste0(now()," *",title,"*: "), paste0(hostName,": ",msg)))
   r <- POST(url, content_type_json(), body = body, encode = "json")
   invisible(r)
@@ -82,7 +82,7 @@ df <- eventReactive(df.rfr(), {
 
   df.rfr() %>%
     dplyr::mutate(RegionID=as.character(RegionID)) %>%
-    dplyr::select(Date,Region,RegionID,Population, starts_with("rma"), starts_with("rm7"), newConfPop, dt7rm7NewConfPop) 
+    dplyr::select(Date,Region,RegionID,Population, starts_with("rma"), starts_with("rm7NewConf"), newConfPop, dt7rm7NewConfPop) 
 })
 
 # Data for log-linear model for weathermap predictions
@@ -194,7 +194,23 @@ wm.rfr <- reactiveFileReader(
   readFunc=readRDS
 )
 
+# ---------------------------------------------------------------------------------
+# Mutations
+# ---------------------------------------------------------------------------------
+cwmStatesMutations <- "./data/COVID-19-CWM-AGES-States-Mutations.rda"
+du.rfr <- reactiveFileReader(
+  session=NULL,
+  intervalMillis=10000,
+  filePath=cwmStatesMutations,
+  readFunc=readRDS
+)
 
+# complete timeframe
+du <- eventReactive(du.rfr(), {
+  logMsg(paste("eventReactive reactiveFileReader:du", cwmStatesMutations)) 
+  
+  du.rfr()
+})
 
 
 
@@ -292,12 +308,10 @@ ui <- fluidPage(
                  h4("COVID-19 Wetterkarte und StufenModell", align = "left", style="color:gray"),
 #                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
                  fluidRow(column(width=6, htmlOutput(outputId="htmlFrontPageTop")),
-                          column(width=6, leafletOutput(outputId = "lftFrontPage", height="40vh"))
-                          ),
+                          column(width=6, leafletOutput(outputId = "lftFrontPage", height="40vh"))),
                  p("", align = "center", style="color:green"),
                  fluidRow(column(width=6, plotOutput(outputId="ggpFrontPage", height="40vh")),
-                          column(width=6, htmlOutput(outputId = "htmlFrontPageBot"))
-                          )),
+                          column(width=6, htmlOutput(outputId = "htmlFrontPageBot")))),
                  
        tabPanel("Bundesländer",
                  h4("Lage und Aussichten Bundesländer", align = "left", style="color:gray"),
@@ -312,7 +326,6 @@ ui <- fluidPage(
                 fluidRow(column(width=9,  leafletOutput(outputId = "lftWeatherMapCounties", height="60vh"),
                                           DT::dataTableOutput(outputId = "dtoWeatherMapCounties")),
                          column(width=3, htmlOutput(outputId="hlpWeatherMapCounties")))),
-       
                                   
         tabPanel("Prognose",
                  h4("Prognose TagesInzidenz", align = "left", style="color:gray"),
@@ -333,13 +346,17 @@ ui <- fluidPage(
                                           DT::dataTableOutput(outputId = "dtoIncidenceCounties")),
                           column(width=3, htmlOutput(outputId="hlpIncidenceCounties")))),
         
-
         tabPanel("Geschwindigkeit",
                  h4("Änderung der TagesInzidenz in % vom Vortag", align = "left", style="color:gray"),
                  p("[Menüauswahl: Region,Zeitbereich]", align = "left", style="color:green"),
                  fluidRow(column(width=9, plotOutput(outputId = "ggpChangeRateStates", height="75vh")),
                           column(width=3, htmlOutput(outputId="hlpChangeRateStates")))),
 
+        tabPanel("Mutationen",
+                 h4("Britische (B.1.1.7, N501Y-V1), Afrikanische (B.1.351, N501Y-V2) und deren Stamm Mutation (N501Y)", align = "left", style="color:gray"),
+                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
+                 fluidRow(column(width=12, plotOutput(outputId = "ggpMutations", height="75vh")))),
+                          
         tabPanel("Rückblick 2020",
                  h4("Exponentielles Wachstum in zweiten Halbjahr 2020", align = "left", style="color:gray"),
                  p("[Menüauswahl: Region,Zeitbereich,LogScale]", align = "left", style="color:green"),
@@ -396,9 +413,8 @@ server <- function(input, output, session) {
     input$abUpdate
     return(de() %>% dplyr::filter(Region %in% isolate(input$cbgRegion)))
   })
-  
-  highlight = highlightOptions(weight=5, bringToFront=TRUE)
-
+ 
+ 
   # -------------------------------------------
   # FrontPage
   # -------------------------------------------
@@ -687,6 +703,28 @@ server <- function(input, output, session) {
       ggtitle(paste0("COVID-19 Österreich und Bundesländer: Ausbreitungsgeschwindigkeit in % pro Tag, seit ", min(dp$Date), ".  Basisdaten: AGES"))
   })
   
+  
+  
+  # -------------------------------------------
+  # Mutationen
+  # -------------------------------------------
+  output$ggpMutations <- renderPlot({
+
+    dp <- du()
+    # dynamic selection of mutations
+    mutStates <- levels(factor(dp$Status))
+    idx <-  !is.na(str_match(mutStates, "positiv")) | !is.na(str_match(mutStates, "bestätigt"))| !is.na(str_match(mutStates, "gesamt"))
+    fltStatus <- mutStates[idx]
+    ggplot(data=dp %>% dplyr::filter(Status %in% fltStatus), aes(x=Date, y=Count, color=Status, shape=Status)) + 
+      scale_shape_manual(values=atShapes) +
+      scale_fill_manual(values=cbPalette) +
+      scale_color_manual(values=cbPalette) +
+      geom_line() + 
+      geom_point(size=3) +
+      facet_wrap(.~Region, nrow=2, scales="free_y") +
+      scale_x_date(date_breaks="1 weeks", date_labels="%d.%m") +
+      scale_y_continuous()
+  }) 
   # -------------------------------------------
   # 2020
   # -------------------------------------------
