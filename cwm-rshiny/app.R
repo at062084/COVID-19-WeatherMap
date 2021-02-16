@@ -15,7 +15,7 @@ logMsg <- function(msg, sessionID="_global_") {
 
 hostSystem <- system("hostname", intern=TRUE)
 slackMsg <- function (title, msg, hostName = hostSystem) {
-  url <- as.character(read.csv("../secrets/slack.txt",header=FALSE)[1,1])
+  url <- as.character(read.csv("./secrets/slack.txt",header=FALSE)[1,1])
   body <- list(text = paste(paste0(now()," *",title,"*: "), paste0(hostName,": ",msg)))
   r <- POST(url, content_type_json(), body = body, encode = "json")
   invisible(r)
@@ -82,7 +82,7 @@ df <- eventReactive(df.rfr(), {
 
   df.rfr() %>%
     dplyr::mutate(RegionID=as.character(RegionID)) %>%
-    dplyr::select(Date,Region,RegionID,Population, starts_with("rma"), starts_with("rm7NewConf"), newConfPop, dt7rm7NewConfPop) 
+    dplyr::select(Date,Region,RegionID,Population, starts_with("rma"), starts_with("rm7NewConf"), rm7NewTested, newConfPop, dt7rm7NewConfPop) 
 })
 
 # Data for log-linear model for weathermap predictions
@@ -713,7 +713,11 @@ server <- function(input, output, session) {
     dp <- du()
     # dynamic selection of mutations
     mutStates <- levels(factor(dp$Status))
-    idx <-  !is.na(str_match(mutStates, "positiv")) | !is.na(str_match(mutStates, "bestätigt"))| !is.na(str_match(mutStates, "gesamt"))
+    idx <-  !is.na(str_match(mutStates, "positiv")) | 
+      !is.na(str_match(mutStates, "bestätigt"))| 
+      !is.na(str_match(mutStates, "gesamt")) |
+      !is.na(str_match(mutStates, "Mutation")) 
+    
     fltStatus <- mutStates[idx]
     ggplot(data=dp %>% dplyr::filter(Status %in% fltStatus), aes(x=Date, y=Count, color=Status, shape=Status)) + 
       scale_shape_manual(values=atShapes) +
