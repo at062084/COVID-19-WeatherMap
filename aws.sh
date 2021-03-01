@@ -17,7 +17,7 @@ fi
 SHINYS="shiny-203 shiny-210"
 if [ $# -ge 2 ]
 then
-  SHINYS = $2
+  SHINYS="$2"
 fi
 
 
