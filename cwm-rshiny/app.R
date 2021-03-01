@@ -23,8 +23,8 @@ slackMsg <- function (title, msg, hostName = hostSystem) {
 slackMsg(title="COVID-19-WeatherMap",msg=paste("Start shiny global section in app.R"))
 
 #if(0==1) {
-  logMsg("Starting service cron")
-  system2("sudo","service cron start")
+#  logMsg("Starting service cron")
+#  system2("sudo","service cron start")
 #}
 
 # -----------------------------------------------------------
@@ -251,7 +251,7 @@ ui <- fluidPage(
   sidebarLayout(
     
     # Sidebar panel for inputs ----
-    sidebarPanel(width=2,
+    sidebarPanel(
       p("CWM-V0.9.18-20210216"),
       
       fluidRow(
@@ -295,6 +295,7 @@ ui <- fluidPage(
                      choices = list("Linear (Gerade)" = "1",
                                     "Quadratisch (Parabel)" = "2"),
                      selected="1")),
+      width=2
   ),
 
 
@@ -398,13 +399,13 @@ server <- function(input, output, session) {
   # states by Time
   df.past <- reactive({
     logMsg(" reactive df.past sldPastTime", sessionID)
-    return(df() %>% dplyr::filter(Date > max(Date)-months(as.integer(input$sldPastTime))))
+    return(df() %>% dplyr::filter(Date > max(Date, na.rm=TRUE)-months(as.integer(input$sldPastTime))))
   })
   
   # counties by Time
   dg.past <- reactive({
     logMsg(" reactive dg.past sldPastTime", sessionID)
-    return(dg() %>% dplyr::filter(Date > max(Date)-months(as.integer(input$sldPastTime))))
+    return(dg() %>% dplyr::filter(Date > max(Date, na.rm=TRUE)-months(as.integer(input$sldPastTime))))
   })
 
   # state history by regions

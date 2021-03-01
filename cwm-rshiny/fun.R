@@ -345,7 +345,7 @@ cwmAgesRm7EstimatePoly <- function(df, nPoly=2, nModelDays=10, nPredDays=7, modW
   dd <- dd %>%
     dplyr::group_by(locID) %>%
     # Log poly model for potentially exponentially growing items
-    dplyr::mutate_at(vars(c(starts_with("rm7"),-rm7NewTested,-rm7NewConfTest)), rm7PolyLog, nPoly=nPoly, nModelDays=nModelDays, modWeights=modWeights) %>%
+    dplyr::mutate_at(vars(starts_with("rm7"),-rm7NewTested,-rm7NewConfTest), rm7PolyLog, nPoly=nPoly, nModelDays=nModelDays, modWeights=modWeights) %>%
     #dplyr::mutate_at(vars(c(starts_with("rma"))), rm7PolyLog, nPoly=nPoly, nModelDays=nModelDays) %>%
     # nonLog linear model for newTested
     dplyr::mutate_at(vars(rm7NewTested), rm7PolyLin, nPoly=nPoly, nModelDays=nModelDays, modWeights=modWeights) %>%
