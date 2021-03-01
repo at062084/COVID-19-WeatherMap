@@ -4,7 +4,7 @@ library(httr)
 library(lubridate)
 
 options(error = function() traceback(2))
-setwd("/srv/shiny-server/COVID-19-WeatherMap")
+#setwd("/srv/shiny-server/COVID-19-WeatherMap")
 #setwd("/home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny")
 
 logDir = "./log"
@@ -40,8 +40,8 @@ dc <- caAgesRead_cftl()
 logMsg("Downloading CovidFaelle_Timeline_GKZ data from AGES ...","__cron__")
 db <- caAgesRead_cfGKZtl()
 
-logMsg("Scraping Mutations data from AGES ...","__cron__")
-dm <-caAgesRead_Mutations()
+#logMsg("Scraping Mutations data from AGES ...","__cron__")
+# dm <-caAgesRead_Mutations()
 
 # Construct working data frame 
 logMsg("Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ...","__cron__")
