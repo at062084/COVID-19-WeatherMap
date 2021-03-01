@@ -2,7 +2,7 @@
 
 LOG="./log/cwm.github.log"
 DIR=/home/shiny/github/COVID-19-WeatherMap
-APP=rshiny
+APP=cwm-rshiny
 
 cd $DIR 
 mkdir -p "./log" 2>/dev/null
