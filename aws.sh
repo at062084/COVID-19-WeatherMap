@@ -9,7 +9,7 @@ then
 fi
 
 CMD="cron"
-if [ $# - ge 1 ]
+if [ $# -ge 1 ]
 then
   CMD=$1
 fi
