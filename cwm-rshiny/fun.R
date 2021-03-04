@@ -179,7 +179,7 @@ cwm.model <- function(dx, dg=datATRegions, locID="Region", colID="RegionS") {
 # ----------------------------------------------------------------------------------------------
 # Standard ggplot style for newConfPop~Date
 # ----------------------------------------------------------------------------------------------
-cwmConfPopStyle <- function(sldPastTime=3, cbLogScale=TRUE, inRegions="Österreich", xLimits=c(NULL,NULL), yLimits=c(yLimMin, yLimMax), yLabel="Positive/100.000 Einwohnern") {
+cwmConfPopStyle <- function(sldPastTime=3, cbLogScale=TRUE, inRegions="Österreich", xLimits=c(NULL,NULL), yLimits=c(yLimMin, yLimMax), yLabel="Positive/100.000 Einwohnern", stepDate=as.Date(now())) {
   
   # Process left side menu user interactions
   trans <- ifelse(cbLogScale, "log10", "identity")
@@ -205,6 +205,7 @@ cwmConfPopStyle <- function(sldPastTime=3, cbLogScale=TRUE, inRegions="Österrei
       scale_color_manual(values=regPalette),
       scale_x_date(limits=xLimits, date_breaks=rvBreaks, date_labels=rvLabels, sec.axis=dup_axis()),
       scale_y_continuous(limits=yLimits, breaks=popBreaksAll, position="right",  trans=trans, name=yLabel, sec.axis=dup_axis()),
+      annotate("text", x=stepDate, y=2^(0:7)*1.5, label=as.character(1:8), colour="grey", size=15),
       geom_line(aes(y=1), size=1.0, color="green"),
       geom_line(aes(y=2), size=1.0, color="orange"),
       geom_line(aes(y=4), size=.8, color="magenta"),

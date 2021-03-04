@@ -14,7 +14,7 @@ then
   CMD=$1
 fi
 
-SHINYS="shiny-203 shiny-210"
+SHINYS="shiny-203 shiny-36"
 if [ $# -ge 2 ]
 then
   SHINYS="$2"

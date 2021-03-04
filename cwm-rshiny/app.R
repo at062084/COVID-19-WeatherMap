@@ -252,7 +252,7 @@ ui <- fluidPage(
     
     # Sidebar panel for inputs ----
     sidebarPanel(
-      p("CWM-V0.9.18-20210216"),
+      p("CWM-V0.9.19-202100305"),
       
       fluidRow(
         column(6,
@@ -269,7 +269,7 @@ ui <- fluidPage(
                            "Salzburg", 
                            "Tirol", 
                            "Vorarlberg"), 
-            selected = c("Österreich","Wien","Niederösterreich","Burgenland","Kärnten"))),
+            selected = c("Österreich","Wien","Niederösterreich","Burgenland","Vorarlberg"))),
         column(6,
           actionButton("abUpdate", "Anzeigen"))),
 
@@ -279,7 +279,7 @@ ui <- fluidPage(
       fluidRow( 
         sliderInput("sldPastTime",
                     width="220px",
-                    label="ZeitRaum (Monate)",
+                    label="ZeitRaum (letzte n Monate)",
                     min=1, max=12, step=1, value=6)),
       
         fluidRow( 
@@ -330,7 +330,7 @@ ui <- fluidPage(
                                   
         tabPanel("Prognose",
                  h4("Prognose TagesInzidenz", align = "left", style="color:gray"),
-                 p("[Menüauswahl: Region,LogScale,BerechnungsTage,BerechnungsModell]", align = "left", style="color:green"),
+                 p("[Menüauswahl: Region,LogScale, BerechnungsTage,BerechnungsModell]", align = "left", style="color:green"),
                  fluidRow(column(width=8, plotOutput(outputId = "ggpIncidencePrediciton", height="75vh")),
                           column(width=4, htmlOutput(outputId="hlpIncidencePrediction")))),
 
@@ -360,7 +360,7 @@ ui <- fluidPage(
                           
         tabPanel("Rückblick 2020",
                  h4("Exponentielles Wachstum in zweiten Halbjahr 2020", align = "left", style="color:gray"),
-                 p("[Menüauswahl: Region,Zeitbereich,LogScale]", align = "left", style="color:green"),
+                 p("[Menüauswahl: Region, LogScale]", align = "left", style="color:green"),
                  fluidRow(column(width=9, 
                                  plotOutput(outputId = "ggpExpDateConfPop", height="60vh"),
                                  plotOutput(outputId = "ggpExpDatedt7ConfPop", height="60vh"),
@@ -742,7 +742,7 @@ server <- function(input, output, session) {
     input$abUpdate
     inRegions <- isolate(input$cbgRegion)
     ggplot(de.regions(), aes(x=Date, y=rm7NewConfPop, color=Region, shape=Region))+
-      cwmConfPopStyle(sldPastTime=1, cbLogScale=input$cbLogScale, inRegions=inRegions) +
+      cwmConfPopStyle(sldPastTime=1, cbLogScale=input$cbLogScale, inRegions=inRegions, stepDate=max(de.regions()$Date)) +
       geom_point(size=2)+geom_line()+
       geom_line(aes(y=modrm7NewConfPop)) +
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: TagesInzidenz: Positiv getestete pro Tag pro 100.000 Einwohner.  Basisdaten: AGES"))
