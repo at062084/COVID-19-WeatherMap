@@ -16,6 +16,7 @@ library(readr)
 
 # Settings for cwmConfPopStyle
 popBreaksAll <- c(0,1,2,3,4,5,6,7,8,9,10,12,15,seq(20,100,by=10),120,150,200,300,400,500)
+popSteps=c(1,2,4,8,16,32,64,128)
 yLimMin <- 1
 yLimMax <- 128
 
@@ -179,7 +180,7 @@ cwm.model <- function(dx, dg=datATRegions, locID="Region", colID="RegionS") {
 # ----------------------------------------------------------------------------------------------
 # Standard ggplot style for newConfPop~Date
 # ----------------------------------------------------------------------------------------------
-cwmConfPopStyle <- function(sldPastTime=3, cbLogScale=TRUE, inRegions="Österreich", xLimits=c(NULL,NULL), yLimits=c(yLimMin, yLimMax), yLabel="Positive/100.000 Einwohnern", stepDate=as.Date(now())) {
+cwmConfPopStyle <- function(sldPastTime=3, cbLogScale=TRUE, inRegions="Österreich", xLimits=c(NULL,NULL), yLimits=c(yLimMin, yLimMax), yLabel="TagesInzidenz", stepDate=as.Date(now())) {
   
   # Process left side menu user interactions
   trans <- ifelse(cbLogScale, "log10", "identity")
@@ -204,7 +205,8 @@ cwmConfPopStyle <- function(sldPastTime=3, cbLogScale=TRUE, inRegions="Österrei
       scale_fill_manual(values=regPalette),
       scale_color_manual(values=regPalette),
       scale_x_date(limits=xLimits, date_breaks=rvBreaks, date_labels=rvLabels, sec.axis=dup_axis()),
-      scale_y_continuous(limits=yLimits, breaks=popBreaksAll, position="right",  trans=trans, name=yLabel, sec.axis=dup_axis()),
+      scale_y_continuous(limits=yLimits, breaks=popSteps, name=yLabel, labels=as.character(popSteps), position="right",  trans=trans,
+                         sec.axis=dup_axis(name="WochenInzidenz", labels=as.character(popSteps*7))),
       annotate("text", x=stepDate, y=2^(0:7)*1.5, label=as.character(1:8), colour="grey", size=15),
       geom_line(aes(y=1), size=1.0, color="green"),
       geom_line(aes(y=2), size=1.0, color="orange"),

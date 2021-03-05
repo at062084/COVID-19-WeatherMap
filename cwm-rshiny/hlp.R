@@ -15,20 +15,29 @@ htmlFrontPageTop <- "<p>
                         Parallel zum Stufenmodell werden unter Punkt '<b>Geschwindigkeit</b>' die Ausbreitungsschübe  betrachtet.
                         Der '<b>Rückblick 2020</b>' motiviert die Möglichkeit einer mittelfristigen Prognose bei gegebenem Verhalten in der Bevölkerung.
                       </p>
+                      <b>Umschaltung 'ORF Darstellung' <-> 'StufenModell' </b><br>mit der Checkbox 'StufenModell' im Menü links
                     "
 
 
 
 htmlFrontPageBot <- "<h4>Bedienungsanleitung</h4>
-                    <p>Das <b>Menü auf der linken Seite</b> ermöglicht es Einfluss auf verschiedene Darstellungen zu nehmen
+                    <p>Das <b>Menü auf der linken Seite</b> ermöglicht es Einfluss auf den Inhalt von Graphiken ud Tabellen zu nehmen (die 'Wetterkarten' sind fix)
                     </p>
                     <p>
-                     <li>Welche Controls für eine Graphik aktiv sind steht unter 'Menüauswahl' jeweils oben links</li>
-                     <li>Die Auswahl der Bundesländer ist jeweils mit dem Button 'Anzeigen' zu bestätigen</li>
-                     <li>Die beiden 'Prognose' Controls gelten nur für den Punkt 'Prognose'</li>
+                     <li>Welche Controls eine Graphik beeinflussen sind steht unter 'Menüauswahl' oben links</li>
+                     <li>Die <b>Auswahl der Bundesländer</b> ist jeweils mit dem Button 'Anzeigen' zu bestätigen</li>
+                     <li>Die <b>Anzahl der angezeigten Monate</b> kann mit 'ZeitRaum' eingestellt werden</li>
+                     <li>Die beiden <b>'Prognose'</b> Controls gelten nur für den Punkt 'Prognose'</li>
                     </p>
-                    <p> Die Skala für die Inzidenz ist in <b>Stufen mit jeweils doppelter Inzidenz</b> geteilt, mit Werten von 1,2,4,8,16,32,64,128, pro Tag und 100.000 Einwohner, 
-                       wobei eine <b>WochenInzidenz von 50</b> einer <b>TagesInzidenz von 7</b> entspricht, bzw. ca. GesamtInzidenz von 560 für ganz Österreich.
+                    <h4>StufenModell</h4>
+                    <p> Die Skala für die Inzidenz ist in <b>Stufen mit jeweils doppelter Inzidenz</b> geteilt:
+                    <center><table>
+                       <tr><td>Stufe&nbsp;</td><td>TagesInzidenz&nbsp;</td><td>WochenInzidenz&nbsp;</td> <td>&nbsp;</td> <td>Stufe&nbsp;</td><td>TagesInzidenz&nbsp;</td><td>WochenInzidenz</td</tr>
+                       <tr><td>0</td><td>0-1</td><td>0-7</td><td>&nbsp;</td><td>4</td><td>8-16</td><td>56-112</td></tr>
+                       <tr><td>1</td><td>1-2</td><td>7-14</td><td>&nbsp;</td><td>5</td><td>16-32</td><td>112-224</td></tr>
+                       <tr><td>2</td><td>2-4</td><td>14-28</td><td>&nbsp;</td><td>6</td><td>32-64</td><td>224-448</td></tr>
+                       <tr><td>3</td><td>4-8</td><td>28-56</td><td>&nbsp;</td><td>7</td><td>64-128</td><td>448-896</td></tr>
+                    </table></center>
                     </p>
                     <p> Die Ermittlung der <b>tatsächlichen Inzidenz</b> ist wegen der starken Schwankungen und Verzögerungen bei den Einmeldungen in das EMS nicht eindeutig.
                         In diesem Dashboard werden die tagesaktuellen Werte und Prognosen mit einem 

@@ -274,7 +274,7 @@ ui <- fluidPage(
           actionButton("abUpdate", "Anzeigen"))),
 
         fluidRow(
-          checkboxInput("cbLogScale", label="LogScale", value=TRUE, width="220px")),
+          checkboxInput("cbLogScale", label="StufenModell", value=TRUE, width="220px")),
         
       fluidRow( 
         sliderInput("sldPastTime",
@@ -307,7 +307,7 @@ ui <- fluidPage(
 
         tabPanel("FrontPage",
                  h4("COVID-19 Wetterkarte und StufenModell", align = "left", style="color:gray"),
-#                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
+                 p("[Menüauswahl: StufenModell]", align = "left", style="color:green"),
                  fluidRow(column(width=6, htmlOutput(outputId="htmlFrontPageTop")),
                           column(width=6, leafletOutput(outputId = "lftFrontPage", height="40vh"))),
                  p("", align = "center", style="color:green"),
@@ -317,7 +317,7 @@ ui <- fluidPage(
        tabPanel("Bundesländer",
                  h4("Lage und Aussichten Bundesländer", align = "left", style="color:gray"),
                  p("[Menüauswahl: keine]", align = "left", style="color:green"),
-                fluidRow(column(width=9,  leafletOutput(outputId = "lftWeatherMap", height="60vh"),
+                 fluidRow(column(width=9,  leafletOutput(outputId = "lftWeatherMap", height="60vh"),
                                           DT::dataTableOutput(outputId = "dtoWeatherMap")),
                          column(width=3, htmlOutput(outputId="hlpWeatherMap")))),
  
@@ -330,19 +330,19 @@ ui <- fluidPage(
                                   
         tabPanel("Prognose",
                  h4("Prognose TagesInzidenz", align = "left", style="color:gray"),
-                 p("[Menüauswahl: Region,LogScale, BerechnungsTage,BerechnungsModell]", align = "left", style="color:green"),
+                 p("[Menüauswahl: Region,StufenModell, BerechnungsTage,BerechnungsModell]", align = "left", style="color:green"),
                  fluidRow(column(width=8, plotOutput(outputId = "ggpIncidencePrediciton", height="75vh")),
                           column(width=4, htmlOutput(outputId="hlpIncidencePrediction")))),
 
         tabPanel("Inzidenz Bundesländer",
                   h4("TagesInzidenz Bundesländer", align = "left", style="color:gray"),
-                  p("[Menüauswahl: Region,Zeitbereich,LogScale]", align = "left", style="color:green"),
+                  p("[Menüauswahl: Region,Zeitbereich,StufenModell]", align = "left", style="color:green"),
                   fluidRow(column(width=9, plotOutput(outputId = "ggpIncidenceStates", height="75vh")),
                            column(width=3, htmlOutput(outputId="hlpIncidenceStates")))),
 
           tabPanel("Inzidenz Bezirke",
                  h4("TagesInzidenz Bezirke", align = "left", style="color:gray"),
-                 p("[Menüauswahl: Region,Zeitbereich,LogScale]", align = "left", style="color:green"),
+                 p("[Menüauswahl: Region,Zeitbereich,StufenModell]", align = "left", style="color:green"),
                  fluidRow(column(width=9, plotOutput(outputId = "ggpIncidenceCounties", height="75vh"),
                                           DT::dataTableOutput(outputId = "dtoIncidenceCounties")),
                           column(width=3, htmlOutput(outputId="hlpIncidenceCounties")))),
@@ -360,7 +360,7 @@ ui <- fluidPage(
                           
         tabPanel("Rückblick 2020",
                  h4("Exponentielles Wachstum in zweiten Halbjahr 2020", align = "left", style="color:gray"),
-                 p("[Menüauswahl: Region, LogScale]", align = "left", style="color:green"),
+                 p("[Menüauswahl: Region, StufenModell]", align = "left", style="color:green"),
                  fluidRow(column(width=9, 
                                  plotOutput(outputId = "ggpExpDateConfPop", height="60vh"),
                                  plotOutput(outputId = "ggpExpDatedt7ConfPop", height="60vh"),
@@ -429,15 +429,16 @@ server <- function(input, output, session) {
     # Depend on reactive file reader
     pMapNUTS <- df.map()
     
+    curZoom=6
     # Depend on reactive file reader
-    leaflet(pMapNUTS, options=leafletOptions(minZoom=6, maxZoom=6, zoomControl=FALSE, dragging=FALSE, zoom=6)) %>%
-      addTiles(group="DefaultMap", options=providerTileOptions(minZoom=6, maxZoom=6)) %>%
+    leaflet(pMapNUTS, options=leafletOptions(minZoom=curZoom, maxZoom=curZoom, zoomControl=FALSE, dragging=FALSE, zoom=curZoom)) %>%
+      addTiles(group="DefaultMap", options=providerTileOptions(minZoom=curZoom, maxZoom=curZoom)) %>%
       addPolygons(stroke=TRUE, weight=3, color="black",
                   fill=TRUE, fillOpacity = 1, fillColor=palConfPop[.bincode(pMapNUTS$rm7NewConfPop.0,binConfPop)]) %>%
       addMarkers(lng=~cxNUTS, lat=~cyNUTS, icon=~iconsWeather[idxCurConfPop], group="Incidence") %>%
       addLabelOnlyMarkers(lng=11, lat=48.5, label=paste("Daten mit Stand von",format(pMapNUTS$Date[1],"%a., %d. %b %Y")), 
-                          labelOptions = labelOptions(noHide=T, direction='top', textsize='10pt', style=list('color'='white', 'background'='#444444'))) %>%
-      setView(lng=pMapNUTS$cxNUTS[1]-3, lat=pMapNUTS$cyNUTS[1], zoom=6)
+                          labelOptions = labelOptions(noHide=T, direction='top', textsize='9pt', style=list('color'='white', 'background'='#666666'))) %>%
+      setView(lng=pMapNUTS$cxNUTS[1]-3, lat=pMapNUTS$cyNUTS[1], zoom=curZoom)
   })
   
   output$ggpFrontPage <- renderPlot({
@@ -446,14 +447,16 @@ server <- function(input, output, session) {
     
     popSteps=c(1,2,4,8,16,32,64,128)
     dp <- df() %>% dplyr::filter(Date>as.Date("2020-07-04"), Region=="Österreich") %>% dplyr::select(Date, Region, rm7NewConfPop)
+    trans <- ifelse(input$cbLogScale, "log10", "identity")
     
     ggplot(dp, aes(x=Date, y=rm7NewConfPop, color=Region, shape=Region))+
       cwmConfPopStyle(sldPastTime=6, cbLogScale=TRUE, inRegions="Österreich") +
       scale_x_date(date_breaks="1 months", date_labels="%b") +
-      scale_y_continuous(limits=c(1,128), breaks=popSteps, position="right",  trans="log10") +
+      scale_y_continuous(limits=c(1,128), breaks=popSteps, position="right",  trans=trans, name="TagesInzidenz",
+                         sec.axis=dup_axis(name="WochenInzidenz", labels=as.character(popSteps*7))) +
       theme(legend.position="none") +
-      geom_point(size=.5)+geom_line()+
-      ggtitle(paste0("COVID-19 Österreich:  TagesInzidenz: Stufenmodell seit ", min(dp$Date), ".   Basisdaten: AGES"))
+      geom_point(size=1, col="red")+geom_line(col="red", size=1)+
+      ggtitle(paste0("COVID-19 Österreich:  Inzidenz: Stufenmodell seit ", min(dp$Date), ".   Basisdaten: AGES"))
   })
   
   # -------------------------------------------
@@ -492,7 +495,7 @@ server <- function(input, output, session) {
       ifelse(pMapNUTS$dblDays>0,"Verdoppelung","Halbierung"), round(abs(pMapNUTS$dblDays))) %>% lapply(htmltools::HTML)
   
     leaflet(pMapNUTS, options=leafletOptions(minZoom=7, maxZoom=7, zoomControl=FALSE, dragging=FALSE, zoom=7)) %>%
-      #addTiles(group="DefaultMap", options=providerTileOptions(minZoom=6, maxZoom=8)) %>%
+      addTiles(group="DefaultMap", options=providerTileOptions(minZoom=7, maxZoom=7)) %>%
       addPolygons(stroke=TRUE, weight=3, color="black",
                   fill=TRUE, fillOpacity = 1, fillColor=palConfPop[.bincode(pMapNUTS$rm7NewConfPop.0,binConfPop)],
                   label=labWeatherMap, 
@@ -562,8 +565,8 @@ server <- function(input, output, session) {
       lapply(htmltools::HTML)
     
     #, options=leafletOptions(minZoom=7, maxZoom=7, zoomControl=FALSE, dragging=FALSE, zoom=7)
-    leaflet(pMapCounties, options=leafletOptions(minZoom=7, maxZoom=7, zoomControl=FALSE, dragging=FALSE)) %>%
-      #addTiles(group="DefaultMap", options=providerTileOptions(minZoom=6, maxZoom=8)) %>%
+    leaflet(pMapCounties, options=leafletOptions(minZoom=7, maxZoom=7, zoomControl=FALSE, dragging=FALSE, zoom=7)) %>%
+      addTiles(group="DefaultMap", options=providerTileOptions(minZoom=7, maxZoom=7)) %>%
       #addMapPane("Counties", zIndex=410) %>% 
       #addMapPane("States", zIndex=420) %>%
       # options(pathOptions(pane="Counties")),
@@ -588,7 +591,8 @@ server <- function(input, output, session) {
                         options=layersControlOptions(collapsed=FALSE)) %>%
       addLabelOnlyMarkers(lng=11, lat=48.5, label=paste("Daten mit Stand von",format(pMapCounties$Date[1],"%a., %d. %b %Y")), 
                           labelOptions = labelOptions(noHide=T, direction='top', textsize='10pt', style=list('color'='white', 'background'='#444444'))) %>%
-      addLegend(pal=colConfPop, values=~rm7NewConfPop.0, position="bottomright", opacity=1, title="Incidence") 
+      addLegend(pal=colConfPop, values=~rm7NewConfPop.0, position="bottomright", opacity=1, title="Incidence") %>%
+      setView(lng=mapNUTSAT$cxNUTS[1]-3, lat=mapNUTSAT$cyNUTS[1], zoom=7)
   })
  
   # -------------------------------------------
