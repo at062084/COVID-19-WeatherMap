@@ -12,7 +12,7 @@ library(geojsonsf)
 library(spdplyr)
 library(readr)
 
-
+bDebug <- FALSE
 
 # Settings for cwmConfPopStyle
 popBreaksAll <- c(0,1,2,3,4,5,6,7,8,9,10,12,15,seq(20,100,by=10),120,150,200,300,400,500)
@@ -24,16 +24,18 @@ yLimMax <- 128
 dblXDays <- c(1:7,10,14,21,28,56,Inf,-56,-28,-21,-14,-10,-7,-6,-5,-4,-3,-2,-1)
 
 # WeatherMaps
-nModelDaysPrediction = 10
-nModelDaysWeek = 14
-nModelDaysMonth = 14
-nModelDaysQuater = 56
+nModelDaysPrediction = 21
+nModelPolyGrade = 2
+
+#nModelDaysWeek = 14
+#nModelDaysMonth = 14
+#nModelDaysQuater = 56
 nForeCastDaysWeek =  7 
 nForeCastDaysMonth = 28 
 nForeCastDaysQuater = 91 
-nModelDaysCountyWeek = 14
-nModelDaysCountyMonth = 14
-nModelDaysCountyQuater = 56
+#nModelDaysCountyWeek = 14
+#nModelDaysCountyMonth = 14
+#nModelDaysCountyQuater = 56
 nForeCastDaysCountyWeek =  7
 nForeCastDaysCountyMonth = 28
 nForeCastDaysCountyQuater = 91
@@ -43,6 +45,9 @@ colConfPop <- colorBin(palette=palConfPop, domain=0:256, bins=binConfPop)
 dblDays <- c(1,14,28,56,-56,-28,-14,-1)
 binDblDays <- sort(round(exp(log(2)/dblDays),3))
 binForeCast <- c(0,4,8,16,32,Inf)
+
+nSettleDays <- 7 # Number of days to wait until status 'all tests returned' reached (may or not actually be the case) 
+nCalcWeeks <- 4 # Number of past weeks to use for estimation of fraction of under-reporting before nSettleDays reached
 
 # ----------------------------------------------------------------------------------
 # Geo data (from OpenData*)
@@ -147,35 +152,72 @@ funNUTSAT <- function () {
   return(mapNUTS)  
 }
 
-cwm.model <- function(dx, dg=datATRegions, locID="Region", colID="RegionS") {
+# Calculate prediction for today, next week (nForeCastDaysWeek) and next month (nForeCastDaysMonth) using 
+# function rm7PolyLog() based on previous nModelDaysPrediction days
+# rm7PolyLog 
+cwm.model <- function(dx, nPoly=2, nModelDays=nModelDaysPrediction, dg=datATRegions, locID="Region", colID="RegionS") {
+  
+  if (bDebug) logMsg(paste(" cwm.model", capture.output(print(sys.call(1))), nPoly, nModelDays, locID, colID))
+  
+  # dx: Date, Region, rm7NewConfPop and rmaNewConfPop range(Date)
   maxDate=max(dx$Date)
-  n <- nModelDaysPrediction + c(0,nForeCastDaysWeek,nForeCastDaysMonth)
-  t <- c(32,16,8,4)
-  rowNames <- c("Date", "AGES", "Heute","In einer Woche","In vier Wochen", "ÄnderungVortag","dblDays","Tage bis Verdoppelung","Tage bis   Halbierung", paste0("Tage bis Inzidenz=",t))
-  rowIDs <- c("Date","rmaNewConfPop","rm7NewConfPop.0","rm7NewConfPop.7","rm7NewConfPop.28","dtDay", "dblDays", "DblDays","HalfDays",paste0("rm7NewConfPop",t))
-  dy <- data.frame(Inzidenz=rowNames, stringsAsFactors=FALSE)
-  rownames(dy) <- rowIDs
+  n <- c(0,nForeCastDaysWeek,nForeCastDaysMonth) # Days to be predicted in nNewData (today=0)
+  t <- c(128,64,32,16,8)
+  
+  #rowNames <- c("Date", "AGES", "Heute","In einer Woche","In vier Wochen", "ÄnderungVortag","dblDays","Tage bis Verdoppelung","Tage bis   Halbierung", paste0("Tage bis Inzidenz=",t))
+  #rowIDs <- c("Date","rmaNewConfPop","rm7NewConfPop.0","rm7NewConfPop.7","rm7NewConfPop.28","dtDay", "dblDays", "DblDays","HalfDays",paste0("rm7NewConfPop",t))
+
+  rowNames <- c("Date", "AGES (3 Tage zurück)",         "Heute",          "In einer Woche", "In vier Wochen",   "ÄnderungVortag", "dblDays", "Tage bis Verdoppelung","Tage bis   Halbierung", 
+                "Tage bis Minimum", "Minimum", "Tage bis Maximum", "Maximum",  paste0("Tage bis Inzidenz=",t))
+  rowIDs <-   c("Date", "rmaNewConfPop","rm7NewConfPop.0","rm7NewConfPop.7","rm7NewConfPop.28", "dtDay",          "dblDays", "DblDays",               "HalfDays",               
+                "MinDays",          "MinInz",  "MaxDays",          "MaxInz",   paste0("rm7NewConfPop",t))
+  
+  # dy: Data frame with feature predicted by rm7PolyLog. Regions in Cols, Features in Rows
+  dy <- data.frame(Inzidenz=rowNames, stringsAsFactors=FALSE, row.names=rowIDs)
+  # rownames(dy) <- rowIDs
+  #print(rowIDs)
+  
+  # Loop over Regions in dg
   for (r in 1:(dim(dg)[1])) {
-    # idx <- dx$Region==dg$Region[r]
+  
+    # select rows in dx for Region r: idx <- dx$Region==dg$Region[r]
     idx <- dx[,locID]==as.character(dg[r,locID])
+    
+    # inzidence data of current Region
     y <- dx$rm7NewConfPop[idx]
-    p <- rm7PolyLog(y, nPoly=1, nNewData=n, nTransData=t, bDblDays=TRUE)
+    
+    # Fit poly to y: list of features from model in p
+    p <- rm7PolyLog(y, nPoly=nPoly, nModelDays=nModelDays, nNewData=n, nTransData=t, bDblDays=TRUE, bMinMax=TRUE)
+    # p <- list(pNewData=pNewData, pDblDays=pDblDays, pMMX=pMMX, pTransData=pTransData, pCoefs=pc)
+    
     p$pTransData[p$pTransData<0] <- NA
+    
+    # construct vector of features
     q <- c(as.numeric(maxDate),
            round(dx$rmaNewConfPop[idx & dx$Date==maxDate]/7,1),
            round(p$pNewData,1),
            round(exp(log(2)/p$pDblDays),3),
            round(p$pDblDays),
-           ifelse(p$pDblDays>=0,round(p$pDblDays),NA), 
-           ifelse(p$pDblDays<=0,-round(p$pDblDays),NA), 
+           round(p$pHflDblDays[2]), round(p$pHflDblDays[1]),
+           #ifelse(round(p$pDblDays)>0,round(p$pDblDays),NA), 
+           #ifelse(round(p$pDblDays)<0,-round(p$pDblDays),NA),
+           round(p$pMMX$xMin),round(p$pMMX$yMin), round(p$pMMX$xMax),round(p$pMMX$yMax),
            round(p$pTransData))
     cn <- colnames(dy)
     dy <- cbind(dy,(q))
     colnames(dy) <- c(cn,dg[r,colID])
   } 
+  #rownames(dy) <- rowIDs
+  #print(colnames(dy))
+  #print(rownames(dy))
+  #print(str(dy))
+  #print(summary(dy))
   return (dy)
 }
 
+# not needed
+cwm.predict <- function(df, nPoly=2, nModelDays=nModelDaysPrediction, nPredDays=7, modWeights=NULL) {
+}
 
 # ----------------------------------------------------------------------------------------------
 # Standard ggplot style for newConfPop~Date
@@ -275,29 +317,114 @@ cwmSpreadStyle <- function(sldPastTime=3, inRegions=1:10, yLimits=c(0.84, 1.19))
 # then subtract the minimum resulting weight from all weights (to decrease effective weight from days further in the past)
 # ------------------------------------------------------------------------------------------
 # Linear model of order nPoly on log data
-rm7PolyLog <- function(y, nPoly=2, nModelDays=length(y), modWeights=NULL, nNewData=NULL, nTransData=NULL, bDblDays=FALSE) {
-  nx=1:length(y)
-  x <- 1:nModelDays
-  y <- y[x]+0.001
+# !!! CAVEAT: y MUST start with the first day to use for the model, and nModelDays MUST depict the 'time zero' day starting from the first day !!!
+rm7PolyLog <- function(y, nPoly=2, nModelDays=length(y), modWeights=NULL, nNewData=NULL, nTransData=NULL, bDblDays=FALSE, bMinMax=FALSE) {
+  
+  #  capture.output(print(sys.call(1))),
+  if (bDebug) logMsg(paste(" rm7PolyLog:", "length(y)=", length(y), y[1], y[length(y)], nPoly, nModelDays, length(modWeights), length(nNewData), length(nTransData), bDblDays, bMinMax))
+  
+  Ny <- length(y)                   # may be different from nModelDays if nNewData is not given (such that a complete df is returned)
+  Yy=y+0.001                        # adjust zero values (cannot be log'ed)
+  Yx=(1:Ny)-nModelDays              # time values for model days (partly in the past, so <0. today: Yx==0)
+  Mx <- (1:nModelDays)-nModelDays
+  My <- Yy[1:nModelDays]
   if(is.null(modWeights)) {
-    modWeights <- c(1:(nModelDays-3),nModelDays-1,nModelDays-2,nModelDays-3) + c(rep(7,nModelDays-3), 5,3,1)
-    # make different weights more pronounced
-    modWeights <- modWeights-min(modWeights)+1
+    modWeights <- c(1:(nModelDays-3),nModelDays*.8,nModelDays*.7,nModelDays*.5) + c(rep(7,nModelDays-3), 5,3,1)
   }
   
-  pm <- lm(formula = log(y) ~ poly(x, nPoly, raw=TRUE), na.action="na.omit", weights=modWeights)
+  # calculate model of degree nPoly (should be one or two) and extract cofficients
+  pm <- lm(formula = log(My) ~ poly(Mx, degree=nPoly, raw=TRUE), na.action="na.omit", weights=modWeights)
+  pc <- coefficients(pm)
+  names(pc) <- c("d","k","a")[1:length(pc)]
 
-  if(is.null(nNewData)) dn <- data.frame(x=nx) else dn <- data.frame(x=nNewData)
+  # make prediction for required days --> this works for nPoly==1 and nPoly==2
+  if(is.null(nNewData)) dn <- data.frame(Mx=Yx) else dn <- data.frame(Mx=nNewData)
   pNewData <- exp(predict(pm, newdata=dn))
-  if(bDblDays & nPoly==1) pDblDays <- log(2)/(coef(pm)[2]) else pDblDays <- NA
-  if(is.null(nTransData)) pTransData <- NA else pTransData <- (log(nTransData)-coef(pm)[1])/coef(pm)[2]
   
-  if (!bDblDays & is.null(nTransData)) r <- pNewData else r <- list(pNewData=pNewData, pDblDays=pDblDays, pTransData=pTransData)
+  # calculate dblDays for nPoly==1
+  if(bDblDays) {
+  
+    # same for fst and scnd order model    
+    pDblDays <- log(2)/pc[2]
+
+    if(nPoly==2) {
+
+      # HflDblDays: For nPoly=2 defined by intersection of prediction model with half/double value of prediction for today
+      pHflDblDays <- c(NA,NA)
+      
+      # halfdays (negativ double days)
+      pd <- c(pc[1]-log(0.5*pNewData[1]),pc[2],pc[3])
+      roots <- polyroot(pd)
+      Roots <- Re(roots[abs(Im(roots))<1e-10 & Re(roots)>0])
+      if(length(Roots)>0) pHflDblDays[1]=Roots[1]
+      
+      # dblDays
+      pd <- c(pc[1]-log(2*pNewData[1]),pc[2],pc[3])
+      roots <- polyroot(pd)
+      Roots <- Re(roots[abs(Im(roots))<1e-10 & Re(roots)>0])
+      if(length(Roots)>0) pHflDblDays[2]=Roots[1]
+    }
+  } 
+  
+  # Calculate Min/Max date and value from coefs for nPoly=2 model
+  # ! must calc number of days relative to today (day=ny !!!, not start of data where day=1)
+  pMMX <- list(mmX=NA, xMin=NA, yMin=NA, xMax=NA, yMax=NA)
+  if(bMinMax & nPoly==2) {
+    # calculate roots of first derivative
+    t0 <- -pc[2]/2/pc[3]
+    m0 <- pc[1]+pc[2]*t0+pc[3]*t0^2
+    # max
+    if(pc[3]<0) {
+      pMMX$mmx <- "max"
+      if (round(t0)>0) {
+        pMMX$xMax <- round(t0)
+        pMMX$yMax <- round(exp(round(m0)))
+      }
+    }
+    if(pc[3]>0) {
+      pMMX$mmx <- "min"
+      if (round(t0)>0) {
+        pMMX$xMin <- round(t0)
+        pMMX$yMin <- round(exp(round(m0)))
+      }
+    }
+  }
+  
+  # calculate number of days until inzidenz levels nTransData reached
+  pTransData <- NULL
+  if(!is.null(nTransData)) {
+    n = length(nTransData)
+    pTransData <- rep(NA,n)
+    
+    if (nPoly==1) {
+      pTransData <- (log(nTransData)-coef(pm)[1])/coef(pm)[2]
+    }
+    if (nPoly==2) {
+      for(i in 1:n) {
+        # intersection of estimated poly line with nTransData 
+        pn <- c((pc[1]-log(nTransData[i])),pc[2],pc[3])
+        roots <- polyroot(pn)
+        j <- abs(Im(roots))<1e-14 & Re(roots)>0
+        # at least one root real and positive
+        if (sum(j)>0) {
+          Roots <- Re(roots[j])
+          Roots <- Roots[round(Roots)>0]
+          if (length(Roots)>0) pTransData[i] <- round(Roots[1])    
+        }
+      }
+    }
+  }
+  
+  # add calcuated estimates for critical events to list of return values
+  if (!bDblDays & !bMinMax & is.null(nTransData)) r <- pNewData else r <- list(pNewData=pNewData, pDblDays=pDblDays, pHflDblDays=pHflDblDays, pMMX=pMMX, pTransData=pTransData, pCoefs=pc)
   return(r)
 }
 
 # Linear model of order nPoly on lin data
 rm7PolyLin <- function(y, nPoly=2, nModelDays=length(y), modWeights=NULL, nNewData=NULL, nTransData=NULL, bDblDays=FALSE) {
+
+  if (bDebug)  logMsg(paste(" rm7PolyLin:", capture.output(print(sys.call(1))), " length(y)=", length(y), nPoly, nModelDays, bDblDays))
+  
   nx=1:length(y)
   x <- 1:nModelDays
   y <- y[x]+0.001
@@ -319,7 +446,9 @@ rm7PolyLin <- function(y, nPoly=2, nModelDays=length(y), modWeights=NULL, nNewDa
 }
 
 # Prediction on rm7* features group by "locID": this field MUST be provided in df (usually a copy of RegionID or CountyID)
-cwmAgesRm7EstimatePoly <- function(df, nPoly=2, nModelDays=10, nPredDays=7, modWeights=NULL) {
+cwmAgesRm7EstimatePoly <- function(df, nPoly=2, nModelDays=14, nPredDays=7, modWeights=NULL) {
+  
+  if (bDebug)  logMsg(paste(" cwmAgesRm7EstimatePoly:", capture.output(print(sys.call(1))), nPoly, nModelDays, nPredDays))
   
   curDate <- max(df$Date)                 # last day in dataset                   
   minDate <- curDate - days(nModelDays)+1 # go back nModelDays for Model
@@ -390,7 +519,7 @@ cwmAgesRm7DOWCorrection <- function(df, nWeeks=4, bPlot=FALSE) {
   dowFactorCalc <- function(n){
     if(length(n)<=3) return(mean(n))
     d <- n-mean(n)
-    n <- n[which (abs(d)!=max(abs(d)))]
+    n <- n[which (abs(d)<max(abs(d)))]
     return(mean(n))
   }
   
@@ -435,3 +564,6 @@ cwmAgesRm7DOWCorrection <- function(df, nWeeks=4, bPlot=FALSE) {
   # let the caller handle the estimates
   return(dow)    
 }
+
+
+

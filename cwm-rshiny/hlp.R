@@ -1,5 +1,16 @@
 
-htmlFrontPageTop <- "<p>
+
+htmlFrontPageNews <- "<i><b>News:</b>
+                      Mit Version 1.0.0 vom 16.3.2021 berücksichtigt die Prognose der COVID Inzidenz die <b>Effekte 
+                      von Öffnungen (Beschleunigung) und Lockdowns (Abbremsung)</b> in den Bundesländern.
+                      Details dazu den Reiter '<b>Bundesländer</b>'und '<b>Prognose</b></i>'
+                    "
+htmlFrontPageTop <- "<b>News:</b>
+                      <i>Mit Version 1.0.0 vom 16.3.2021 berücksichtigt die Prognose der COVID Inzidenz die Effekte 
+                      von <b>Öffnungen (Beschleunigung)</b> und <b>Lockdowns (Abbremsung)</b> in den Bundesländern.
+                      Details siehe  '<b>Bundesländer</b>' und '<b>Prognose</b></i>'
+                      <h4>Zielsetzung und Funktionsweise</h4>
+                     <p>
                        Dieses Dashboard beschäftigt sich mit der <b>Entwicklung der TagesInzidenz</b> der COVID-19 Pandemie in Österreich, 
                        basierend auf den Einmeldungen im EMS (Epidemiologisches Melde System) der AGES. Es verfolgt drei <b>Ziele</b>:
                      </p>
@@ -11,11 +22,13 @@ htmlFrontPageTop <- "<p>
                      <li>Eine Darstellungsform für die Inzidenz Zahlen zu etablieren, die dem <b>exponentiellen Charakter der Verbreitung</b> angemessen ist
                          (Stufen mit jeweils doppelter TagesInzidenz) </li>
                       </p><p>
+                      <b>Umschaltung 'ORF Darstellung' <-> 'StufenModell'</b> mit der Checkbox im Menü links
+                      </p><p>
                         Unterschiedliche Varianten für die <b>Prognose der Inzidenz</b> auf Bundesländer Ebene können interaktiv unter Punkt 'Prognose' gerechnet werden.
                         Parallel zum Stufenmodell werden unter Punkt '<b>Geschwindigkeit</b>' die Ausbreitungsschübe  betrachtet.
                         Der '<b>Rückblick 2020</b>' motiviert die Möglichkeit einer mittelfristigen Prognose bei gegebenem Verhalten in der Bevölkerung.
                       </p>
-                      <b>Umschaltung 'ORF Darstellung' <-> 'StufenModell' </b><br>mit der Checkbox 'StufenModell' im Menü links
+                      
                     "
 
 
@@ -136,31 +149,41 @@ htmlIncidencePrediction <- "<p><b>Berechnung und Prognose der Tages Inzidenz</b>
                             <p><b>Prognose Menü (links unten) </b><li><b>BerechnungsTage:</b> Anzahl der vergangenen Tage, aus denen die Prognose erstellt wird.</li>
                                                                   <li><b>Berechnungsmodell:</b>  Lineare oder quadratische Regression der logarithmierten TagesInzidenzen</li>
                             </p>
-                            <p>Als <b>Zeitpunkt für die Einmeldung</b> einer positiv getesteten Person wird von den Ministerien der <b>Tag der Einmeldung</b>, 
-                               von der AGES der <b>Tag der Auswertung</b> eines Tests ausgewiesen.
-                               Damit sind die von der AGES ausgewiesenene Daten näher am epidemiologischen Geschehen, führen aber zu Änderungen an den Zahlen vergangener Tage.
-                               </p><p><b>Tägliche Schwankungen: </b> Unabhängig davon schwankt die Anzahl der durchgeführten Tests stark mit Sonn und Feiertagen. 
-                               Um die täglichen Schwankungen einigermassen auszugleichen wird das <b>Wochenmittel</b> berechnet.
-                               Das hat den Nachteil, dass bei steigenden bzw. fallenden Infektionszahlen die ausgewiesenen Werte dem epidemiologischen Geschehen hinterherhinken bzw vorauseilen.
-                               </p><p>
-                                 <b>Berechnung des Wochenmittel:</b> Steigt die Inzidenz während einer Woche von 1 auf 7, dann ergibt am 7ten Tag das Wochenmittel 4. 
-                                 Das ist aus epidemiologischer Sicht der korrekte Wert für den vierten Tag.
-                                 Das epidmiologische Geschehen der letzten drei Tage ist also über das Wochenmittel nicht beschreibbar.
-                               </p><p>
-                                 <b>Die tatsächliche Inzidenz der letzten drei Tage</b> kann auf unterschiedliche Arten abgeschätzt werden:
-                                 <li><b>Lineare Fortsetzung</b> der Entwicklung der letzten Tage.
-                                   Findet gerade ein Verlangsamung oder Beschleunigung der Inzidenz statt, dann ist z.B. eine quadratische Kurve oft die bessere Wahl.
-                                   Dieses Verfahren hat den Nachteil, dass die Einmeldungen der letzten drei Tage nicht berücksicht werden</li>
-                                 <li><b>Korrektur der Einmeldungen:</b> Die Differenz zwischen Wochenmittel und erfolgten Einmeldungen eines Tages
-                                   zeigt systematische Abweichungen nach unten für das Wochenende und nach oben z.B. für den Dienstag. 
-                                   Die Korrektur errechnet die durchschnittliche Abweichung aus den letzten 4 Wochen und korrigiert entsprechend.
-                                   Dieses Verfahren ist zu Zeiten vieler Feiertage oder sich ändernder Teststrategie nicht sehr zuverlässig.</li>
-                               </p><p>
-                                <b>Angewendetes Verfahren:</b><br>Für diese Dashboard wurden beide Verfahren berücksichtigt, d.h. zunächst wird das Korrekturverfahren angewendet,
-                                   dann wird eine gewichtete lineare Regression der letzten 10 Tage gerechnet.
-                                </p><p><b>Parameter:</b> Die Anzahl der für die Regression berücksichtigten Tage sowie der Modeltyp (linear, quadratisch) 
-                                können im <b>Menü links</b> gewählt werden
-                                </p>
+                            <p>Die Erstellung einer Prognose des epidemiologischen Geschehens von COVID-19 steht vor einer Reihe von Herausforderungen.
+                               Der Vorgang der Ansteckung selbst ist nicht beobachtbar, die Kenntnis über den Verbreitungsgrad Krankheit ist indirekt über 
+                               Symptome, Tests und deren Einmeldung in das EMS vermittelt. Und das mit Wochentag und Bundesland spezifischen Abläufen und 
+                               zeitlichen Abständen zwischen Test und Verfügbarkeit der zugehörigen Daten.
+                            </p><p>Als <b>Zeitpunkt für die Erkrankung</b>  wird von den Ministerien der <b>Tag der Einmeldung</b>, 
+                               von der AGES der <b>Tag der Auswertung</b> eines positiven Tests angesetzt. 
+                               Damit sind die von der AGES ausgewiesenene Daten um die <b>Dauer der Datenübermittlung</b> näher am epidemiologischen Geschehen, 
+                               führen aber zu nachträglichen Änderungen an den Zahlen vergangener Tage.
+                               Bei Tests von symptomatischen Personen ist in beiden Varianten der Zeitraum zwischen dem Auftreten der Symptome und der Durchführung des Tests nicht bekannt.
+                               Weiters ist nicht veröffentlicht, ob ein Test an einer symptomatischen oder asymptomatischen Person durchgeführt wurde. 
+                             </p><p><b>Tägliche Schwankungen: </b> Unabhängig davon schwankt die Anzahl der durchgeführten Tests stark mit Sonn und Feiertagen. 
+                                 Um die täglichen Schwankungen auszugleichen wird von AGES die <b>Sieben Tage Inzidenz</b> als Summe der Inzidenzen der letzten Woche berechnet.
+                                 Das ermöglicht eine einigermassen stabile Entwicklung, hat aber den Nachteil, dass bei steigenden bzw. fallenden Infektionszahlen 
+                                 die ausgewiesenen Werte dem epidemiologischen Geschehen hinterherhinken bzw vorauseilen.
+                                 <br>Steigt z.B. die Inzidenz während einer Woche von 1 auf 7, dann ergibt das am 7ten Tag das Wochenmittel 4. 
+                                 Das ist aus epidemiologischer Sicht aber der korrekte Wert für den vierten Tag.
+                                 Das epidemiologische Geschehen der letzten drei Tage ist also über das Wochenmittel nicht direkt beschreibbar.
+                             </p><p>Dieses Dashboard versucht vor der Berechnung der Prognose die <b>tatsächliche Inzidenz der letzten drei Tage</b> aus den eingemeldeten Daten abzuschätzen:
+                                 <li>Die übliche Höhe der <b>nachträglichen Einmeldungen</b> wird aus den vergangenen Wochen pro Bundesland und Wochentag  ermittelt und 
+                                     auf die Einmeldungen der letzten drei Tage aufgeschlagen.
+                                </li><li>Die <b>wochentagsabhängige Differenz</b> zwischen der täglich gemeldeten Inzidenz und dem Wochenmittel wird 
+                                    aus den vergangenen Wochen pro Bundesland und Wochentag ermittelt und die Einmeldungen der letzten drei Tage entsprechend skaliert.
+                                </li>
+                                   Die so berechneten Werte sind z.B. zu Zeiten vieler Feiertage oder sich ändernder Teststrategie nicht sehr zuverlässig und 
+                                   werden daher für die Prognose mit etwas verringertem Gewicht berücksicht.
+                             </p><p>
+                                   Auf Basis dieser Daten wird das Wochenmittel als Basis für die Erstellung der Prognose berechnet
+                                   (moving mean mit window size 7, bzw. window size 5,3,1 für die letzen drei Tage) 
+                              </p><p><b>Prognose Parameter:</b> Für die Berechnung der Prognose der <b>Wetterkarte</b> wird ein lineares Modell auf Basis der letzten 14 Tage gerechnet.
+                                Um dem inherent exponentiellen Charakter der Verbreitung von COVID-19 gerecht zu werden, 
+                                wird, wie im Stufenmodell mit seinem Verdoppelungsraster angezeigt, ausschließlich mit logarithmierten Inzidenz Werten gearbeitet.
+                             </p><p><b>LockDown und Lockerungen:</b> Führen zu einer Bremsung bzw. Beschleunigung des exponentiellen Wachstums. 
+                                Die Auswirkungen auf die Prognose sind statt mit einer Geraden (lineares Modell) besser mit einer einfachen Kurve (quadratisches Modell, Parabel) abzuschätzen. 
+                                Diese beiden Varianten können, zusammen mit der Anzahl der zu berücksichtigen Tage für das Modell, im <b>Menü links unten</b> eingestellt werden. 
+                              </p>
                                 "
 
 htmlIncidenceStates <- "<p><b>Historie der Inzidenz in Bundesländern</b></p>

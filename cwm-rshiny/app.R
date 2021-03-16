@@ -90,7 +90,7 @@ df.model <- eventReactive(df(), {
   logMsg(paste("eventReactive reactiveFileReader:df.model", cwmPredictionFile)) 
   
   dx <- df() %>% dplyr::filter(Date>max(Date)-days(nModelDaysPrediction)) %>% dplyr::select(Date, Region, rm7NewConfPop, rmaNewConfPop)
-  dy <- cwm.model(dx=dx, dg=datATRegions, locID="Region", colID="RegionS")
+  dy <- cwm.model(dx=dx, nPoly=nModelPolyGrade, nModelDays=nModelDaysPrediction, dg=datATRegions, locID="Region", colID="RegionS")
   return(dy)
 })
 
@@ -99,11 +99,11 @@ df.map <- eventReactive(df.model(), {
   logMsg(paste("eventReactive reactiveFileReader:map", cwmPredictionFile)) 
 
   # Conjugate model data frame and add some geoRegion attributes
-  dm <- data.frame(t(df.model() %>% dplyr::select(-Inzidenz)), stringsAsFactors=FALSE)  %>% 
+  dm <- data.frame(t(df.model() %>% dplyr::select(-Inzidenz)), stringsAsFactors=FALSE) %>% 
     dplyr::mutate(RegionS=rownames(.)) %>%
-    dplyr::mutate(Date=as.Date(Date)) %>%
+    dplyr::mutate(Date=as.Date(as.numeric(Date))) %>%
     dplyr::left_join(datATRegions %>% dplyr::select(RegionS,RegionID), by="RegionS")
-  
+    
   # Add prediction data to geoMap data
   pMapNUTS <- mapNUTSAT %>% 
     dplyr::left_join(dm, by="RegionID") %>%
@@ -252,7 +252,7 @@ ui <- fluidPage(
     
     # Sidebar panel for inputs ----
     sidebarPanel(
-      p("CWM-V0.9.19-202100305"),
+      p("CWM-V1.0.0-20210316"),
       
       fluidRow(
         column(6,
@@ -287,17 +287,18 @@ ui <- fluidPage(
           sliderInput("sldModelDays",
                        width="220px",
                        label="Prognose: BerechnungsTage",
-                       min=7, max=28, step=7, value=14)),
+                       min=7, max=56, step=7, value=21)),
       fluidRow(        
         radioButtons("rbsModelOrder",
                      width="220px",
                      label="Prognose: BerechnungsModel",
                      choices = list("Linear (Gerade)" = "1",
                                     "Quadratisch (Parabel)" = "2"),
-                     selected="1")),
+                     selected="2")),
       width=2
   ),
 
+#                  fluidRow(column(width=12, htmlOutput(outputId="htmlFrontPageNews"))),
 
     # Main panel for displaying outputs ----
     mainPanel(width=10,
@@ -309,9 +310,9 @@ ui <- fluidPage(
                  h4("COVID-19 Wetterkarte und StufenModell", align = "left", style="color:gray"),
                  p("[Menüauswahl: StufenModell]", align = "left", style="color:green"),
                  fluidRow(column(width=6, htmlOutput(outputId="htmlFrontPageTop")),
-                          column(width=6, leafletOutput(outputId = "lftFrontPage", height="40vh"))),
+                          column(width=6, leafletOutput(outputId = "lftFrontPage", height="50vh"))),
                  p("", align = "center", style="color:green"),
-                 fluidRow(column(width=6, plotOutput(outputId="ggpFrontPage", height="40vh")),
+                 fluidRow(column(width=6, plotOutput(outputId="ggpFrontPage", height="50vh")),
                           column(width=6, htmlOutput(outputId = "htmlFrontPageBot")))),
                  
        tabPanel("Bundesländer",
@@ -353,10 +354,10 @@ ui <- fluidPage(
                  fluidRow(column(width=9, plotOutput(outputId = "ggpChangeRateStates", height="75vh")),
                           column(width=3, htmlOutput(outputId="hlpChangeRateStates")))),
 
-        tabPanel("Mutationen",
-                 h4("Britische (B.1.1.7, N501Y-V1), Afrikanische (B.1.351, N501Y-V2) und deren Stamm Mutation (N501Y)", align = "left", style="color:gray"),
-                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
-                 fluidRow(column(width=12, plotOutput(outputId = "ggpMutations", height="75vh")))),
+#        tabPanel("Mutationen",
+#                 h4("Britische (B.1.1.7, N501Y-V1), Afrikanische (B.1.351, N501Y-V2) und deren Stamm Mutation (N501Y)", align = "left", style="color:gray"),
+#                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
+#                 fluidRow(column(width=12, plotOutput(outputId = "ggpMutations", height="75vh")))),
                           
         tabPanel("Rückblick 2020",
                  h4("Exponentielles Wachstum in zweiten Halbjahr 2020", align = "left", style="color:gray"),
@@ -419,6 +420,7 @@ server <- function(input, output, session) {
   # -------------------------------------------
   # FrontPage
   # -------------------------------------------
+  output$htmlFrontPageNews <- renderText({ htmlFrontPageNews })
   output$htmlFrontPageTop <- renderText({ htmlFrontPageTop })
   output$htmlFrontPageBot <- renderText({ htmlFrontPageBot })
   
@@ -464,10 +466,12 @@ server <- function(input, output, session) {
   # -------------------------------------------
   output$hlpWeatherMap <- renderText({ htmlWeatherMap })
 
+  flts <- c("Date", "ÄnderungVortag", "dblDays")
+  #flts <- "foo"
   # Values, and Prediction of Incodence, Time to/outof Lockdown
   output$dtoWeatherMap <- DT::renderDataTable({ df.model() %>% 
       dplyr::mutate(ID=(1:n())-1) %>% 
-      dplyr::filter(! Inzidenz %in% c("Date","dtDay","dblDays")) }, options=list(pageLength=11, dom='t'))
+      dplyr::filter(! Inzidenz %in% flts) }, options=list(pageLength=20, dom='t'))
   # options=list(pageLength=8, lengthChange=FALSE) 
   
   # WeatherMap
@@ -487,7 +491,7 @@ server <- function(input, output, session) {
           <tr><td>Inzidenz heute: </td><td align='right'> %g</td></tr>
           <tr><td>Inzidenz kommende Woche: </td><td align='right'>  %g </td></tr>
           <tr><td>Inzidenz nächstes Monat: </td><td align='right'>  %g </td></tr>
-          <tr><td>Tage bis Inzidenz %s:  </td><td align='right'> %g </td></tr>
+          <tr><td>Tage Inzidenz %s (linear):  </td><td align='right'> %g </td></tr>
         </table>",
       pMapNUTS$Region, format(pMapNUTS$Date,"%a, %d.%m"),
       round(pMapNUTS$rmaNewConfPop,1),  nModelDaysPrediction, 
@@ -561,7 +565,7 @@ server <- function(input, output, session) {
       round(pMapCounties$rmaNewConfPop,1), 
       nModelDaysPrediction,
       round(pMapCounties$rm7NewConfPop.0,1), round(pMapCounties$rm7NewConfPop.7,1), round(pMapCounties$rm7NewConfPop.28,1),
-      ifelse(pMapCounties$dblDays>0,"Verdoppelung","Halbierung"), abs(round(pMapCounties$dblDays)))  %>% 
+      ifelse(pMapCounties$dblDays>0,"Verdoppelung","Halbierung"), abs(round(0)))  %>% 
       lapply(htmltools::HTML)
     
     #, options=leafletOptions(minZoom=7, maxZoom=7, zoomControl=FALSE, dragging=FALSE, zoom=7)
@@ -610,10 +614,11 @@ server <- function(input, output, session) {
     dk <- df.past() %>% dplyr::filter(Region %in% inRegions) %>%
       dplyr::mutate(locID=RegionID) # added so cwmAgesRm7EstimatePoly know what to look for (RegionID or CountyID)
     
-    dp <- cwmAgesRm7EstimatePoly(dk, nModelDays=input$sldModelDays+3, nPoly=as.integer(input$rbsModelOrder), nPredDays=28)
-
+    # dp <- cwmAgesRm7EstimatePoly(dk, nModelDays=input$sldModelDays, nPoly=as.integer(input$rbsModelOrder), nPredDays=28)
+    dp <- cwmAgesRm7EstimatePoly(dk, nPoly=as.integer(input$rbsModelOrder), nModelDays=input$sldModelDays, nPredDays=28)
+    
     ggplot(data=dp, aes(x=Date, y=rm7NewConfPop, color=Region, shape=Region)) + 
-      cwmConfPopStyle(sldPastTime=1, cbLogScale=input$cbLogScale, inRegions=inRegions, xLimits=c(max(dk$Date)-weeks(6), max(dp$Date)+days(1))) +
+      cwmConfPopStyle(sldPastTime=1, cbLogScale=input$cbLogScale, inRegions=inRegions, xLimits=c(max(dk$Date)-weeks(8), max(dp$Date)+days(1))) +
       geom_line(linetype=2, size=1) + 
       geom_line(data=dk, aes(x=Date, y=1), size=1.0, color="green") +
       geom_line(data=dk, aes(x=Date, y=2), size=1.0, color="orange") +

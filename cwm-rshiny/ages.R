@@ -218,6 +218,58 @@ caAgesRead_cfz <- function(csvFile="CovidFallzahlen.csv", bSave=TRUE) {
 }
 
 
+# ----------------------------------------------------------------------------------------------------------
+# CovidFallzahlen.csv: History of confirmed cases by dates as reported by AGES (Date of evaluation in lab)
+# ----------------------------------------------------------------------------------------------------------
+caAgesConfHistory <- function (df, nCalcWeeks=4, nSettleDays=7, dataPath="./data",
+                               agesProcessedFile="COVID-19-CWM-AGES-TestedProcessed.rda", 
+                               agesEvaluatedFile="COVID-19-CWM-AGES-TestedEvaluated.rda") {
+  
+  # df as read by caAgesRead_cftl(). i.e. ages data preprocessed into cwm naming conventions (prefiltered by cron.R)
+  df <- df %>%
+    dplyr::filter(Date>(max(Date)-days(nSettleDays))) %>%
+    dplyr::mutate(DateReported = max(Date)) %>%
+    dplyr::mutate(DateEvaluated = Date) %>%
+    dplyr::mutate(RegionID=as.character(RegionID)) %>%
+    dplyr::select(DateReported, DateEvaluated, RegionID, Region, newConfirmed)
+  
+  # read history accumulated so far (same data format as above)
+  dp <- readRDS(paste0(dataPath,"/",agesProcessedFile))
+  
+  # make sure no double entries and save with today's additions
+  dp <- rbind(dp, df)
+  dp <- dp %>% 
+    dplyr::arrange(RegionID, Region, DateEvaluated, DateReported) %>%
+    dplyr::group_by(RegionID, Region, DateEvaluated, DateReported) %>% 
+    dplyr::summarize(newConfirmed=max(newConfirmed)) %>%
+    dplyr::ungroup()
+  
+  rdaFile=paste0(dataPath,"/",agesProcessedFile)
+  logMsg(paste("Writing", rdaFile))
+  saveRDS(dp,file=rdaFile)
+  
+  # Enrich data and write to disk
+  dq <- dp %>%
+    dplyr::mutate(WdayReported=as.character(wday(DateReported, week_start=1, label=TRUE, abbr=TRUE))) %>%
+    dplyr::mutate(WdayEvaluated=as.character(wday(DateEvaluated, week_start=1, label=TRUE, abbr=TRUE))) %>%
+    dplyr::mutate(MonthEvaluated=as.character(month(DateEvaluated, label=TRUE, abbr=TRUE))) %>%
+    dplyr::select(DateEvaluated, MonthEvaluated, WdayEvaluated, DateReported, WdayReported, RegionID, Region, newConfirmed) %>%
+    dplyr::arrange(RegionID, Region, DateEvaluated, DateReported) %>%
+    dplyr::group_by(DateEvaluated, Region) %>%
+    dplyr::mutate(daysDayN=as.integer(DateReported-DateEvaluated)) %>%
+    dplyr::mutate(propDayN = newConfirmed/last(newConfirmed)) %>%  
+    dplyr::ungroup()
+  
+  rdaFile=paste0(dataPath,"/",agesEvaluatedFile)
+  logMsg(paste("Writing", rdaFile))
+  saveRDS(dq,file=rdaFile)
+  
+  return(dq %>% dplyr::filter(DateEvaluated>max(DateReported)-weeks(nCalcWeeks)-days(nSettleDays)))
+}
+
+
+
+
 # --------------------------------------------------------------------------------------------------------------------
 # Join cftl and cfz AGES data files. Add several derived features
 # --------------------------------------------------------------------------------------------------------------------
@@ -225,6 +277,7 @@ caAgesRead_tlrm <- function(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile=
                             nRm7Days=7, bDt7=TRUE, nDt7Days=7, bLpr=TRUE, nLprDays=19,
                             bResiduals=TRUE, dResFirst=as.Date("2020-07-27"), dResLast=as.Date("2020-11-16"), bShiftDown=TRUE,
                             bDOWCorrection=TRUE, nDOWCorrectionWeeks=4,
+                            bAGESTestEvaluationCorrection=TRUE, agesEvaluatedFile=paste0(dataPath,"/","COVID-19-CWM-AGES-TestedEvaluated.rda"),
                             bPredict=TRUE, nPolyDays=7, nPoly=2,
                             bEstimate=FALSE, bCompleteCases=FALSE) {
   
@@ -273,6 +326,39 @@ caAgesRead_tlrm <- function(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile=
   idx <- which(is.na(df$freeICU))
   df$freeICU[idx] <- round((df$freeICU[idx-1]+df$freeICU[idx+1])/2)
   
+  # remove one potential outlier
+  trimMean <- function(x) {
+    res <- abs(x-mean(x))
+    idx <- which(res!=max(res))
+    if(length(idx)==0) idx=1
+    mean(x[idx])
+  }
+  
+  # Correct for late reports of newConfirmed counts
+  if (bAGESTestEvaluationCorrection) {
+    
+    # this file is initially generated from past ZIP files and updated by the daily cron job.
+    dr <- readRDS(agesEvaluatedFile)
+    
+    # select those days within nCalcWeeks range that hold converged data as defined by nSettleDays
+    dr <- dr %>% 
+      # consider nCalcWeeks timerange for correction
+      dplyr::filter(DateEvaluated > max(DateReported)-weeks(nCalcWeeks) - days(nSettleDays)) %>%
+      # make sure only settled timeranges are considered
+      dplyr::filter(DateEvaluated <(max(DateReported)-days(nSettleDays))) %>%
+      # Calculate correction by Region, DayOfWeek of Evaluation, for each Evaluation-Report interval 
+      dplyr::group_by(Region, WdayReported, daysDayN) %>%
+      dplyr::summarize(countPropDayN = n(), meanPropDayN = round(trimMean(propDayN),2)) %>%
+      dplyr::ungroup() 
+    
+    # correct last three days including today
+    for (k in 0:2)  {
+      toDay <- max(df$Date)-days(k)
+      weekDay <- wday(toDay, label=TRUE, abbr=TRUE)
+      meanProp <- dr %>% filter(daysDayN==k, WdayReported==weekDay) %>% dplyr::select(meanPropDayN)
+      df$newConfirmed[df$Date==toDay] <- round(df$newConfirmed[df$Date==toDay]/meanProp$meanPropDayN)
+    }
+  }
   
   # add derived properties
   df <- df %>%
@@ -307,7 +393,7 @@ caAgesRead_tlrm <- function(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile=
       dplyr::arrange(Region,Date)
     
     # patch newConfirmed with dowNewConfirmed. This relies on same sort order: Region,Date    
-    df$newConfirmed[df$Date>max(df$Date)-days(3)] <- dq$dowNewConfirmed
+    df$newConfirmed[df$Date>(max(df$Date)-days(3))] <- dq$dowNewConfirmed
   }
 
   # Calculate 'shorted' week means for last three days:
@@ -349,7 +435,7 @@ caAgesRead_tlrm <- function(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile=
       
       # incremental build of rm7 from available rm7 and new
       s <- df %>% 
-        dplyr::filter(Date>=maxDate-days(d*2)) %>% 
+        dplyr::filter(Date>=(maxDate-days(d*2))) %>% 
         dplyr::select(Region,x=paste0(tolower(substr(!!rm7, 4,4)),substr(!!rm7,5,100)),y=!!rm7) %>% 
         dplyr::group_by(Region)  %>%
         dplyr::summarise(rm7=patch531(x,y))  %>%

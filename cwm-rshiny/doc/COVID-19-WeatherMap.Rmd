@@ -1,8 +1,7 @@
 ---
+title: COVID-19-WeatherMap
 output: html_document
 ---
-
-# COVID-19-WeatherMap
 
 Dieses Dashboard beschäftigt sich mit der COVID-19 Epidemie in Österreich. Die Darstellungen und Analysen basieren auf drei Grundsätzen
 
@@ -31,50 +30,8 @@ auf Basis der von AGES veröffentlichten Daten nicht möglich. Geplant ist daher
 - Die Daten werden von der **[AGES](https://covid19-dashboard.ages.at)** bereitgestellt und heruntergeladen von der
 - "Datenquelle: BMSGPK, **Österreichisches COVID-19 Open Data Informationsportal** [(https://www.data.gv.at/covid-19)](https://www.data.gv.at/covid-19)"
 - Das Dashboard ist in der [Programmiersprache 'R'](https://www.r-project.org) geschrieben, und basiert auf der ['Shiny' Platform](https://shiny.rstudio.com)
-- Die Anwendung wird als **Docker image** basierend auf [rocker/shiny](https://hub.docker.com/r/rocker/shiny) verpackt und auf der **[IBM Cloud Kubernetes Platform](https://www.ibm.com/de-de/cloud/kubernetes-service)** betrieben. Massnahmen für die Skalierung der shiny Platform in der Cloud sind in Arbeit.
 - Der **[Source code liegt auf github](https://github.com/at062084/COVID-19-WeatherMap)**. Rückmeldungen bitte ebendort (Issue anlegen)
-
-
-## Einheiten
-
-
-### Inzidenz
-
-Die Inzidenz wird in Europa in unterschiedlichen Einheiten angegeben. Üblich sind 'Anzahl der positiv Getesteten in einem Land pro Tag', und die 'Anzahl der Positiv Getesteten pro 100.000 Einwohner' pro Tag oder pro Woche. Die Summe über eine Woche wird gebildet, um die Schwankungen im Testaufkommen an Wochenenden zu berücksichtigen. 
-
-Für Österreich mit seinen ca. 8 Mio Einwohnern beschreiben folgende Werte die gleiche epidemiologischen Lage:
-
-- Tages Inzidenz von **1000** positiven Testungen
-- **Tages Inzidenz pro 100.000 Einwohner:** 1000 / 80 = **12.5**
-- Sieben Tages Inzidenz pro 100.000 Einwohner: 12.5 * 7 = **87.5**
-
-**In diesem Dashboard wird ausschließlich die Einheit 'Tages Inzidenz pro 100.000 Einwohner' verwendet.**
-
-- Eine Tages Inzidenz von 100 bedeutet, dass 1 ProMill der getesteten positiv ist (ganz Österreich: 8.000)
-- Nach der 100-10-1 Regel kommen 800 davon ins Krankenhaus, und 80 Personen werden sterben, pro Tag.
-- Geht man davon aus, dass die Krankeit im Mittel 10 Tage dauert, dann ist gleichzeitig 1 Prozent der Bevölkerung erkrankt (ganz Österreich: 80.000). Davon liegen 8.000 im Spital, und 800 auf Intensivbetten.
-
-### Inzidenz Skala
-
-Um die explosionsartige Verbreitung von COVID-19 (das exponentielle Wachstum) adequat darzustellen wird die Inzidenz in diesem Dashboard in **explosionsartig (exponentiell) wachsenden Stufen** dargestellt. 
-
-- Die verwendeten Inzidenz Stufen sind 0,1,2,4,8,16,32,64,128
-- **Jede Inzidenz Stufe wird gleich groß dargestellt, um jede Phase der Explosion gleich gut sehen zu können**
-
-Beispiel: Bei einer Verdoppelung der Inzidenz (Fallzahlen) in 2 Wochen steigt die Inzidenz in 2 Monaten um rund 4 Stufen, also von z.B. 8 auf 128. Bei Stufe 16 funktioniert das Kontakt Tracing nicht mehr, über 64 wird es mit den Intensivstationen eng. 
-
-Alle Graphiken, die Inzidenz Werte darstellen folgen diesem Stufen Schema. 
-
-
-### ECDC Farbschema (European Center for Disease Control)
-
-Das Farbschema der ECDC sieht folgende Werte vor
-
-- Stufe 1: 5  grün
-- Stufe 2: 10 gelb
-- Stufe 3: 15 orange
-- Stufe 4: 20 rot
-
-
-
+- Das Dashboard wird auf AWS in einer VPC (Virual Private CLoud) auf virtuellen Linux Servern gehostet.
+  Die Basis Images für die RShiny Instanzen stammen von [Louis Aslett](https://www.louisaslett.com/RStudio_AMI/), die Lastverteilung erfolgt über einen Apache 2.4 Server.
+- [AWS Architecture] (AWS-rshiny-architecture.png)
 

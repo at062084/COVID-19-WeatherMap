@@ -36,6 +36,11 @@ dt <- caAgesRead_cfz()
 logMsg("Downloading CovidFaelle_Timeline data from AGES ...","__cron__")
 dc <- caAgesRead_cftl()
 
+logMsg("Creating history of AGES reports of Confirmed cases ...", "__cron__")
+dq <- caAgesConfHistory(dc %>% 
+                        dplyr::select(Date, RegionID, Region, newConfirmed) %>% 
+                        dplyr::filter(Date> max(Date)-days(nSettleDays)))
+
 # Bezirke 
 logMsg("Downloading CovidFaelle_Timeline_GKZ data from AGES ...","__cron__")
 db <- caAgesRead_cfGKZtl()
