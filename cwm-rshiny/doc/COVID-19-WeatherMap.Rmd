@@ -33,5 +33,5 @@ auf Basis der von AGES veröffentlichten Daten nicht möglich. Geplant ist daher
 - Der **[Source code liegt auf github](https://github.com/at062084/COVID-19-WeatherMap)**. Rückmeldungen bitte ebendort (Issue anlegen)
 - Das Dashboard wird auf AWS in einer VPC (Virual Private CLoud) auf virtuellen Linux Servern gehostet.
   Die Basis Images für die RShiny Instanzen stammen von [Louis Aslett](https://www.louisaslett.com/RStudio_AMI/), die Lastverteilung erfolgt über einen Apache 2.4 Server.
-- [AWS Architecture] (AWS-rshiny-architecture.png)
+- [AWS Architecture](AWS-rshiny-architecture.png)
 
