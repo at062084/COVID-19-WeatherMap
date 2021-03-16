@@ -244,7 +244,7 @@ caAgesConfHistory <- function (df, nCalcWeeks=4, nSettleDays=7, dataPath="./data
     dplyr::summarize(newConfirmed=max(newConfirmed)) %>%
     dplyr::ungroup()
   
-  rdaFile=paste0(dataPath,"/",agesProcessedFile)
+  rdaFile <- paste0(dataPath,"/",agesProcessedFile)
   logMsg(paste("Writing", rdaFile))
   saveRDS(dp,file=rdaFile)
   
@@ -260,7 +260,7 @@ caAgesConfHistory <- function (df, nCalcWeeks=4, nSettleDays=7, dataPath="./data
     dplyr::mutate(propDayN = newConfirmed/last(newConfirmed)) %>%  
     dplyr::ungroup()
   
-  rdaFile=paste0(dataPath,"/",agesEvaluatedFile)
+  rdaFile <- paste0(dataPath,"/",agesEvaluatedFile)
   logMsg(paste("Writing", rdaFile))
   saveRDS(dq,file=rdaFile)
   
@@ -277,7 +277,7 @@ caAgesRead_tlrm <- function(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile=
                             nRm7Days=7, bDt7=TRUE, nDt7Days=7, bLpr=TRUE, nLprDays=19,
                             bResiduals=TRUE, dResFirst=as.Date("2020-07-27"), dResLast=as.Date("2020-11-16"), bShiftDown=TRUE,
                             bDOWCorrection=TRUE, nDOWCorrectionWeeks=4,
-                            bAGESTestEvaluationCorrection=TRUE, agesEvaluatedFile=paste0(dataPath,"/","COVID-19-CWM-AGES-TestedEvaluated.rda"),
+                            bAGESTestEvaluationCorrection=TRUE, agesEvaluatedFile=paste0("./data/COVID-19-CWM-AGES-TestedEvaluated.rda"),
                             bPredict=TRUE, nPolyDays=7, nPoly=2,
                             bEstimate=FALSE, bCompleteCases=FALSE) {
   
