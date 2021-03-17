@@ -96,6 +96,12 @@ htmlWeatherMap <- "<p><b>Tages Inzidenz: Lage und Vorhersage</b></p>
                           <tr><td>Pfeil N </td><td align='right'> 0-2</td></tr>
                         </table>
                       </center>
+                    </p><p>
+                        Die Progonose berücksichtigt seit Version 1.0.0 eine <b>Verlangsamung oder Beschleunigung</b> des Ausbreitungsgeschehens. 
+                        In beiden Fällen ist die entstehende Kurve eine Parabel, und hat ein <b>Maximum bzw. Minimum</b>. 
+                        Maximum und Minimum können in der <b>Vergangenheit oder Zukunft</b> liegen.
+                        Für die Berechnung der Parabel werden die letzen 21 Tage berücksichtigt, das entspricht grob den zeitlichen Verzögerungen bei <b>Lockdowns oder Lockerungen</b>
+                        So flacht sich z.B. die Inzidenzkurve etwa 10 Tage nach Inkrafttreten eines Lockdowns ab, erreicht nach 2-3 Wochen ein Maximum, und beginnt danach wieder zu sinken.
                     </p><p> Als <b>Grenzwert für Lockerungen aus einem LockDown</b> wurde von offizieller Seite immer wieder ein Sinken auf eine Wochen Inzidenz 
                       von 50 genannt, d.h. eine <b>Tages Inzidenz von ca. 8</b>. Als Grenzwert für ein neuerliches <b>Inkrafttreten eines Lockdown</b> wurde 
                       am 1.2.2021 vom Gesundheitsministerium eine Wochen Inzidenz von 200 genannt, d.h. eine <b>Tages Inzidenz ca. 32</b>.
@@ -111,11 +117,15 @@ htmlWeatherMapCounties <- "<p><b>Inzidenz Bezirke: Lage und Vorhersage</b></p>
                               Größere Differenzen zu den AGES Tagesmeldungen sind ein Hinweis auf solche Unwägbarkeiten.
                           </p>
                           <p>
-                          <li><b>Änderung</b> gibt die Änderung der Inzidienz zum Vortag an. 1 bedeutet keine Änderung, 1.10 Steigerung 10%, 0.90 Abnahme um 10%</li>
+                          <li><b>Änderung</b> gibt die Änderung der Inzidienz in Prozent zum Vortag an</li>
                           <li><b>TageDoppelt</b> bzw. <b>TageHälfte</b> ist die geschätzte Anzahl der Tage bis zur Verdoppelung bzw Halbierung der Inzidenz aus der Entwicklung  
                                  der letzten 10 Tage</li>
                           </p>
-                            <p><b>Anmerkung: Interpretation</b><br>Die AGES Daten unterscheiden nicht zwischen 'Positiv getestet im Massentest' und 'Positiv getestet bei 1450'. 
+                          <p>
+                             <b>Anmerkung1: Lineares Modell</b><br>Im Gegensatz zur Prognose für die Bundesländer, die Beschleunigung bzw. Abschwächung berücksichtigt, 
+                             wird für die Bezirke ein lineares Modell, d.h. gleichförmige Ausbreitung, aus den letzten zwei Wochen gerechnet.
+                          </p>
+                            <p><b>Anmerkung2: Interpretation</b><br>Die AGES Daten unterscheiden nicht zwischen 'Positiv getestet im Massentest' und 'Positiv getestet bei 1450'. 
                           Damit ist die Bedeutung der Zahlen semi-definiert und ein Rückschluss auf das epidemiologische Geschehen nur eingeschränkt möglich
                           </p>"
 

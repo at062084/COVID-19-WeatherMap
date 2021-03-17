@@ -24,6 +24,7 @@ yLimMax <- 128
 dblXDays <- c(1:7,10,14,21,28,56,Inf,-56,-28,-21,-14,-10,-7,-6,-5,-4,-3,-2,-1)
 
 # WeatherMaps
+nModelDaysPredictionCounties = 14
 nModelDaysPrediction = 21
 nModelPolyGrade = 2
 
@@ -187,7 +188,7 @@ cwm.model <- function(dx, nPoly=2, nModelDays=nModelDaysPrediction, dg=datATRegi
     y <- dx$rm7NewConfPop[idx]
     
     # Fit poly to y: list of features from model in p
-    p <- rm7PolyLog(y, nPoly=nPoly, nModelDays=nModelDays, nNewData=n, nTransData=t, bDblDays=TRUE, bMinMax=TRUE)
+    p <- rm7PolyLog(y, nPoly=nPoly, nModelDays=nModelDays, nNewData=n, nTransData=t, bDblDays=TRUE, bMinMax=(nPoly==2))
     # p <- list(pNewData=pNewData, pDblDays=pDblDays, pMMX=pMMX, pTransData=pTransData, pCoefs=pc)
     
     p$pTransData[p$pTransData<0] <- NA
@@ -342,6 +343,9 @@ rm7PolyLog <- function(y, nPoly=2, nModelDays=length(y), modWeights=NULL, nNewDa
   pNewData <- exp(predict(pm, newdata=dn))
   
   # calculate dblDays for nPoly==1
+  pDblDays <- NA
+  pHflDblDays <- c(NA,NA)
+  
   if(bDblDays) {
   
     # same for fst and scnd order model    

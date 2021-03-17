@@ -89,7 +89,9 @@ df <- eventReactive(df.rfr(), {
 df.model <- eventReactive(df(), {
   logMsg(paste("eventReactive reactiveFileReader:df.model", cwmPredictionFile)) 
   
-  dx <- df() %>% dplyr::filter(Date>max(Date)-days(nModelDaysPrediction)) %>% dplyr::select(Date, Region, rm7NewConfPop, rmaNewConfPop)
+  dx <- df() %>% 
+    dplyr::filter(Date>max(Date)-days(nModelDaysPrediction)) %>% 
+    dplyr::select(Date, Region, rm7NewConfPop, rmaNewConfPop)
   dy <- cwm.model(dx=dx, nPoly=nModelPolyGrade, nModelDays=nModelDaysPrediction, dg=datATRegions, locID="Region", colID="RegionS")
   return(dy)
 })
@@ -149,8 +151,10 @@ dg <- eventReactive(dg.rfr(), {
 dg.model <- eventReactive(dg(), {
   logMsg(paste("eventReactive reactiveFileReader:dg.model", cwmPredictionFile)) 
   
-  dx <- dg() %>% dplyr::filter(Date>max(Date)-days(nModelDaysPrediction)) %>% dplyr::select(Date, Region, RegionID, County, CountyID, CountyNR, Population, rm7NewConfPop, rmaNewConfPop)
-  dy <- cwm.model(dx=dx, dg=datATCounties, locID="CountyID", colID="CountyID")
+  dx <- dg() %>% 
+    dplyr::filter(Date>max(Date)-days(nModelDaysPrediction)) %>% 
+    dplyr::select(Date, Region, RegionID, County, CountyID, CountyNR, Population, rm7NewConfPop, rmaNewConfPop)
+  dy <- cwm.model(dx=dx, nPoly=1, nModelDays=nModelDaysPredictionCounties, dg=datATCounties, locID="CountyID", colID="CountyID")
   return(dy)
 })
 
@@ -162,7 +166,7 @@ dg.map <- eventReactive(dg.model(), {
   dm <- data.frame(t(dg.model() %>% dplyr::select(-Inzidenz)), stringsAsFactors=FALSE)  %>% 
     dplyr::mutate(CountyID=rownames(.)) %>%
     dplyr::mutate(Date=as.Date(Date)) %>%
-    dplyr::select(Date, CountyID, starts_with("rm"), dtDay, ends_with("Days"))
+    dplyr::select(Date, CountyID, rmaNewConfPop, starts_with("rm7NewConfPop"), dtDay, ends_with("Days"))
   
   # Add prediction data to geoMap data
   pMapATCounties <- mapATCounties %>% 
@@ -252,7 +256,7 @@ ui <- fluidPage(
     
     # Sidebar panel for inputs ----
     sidebarPanel(
-      p("CWM-V1.0.0-20210316"),
+      p("CWM-V1.0.1-20210317"),
       
       fluidRow(
         column(6,
@@ -533,15 +537,13 @@ server <- function(input, output, session) {
   
   # Values, and Prediction of Incodence, Time to/outof Lockdown
   output$dtoWeatherMapCounties <- DT::renderDataTable({ dg.map()@data %>% 
-                                      dplyr::mutate(ID=(1:n())-1) %>%
-                                      dplyr::rename(AGES=rmaNewConfPop,
-                                                    Heute=rm7NewConfPop.0, Woche=rm7NewConfPop.7, Monat=rm7NewConfPop.28,
-                                                    Änderung=dtDay, TageDoppelt=DblDays, TageHälfte=HalfDays, 
-                                                    EndeLockDownTage=rm7NewConfPop8, BeginLockDownTage=rm7NewConfPop32) %>%
-                                      dplyr::select(Region,County,AGES,
-                                                    Heute, Woche, Monat,
-                                                    Änderung, TageDoppelt, TageHälfte) }, options=list(pageLength=94, dom='t'))
-  # options=list(pageLength=8, lengthChange=FALSE) 
+                                      dplyr::mutate(ID=1:n()) %>%
+                                      dplyr::mutate(TageDplt =ifelse(dblDays>0,dblDays,NA)) %>%
+                                      dplyr::mutate(TageHalb =ifelse(dblDays<0,-dblDays,NA)) %>%
+                                      dplyr::mutate(Heute=round(rm7NewConfPop.0,1), Woche=round(rm7NewConfPop.7,1), Monat=round(rm7NewConfPop.28,1), ProzVortag=round((dtDay-1)*100,2)) %>%
+                                      dplyr::rename(AGES=rmaNewConfPop) %>%
+                                      dplyr::select(Region,County,AGES, Heute, Woche, Monat,
+                                                    ProzVortag, TageDplt, TageHalb) }, options=list(pageLength=94, dom='t'))
   
   # WeatherMap
   output$lftWeatherMapCounties <- renderLeaflet({
@@ -550,12 +552,12 @@ server <- function(input, output, session) {
     
     # Depend on reactive file reader
     pMapCounties <- dg.map()
-    
+
     labWeatherMapCounties <- sprintf(
       "<table>
           <tr><td><strong>%s</strong></td><td align='right'> %s </td></tr>
           <tr><td>TagesInzidenz AGES: </td><td align='right'> %g</td></tr>
-          <tr><td><small><i><b>Modell aus den letzten %s Tagen</b></i></small></td> </tr>
+          <tr><td><small><i><b>Lineares Modell aus den letzten %s Tagen</b></i></small></td> </tr>
           <tr><td>Inzidenz heute: </td><td align='right'> %g</td></tr>
           <tr><td>Inzidenz kommende Woche: </td><td align='right'>  %g </td></tr>
           <tr><td>Inzidenz nächstes Monat: </td><td align='right'>  %g </td></tr>
@@ -563,9 +565,9 @@ server <- function(input, output, session) {
         </table>",
       pMapCounties$County, format(pMapCounties$Date,"%a, %d.%m"),
       round(pMapCounties$rmaNewConfPop,1), 
-      nModelDaysPrediction,
-      round(pMapCounties$rm7NewConfPop.0,1), round(pMapCounties$rm7NewConfPop.7,1), round(pMapCounties$rm7NewConfPop.28,1),
-      ifelse(pMapCounties$dblDays>0,"Verdoppelung","Halbierung"), abs(round(0)))  %>% 
+      nModelDaysPredictionCounties,
+      round(pMapCounties$rm7NewConfPop.0,1), round(pMapCounties$rm7NewConfPop.7,1), round(pMapCounties$rm7NewConfPop.28),
+      ifelse(pMapCounties$dblDays>0,"Verdoppelung","Halbierung"), abs(round(pMapCounties$dblDays)))  %>% 
       lapply(htmltools::HTML)
     
     #, options=leafletOptions(minZoom=7, maxZoom=7, zoomControl=FALSE, dragging=FALSE, zoom=7)
