@@ -460,3 +460,312 @@
 20210216-133257.085 __cron__ Writing ./data/COVID-19-CWM-AGES-States-Curated.rda 
 20210216-133257.167 __cron__ Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features 
 20210216-133257.461 __cron__ cron: Done Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210311-144131.811 __cron__ cron: Start Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210311-144131.826 __cron__ Sourcing fun.R 
+20210311-144132.217 __cron__ Sourcing ages.R 
+20210311-144132.226 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210311-144132.269 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210311-144132.269 __cron__ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210311-144132.998 __cron__ Writing ./data/CovidFallzahlen.rda 
+20210311-144133.019 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210311-144133.171 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210311-144133.171 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210311-144133.727 __cron__ Writing ./data/CovidFaelle_Timeline.rda 
+20210311-144133.747 __cron__ Creating history of AGES reports of Confirmed cases 
+20210311-144217.189 __cron__ cron: Start Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210311-144217.209 __cron__ Sourcing fun.R 
+20210311-144217.222 __cron__ Sourcing ages.R 
+20210311-144217.229 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210311-144217.274 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210311-144217.274 __cron__ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210311-144217.811 __cron__ Writing ./data/CovidFallzahlen.rda 
+20210311-144217.827 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210311-144217.891 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210311-144217.892 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210311-144218.427 __cron__ Writing ./data/CovidFaelle_Timeline.rda 
+20210311-144218.451 __cron__ Creating history of AGES reports of Confirmed cases 
+20210311-144303.486 __cron__ cron: Start Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210311-144303.499 __cron__ Sourcing fun.R 
+20210311-144303.514 __cron__ Sourcing ages.R 
+20210311-144303.522 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210311-144303.589 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210311-144303.589 __cron__ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210311-144304.251 __cron__ Writing ./data/CovidFallzahlen.rda 
+20210311-144304.267 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210311-144304.299 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210311-144304.299 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210311-144304.865 __cron__ Writing ./data/CovidFaelle_Timeline.rda 
+20210311-144304.883 __cron__ Creating history of AGES reports of Confirmed cases 
+20210311-144305.195 __cron__ Downloading CovidFaelle_Timeline_GKZ data from AGES ... 
+20210311-144305.262 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv 
+20210311-144305.262 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline_GKZ.csv 
+20210311-144307.962 __cron__ Writing ./data/CovidFaelle_Timeline_GKZ.rda 
+20210311-144308.490 __cron__ Writing ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210311-144308.699 __cron__ Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ... 
+20210311-144333.775 __cron__ Writing ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210311-144333.862 __cron__ Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features 
+20210311-144334.119 __cron__ cron: Done Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210311-144603.782 __cron__ cron: Start Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210311-144603.795 __cron__ Sourcing fun.R 
+20210311-144603.811 __cron__ Sourcing ages.R 
+20210311-144603.823 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210311-144603.886 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210311-144603.886 __cron__ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210311-144604.507 __cron__ Writing ./data/CovidFallzahlen.rda 
+20210311-144604.524 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210311-144604.557 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210311-144604.557 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210311-144605.082 __cron__ Writing ./data/CovidFaelle_Timeline.rda 
+20210311-144605.102 __cron__ Creating history of AGES reports of Confirmed cases 
+20210311-144605.332 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedProcessed.rda 
+20210311-144605.449 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedEvaluated.rda 
+20210311-144605.466 __cron__ Downloading CovidFaelle_Timeline_GKZ data from AGES ... 
+20210311-144605.570 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv 
+20210311-144605.571 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline_GKZ.csv 
+20210311-144608.152 __cron__ Writing ./data/CovidFaelle_Timeline_GKZ.rda 
+20210311-144608.691 __cron__ Writing ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210311-144608.891 __cron__ Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ... 
+20210311-144633.401 __cron__ Writing ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210311-144633.492 __cron__ Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features 
+20210311-144633.787 __cron__ cron: Done Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210311-145451.437 __cron__ cron: Start Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210311-145451.451 __cron__ Sourcing fun.R 
+20210311-145451.466 __cron__ Sourcing ages.R 
+20210311-145451.475 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210311-145451.672 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210311-145451.673 __cron__ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210311-145452.281 __cron__ Writing ./data/CovidFallzahlen.rda 
+20210311-145452.297 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210311-145452.329 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210311-145452.329 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210311-145452.934 __cron__ Writing ./data/CovidFaelle_Timeline.rda 
+20210311-145452.958 __cron__ Creating history of AGES reports of Confirmed cases ... 
+20210311-145453.120 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedProcessed.rda 
+20210311-145453.238 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedEvaluated.rda 
+20210311-145453.264 __cron__ Downloading CovidFaelle_Timeline_GKZ data from AGES ... 
+20210311-145453.377 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv 
+20210311-145453.378 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline_GKZ.csv 
+20210311-145456.033 __cron__ Writing ./data/CovidFaelle_Timeline_GKZ.rda 
+20210311-145456.624 __cron__ Writing ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210311-145456.832 __cron__ Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ... 
+20210311-145521.904 __cron__ Writing ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210311-145521.993 __cron__ Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features 
+20210311-145522.260 __cron__ cron: Done Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210311-161143.471 __cron__ cron: Start Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210311-161143.482 __cron__ Sourcing fun.R 
+20210311-161143.493 __cron__ Sourcing ages.R 
+20210311-161143.500 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210311-161143.618 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210311-161143.619 __cron__ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210311-161144.235 __cron__ Writing ./data/CovidFallzahlen.rda 
+20210311-161144.251 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210311-161144.332 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210311-161144.332 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210311-161144.908 __cron__ Writing ./data/CovidFaelle_Timeline.rda 
+20210311-161144.932 __cron__ Creating history of AGES reports of Confirmed cases ... 
+20210311-161145.128 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedProcessed.rda 
+20210311-161145.269 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedEvaluated.rda 
+20210311-161145.329 __cron__ Downloading CovidFaelle_Timeline_GKZ data from AGES ... 
+20210311-161145.418 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv 
+20210311-161145.418 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline_GKZ.csv 
+20210311-161148.074 __cron__ Writing ./data/CovidFaelle_Timeline_GKZ.rda 
+20210311-161148.536 __cron__ Writing ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210311-161148.738 __cron__ Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ... 
+20210311-161212.888 __cron__ Writing ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210311-161212.973 __cron__ Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features 
+20210311-161213.312 __cron__ cron: Done Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210311-191413.812 __cron__ cron: Start Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210311-191413.825 __cron__ Sourcing fun.R 
+20210311-191413.839 __cron__ Sourcing ages.R 
+20210311-191413.848 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210311-191413.909 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210311-191413.910 __cron__ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210311-191414.696 __cron__ Writing ./data/CovidFallzahlen.rda 
+20210311-191414.712 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210311-191414.750 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210311-191414.751 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210311-191415.336 __cron__ Writing ./data/CovidFaelle_Timeline.rda 
+20210311-191415.367 __cron__ Creating history of AGES reports of Confirmed cases ... 
+20210311-191415.578 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedProcessed.rda 
+20210311-191415.791 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedEvaluated.rda 
+20210311-191415.826 __cron__ Downloading CovidFaelle_Timeline_GKZ data from AGES ... 
+20210311-191415.927 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv 
+20210311-191415.927 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline_GKZ.csv 
+20210311-191418.590 __cron__ Writing ./data/CovidFaelle_Timeline_GKZ.rda 
+20210311-191419.313 __cron__ Writing ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210311-191419.512 __cron__ Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ... 
+20210311-191444.683 __cron__ Writing ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210311-191444.772 __cron__ Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features 
+20210311-191445.108 __cron__ cron: Done Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210311-191655.754 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210311-191655.755 __cron__ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210311-191656.378 __cron__ Writing ./data/CovidFallzahlen.rda 
+20210311-191711.197 __cron__ cron: Start Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210311-191711.215 __cron__ Sourcing fun.R 
+20210311-191711.237 __cron__ Sourcing ages.R 
+20210311-191711.246 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210311-191711.348 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210311-191711.349 __cron__ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210311-191712.041 __cron__ Writing ./data/CovidFallzahlen.rda 
+20210311-191712.058 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210311-191712.090 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210311-191712.091 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210311-191712.710 __cron__ Writing ./data/CovidFaelle_Timeline.rda 
+20210311-191712.731 __cron__ Creating history of AGES reports of Confirmed cases ... 
+20210311-191712.933 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedProcessed.rda 
+20210311-191713.064 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedEvaluated.rda 
+20210311-191713.118 __cron__ Downloading CovidFaelle_Timeline_GKZ data from AGES ... 
+20210311-191713.262 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv 
+20210311-191713.262 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline_GKZ.csv 
+20210311-191715.937 __cron__ Writing ./data/CovidFaelle_Timeline_GKZ.rda 
+20210311-191716.508 __cron__ Writing ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210311-191716.720 __cron__ Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ... 
+20210311-191742.554 __cron__ Writing ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210311-191742.646 __cron__ Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features 
+20210311-191742.967 __cron__ cron: Done Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210311-192554.334 __cron__ cron: Start Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210311-192554.346 __cron__ Sourcing fun.R 
+20210311-192554.359 __cron__ Sourcing ages.R 
+20210311-192554.368 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210311-192554.420 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210311-192554.420 __cron__ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210311-192555.143 __cron__ Writing ./data/CovidFallzahlen.rda 
+20210311-192555.159 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210311-192555.206 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210311-192555.206 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210311-192555.784 __cron__ Writing ./data/CovidFaelle_Timeline.rda 
+20210311-192555.803 __cron__ Creating history of AGES reports of Confirmed cases ... 
+20210311-192555.981 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedProcessed.rda 
+20210311-192556.185 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedEvaluated.rda 
+20210311-192556.213 __cron__ Downloading CovidFaelle_Timeline_GKZ data from AGES ... 
+20210311-192556.282 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv 
+20210311-192556.282 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline_GKZ.csv 
+20210311-192558.987 __cron__ Writing ./data/CovidFaelle_Timeline_GKZ.rda 
+20210311-192559.706 __cron__ Writing ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210311-192559.914 __cron__ Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ... 
+20210311-192624.576 __cron__ Writing ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210311-192624.697 __cron__ Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features 
+20210311-192624.954 __cron__ cron: Done Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210311-232811.599 __cron__ cron: Start Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210311-232811.610 __cron__ Sourcing fun.R 
+20210311-232811.622 __cron__ Sourcing ages.R 
+20210311-232811.631 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210311-232811.744 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210311-232811.745 __cron__ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210311-232812.356 __cron__ Writing ./data/CovidFallzahlen.rda 
+20210311-232812.375 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210311-232812.441 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210311-232812.441 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210311-232813.008 __cron__ Writing ./data/CovidFaelle_Timeline.rda 
+20210311-232813.029 __cron__ Creating history of AGES reports of Confirmed cases ... 
+20210311-232813.205 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedProcessed.rda 
+20210311-232813.429 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedEvaluated.rda 
+20210311-232813.452 __cron__ Downloading CovidFaelle_Timeline_GKZ data from AGES ... 
+20210311-232813.589 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv 
+20210311-232813.590 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline_GKZ.csv 
+20210311-232816.267 __cron__ Writing ./data/CovidFaelle_Timeline_GKZ.rda 
+20210311-232816.815 __cron__ Writing ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210311-232817.019 __cron__ Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ... 
+20210311-232841.031 __cron__ Writing ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210311-232841.122 __cron__ Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features 
+20210311-232841.439 __cron__ cron: Done Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210313-002227.544 __cron__ cron: Start Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210313-002227.560 __cron__ Sourcing fun.R 
+20210313-002227.578 __cron__ Sourcing ages.R 
+20210313-002227.591 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210313-002227.644 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210313-002227.644 __cron__ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210313-002228.258 __cron__ Writing ./data/CovidFallzahlen.rda 
+20210313-002228.274 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210313-002228.311 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210313-002228.312 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210313-002228.844 __cron__ Writing ./data/CovidFaelle_Timeline.rda 
+20210313-002228.864 __cron__ Creating history of AGES reports of Confirmed cases ... 
+20210313-002229.023 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedProcessed.rda 
+20210313-002229.125 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedEvaluated.rda 
+20210313-002229.145 __cron__ Downloading CovidFaelle_Timeline_GKZ data from AGES ... 
+20210313-002229.346 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv 
+20210313-002229.347 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline_GKZ.csv 
+20210313-002231.879 __cron__ Writing ./data/CovidFaelle_Timeline_GKZ.rda 
+20210313-002232.573 __cron__ Writing ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210313-002232.780 __cron__ Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ... 
+20210313-002257.625 __cron__ Writing ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210313-002257.712 __cron__ Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features 
+20210313-002258.004 __cron__ cron: Done Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210315-202918.430 __cron__  rm7PolyLog: rm7PolyLog(y, nPoly = nPoly, nModelDays = nModelDays, nNewData = n,  length(y)= 14 24.7931638794169 40.0766210653589 2 14 0 3 5 TRUE TRUE 
+ 20210315-202918.430 __cron__  rm7PolyLog:     nTransData = t, bDblDays = TRUE, bMinMax = TRUE) length(y)= 14 24.7931638794169 40.0766210653589 2 14 0 3 5 TRUE TRUE 
+20210315-210128.687 __cron__  rm7PolyLog: rm7PolyLog(y, nPoly = nPoly, nModelDays = nModelDays, nNewData = n,  length(y)= 14 24.7931638794169 40.0766210653589 2 14 0 1 5 TRUE TRUE 
+ 20210315-210128.687 __cron__  rm7PolyLog:     nTransData = t, bDblDays = TRUE, bMinMax = TRUE) length(y)= 14 24.7931638794169 40.0766210653589 2 14 0 1 5 TRUE TRUE 
+20210315-210206.339 __cron__  rm7PolyLog: rm7PolyLog(y, nPoly = nPoly, nModelDays = nModelDays, nNewData = n,  length(y)= 14 24.7931638794169 40.0766210653589 2 14 0 1 5 TRUE TRUE 
+ 20210315-210206.339 __cron__  rm7PolyLog:     nTransData = t, bDblDays = TRUE, bMinMax = TRUE) length(y)= 14 24.7931638794169 40.0766210653589 2 14 0 1 5 TRUE TRUE 
+20210315-210249.706 __cron__  rm7PolyLog: rm7PolyLog(y, nPoly = nPoly, nModelDays = nModelDays, nNewData = n,  length(y)= 14 24.7931638794169 40.0766210653589 2 14 0 1 5 TRUE TRUE 
+ 20210315-210249.706 __cron__  rm7PolyLog:     nTransData = t, bDblDays = TRUE, bMinMax = TRUE) length(y)= 14 24.7931638794169 40.0766210653589 2 14 0 1 5 TRUE TRUE 
+20210315-210322.057 __cron__  rm7PolyLog: rm7PolyLog(y, nPoly = nPoly, nModelDays = nModelDays, nNewData = n,  length(y)= 14 24.7931638794169 40.0766210653589 2 14 0 3 5 TRUE TRUE 
+ 20210315-210322.057 __cron__  rm7PolyLog:     nTransData = t, bDblDays = TRUE, bMinMax = TRUE) length(y)= 14 24.7931638794169 40.0766210653589 2 14 0 3 5 TRUE TRUE 
+20210315-210406.393 __cron__  rm7PolyLog: rm7PolyLog(y, nPoly = nPoly, nModelDays = nModelDays, nNewData = n,  length(y)= 14 24.7931638794169 40.0766210653589 2 14 0 3 5 TRUE TRUE 
+ 20210315-210406.393 __cron__  rm7PolyLog:     nTransData = t, bDblDays = TRUE, bMinMax = TRUE) length(y)= 14 24.7931638794169 40.0766210653589 2 14 0 3 5 TRUE TRUE 
+20210315-210439.266 __cron__  rm7PolyLog: rm7PolyLog(y, nPoly = nPoly, nModelDays = nModelDays, nNewData = n,  length(y)= 14 24.7931638794169 40.0766210653589 2 14 0 3 5 TRUE TRUE 
+ 20210315-210439.266 __cron__  rm7PolyLog:     nTransData = t, bDblDays = TRUE, bMinMax = TRUE) length(y)= 14 24.7931638794169 40.0766210653589 2 14 0 3 5 TRUE TRUE 
+20210315-210439.277 __cron__  rm7PolyLog: rm7PolyLog(y, nPoly = nPoly, nModelDays = nModelDays, nNewData = n,  length(y)= 14 26.5967532617927 30.1090517786611 2 14 0 3 5 TRUE TRUE 
+ 20210315-210439.277 __cron__  rm7PolyLog:     nTransData = t, bDblDays = TRUE, bMinMax = TRUE) length(y)= 14 26.5967532617927 30.1090517786611 2 14 0 3 5 TRUE TRUE 
+20210315-210439.284 __cron__  rm7PolyLog: rm7PolyLog(y, nPoly = nPoly, nModelDays = nModelDays, nNewData = n,  length(y)= 14 28.5411147692932 36.1577332129263 2 14 0 3 5 TRUE TRUE 
+ 20210315-210439.284 __cron__  rm7PolyLog:     nTransData = t, bDblDays = TRUE, bMinMax = TRUE) length(y)= 14 28.5411147692932 36.1577332129263 2 14 0 3 5 TRUE TRUE 
+20210315-210439.291 __cron__  rm7PolyLog: rm7PolyLog(y, nPoly = nPoly, nModelDays = nModelDays, nNewData = n,  length(y)= 14 19.2389670467265 26.6393071364489 2 14 0 3 5 TRUE TRUE 
+ 20210315-210439.291 __cron__  rm7PolyLog:     nTransData = t, bDblDays = TRUE, bMinMax = TRUE) length(y)= 14 19.2389670467265 26.6393071364489 2 14 0 3 5 TRUE TRUE 
+20210315-210439.297 __cron__  rm7PolyLog: rm7PolyLog(y, nPoly = nPoly, nModelDays = nModelDays, nNewData = n,  length(y)= 14 23.7098460524334 32.8275361237713 2 14 0 3 5 TRUE TRUE 
+ 20210315-210439.297 __cron__  rm7PolyLog:     nTransData = t, bDblDays = TRUE, bMinMax = TRUE) length(y)= 14 23.7098460524334 32.8275361237713 2 14 0 3 5 TRUE TRUE 
+20210315-210439.304 __cron__  rm7PolyLog: rm7PolyLog(y, nPoly = nPoly, nModelDays = nModelDays, nNewData = n,  length(y)= 14 28.8574447346676 29.3691015562042 2 14 0 3 5 TRUE TRUE 
+ 20210315-210439.304 __cron__  rm7PolyLog:     nTransData = t, bDblDays = TRUE, bMinMax = TRUE) length(y)= 14 28.8574447346676 29.3691015562042 2 14 0 3 5 TRUE TRUE 
+20210315-210439.310 __cron__  rm7PolyLog: rm7PolyLog(y, nPoly = nPoly, nModelDays = nModelDays, nNewData = n,  length(y)= 14 22.3272489287677 35.9436615198232 2 14 0 3 5 TRUE TRUE 
+ 20210315-210439.310 __cron__  rm7PolyLog:     nTransData = t, bDblDays = TRUE, bMinMax = TRUE) length(y)= 14 22.3272489287677 35.9436615198232 2 14 0 3 5 TRUE TRUE 
+20210315-210439.317 __cron__  rm7PolyLog: rm7PolyLog(y, nPoly = nPoly, nModelDays = nModelDays, nNewData = n,  length(y)= 14 16.0084835534987 20.0624575982598 2 14 0 3 5 TRUE TRUE 
+ 20210315-210439.317 __cron__  rm7PolyLog:     nTransData = t, bDblDays = TRUE, bMinMax = TRUE) length(y)= 14 16.0084835534987 20.0624575982598 2 14 0 3 5 TRUE TRUE 
+20210315-210439.513 __cron__  rm7PolyLog: rm7PolyLog(y, nPoly = nPoly, nModelDays = nModelDays, nNewData = n,  length(y)= 14 10.8993864328898 8.30943322111402 2 14 0 3 5 TRUE TRUE 
+ 20210315-210439.513 __cron__  rm7PolyLog:     nTransData = t, bDblDays = TRUE, bMinMax = TRUE) length(y)= 14 10.8993864328898 8.30943322111402 2 14 0 3 5 TRUE TRUE 
+20210315-210439.519 __cron__  rm7PolyLog: rm7PolyLog(y, nPoly = nPoly, nModelDays = nModelDays, nNewData = n,  length(y)= 14 27.0362452373565 43.6900341200853 2 14 0 3 5 TRUE TRUE 
+ 20210315-210439.519 __cron__  rm7PolyLog:     nTransData = t, bDblDays = TRUE, bMinMax = TRUE) length(y)= 14 27.0362452373565 43.6900341200853 2 14 0 3 5 TRUE TRUE 
+20210315-233326.810 __cron__  cwm.model cwm.model(dx = dx, nPoly = nModelPolyGrade, nModelDays = nModelDaysPrediction,  2 21 Region RegionS 
+ 20210315-233326.810 __cron__  cwm.model     dg = datATRegions, locID = "Region", colID = "RegionS") 2 21 Region RegionS 
+20210315-233326.811 __cron__  rm7PolyLog: cwm.model(dx = dx, nPoly = nModelPolyGrade, nModelDays = nModelDaysPrediction,  length(y)= 14 24.7931638794169 40.0766210653589 2 21 0 3 5 TRUE TRUE 
+ 20210315-233326.811 __cron__  rm7PolyLog:     dg = datATRegions, locID = "Region", colID = "RegionS") length(y)= 14 24.7931638794169 40.0766210653589 2 21 0 3 5 TRUE TRUE 
+20210315-233326.816 __cron__  rm7PolyLog: cwm.model(dx = dx, nPoly = nModelPolyGrade, nModelDays = nModelDaysPrediction,  length(y)= 14 26.5967532617927 30.1090517786611 2 21 0 3 5 TRUE TRUE 
+ 20210315-233326.816 __cron__  rm7PolyLog:     dg = datATRegions, locID = "Region", colID = "RegionS") length(y)= 14 26.5967532617927 30.1090517786611 2 21 0 3 5 TRUE TRUE 
+20210315-233326.819 __cron__  rm7PolyLog: cwm.model(dx = dx, nPoly = nModelPolyGrade, nModelDays = nModelDaysPrediction,  length(y)= 14 28.5411147692932 36.1577332129263 2 21 0 3 5 TRUE TRUE 
+ 20210315-233326.819 __cron__  rm7PolyLog:     dg = datATRegions, locID = "Region", colID = "RegionS") length(y)= 14 28.5411147692932 36.1577332129263 2 21 0 3 5 TRUE TRUE 
+20210315-233326.822 __cron__  rm7PolyLog: cwm.model(dx = dx, nPoly = nModelPolyGrade, nModelDays = nModelDaysPrediction,  length(y)= 14 19.2389670467265 26.6393071364489 2 21 0 3 5 TRUE TRUE 
+ 20210315-233326.822 __cron__  rm7PolyLog:     dg = datATRegions, locID = "Region", colID = "RegionS") length(y)= 14 19.2389670467265 26.6393071364489 2 21 0 3 5 TRUE TRUE 
+20210315-233326.826 __cron__  rm7PolyLog: cwm.model(dx = dx, nPoly = nModelPolyGrade, nModelDays = nModelDaysPrediction,  length(y)= 14 23.7098460524334 32.8275361237713 2 21 0 3 5 TRUE TRUE 
+ 20210315-233326.826 __cron__  rm7PolyLog:     dg = datATRegions, locID = "Region", colID = "RegionS") length(y)= 14 23.7098460524334 32.8275361237713 2 21 0 3 5 TRUE TRUE 
+20210315-233326.828 __cron__  rm7PolyLog: cwm.model(dx = dx, nPoly = nModelPolyGrade, nModelDays = nModelDaysPrediction,  length(y)= 14 28.8574447346676 29.3691015562042 2 21 0 3 5 TRUE TRUE 
+ 20210315-233326.828 __cron__  rm7PolyLog:     dg = datATRegions, locID = "Region", colID = "RegionS") length(y)= 14 28.8574447346676 29.3691015562042 2 21 0 3 5 TRUE TRUE 
+20210315-233326.831 __cron__  rm7PolyLog: cwm.model(dx = dx, nPoly = nModelPolyGrade, nModelDays = nModelDaysPrediction,  length(y)= 14 22.3272489287677 35.9436615198232 2 21 0 3 5 TRUE TRUE 
+ 20210315-233326.831 __cron__  rm7PolyLog:     dg = datATRegions, locID = "Region", colID = "RegionS") length(y)= 14 22.3272489287677 35.9436615198232 2 21 0 3 5 TRUE TRUE 
+20210315-233326.834 __cron__  rm7PolyLog: cwm.model(dx = dx, nPoly = nModelPolyGrade, nModelDays = nModelDaysPrediction,  length(y)= 14 16.0084835534987 20.0624575982598 2 21 0 3 5 TRUE TRUE 
+ 20210315-233326.834 __cron__  rm7PolyLog:     dg = datATRegions, locID = "Region", colID = "RegionS") length(y)= 14 16.0084835534987 20.0624575982598 2 21 0 3 5 TRUE TRUE 
+20210315-233326.836 __cron__  rm7PolyLog: cwm.model(dx = dx, nPoly = nModelPolyGrade, nModelDays = nModelDaysPrediction,  length(y)= 14 10.8993864328898 8.30943322111402 2 21 0 3 5 TRUE TRUE 
+ 20210315-233326.836 __cron__  rm7PolyLog:     dg = datATRegions, locID = "Region", colID = "RegionS") length(y)= 14 10.8993864328898 8.30943322111402 2 21 0 3 5 TRUE TRUE 
+20210315-233326.839 __cron__  rm7PolyLog: cwm.model(dx = dx, nPoly = nModelPolyGrade, nModelDays = nModelDaysPrediction,  length(y)= 14 27.0362452373565 43.6900341200853 2 21 0 3 5 TRUE TRUE 
+ 20210315-233326.839 __cron__  rm7PolyLog:     dg = datATRegions, locID = "Region", colID = "RegionS") length(y)= 14 27.0362452373565 43.6900341200853 2 21 0 3 5 TRUE TRUE 
+20210315-233341.421 __cron__  cwm.model cwm.model(dx = dx, nPoly = nModelPolyGrade, nModelDays = nModelDaysPrediction,  2 21 Region RegionS 
+ 20210315-233341.421 __cron__  cwm.model     dg = datATRegions, locID = "Region", colID = "RegionS") 2 21 Region RegionS 
+20210315-233341.425 __cron__  rm7PolyLog: cwm.model(dx = dx, nPoly = nModelPolyGrade, nModelDays = nModelDaysPrediction,  length(y)= 14 24.7931638794169 40.0766210653589 2 21 0 3 5 TRUE TRUE 
+ 20210315-233341.425 __cron__  rm7PolyLog:     dg = datATRegions, locID = "Region", colID = "RegionS") length(y)= 14 24.7931638794169 40.0766210653589 2 21 0 3 5 TRUE TRUE 
+20210315-233341.431 __cron__  rm7PolyLog: cwm.model(dx = dx, nPoly = nModelPolyGrade, nModelDays = nModelDaysPrediction,  length(y)= 14 26.5967532617927 30.1090517786611 2 21 0 3 5 TRUE TRUE 
+ 20210315-233341.431 __cron__  rm7PolyLog:     dg = datATRegions, locID = "Region", colID = "RegionS") length(y)= 14 26.5967532617927 30.1090517786611 2 21 0 3 5 TRUE TRUE 
+20210315-233341.439 __cron__  rm7PolyLog: cwm.model(dx = dx, nPoly = nModelPolyGrade, nModelDays = nModelDaysPrediction,  length(y)= 14 28.5411147692932 36.1577332129263 2 21 0 3 5 TRUE TRUE 
+ 20210315-233341.439 __cron__  rm7PolyLog:     dg = datATRegions, locID = "Region", colID = "RegionS") length(y)= 14 28.5411147692932 36.1577332129263 2 21 0 3 5 TRUE TRUE 
+20210315-233341.447 __cron__  rm7PolyLog: cwm.model(dx = dx, nPoly = nModelPolyGrade, nModelDays = nModelDaysPrediction,  length(y)= 14 19.2389670467265 26.6393071364489 2 21 0 3 5 TRUE TRUE 
+ 20210315-233341.447 __cron__  rm7PolyLog:     dg = datATRegions, locID = "Region", colID = "RegionS") length(y)= 14 19.2389670467265 26.6393071364489 2 21 0 3 5 TRUE TRUE 
+20210315-233341.453 __cron__  rm7PolyLog: cwm.model(dx = dx, nPoly = nModelPolyGrade, nModelDays = nModelDaysPrediction,  length(y)= 14 23.7098460524334 32.8275361237713 2 21 0 3 5 TRUE TRUE 
+ 20210315-233341.453 __cron__  rm7PolyLog:     dg = datATRegions, locID = "Region", colID = "RegionS") length(y)= 14 23.7098460524334 32.8275361237713 2 21 0 3 5 TRUE TRUE 
+20210315-233341.457 __cron__  rm7PolyLog: cwm.model(dx = dx, nPoly = nModelPolyGrade, nModelDays = nModelDaysPrediction,  length(y)= 14 28.8574447346676 29.3691015562042 2 21 0 3 5 TRUE TRUE 
+ 20210315-233341.457 __cron__  rm7PolyLog:     dg = datATRegions, locID = "Region", colID = "RegionS") length(y)= 14 28.8574447346676 29.3691015562042 2 21 0 3 5 TRUE TRUE 
+20210315-233341.461 __cron__  rm7PolyLog: cwm.model(dx = dx, nPoly = nModelPolyGrade, nModelDays = nModelDaysPrediction,  length(y)= 14 22.3272489287677 35.9436615198232 2 21 0 3 5 TRUE TRUE 
+ 20210315-233341.461 __cron__  rm7PolyLog:     dg = datATRegions, locID = "Region", colID = "RegionS") length(y)= 14 22.3272489287677 35.9436615198232 2 21 0 3 5 TRUE TRUE 
+20210315-233341.464 __cron__  rm7PolyLog: cwm.model(dx = dx, nPoly = nModelPolyGrade, nModelDays = nModelDaysPrediction,  length(y)= 14 16.0084835534987 20.0624575982598 2 21 0 3 5 TRUE TRUE 
+ 20210315-233341.464 __cron__  rm7PolyLog:     dg = datATRegions, locID = "Region", colID = "RegionS") length(y)= 14 16.0084835534987 20.0624575982598 2 21 0 3 5 TRUE TRUE 
+20210315-233341.468 __cron__  rm7PolyLog: cwm.model(dx = dx, nPoly = nModelPolyGrade, nModelDays = nModelDaysPrediction,  length(y)= 14 10.8993864328898 8.30943322111402 2 21 0 3 5 TRUE TRUE 
+ 20210315-233341.468 __cron__  rm7PolyLog:     dg = datATRegions, locID = "Region", colID = "RegionS") length(y)= 14 10.8993864328898 8.30943322111402 2 21 0 3 5 TRUE TRUE 
+20210315-233341.472 __cron__  rm7PolyLog: cwm.model(dx = dx, nPoly = nModelPolyGrade, nModelDays = nModelDaysPrediction,  length(y)= 14 27.0362452373565 43.6900341200853 2 21 0 3 5 TRUE TRUE 
+ 20210315-233341.472 __cron__  rm7PolyLog:     dg = datATRegions, locID = "Region", colID = "RegionS") length(y)= 14 27.0362452373565 43.6900341200853 2 21 0 3 5 TRUE TRUE 
+20210316-183621.760 __cron__  rm7PolyLog: length(y)= 14 23.7098460524334 32.8275361237713 2 14 0 3 5 TRUE TRUE 

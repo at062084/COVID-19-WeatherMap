@@ -121,4 +121,21 @@ https://nextstrain.org/community/narratives/bergthalerlab/SARSCoV2/Generalaudien
 Error fetching one of the datasets. Using the YAML-defined dataset (/community/jgenger/SARS-CoV-2-project/NextstrainAustriav19wIDs) instead.
 Could not fetch dataset "//nextstrain.org/community/jgenger/SARS-CoV-2-project/NextstrainAustriav19wIDs". Make sure this dataset exists and is spelled correctly. Error details: status: undefined; message: The requested URL does not exist. (Not Found)
 
+#----------------
+Apache: mod_proxy
+https://stackoverflow.com/questions/27526281/websockets-and-apache-proxy-how-to-configure-mod-proxy-wstunnel
+https://www.serverlab.ca/tutorials/linux/web-servers-linux/how-to-reverse-proxy-websockets-with-apache-2-4/
+https://cwiki.apache.org/confluence/display/HTTPD/PerformanceScalingOut#PerformanceScalingOut-LoadBalancingwithApache2.2
+#----------------
+#
+# On ubunt 16+ run a2enmod to enable a module (alternative: use LoadModule in conifg file)
+a2enmod proxy rewrite proxy_http proxy_wstunnel
+
+Explicitly configured workers come in two flavors: direct workers and (load) balancer workers. They support many important configuration attributes which are described below in the ProxyPass directive. The same attributes can also be set using ProxySet.
+
+The set of options available for a direct worker depends on the protocol which is specified in the origin server URL. Available protocols include ajp, fcgi, ftp, http and scgi.
+
+Balancer workers are virtual workers that use direct workers known as their members to actually handle the requests. Each balancer can have multiple members. When it handles a request, it chooses a member based on the configured load balancing algorithm.
+
+
 
