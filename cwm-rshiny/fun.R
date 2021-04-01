@@ -25,7 +25,8 @@ dblXDays <- c(1:7,10,14,21,28,56,Inf,-56,-28,-21,-14,-10,-7,-6,-5,-4,-3,-2,-1)
 
 # WeatherMaps
 nModelDaysPredictionCounties = 14
-nModelDaysPrediction = 21
+nModelDaysPrediction = 42
+nModelDaysPredictionPast = 70
 nModelPolyGrade = 2
 
 #nModelDaysWeek = 14
@@ -472,10 +473,13 @@ cwmAgesRm7EstimatePoly <- function(df, nPoly=2, nModelDays=14, nPredDays=7, modW
       dplyr::filter(Date==curDate) %>% 
       dplyr::mutate_at(vars(c(starts_with("rm7"),starts_with("rma"))), function(x){NA})
     for (k in 1:nPredDays) {
+      if (bDebug) logMsg(paste(nPredDays, curDate, curDate+days(k)))
       dd.append$Date=curDate+days(k)
       dd <- rbind(dd,dd.append)
     }
   }
+  
+  if (bDebug) logMsg(table(dd$locID))
   
   # Calc order nPoly estimate for each locID and each rm7 feature for next nPredDays from past nModelDays
   dd <- dd %>%

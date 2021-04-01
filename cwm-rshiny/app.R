@@ -86,6 +86,15 @@ df <- eventReactive(df.rfr(), {
 })
 
 # Data for log-linear model for weathermap predictions
+df.predict <- eventReactive(df(), {
+  logMsg(paste("eventReactive reactiveFileReader:df.predict", cwmPredictionFile)) 
+  
+  return(df() %>% 
+           dplyr::select(Date, Region, RegionID, rm7NewConfPop, rm7NewConfirmed, rmaNewConfPop, rm7NewTested, rm7NewConfTest) %>% 
+           dplyr::filter(Date>max(Date)-days(nModelDaysPredictionPast)))
+})
+
+# Data for log-linear model for weathermap predictions
 df.model <- eventReactive(df(), {
   logMsg(paste("eventReactive reactiveFileReader:df.model", cwmPredictionFile)) 
   
@@ -385,7 +394,15 @@ ui <- fluidPage(
         tabPanel("Erläuterungen",
                  h4("Beschreibung der Graphiken und Hintergrund zu Berechnungen", align = "left", style="color:black"),
                  p("[Menüauswahl: keine]", align = "left", style="color:green"),
-                 htmlOutput(outputId="manDescription"))
+                 htmlOutput(outputId="manDescription")),
+
+        tabPanel("SessionData",
+                 h3("Parsed query string"),
+                 verbatimTextOutput("queryText"),
+                 h3("URL components"),
+                 verbatimTextOutput("sessionText"),
+                 h3("EnvVars"),
+                 verbatimTextOutput("envvarText"))
       )
     )
   )
@@ -401,11 +418,13 @@ server <- function(input, output, session) {
   sessionID = substr(session$token,1,8)
   logMsg("Server WeatherMap app.R", sessionID)
   
+  
   # states by Time
   df.past <- reactive({
     logMsg(" reactive df.past sldPastTime", sessionID)
     return(df() %>% dplyr::filter(Date > max(Date, na.rm=TRUE)-months(as.integer(input$sldPastTime))))
   })
+  
   
   # counties by Time
   dg.past <- reactive({
@@ -613,7 +632,7 @@ server <- function(input, output, session) {
     # react on Update button
     input$abUpdate
     inRegions <- isolate(input$cbgRegion)
-    dk <- df.past() %>% dplyr::filter(Region %in% inRegions) %>%
+    dk <- df.predict() %>% dplyr::filter(Region %in% inRegions) %>%
       dplyr::mutate(locID=RegionID) # added so cwmAgesRm7EstimatePoly know what to look for (RegionID or CountyID)
     
     # dp <- cwmAgesRm7EstimatePoly(dk, nModelDays=input$sldModelDays, nPoly=as.integer(input$rbsModelOrder), nPredDays=28)
@@ -864,6 +883,52 @@ server <- function(input, output, session) {
   # Erläuterungen
   # -------------------------------------------
   output$manDescription <- renderText({ htmlDescription })
+  
+  
+  
+  # -------------------------------------------
+  # Client Session
+  # -------------------------------------------  
+  # Parse the GET query string
+  output$queryText <- renderText({
+    query <- parseQueryString(session$clientData$url_search)
+    # Return a string with key-value pairs
+    paste(names(query), query, sep = "=", collapse=", ")
+  })
+  # Return the components of the URL in a string:
+  output$sessionText <- renderText({
+    cls <- sapply(session, function(a) class(a)[1])
+    nms <- names(cls[ cls %in% c("list", "character", "numeric", "integer",
+                                 "NULL", "logical", "environment", "reactivevalues" ) ])
+    nms <- setdiff(nms, ".__enclos_env__")
+    paste(
+      capture.output(
+        str(
+          sapply(nms,
+                 function(sessnm) {
+                   if (inherits(session[[sessnm]], c("environment", "reactivevalues"))) {
+                     sapply(names(session[[sessnm]]), function(nm) session[[sessnm]][[nm]], simplify = FALSE)
+                   } else if (inherits(session[[sessnm]], c("character", "numeric", "integer"))) {
+                     session[[sessnm]]
+                   } else class(session[[sessnm]])
+                 }, simplify = FALSE),
+          nchar.max = 1e5,
+          vec.len = 1e5
+        )
+      ),
+      collapse = "\n"
+    )
+  })
+  # Dump the environment variables
+  output$envvarText <- renderText({
+    paste(
+      capture.output(
+        str(as.list(Sys.getenv()))
+      ),
+      collapse = "\n"
+    )
+  })
+
 }
 
 
