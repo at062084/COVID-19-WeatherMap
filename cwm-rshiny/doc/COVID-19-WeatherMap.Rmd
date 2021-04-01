@@ -35,3 +35,14 @@ auf Basis der von AGES veröffentlichten Daten nicht möglich. Geplant ist daher
   Die Basis Images für die RShiny Instanzen stammen von [Louis Aslett](https://www.louisaslett.com/RStudio_AMI/), die Lastverteilung erfolgt über einen Apache 2.4 Server.
 - [AWS Architecture](AWS-rshiny-architecture.png)
 
+## History
+### Version 1.0.0 20210316
+
+- Correction of incidence of past three days along AGES 'day of lab processing' and weekday dependent over/under reporting 
+- Quadratic model prediction states
+- News section on front page
+- Move runtime from IBM Kubernetes to AWS EC2
+
+### Version 1.0.1 20210317
+
+- Bug Fix prediction counties
