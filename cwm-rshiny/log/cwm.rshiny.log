@@ -11541,3 +11541,673 @@
 20210402-015158.379 _global_  rm7PolyLog: length(y)= 70 8.12957535918514 NA 2 42 0 0 0 FALSE FALSE 
 20210402-015158.383 _global_  rm7PolyLog: length(y)= 70 32.2857142857143 NA 2 42 0 0 0 FALSE FALSE 
 20210402-015158.392 _global_  rm7PolyLin: runApp()  length(y)= 70 2 42 FALSE 
+20210402-020119.530 _global_ Loading libraries 
+20210402-020120.630 _global_ Sourcing fun.R 
+20210402-020120.656 _global_ Sourcing hlp.R 
+20210402-020120.695 _global_ Sourcing ages.R 
+20210402-020120.927 _global_ Constructing geo data structures 
+20210402-020124.280 ca8b2bfe Server WeatherMap app.R 
+20210402-020124.461 ca8b2bfe   output renderPlot lftFrontPage 
+20210402-020124.480 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210402-020124.495 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-020124.716 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-020124.890 ca8b2bfe   output renderPlot ggpFrontPage 
+20210402-020131.958 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210402-020131.972 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-020132.561 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-020132.619 ca8b2bfe   output renderPlot lftWeatherMapCounties 
+20210402-020134.696 ca8b2bfe   output renderPlot ggpIncidencePrediciton 
+20210402-020134.710 _global_ eventReactive reactiveFileReader:df.predict ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-020140.801 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-020140.804 ca8b2bfe  reactive df.past sldPastTime 
+20210402-020207.666 ca8b2bfe   output renderPlot ggpIncidenceCounties 
+20210402-020207.669 ca8b2bfe  reactive dg.past sldPastTime 
+20210402-021238.937 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021246.290 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021247.542 ca8b2bfe   output renderPlot ggpIncidencePrediciton 
+20210402-021256.797 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021259.836 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021259.840 ca8b2bfe  reactive df.past sldPastTime 
+20210402-021300.961 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021305.951 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021309.460 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021309.467 ca8b2bfe  reactive df.past sldPastTime 
+20210402-021312.769 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021312.777 ca8b2bfe  reactive df.past sldPastTime 
+20210402-021317.283 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021317.291 ca8b2bfe  reactive df.past sldPastTime 
+20210402-021319.983 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021319.989 ca8b2bfe  reactive df.past sldPastTime 
+20210402-021323.890 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021323.894 ca8b2bfe  reactive df.past sldPastTime 
+20210402-021328.399 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021328.406 ca8b2bfe  reactive df.past sldPastTime 
+20210402-021330.815 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021330.820 ca8b2bfe  reactive df.past sldPastTime 
+20210402-021333.215 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021333.217 ca8b2bfe  reactive df.past sldPastTime 
+20210402-021335.662 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021335.665 ca8b2bfe  reactive df.past sldPastTime 
+20210402-021344.072 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021344.077 ca8b2bfe  reactive df.past sldPastTime 
+20210402-021346.800 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021346.803 ca8b2bfe  reactive df.past sldPastTime 
+20210402-021351.287 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021351.290 ca8b2bfe  reactive df.past sldPastTime 
+20210402-021354.906 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021354.913 ca8b2bfe  reactive df.past sldPastTime 
+20210402-021359.117 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021359.122 ca8b2bfe  reactive df.past sldPastTime 
+20210402-021401.526 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021401.529 ca8b2bfe  reactive df.past sldPastTime 
+20210402-021405.458 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021405.463 ca8b2bfe  reactive df.past sldPastTime 
+20210402-021409.040 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021409.045 ca8b2bfe  reactive df.past sldPastTime 
+20210402-021413.250 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021413.254 ca8b2bfe  reactive df.past sldPastTime 
+20210402-021416.277 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021416.282 ca8b2bfe  reactive df.past sldPastTime 
+20210402-021419.269 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021419.273 ca8b2bfe  reactive df.past sldPastTime 
+20210402-021421.969 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021421.972 ca8b2bfe  reactive df.past sldPastTime 
+20210402-021424.984 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021424.990 ca8b2bfe  reactive df.past sldPastTime 
+20210402-021427.696 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021427.701 ca8b2bfe  reactive df.past sldPastTime 
+20210402-021429.798 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021429.804 ca8b2bfe  reactive df.past sldPastTime 
+20210402-021457.739 ca8b2bfe   output renderPlot ggpIncidenceStates 
+20210402-021457.743 ca8b2bfe  reactive df.past sldPastTime 
+20210402-022240.457 _global_ Loading libraries 
+20210402-022240.459 _global_ Sourcing fun.R 
+20210402-022240.478 _global_ Sourcing hlp.R 
+20210402-022240.483 _global_ Sourcing ages.R 
+20210402-022240.496 _global_ Constructing geo data structures 
+20210402-022243.001 8ad229fc Server WeatherMap app.R 
+20210402-022243.157 8ad229fc   output renderPlot lftFrontPage 
+20210402-022243.176 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210402-022243.197 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-022243.210 _global_  cwm.model runApp("cwm-rshiny") 2 42 Region RegionS 
+20210402-022243.212 _global_  rm7PolyLog: length(y)= 42 20.3294240028878 32.6047086633428 2 42 0 3 5 TRUE TRUE 
+20210402-022243.217 _global_  rm7PolyLog: length(y)= 42 20.9210824700417 34.3848934513703 2 42 0 3 5 TRUE TRUE 
+20210402-022243.221 _global_  rm7PolyLog: length(y)= 42 22.6462931453233 30.6954812333053 2 42 0 3 5 TRUE TRUE 
+20210402-022243.224 _global_  rm7PolyLog: length(y)= 42 16.5165621432535 37.2413487675798 2 42 0 3 5 TRUE TRUE 
+20210402-022243.227 _global_  rm7PolyLog: length(y)= 42 19.0330375912684 38.8155842941922 2 42 0 3 5 TRUE TRUE 
+20210402-022243.233 _global_  rm7PolyLog: length(y)= 42 20.056947404237 30.2645009938934 2 42 0 3 5 TRUE TRUE 
+20210402-022243.240 _global_  rm7PolyLog: length(y)= 42 22.0177850062437 26.7972833652253 2 42 0 3 5 TRUE TRUE 
+20210402-022243.243 _global_  rm7PolyLog: length(y)= 42 11.8979424290432 51.6080323744711 2 42 0 3 5 TRUE TRUE 
+20210402-022243.247 _global_  rm7PolyLog: length(y)= 42 8.12957535918514 19.6404785226331 2 42 0 3 5 TRUE TRUE 
+20210402-022243.251 _global_  rm7PolyLog: length(y)= 42 19.9053140909816 64.5670683882459 2 42 0 3 5 TRUE TRUE 
+20210402-022243.257 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-022243.357 8ad229fc   output renderPlot ggpFrontPage 
+20210402-022247.771 8ad229fc   output renderPlot ggpIncidencePrediciton 
+20210402-022247.776 _global_ eventReactive reactiveFileReader:df.predict ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-022247.798 _global_  cwmAgesRm7EstimatePoly: runApp("cwm-rshiny") 2 42 28 
+20210402-022247.832 _global_ 28 2021-03-31 2021-04-01 
+20210402-022247.888 _global_ 28 2021-03-31 2021-04-02 
+20210402-022247.897 _global_ 28 2021-03-31 2021-04-03 
+20210402-022247.904 _global_ 28 2021-03-31 2021-04-04 
+20210402-022247.910 _global_ 28 2021-03-31 2021-04-05 
+20210402-022247.919 _global_ 28 2021-03-31 2021-04-06 
+20210402-022247.927 _global_ 28 2021-03-31 2021-04-07 
+20210402-022247.937 _global_ 28 2021-03-31 2021-04-08 
+20210402-022247.947 _global_ 28 2021-03-31 2021-04-09 
+20210402-022247.955 _global_ 28 2021-03-31 2021-04-10 
+20210402-022247.961 _global_ 28 2021-03-31 2021-04-11 
+20210402-022247.965 _global_ 28 2021-03-31 2021-04-12 
+20210402-022247.972 _global_ 28 2021-03-31 2021-04-13 
+20210402-022247.980 _global_ 28 2021-03-31 2021-04-14 
+20210402-022247.992 _global_ 28 2021-03-31 2021-04-15 
+20210402-022248.004 _global_ 28 2021-03-31 2021-04-16 
+20210402-022248.013 _global_ 28 2021-03-31 2021-04-17 
+20210402-022248.025 _global_ 28 2021-03-31 2021-04-18 
+20210402-022248.031 _global_ 28 2021-03-31 2021-04-19 
+20210402-022248.068 _global_ 28 2021-03-31 2021-04-20 
+20210402-022248.077 _global_ 28 2021-03-31 2021-04-21 
+20210402-022248.083 _global_ 28 2021-03-31 2021-04-22 
+20210402-022248.092 _global_ 28 2021-03-31 2021-04-23 
+20210402-022248.098 _global_ 28 2021-03-31 2021-04-24 
+20210402-022248.104 _global_ 28 2021-03-31 2021-04-25 
+20210402-022248.110 _global_ 28 2021-03-31 2021-04-26 
+20210402-022248.117 _global_ 28 2021-03-31 2021-04-27 
+20210402-022248.123 _global_ 28 2021-03-31 2021-04-28 
+20210402-022248.129 _global_ 70 
+ 20210402-022248.129 _global_ 70 
+ 20210402-022248.129 _global_ 70 
+ 20210402-022248.129 _global_ 70 
+ 20210402-022248.129 _global_ 70 
+20210402-022248.142 _global_  rm7PolyLog: length(y)= 70 20.3294240028878 NA 2 42 0 0 0 FALSE FALSE 
+20210402-022248.146 _global_  rm7PolyLog: length(y)= 70 19.0330375912684 NA 2 42 0 0 0 FALSE FALSE 
+20210402-022248.150 _global_  rm7PolyLog: length(y)= 70 22.6462931453233 NA 2 42 0 0 0 FALSE FALSE 
+20210402-022248.156 _global_  rm7PolyLog: length(y)= 70 8.12957535918514 NA 2 42 0 0 0 FALSE FALSE 
+20210402-022248.160 _global_  rm7PolyLog: length(y)= 70 19.9053140909816 NA 2 42 0 0 0 FALSE FALSE 
+20210402-022248.164 _global_  rm7PolyLog: length(y)= 70 59.8571428571429 NA 2 42 0 0 0 FALSE FALSE 
+20210402-022248.168 _global_  rm7PolyLog: length(y)= 70 1694.14285714286 NA 2 42 0 0 0 FALSE FALSE 
+20210402-022248.172 _global_  rm7PolyLog: length(y)= 70 381.428571428571 NA 2 42 0 0 0 FALSE FALSE 
+20210402-022248.175 _global_  rm7PolyLog: length(y)= 70 32.2857142857143 NA 2 42 0 0 0 FALSE FALSE 
+20210402-022248.179 _global_  rm7PolyLog: length(y)= 70 380.428571428571 NA 2 42 0 0 0 FALSE FALSE 
+20210402-022248.191 _global_  rm7PolyLin: runApp("cwm-rshiny")  length(y)= 70 2 42 FALSE 
+20210402-022248.194 _global_  rm7PolyLin: runApp("cwm-rshiny")  length(y)= 70 2 42 FALSE 
+20210402-022248.199 _global_  rm7PolyLin: runApp("cwm-rshiny")  length(y)= 70 2 42 FALSE 
+20210402-022248.205 _global_  rm7PolyLin: runApp("cwm-rshiny")  length(y)= 70 2 42 FALSE 
+20210402-022248.210 _global_  rm7PolyLin: runApp("cwm-rshiny")  length(y)= 70 2 42 FALSE 
+20210402-022253.665 8ad229fc   output renderPlot ggpIncidenceStates 
+20210402-022253.668 8ad229fc  reactive df.past sldPastTime 
+20210402-022253.673 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Österreich 
+ 20210402-022253.673 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Wien 
+ 20210402-022253.673 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Niederösterreich 
+ 20210402-022253.673 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Burgenland 
+ 20210402-022253.673 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Vorarlberg 
+20210402-022622.057 _global_ Loading libraries 
+20210402-022622.058 _global_ Sourcing fun.R 
+20210402-022622.072 _global_ Sourcing hlp.R 
+20210402-022622.076 _global_ Sourcing ages.R 
+20210402-022622.086 _global_ Constructing geo data structures 
+20210402-022624.539 f64e7ba3 Server WeatherMap app.R 
+20210402-022624.766 f64e7ba3   output renderPlot lftFrontPage 
+20210402-022624.799 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210402-022624.827 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-022624.847 _global_  cwm.model runApp("cwm-rshiny") 2 42 Region RegionS 
+20210402-022624.849 _global_  rm7PolyLog: length(y)= 42 20.3294240028878 32.6047086633428 2 42 0 3 5 TRUE TRUE 
+20210402-022624.857 _global_  rm7PolyLog: length(y)= 42 20.9210824700417 34.3848934513703 2 42 0 3 5 TRUE TRUE 
+20210402-022624.862 _global_  rm7PolyLog: length(y)= 42 22.6462931453233 30.6954812333053 2 42 0 3 5 TRUE TRUE 
+20210402-022624.870 _global_  rm7PolyLog: length(y)= 42 16.5165621432535 37.2413487675798 2 42 0 3 5 TRUE TRUE 
+20210402-022624.874 _global_  rm7PolyLog: length(y)= 42 19.0330375912684 38.8155842941922 2 42 0 3 5 TRUE TRUE 
+20210402-022624.880 _global_  rm7PolyLog: length(y)= 42 20.056947404237 30.2645009938934 2 42 0 3 5 TRUE TRUE 
+20210402-022624.885 _global_  rm7PolyLog: length(y)= 42 22.0177850062437 26.7972833652253 2 42 0 3 5 TRUE TRUE 
+20210402-022624.889 _global_  rm7PolyLog: length(y)= 42 11.8979424290432 51.6080323744711 2 42 0 3 5 TRUE TRUE 
+20210402-022624.894 _global_  rm7PolyLog: length(y)= 42 8.12957535918514 19.6404785226331 2 42 0 3 5 TRUE TRUE 
+20210402-022624.929 _global_  rm7PolyLog: length(y)= 42 19.9053140909816 64.5670683882459 2 42 0 3 5 TRUE TRUE 
+20210402-022624.939 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-022625.041 f64e7ba3   output renderPlot ggpFrontPage 
+20210402-022628.666 f64e7ba3   output renderPlot ggpIncidenceStates 
+20210402-022628.671 f64e7ba3  reactive df.past sldPastTime 
+20210402-022628.676 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Österreich 
+ 20210402-022628.676 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Wien 
+ 20210402-022628.676 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Niederösterreich 
+ 20210402-022628.676 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Burgenland 
+ 20210402-022628.676 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Vorarlberg 
+20210402-022644.002 _global_ Loading libraries 
+20210402-022644.003 _global_ Sourcing fun.R 
+20210402-022644.022 _global_ Sourcing hlp.R 
+20210402-022644.028 _global_ Sourcing ages.R 
+20210402-022644.044 _global_ Constructing geo data structures 
+20210402-022646.525 12af21a9 Server WeatherMap app.R 
+20210402-022646.738 12af21a9   output renderPlot lftFrontPage 
+20210402-022646.758 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210402-022646.782 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-022646.802 _global_  cwm.model runApp("cwm-rshiny") 2 42 Region RegionS 
+20210402-022646.803 _global_  rm7PolyLog: length(y)= 42 20.3294240028878 32.6047086633428 2 42 0 3 5 TRUE TRUE 
+20210402-022646.809 _global_  rm7PolyLog: length(y)= 42 20.9210824700417 34.3848934513703 2 42 0 3 5 TRUE TRUE 
+20210402-022646.813 _global_  rm7PolyLog: length(y)= 42 22.6462931453233 30.6954812333053 2 42 0 3 5 TRUE TRUE 
+20210402-022646.817 _global_  rm7PolyLog: length(y)= 42 16.5165621432535 37.2413487675798 2 42 0 3 5 TRUE TRUE 
+20210402-022646.822 _global_  rm7PolyLog: length(y)= 42 19.0330375912684 38.8155842941922 2 42 0 3 5 TRUE TRUE 
+20210402-022646.827 _global_  rm7PolyLog: length(y)= 42 20.056947404237 30.2645009938934 2 42 0 3 5 TRUE TRUE 
+20210402-022646.832 _global_  rm7PolyLog: length(y)= 42 22.0177850062437 26.7972833652253 2 42 0 3 5 TRUE TRUE 
+20210402-022646.838 _global_  rm7PolyLog: length(y)= 42 11.8979424290432 51.6080323744711 2 42 0 3 5 TRUE TRUE 
+20210402-022646.844 _global_  rm7PolyLog: length(y)= 42 8.12957535918514 19.6404785226331 2 42 0 3 5 TRUE TRUE 
+20210402-022646.849 _global_  rm7PolyLog: length(y)= 42 19.9053140909816 64.5670683882459 2 42 0 3 5 TRUE TRUE 
+20210402-022646.856 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-022646.944 12af21a9   output renderPlot ggpFrontPage 
+20210402-022650.160 12af21a9   output renderPlot ggpIncidenceStates 
+20210402-022650.164 12af21a9  reactive df.past sldPastTime 
+20210402-022650.172 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Österreich 
+ 20210402-022650.172 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Wien 
+ 20210402-022650.172 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Niederösterreich 
+ 20210402-022650.172 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Burgenland 
+ 20210402-022650.172 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Vorarlberg 
+20210402-022731.239 _global_ Loading libraries 
+20210402-022731.240 _global_ Sourcing fun.R 
+20210402-022731.255 _global_ Sourcing hlp.R 
+20210402-022731.260 _global_ Sourcing ages.R 
+20210402-022731.268 _global_ Constructing geo data structures 
+20210402-022733.551 e542aa03 Server WeatherMap app.R 
+20210402-022733.699 e542aa03   output renderPlot lftFrontPage 
+20210402-022733.742 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210402-022733.761 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-022733.774 _global_  cwm.model runApp("cwm-rshiny") 2 42 Region RegionS 
+20210402-022733.776 _global_  rm7PolyLog: length(y)= 42 20.3294240028878 32.6047086633428 2 42 0 3 5 TRUE TRUE 
+20210402-022733.780 _global_  rm7PolyLog: length(y)= 42 20.9210824700417 34.3848934513703 2 42 0 3 5 TRUE TRUE 
+20210402-022733.784 _global_  rm7PolyLog: length(y)= 42 22.6462931453233 30.6954812333053 2 42 0 3 5 TRUE TRUE 
+20210402-022733.790 _global_  rm7PolyLog: length(y)= 42 16.5165621432535 37.2413487675798 2 42 0 3 5 TRUE TRUE 
+20210402-022733.795 _global_  rm7PolyLog: length(y)= 42 19.0330375912684 38.8155842941922 2 42 0 3 5 TRUE TRUE 
+20210402-022733.799 _global_  rm7PolyLog: length(y)= 42 20.056947404237 30.2645009938934 2 42 0 3 5 TRUE TRUE 
+20210402-022733.803 _global_  rm7PolyLog: length(y)= 42 22.0177850062437 26.7972833652253 2 42 0 3 5 TRUE TRUE 
+20210402-022733.808 _global_  rm7PolyLog: length(y)= 42 11.8979424290432 51.6080323744711 2 42 0 3 5 TRUE TRUE 
+20210402-022733.812 _global_  rm7PolyLog: length(y)= 42 8.12957535918514 19.6404785226331 2 42 0 3 5 TRUE TRUE 
+20210402-022733.819 _global_  rm7PolyLog: length(y)= 42 19.9053140909816 64.5670683882459 2 42 0 3 5 TRUE TRUE 
+20210402-022733.826 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-022733.895 e542aa03   output renderPlot ggpFrontPage 
+20210402-022736.528 e542aa03   output renderPlot ggpIncidenceStates 
+20210402-022736.533 e542aa03  reactive df.past sldPastTime 
+20210402-022736.541 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Österreich 
+ 20210402-022736.541 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Wien 
+ 20210402-022736.541 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Niederösterreich 
+ 20210402-022736.541 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Burgenland 
+ 20210402-022736.541 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Vorarlberg 
+20210402-022815.404 _global_ Loading libraries 
+20210402-022815.406 _global_ Sourcing fun.R 
+20210402-022815.425 _global_ Sourcing hlp.R 
+20210402-022815.430 _global_ Sourcing ages.R 
+20210402-022815.438 _global_ Constructing geo data structures 
+20210402-022816.649 4f2711dd Server WeatherMap app.R 
+20210402-022816.843 4f2711dd   output renderPlot lftFrontPage 
+20210402-022816.862 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210402-022816.883 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-022816.895 _global_  cwm.model runApp("cwm-rshiny") 2 42 Region RegionS 
+20210402-022816.896 _global_  rm7PolyLog: length(y)= 42 20.3294240028878 32.6047086633428 2 42 0 3 5 TRUE TRUE 
+20210402-022816.900 _global_  rm7PolyLog: length(y)= 42 20.9210824700417 34.3848934513703 2 42 0 3 5 TRUE TRUE 
+20210402-022816.904 _global_  rm7PolyLog: length(y)= 42 22.6462931453233 30.6954812333053 2 42 0 3 5 TRUE TRUE 
+20210402-022816.910 _global_  rm7PolyLog: length(y)= 42 16.5165621432535 37.2413487675798 2 42 0 3 5 TRUE TRUE 
+20210402-022816.914 _global_  rm7PolyLog: length(y)= 42 19.0330375912684 38.8155842941922 2 42 0 3 5 TRUE TRUE 
+20210402-022816.917 _global_  rm7PolyLog: length(y)= 42 20.056947404237 30.2645009938934 2 42 0 3 5 TRUE TRUE 
+20210402-022816.921 _global_  rm7PolyLog: length(y)= 42 22.0177850062437 26.7972833652253 2 42 0 3 5 TRUE TRUE 
+20210402-022816.924 _global_  rm7PolyLog: length(y)= 42 11.8979424290432 51.6080323744711 2 42 0 3 5 TRUE TRUE 
+20210402-022816.930 _global_  rm7PolyLog: length(y)= 42 8.12957535918514 19.6404785226331 2 42 0 3 5 TRUE TRUE 
+20210402-022816.964 _global_  rm7PolyLog: length(y)= 42 19.9053140909816 64.5670683882459 2 42 0 3 5 TRUE TRUE 
+20210402-022816.972 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-022817.092 4f2711dd   output renderPlot ggpFrontPage 
+20210402-022818.973 4f2711dd   output renderPlot ggpIncidenceStates 
+20210402-022818.977 4f2711dd  reactive df.past sldPastTime 
+20210402-022818.987 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Österreich 
+ 20210402-022818.987 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Wien 
+ 20210402-022818.987 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Niederösterreich 
+ 20210402-022818.987 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Burgenland 
+ 20210402-022818.987 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Vorarlberg 
+20210402-022823.816 4f2711dd   output renderPlot ggpIncidenceStates 
+20210402-022823.819 4f2711dd  reactive df.past sldPastTime 
+20210402-022823.826 _global_ sldPastTime= 7 cbLogScale= TRUE inRegions= Österreich 
+ 20210402-022823.826 _global_ sldPastTime= 7 cbLogScale= TRUE inRegions= Wien 
+ 20210402-022823.826 _global_ sldPastTime= 7 cbLogScale= TRUE inRegions= Niederösterreich 
+ 20210402-022823.826 _global_ sldPastTime= 7 cbLogScale= TRUE inRegions= Burgenland 
+ 20210402-022823.826 _global_ sldPastTime= 7 cbLogScale= TRUE inRegions= Vorarlberg 
+20210402-024227.168 _global_ Loading libraries 
+20210402-024227.169 _global_ Sourcing fun.R 
+20210402-024227.186 _global_ Sourcing hlp.R 
+20210402-024227.190 _global_ Sourcing ages.R 
+20210402-024227.198 _global_ Constructing geo data structures 
+20210402-024230.036 ec476fc3 Server WeatherMap app.R 
+20210402-024230.224 ec476fc3   output renderPlot lftFrontPage 
+20210402-024230.245 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210402-024230.263 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-024230.277 _global_  cwm.model runApp("cwm-rshiny") 2 42 Region RegionS 
+20210402-024230.278 _global_  rm7PolyLog: length(y)= 42 20.3294240028878 32.6047086633428 2 42 0 3 5 TRUE TRUE 
+20210402-024230.283 _global_  rm7PolyLog: length(y)= 42 20.9210824700417 34.3848934513703 2 42 0 3 5 TRUE TRUE 
+20210402-024230.288 _global_  rm7PolyLog: length(y)= 42 22.6462931453233 30.6954812333053 2 42 0 3 5 TRUE TRUE 
+20210402-024230.292 _global_  rm7PolyLog: length(y)= 42 16.5165621432535 37.2413487675798 2 42 0 3 5 TRUE TRUE 
+20210402-024230.295 _global_  rm7PolyLog: length(y)= 42 19.0330375912684 38.8155842941922 2 42 0 3 5 TRUE TRUE 
+20210402-024230.299 _global_  rm7PolyLog: length(y)= 42 20.056947404237 30.2645009938934 2 42 0 3 5 TRUE TRUE 
+20210402-024230.303 _global_  rm7PolyLog: length(y)= 42 22.0177850062437 26.7972833652253 2 42 0 3 5 TRUE TRUE 
+20210402-024230.307 _global_  rm7PolyLog: length(y)= 42 11.8979424290432 51.6080323744711 2 42 0 3 5 TRUE TRUE 
+20210402-024230.312 _global_  rm7PolyLog: length(y)= 42 8.12957535918514 19.6404785226331 2 42 0 3 5 TRUE TRUE 
+20210402-024230.319 _global_  rm7PolyLog: length(y)= 42 19.9053140909816 64.5670683882459 2 42 0 3 5 TRUE TRUE 
+20210402-024230.324 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-024230.385 ec476fc3   output renderPlot ggpFrontPage 
+20210402-024235.318 ec476fc3   output renderPlot ggpIncidenceStates 
+20210402-024235.322 ec476fc3  reactive df.past sldPastTime 
+20210402-024235.327 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Österreich 
+ 20210402-024235.327 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Wien 
+ 20210402-024235.327 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Niederösterreich 
+ 20210402-024235.327 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Burgenland 
+ 20210402-024235.327 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Vorarlberg 
+20210402-024329.937 _global_ Loading libraries 
+20210402-024329.938 _global_ Sourcing fun.R 
+20210402-024329.955 _global_ Sourcing hlp.R 
+20210402-024329.961 _global_ Sourcing ages.R 
+20210402-024329.970 _global_ Constructing geo data structures 
+20210402-024332.483 c01b9675 Server WeatherMap app.R 
+20210402-024332.623 c01b9675   output renderPlot lftFrontPage 
+20210402-024332.641 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210402-024332.657 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-024332.685 _global_  cwm.model runApp("cwm-rshiny") 2 42 Region RegionS 
+20210402-024332.686 _global_  rm7PolyLog: length(y)= 42 20.3294240028878 32.6047086633428 2 42 0 3 5 TRUE TRUE 
+20210402-024332.691 _global_  rm7PolyLog: length(y)= 42 20.9210824700417 34.3848934513703 2 42 0 3 5 TRUE TRUE 
+20210402-024332.695 _global_  rm7PolyLog: length(y)= 42 22.6462931453233 30.6954812333053 2 42 0 3 5 TRUE TRUE 
+20210402-024332.698 _global_  rm7PolyLog: length(y)= 42 16.5165621432535 37.2413487675798 2 42 0 3 5 TRUE TRUE 
+20210402-024332.733 _global_  rm7PolyLog: length(y)= 42 19.0330375912684 38.8155842941922 2 42 0 3 5 TRUE TRUE 
+20210402-024332.737 _global_  rm7PolyLog: length(y)= 42 20.056947404237 30.2645009938934 2 42 0 3 5 TRUE TRUE 
+20210402-024332.744 _global_  rm7PolyLog: length(y)= 42 22.0177850062437 26.7972833652253 2 42 0 3 5 TRUE TRUE 
+20210402-024332.749 _global_  rm7PolyLog: length(y)= 42 11.8979424290432 51.6080323744711 2 42 0 3 5 TRUE TRUE 
+20210402-024332.754 _global_  rm7PolyLog: length(y)= 42 8.12957535918514 19.6404785226331 2 42 0 3 5 TRUE TRUE 
+20210402-024332.758 _global_  rm7PolyLog: length(y)= 42 19.9053140909816 64.5670683882459 2 42 0 3 5 TRUE TRUE 
+20210402-024332.764 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-024332.821 c01b9675   output renderPlot ggpFrontPage 
+20210402-024335.919 c01b9675   output renderPlot ggpIncidenceStates 
+20210402-024335.924 c01b9675  reactive df.past sldPastTime 
+20210402-024335.930 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Österreich 
+ 20210402-024335.930 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Wien 
+ 20210402-024335.930 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Niederösterreich 
+ 20210402-024335.930 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Burgenland 
+ 20210402-024335.930 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Vorarlberg 
+20210402-024508.160 _global_ Loading libraries 
+20210402-024508.161 _global_ Sourcing fun.R 
+20210402-024508.176 _global_ Sourcing hlp.R 
+20210402-024508.181 _global_ Sourcing ages.R 
+20210402-024508.189 _global_ Constructing geo data structures 
+20210402-024510.776 8abffa9f Server WeatherMap app.R 
+20210402-024510.913 8abffa9f   output renderPlot lftFrontPage 
+20210402-024511.002 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210402-024511.017 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-024511.029 _global_  cwm.model runApp("cwm-rshiny") 2 42 Region RegionS 
+20210402-024511.031 _global_  rm7PolyLog: length(y)= 42 20.3294240028878 32.6047086633428 2 42 0 3 5 TRUE TRUE 
+20210402-024511.060 _global_  rm7PolyLog: length(y)= 42 20.9210824700417 34.3848934513703 2 42 0 3 5 TRUE TRUE 
+20210402-024511.069 _global_  rm7PolyLog: length(y)= 42 22.6462931453233 30.6954812333053 2 42 0 3 5 TRUE TRUE 
+20210402-024511.076 _global_  rm7PolyLog: length(y)= 42 16.5165621432535 37.2413487675798 2 42 0 3 5 TRUE TRUE 
+20210402-024511.082 _global_  rm7PolyLog: length(y)= 42 19.0330375912684 38.8155842941922 2 42 0 3 5 TRUE TRUE 
+20210402-024511.086 _global_  rm7PolyLog: length(y)= 42 20.056947404237 30.2645009938934 2 42 0 3 5 TRUE TRUE 
+20210402-024511.091 _global_  rm7PolyLog: length(y)= 42 22.0177850062437 26.7972833652253 2 42 0 3 5 TRUE TRUE 
+20210402-024511.095 _global_  rm7PolyLog: length(y)= 42 11.8979424290432 51.6080323744711 2 42 0 3 5 TRUE TRUE 
+20210402-024511.099 _global_  rm7PolyLog: length(y)= 42 8.12957535918514 19.6404785226331 2 42 0 3 5 TRUE TRUE 
+20210402-024511.105 _global_  rm7PolyLog: length(y)= 42 19.9053140909816 64.5670683882459 2 42 0 3 5 TRUE TRUE 
+20210402-024511.110 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-024511.176 8abffa9f   output renderPlot ggpFrontPage 
+20210402-024514.607 8abffa9f   output renderPlot ggpIncidenceStates 
+20210402-024514.611 8abffa9f  reactive df.past sldPastTime 
+20210402-024514.616 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Österreich 
+ 20210402-024514.616 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Wien 
+ 20210402-024514.616 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Niederösterreich 
+ 20210402-024514.616 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Burgenland 
+ 20210402-024514.616 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Vorarlberg 
+20210402-024559.763 _global_ Loading libraries 
+20210402-024559.765 _global_ Sourcing fun.R 
+20210402-024559.790 _global_ Sourcing hlp.R 
+20210402-024559.797 _global_ Sourcing ages.R 
+20210402-024559.838 _global_ Constructing geo data structures 
+20210402-024602.550 e6c01423 Server WeatherMap app.R 
+20210402-024602.681 e6c01423   output renderPlot lftFrontPage 
+20210402-024602.699 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210402-024602.713 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-024602.729 _global_  cwm.model runApp("cwm-rshiny") 2 42 Region RegionS 
+20210402-024602.731 _global_  rm7PolyLog: length(y)= 42 20.3294240028878 32.6047086633428 2 42 0 3 5 TRUE TRUE 
+20210402-024602.735 _global_  rm7PolyLog: length(y)= 42 20.9210824700417 34.3848934513703 2 42 0 3 5 TRUE TRUE 
+20210402-024602.739 _global_  rm7PolyLog: length(y)= 42 22.6462931453233 30.6954812333053 2 42 0 3 5 TRUE TRUE 
+20210402-024602.745 _global_  rm7PolyLog: length(y)= 42 16.5165621432535 37.2413487675798 2 42 0 3 5 TRUE TRUE 
+20210402-024602.750 _global_  rm7PolyLog: length(y)= 42 19.0330375912684 38.8155842941922 2 42 0 3 5 TRUE TRUE 
+20210402-024602.770 _global_  rm7PolyLog: length(y)= 42 20.056947404237 30.2645009938934 2 42 0 3 5 TRUE TRUE 
+20210402-024602.775 _global_  rm7PolyLog: length(y)= 42 22.0177850062437 26.7972833652253 2 42 0 3 5 TRUE TRUE 
+20210402-024602.780 _global_  rm7PolyLog: length(y)= 42 11.8979424290432 51.6080323744711 2 42 0 3 5 TRUE TRUE 
+20210402-024602.787 _global_  rm7PolyLog: length(y)= 42 8.12957535918514 19.6404785226331 2 42 0 3 5 TRUE TRUE 
+20210402-024602.791 _global_  rm7PolyLog: length(y)= 42 19.9053140909816 64.5670683882459 2 42 0 3 5 TRUE TRUE 
+20210402-024602.799 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-024602.904 e6c01423   output renderPlot ggpFrontPage 
+20210402-024605.884 e6c01423   output renderPlot ggpIncidenceStates 
+20210402-024605.891 e6c01423  reactive df.past sldPastTime 
+20210402-024605.900 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Österreich 
+ 20210402-024605.900 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Wien 
+ 20210402-024605.900 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Niederösterreich 
+ 20210402-024605.900 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Burgenland 
+ 20210402-024605.900 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Vorarlberg 
+20210402-024644.731 _global_ Loading libraries 
+20210402-024644.732 _global_ Sourcing fun.R 
+20210402-024644.753 _global_ Sourcing hlp.R 
+20210402-024644.758 _global_ Sourcing ages.R 
+20210402-024644.768 _global_ Constructing geo data structures 
+20210402-024647.359 0a6dadcb Server WeatherMap app.R 
+20210402-024647.845 0a6dadcb   output renderPlot lftFrontPage 
+20210402-024647.866 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210402-024647.891 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-024647.906 _global_  cwm.model runApp("cwm-rshiny") 2 42 Region RegionS 
+20210402-024647.907 _global_  rm7PolyLog: length(y)= 42 20.3294240028878 32.6047086633428 2 42 0 3 5 TRUE TRUE 
+20210402-024647.912 _global_  rm7PolyLog: length(y)= 42 20.9210824700417 34.3848934513703 2 42 0 3 5 TRUE TRUE 
+20210402-024647.924 _global_  rm7PolyLog: length(y)= 42 22.6462931453233 30.6954812333053 2 42 0 3 5 TRUE TRUE 
+20210402-024647.930 _global_  rm7PolyLog: length(y)= 42 16.5165621432535 37.2413487675798 2 42 0 3 5 TRUE TRUE 
+20210402-024647.934 _global_  rm7PolyLog: length(y)= 42 19.0330375912684 38.8155842941922 2 42 0 3 5 TRUE TRUE 
+20210402-024647.939 _global_  rm7PolyLog: length(y)= 42 20.056947404237 30.2645009938934 2 42 0 3 5 TRUE TRUE 
+20210402-024647.943 _global_  rm7PolyLog: length(y)= 42 22.0177850062437 26.7972833652253 2 42 0 3 5 TRUE TRUE 
+20210402-024647.946 _global_  rm7PolyLog: length(y)= 42 11.8979424290432 51.6080323744711 2 42 0 3 5 TRUE TRUE 
+20210402-024647.950 _global_  rm7PolyLog: length(y)= 42 8.12957535918514 19.6404785226331 2 42 0 3 5 TRUE TRUE 
+20210402-024647.954 _global_  rm7PolyLog: length(y)= 42 19.9053140909816 64.5670683882459 2 42 0 3 5 TRUE TRUE 
+20210402-024647.959 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-024648.016 0a6dadcb   output renderPlot ggpFrontPage 
+20210402-024650.375 0a6dadcb   output renderPlot ggpIncidenceStates 
+20210402-024650.379 0a6dadcb  reactive df.past sldPastTime 
+20210402-024650.384 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Österreich 
+ 20210402-024650.384 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Wien 
+ 20210402-024650.384 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Niederösterreich 
+ 20210402-024650.384 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Burgenland 
+ 20210402-024650.384 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Vorarlberg 
+20210402-024742.267 _global_ Loading libraries 
+20210402-024742.268 _global_ Sourcing fun.R 
+20210402-024742.282 _global_ Sourcing hlp.R 
+20210402-024742.288 _global_ Sourcing ages.R 
+20210402-024742.298 _global_ Constructing geo data structures 
+20210402-024744.773 9d3f1efb Server WeatherMap app.R 
+20210402-024744.990 9d3f1efb   output renderPlot lftFrontPage 
+20210402-024745.009 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210402-024745.024 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-024745.039 _global_  cwm.model runApp("cwm-rshiny") 2 42 Region RegionS 
+20210402-024745.041 _global_  rm7PolyLog: length(y)= 42 20.3294240028878 32.6047086633428 2 42 0 3 5 TRUE TRUE 
+20210402-024745.045 _global_  rm7PolyLog: length(y)= 42 20.9210824700417 34.3848934513703 2 42 0 3 5 TRUE TRUE 
+20210402-024745.048 _global_  rm7PolyLog: length(y)= 42 22.6462931453233 30.6954812333053 2 42 0 3 5 TRUE TRUE 
+20210402-024745.052 _global_  rm7PolyLog: length(y)= 42 16.5165621432535 37.2413487675798 2 42 0 3 5 TRUE TRUE 
+20210402-024745.055 _global_  rm7PolyLog: length(y)= 42 19.0330375912684 38.8155842941922 2 42 0 3 5 TRUE TRUE 
+20210402-024745.058 _global_  rm7PolyLog: length(y)= 42 20.056947404237 30.2645009938934 2 42 0 3 5 TRUE TRUE 
+20210402-024745.062 _global_  rm7PolyLog: length(y)= 42 22.0177850062437 26.7972833652253 2 42 0 3 5 TRUE TRUE 
+20210402-024745.065 _global_  rm7PolyLog: length(y)= 42 11.8979424290432 51.6080323744711 2 42 0 3 5 TRUE TRUE 
+20210402-024745.069 _global_  rm7PolyLog: length(y)= 42 8.12957535918514 19.6404785226331 2 42 0 3 5 TRUE TRUE 
+20210402-024745.073 _global_  rm7PolyLog: length(y)= 42 19.9053140909816 64.5670683882459 2 42 0 3 5 TRUE TRUE 
+20210402-024745.079 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-024745.163 9d3f1efb   output renderPlot ggpFrontPage 
+20210402-024748.087 9d3f1efb   output renderPlot ggpIncidenceStates 
+20210402-024748.093 9d3f1efb  reactive df.past sldPastTime 
+20210402-024748.103 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Österreich 
+ 20210402-024748.103 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Wien 
+ 20210402-024748.103 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Niederösterreich 
+ 20210402-024748.103 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Burgenland 
+ 20210402-024748.103 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Vorarlberg 
+20210402-024757.856 9d3f1efb   output renderPlot ggpIncidenceStates 
+20210402-024757.859 9d3f1efb  reactive df.past sldPastTime 
+20210402-024757.866 _global_ sldPastTime= 7 cbLogScale= TRUE inRegions= Österreich 
+ 20210402-024757.866 _global_ sldPastTime= 7 cbLogScale= TRUE inRegions= Wien 
+ 20210402-024757.866 _global_ sldPastTime= 7 cbLogScale= TRUE inRegions= Niederösterreich 
+ 20210402-024757.866 _global_ sldPastTime= 7 cbLogScale= TRUE inRegions= Burgenland 
+ 20210402-024757.866 _global_ sldPastTime= 7 cbLogScale= TRUE inRegions= Vorarlberg 
+20210402-024820.946 _global_ Loading libraries 
+20210402-024820.947 _global_ Sourcing fun.R 
+20210402-024820.965 _global_ Sourcing hlp.R 
+20210402-024820.971 _global_ Sourcing ages.R 
+20210402-024820.984 _global_ Constructing geo data structures 
+20210402-024822.173 9d232a34 Server WeatherMap app.R 
+20210402-024822.323 9d232a34   output renderPlot lftFrontPage 
+20210402-024822.341 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210402-024822.353 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-024822.362 _global_  cwm.model runApp("cwm-rshiny") 2 42 Region RegionS 
+20210402-024822.363 _global_  rm7PolyLog: length(y)= 42 20.3294240028878 32.6047086633428 2 42 0 3 5 TRUE TRUE 
+20210402-024822.366 _global_  rm7PolyLog: length(y)= 42 20.9210824700417 34.3848934513703 2 42 0 3 5 TRUE TRUE 
+20210402-024822.369 _global_  rm7PolyLog: length(y)= 42 22.6462931453233 30.6954812333053 2 42 0 3 5 TRUE TRUE 
+20210402-024822.371 _global_  rm7PolyLog: length(y)= 42 16.5165621432535 37.2413487675798 2 42 0 3 5 TRUE TRUE 
+20210402-024822.374 _global_  rm7PolyLog: length(y)= 42 19.0330375912684 38.8155842941922 2 42 0 3 5 TRUE TRUE 
+20210402-024822.377 _global_  rm7PolyLog: length(y)= 42 20.056947404237 30.2645009938934 2 42 0 3 5 TRUE TRUE 
+20210402-024822.379 _global_  rm7PolyLog: length(y)= 42 22.0177850062437 26.7972833652253 2 42 0 3 5 TRUE TRUE 
+20210402-024822.382 _global_  rm7PolyLog: length(y)= 42 11.8979424290432 51.6080323744711 2 42 0 3 5 TRUE TRUE 
+20210402-024822.384 _global_  rm7PolyLog: length(y)= 42 8.12957535918514 19.6404785226331 2 42 0 3 5 TRUE TRUE 
+20210402-024822.387 _global_  rm7PolyLog: length(y)= 42 19.9053140909816 64.5670683882459 2 42 0 3 5 TRUE TRUE 
+20210402-024822.390 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-024822.503 9d232a34   output renderPlot ggpFrontPage 
+20210402-024824.146 9d232a34   output renderPlot ggpIncidenceStates 
+20210402-024824.153 9d232a34  reactive df.past sldPastTime 
+20210402-024824.159 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Österreich 
+ 20210402-024824.159 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Wien 
+ 20210402-024824.159 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Niederösterreich 
+ 20210402-024824.159 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Burgenland 
+ 20210402-024824.159 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Vorarlberg 
+20210402-024830.413 9d232a34   output renderPlot ggpIncidenceStates 
+20210402-024830.416 9d232a34  reactive df.past sldPastTime 
+20210402-024830.422 _global_ sldPastTime= 7 cbLogScale= TRUE inRegions= Österreich 
+ 20210402-024830.422 _global_ sldPastTime= 7 cbLogScale= TRUE inRegions= Wien 
+ 20210402-024830.422 _global_ sldPastTime= 7 cbLogScale= TRUE inRegions= Niederösterreich 
+ 20210402-024830.422 _global_ sldPastTime= 7 cbLogScale= TRUE inRegions= Burgenland 
+ 20210402-024830.422 _global_ sldPastTime= 7 cbLogScale= TRUE inRegions= Vorarlberg 
+20210402-024956.644 9d232a34   output renderPlot ggpIncidenceStates 
+20210402-024956.648 9d232a34  reactive df.past sldPastTime 
+20210402-024956.656 _global_ sldPastTime= 8 cbLogScale= TRUE inRegions= Österreich 
+ 20210402-024956.656 _global_ sldPastTime= 8 cbLogScale= TRUE inRegions= Wien 
+ 20210402-024956.656 _global_ sldPastTime= 8 cbLogScale= TRUE inRegions= Niederösterreich 
+ 20210402-024956.656 _global_ sldPastTime= 8 cbLogScale= TRUE inRegions= Burgenland 
+ 20210402-024956.656 _global_ sldPastTime= 8 cbLogScale= TRUE inRegions= Vorarlberg 
+20210402-024959.714 9d232a34   output renderPlot ggpIncidenceStates 
+20210402-024959.716 9d232a34  reactive df.past sldPastTime 
+20210402-024959.721 _global_ sldPastTime= 9 cbLogScale= TRUE inRegions= Österreich 
+ 20210402-024959.721 _global_ sldPastTime= 9 cbLogScale= TRUE inRegions= Wien 
+ 20210402-024959.721 _global_ sldPastTime= 9 cbLogScale= TRUE inRegions= Niederösterreich 
+ 20210402-024959.721 _global_ sldPastTime= 9 cbLogScale= TRUE inRegions= Burgenland 
+ 20210402-024959.721 _global_ sldPastTime= 9 cbLogScale= TRUE inRegions= Vorarlberg 
+20210402-025001.892 9d232a34   output renderPlot ggpIncidenceStates 
+20210402-025001.897 9d232a34  reactive df.past sldPastTime 
+20210402-025001.905 _global_ sldPastTime= 8 cbLogScale= TRUE inRegions= Österreich 
+ 20210402-025001.905 _global_ sldPastTime= 8 cbLogScale= TRUE inRegions= Wien 
+ 20210402-025001.905 _global_ sldPastTime= 8 cbLogScale= TRUE inRegions= Niederösterreich 
+ 20210402-025001.905 _global_ sldPastTime= 8 cbLogScale= TRUE inRegions= Burgenland 
+ 20210402-025001.905 _global_ sldPastTime= 8 cbLogScale= TRUE inRegions= Vorarlberg 
+20210402-025003.163 9d232a34   output renderPlot ggpIncidenceStates 
+20210402-025003.167 9d232a34  reactive df.past sldPastTime 
+20210402-025003.171 _global_ sldPastTime= 7 cbLogScale= TRUE inRegions= Österreich 
+ 20210402-025003.171 _global_ sldPastTime= 7 cbLogScale= TRUE inRegions= Wien 
+ 20210402-025003.171 _global_ sldPastTime= 7 cbLogScale= TRUE inRegions= Niederösterreich 
+ 20210402-025003.171 _global_ sldPastTime= 7 cbLogScale= TRUE inRegions= Burgenland 
+ 20210402-025003.171 _global_ sldPastTime= 7 cbLogScale= TRUE inRegions= Vorarlberg 
+20210402-025011.776 _global_ Loading libraries 
+20210402-025011.778 _global_ Sourcing fun.R 
+20210402-025011.799 _global_ Sourcing hlp.R 
+20210402-025011.804 _global_ Sourcing ages.R 
+20210402-025011.813 _global_ Constructing geo data structures 
+20210402-025013.083 ca05570b Server WeatherMap app.R 
+20210402-025013.250 ca05570b   output renderPlot lftFrontPage 
+20210402-025013.272 _global_ eventReactive reactiveFileReader:df ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210402-025013.296 _global_ eventReactive reactiveFileReader:df.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-025013.310 _global_  cwm.model runApp("cwm-rshiny") 2 42 Region RegionS 
+20210402-025013.311 _global_  rm7PolyLog: length(y)= 42 20.3294240028878 32.6047086633428 2 42 0 3 5 TRUE TRUE 
+20210402-025013.316 _global_  rm7PolyLog: length(y)= 42 20.9210824700417 34.3848934513703 2 42 0 3 5 TRUE TRUE 
+20210402-025013.319 _global_  rm7PolyLog: length(y)= 42 22.6462931453233 30.6954812333053 2 42 0 3 5 TRUE TRUE 
+20210402-025013.323 _global_  rm7PolyLog: length(y)= 42 16.5165621432535 37.2413487675798 2 42 0 3 5 TRUE TRUE 
+20210402-025013.327 _global_  rm7PolyLog: length(y)= 42 19.0330375912684 38.8155842941922 2 42 0 3 5 TRUE TRUE 
+20210402-025013.353 _global_  rm7PolyLog: length(y)= 42 20.056947404237 30.2645009938934 2 42 0 3 5 TRUE TRUE 
+20210402-025013.361 _global_  rm7PolyLog: length(y)= 42 22.0177850062437 26.7972833652253 2 42 0 3 5 TRUE TRUE 
+20210402-025013.372 _global_  rm7PolyLog: length(y)= 42 11.8979424290432 51.6080323744711 2 42 0 3 5 TRUE TRUE 
+20210402-025013.380 _global_  rm7PolyLog: length(y)= 42 8.12957535918514 19.6404785226331 2 42 0 3 5 TRUE TRUE 
+20210402-025013.392 _global_  rm7PolyLog: length(y)= 42 19.9053140909816 64.5670683882459 2 42 0 3 5 TRUE TRUE 
+20210402-025013.400 _global_ eventReactive reactiveFileReader:map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-025013.521 ca05570b   output renderPlot ggpFrontPage 
+20210402-025015.386 ca05570b   output renderPlot ggpIncidenceStates 
+20210402-025015.390 ca05570b  reactive df.past sldPastTime 
+20210402-025015.476 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Österreich 
+ 20210402-025015.476 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Wien 
+ 20210402-025015.476 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Niederösterreich 
+ 20210402-025015.476 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Burgenland 
+ 20210402-025015.476 _global_ sldPastTime= 6 cbLogScale= TRUE inRegions= Vorarlberg 
+20210402-025018.449 ca05570b   output renderPlot ggpIncidenceStates 
+20210402-025018.452 ca05570b  reactive df.past sldPastTime 
+20210402-025018.458 _global_ sldPastTime= 7 cbLogScale= TRUE inRegions= Österreich 
+ 20210402-025018.458 _global_ sldPastTime= 7 cbLogScale= TRUE inRegions= Wien 
+ 20210402-025018.458 _global_ sldPastTime= 7 cbLogScale= TRUE inRegions= Niederösterreich 
+ 20210402-025018.458 _global_ sldPastTime= 7 cbLogScale= TRUE inRegions= Burgenland 
+ 20210402-025018.458 _global_ sldPastTime= 7 cbLogScale= TRUE inRegions= Vorarlberg 
+20210402-025024.109 ca05570b   output renderPlot ggpIncidenceStates 
+20210402-025024.114 ca05570b  reactive df.past sldPastTime 
+20210402-025024.121 _global_ sldPastTime= 8 cbLogScale= TRUE inRegions= Österreich 
+ 20210402-025024.121 _global_ sldPastTime= 8 cbLogScale= TRUE inRegions= Wien 
+ 20210402-025024.121 _global_ sldPastTime= 8 cbLogScale= TRUE inRegions= Niederösterreich 
+ 20210402-025024.121 _global_ sldPastTime= 8 cbLogScale= TRUE inRegions= Burgenland 
+ 20210402-025024.121 _global_ sldPastTime= 8 cbLogScale= TRUE inRegions= Vorarlberg 
+20210402-025053.820 _global_ eventReactive reactiveFileReader:dg ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210402-025053.832 _global_ eventReactive reactiveFileReader:dg.model ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-025053.846 _global_  cwm.model runApp("cwm-rshiny") 1 14 CountyID CountyID 
+20210402-025053.847 _global_  rm7PolyLog: length(y)= 42 14.2077369387944 36.6757860513065 1 14 0 3 5 TRUE FALSE 
+20210402-025053.850 _global_  rm7PolyLog: length(y)= 42 17.3557543967911 27.9620487503857 1 14 0 3 5 TRUE FALSE 
+20210402-025053.852 _global_  rm7PolyLog: length(y)= 42 23.9030979526719 35.0208179306588 1 14 0 3 5 TRUE FALSE 
+20210402-025053.855 _global_  rm7PolyLog: length(y)= 42 41.7784239507349 35.0938761186173 1 14 0 3 5 TRUE FALSE 
+20210402-025053.857 _global_  rm7PolyLog: length(y)= 42 14.2707300191941 38.1742028013443 1 14 0 3 5 TRUE FALSE 
+20210402-025053.860 _global_  rm7PolyLog: length(y)= 42 21.67027837973 35.0058343057176 1 14 0 3 5 TRUE FALSE 
+20210402-025053.862 _global_  rm7PolyLog: length(y)= 42 9.55336125462383 35.5385038672006 1 14 0 3 5 TRUE FALSE 
+20210402-025053.865 _global_  rm7PolyLog: length(y)= 42 15.8167784385676 58.7856931966764 1 14 0 3 5 TRUE FALSE 
+20210402-025053.867 _global_  rm7PolyLog: length(y)= 42 0 14.4300144300144 1 14 0 3 5 TRUE FALSE 
+20210402-025053.870 _global_  rm7PolyLog: length(y)= 42 12.8992805067984 38.6978415203952 1 14 0 3 5 TRUE FALSE 
+20210402-025053.872 _global_  rm7PolyLog: length(y)= 42 83.0840810900631 29.2772476222127 1 14 0 3 5 TRUE FALSE 
+20210402-025053.875 _global_  rm7PolyLog: length(y)= 42 15.4725802074754 23.5659298544625 1 14 0 3 5 TRUE FALSE 
+20210402-025053.877 _global_  rm7PolyLog: length(y)= 42 17.4869552954449 29.050909603723 1 14 0 3 5 TRUE FALSE 
+20210402-025053.880 _global_  rm7PolyLog: length(y)= 42 17.4003828084218 25.3096477213408 1 14 0 3 5 TRUE FALSE 
+20210402-025053.882 _global_  rm7PolyLog: length(y)= 42 35.3998297795419 31.6338904412928 1 14 0 3 5 TRUE FALSE 
+20210402-025053.885 _global_  rm7PolyLog: length(y)= 42 19.0128358750105 30.2878897078656 1 14 0 3 5 TRUE FALSE 
+20210402-025053.887 _global_  rm7PolyLog: length(y)= 42 14.3125218663529 29.0794095062407 1 14 0 3 5 TRUE FALSE 
+20210402-025053.890 _global_  rm7PolyLog: length(y)= 42 29.6893875795983 27.9831009370926 1 14 0 3 5 TRUE FALSE 
+20210402-025053.892 _global_  rm7PolyLog: length(y)= 42 9.23288318501884 28.7848711062352 1 14 0 3 5 TRUE FALSE 
+20210402-025053.895 _global_  rm7PolyLog: length(y)= 42 9.80824873718798 43.4015006620568 1 14 0 3 5 TRUE FALSE 
+20210402-025053.898 _global_  rm7PolyLog: length(y)= 42 22.7791098040705 47.6024986931216 1 14 0 3 5 TRUE FALSE 
+20210402-025053.900 _global_  rm7PolyLog: length(y)= 42 18.0404740100118 34.4283855152896 1 14 0 3 5 TRUE FALSE 
+20210402-025053.903 _global_  rm7PolyLog: length(y)= 42 19.4962602628041 30.8122714642919 1 14 0 3 5 TRUE FALSE 
+20210402-025053.906 _global_  rm7PolyLog: length(y)= 42 22.6676723817861 36.3464401983812 1 14 0 3 5 TRUE FALSE 
+20210402-025053.909 _global_  rm7PolyLog: length(y)= 42 27.1532985659139 28.8328840442179 1 14 0 3 5 TRUE FALSE 
+20210402-025053.914 _global_  rm7PolyLog: length(y)= 42 21.2420111566737 30.9394510325465 1 14 0 3 5 TRUE FALSE 
+20210402-025053.917 _global_  rm7PolyLog: length(y)= 42 15.8114399681893 29.5877440988888 1 14 0 3 5 TRUE FALSE 
+20210402-025053.920 _global_  rm7PolyLog: length(y)= 42 2.85303448748088 24.5360965923356 1 14 0 3 5 TRUE FALSE 
+20210402-025053.923 _global_  rm7PolyLog: length(y)= 42 8.34578879084694 21.243826013065 1 14 0 3 5 TRUE FALSE 
+20210402-025053.926 _global_  rm7PolyLog: length(y)= 42 13.3641451123423 36.1945596792605 1 14 0 3 5 TRUE FALSE 
+20210402-025053.928 _global_  rm7PolyLog: length(y)= 42 20.4627130999731 56.6378666159971 1 14 0 3 5 TRUE FALSE 
+20210402-025053.931 _global_  rm7PolyLog: length(y)= 42 23.0460448642267 28.14639905549 1 14 0 3 5 TRUE FALSE 
+20210402-025053.934 _global_  rm7PolyLog: length(y)= 42 11.1536870131506 31.782011381558 1 14 0 3 5 TRUE FALSE 
+20210402-025053.937 _global_  rm7PolyLog: length(y)= 42 22.1707111669239 41.1978140340602 1 14 0 3 5 TRUE FALSE 
+20210402-025053.940 _global_  rm7PolyLog: length(y)= 42 12.4714917964696 34.3779382563553 1 14 0 3 5 TRUE FALSE 
+20210402-025053.943 _global_  rm7PolyLog: length(y)= 42 11.8374258230871 33.9682654053804 1 14 0 3 5 TRUE FALSE 
+20210402-025053.945 _global_  rm7PolyLog: length(y)= 42 16.9024967402328 55.191826090556 1 14 0 3 5 TRUE FALSE 
+20210402-025053.948 _global_  rm7PolyLog: length(y)= 42 12.1559623629552 27.4533532017302 1 14 0 3 5 TRUE FALSE 
+20210402-025053.951 _global_  rm7PolyLog: length(y)= 42 23.3626664589985 36.1565076151168 1 14 0 3 5 TRUE FALSE 
+20210402-025053.954 _global_  rm7PolyLog: length(y)= 42 15.2761157929577 48.3743666776994 1 14 0 3 5 TRUE FALSE 
+20210402-025053.957 _global_  rm7PolyLog: length(y)= 42 27.9121187852208 48.7093837624441 1 14 0 3 5 TRUE FALSE 
+20210402-025053.960 _global_  rm7PolyLog: length(y)= 42 28.0582739173403 39.593342083358 1 14 0 3 5 TRUE FALSE 
+20210402-025053.963 _global_  rm7PolyLog: length(y)= 42 22.796171604136 29.6009989486542 1 14 0 3 5 TRUE FALSE 
+20210402-025053.966 _global_  rm7PolyLog: length(y)= 42 24.7675169278534 59.4149723023369 1 14 0 3 5 TRUE FALSE 
+20210402-025053.968 _global_  rm7PolyLog: length(y)= 42 10.7644480421622 20.2371623192649 1 14 0 3 5 TRUE FALSE 
+20210402-025054.003 _global_  rm7PolyLog: length(y)= 42 13.033436105182 41.6642629591883 1 14 0 3 5 TRUE FALSE 
+20210402-025054.008 _global_  rm7PolyLog: length(y)= 42 19.0739860283052 40.2517205156147 1 14 0 3 5 TRUE FALSE 
+20210402-025054.012 _global_  rm7PolyLog: length(y)= 42 13.4324249931186 21.8001651527663 1 14 0 3 5 TRUE FALSE 
+20210402-025054.018 _global_  rm7PolyLog: length(y)= 42 9.51196129132384 39.8000485610655 1 14 0 3 5 TRUE FALSE 
+20210402-025054.022 _global_  rm7PolyLog: length(y)= 42 12.3631909112615 30.9551650297236 1 14 0 3 5 TRUE FALSE 
+20210402-025054.026 _global_  rm7PolyLog: length(y)= 42 18.8493214244287 30.0346330389249 1 14 0 3 5 TRUE FALSE 
+20210402-025054.029 _global_  rm7PolyLog: length(y)= 42 11.8102030891786 30.5675844661093 1 14 0 3 5 TRUE FALSE 
+20210402-025054.034 _global_  rm7PolyLog: length(y)= 42 17.937672902745 10.3583744931344 1 14 0 3 5 TRUE FALSE 
+20210402-025054.040 _global_  rm7PolyLog: length(y)= 42 19.664606446506 24.1451496874821 1 14 0 3 5 TRUE FALSE 
+20210402-025054.045 _global_  rm7PolyLog: length(y)= 42 9.88822160680144 22.4732309245487 1 14 0 3 5 TRUE FALSE 
+20210402-025054.049 _global_  rm7PolyLog: length(y)= 42 7.8831196132016 26.2770653773387 1 14 0 3 5 TRUE FALSE 
+20210402-025054.052 _global_  rm7PolyLog: length(y)= 42 27.6704246609801 43.9067895446957 1 14 0 3 5 TRUE FALSE 
+20210402-025054.075 _global_  rm7PolyLog: length(y)= 42 7.29379157167091 18.5874043278065 1 14 0 3 5 TRUE FALSE 
+20210402-025054.078 _global_  rm7PolyLog: length(y)= 42 7.14244188460804 15.1154002674263 1 14 0 3 5 TRUE FALSE 
+20210402-025054.081 _global_  rm7PolyLog: length(y)= 42 16.335805901492 50.6722132103604 1 14 0 3 5 TRUE FALSE 
+20210402-025054.084 _global_  rm7PolyLog: length(y)= 42 17.2334002660527 36.7904050623597 1 14 0 3 5 TRUE FALSE 
+20210402-025054.086 _global_  rm7PolyLog: length(y)= 42 17.6152270720204 29.3587117867007 1 14 0 3 5 TRUE FALSE 
+20210402-025054.089 _global_  rm7PolyLog: length(y)= 42 16.1944224175481 40.765270223483 1 14 0 3 5 TRUE FALSE 
+20210402-025054.091 _global_  rm7PolyLog: length(y)= 42 14.2837790640346 36.6770584999083 1 14 0 3 5 TRUE FALSE 
+20210402-025054.095 _global_  rm7PolyLog: length(y)= 42 32.3739614820237 26.3918164255628 1 14 0 3 5 TRUE FALSE 
+20210402-025054.098 _global_  rm7PolyLog: length(y)= 42 19.0466784709044 25.3955712945392 1 14 0 3 5 TRUE FALSE 
+20210402-025054.104 _global_  rm7PolyLog: length(y)= 42 14.3463602631905 35.2137933732858 1 14 0 3 5 TRUE FALSE 
+20210402-025054.109 _global_  rm7PolyLog: length(y)= 42 20.2640404470247 16.2112323576198 1 14 0 3 5 TRUE FALSE 
+20210402-025054.112 _global_  rm7PolyLog: length(y)= 42 19.4804127969883 28.8685635425248 1 14 0 3 5 TRUE FALSE 
+20210402-025054.120 _global_  rm7PolyLog: length(y)= 42 15.3777151278273 22.5173685800328 1 14 0 3 5 TRUE FALSE 
+20210402-025054.129 _global_  rm7PolyLog: length(y)= 42 21.1042530468652 19.8772615906521 1 14 0 3 5 TRUE FALSE 
+20210402-025054.135 _global_  rm7PolyLog: length(y)= 42 37.0521031404417 29.9570195603571 1 14 0 3 5 TRUE FALSE 
+20210402-025054.142 _global_  rm7PolyLog: length(y)= 42 17.866413165861 24.9455580051644 1 14 0 3 5 TRUE FALSE 
+20210402-025054.147 _global_  rm7PolyLog: length(y)= 42 14.3575017946877 21.5362526920316 1 14 0 3 5 TRUE FALSE 
+20210402-025054.150 _global_  rm7PolyLog: length(y)= 42 6.81536110652768 23.8537638728469 1 14 0 3 5 TRUE FALSE 
+20210402-025054.154 _global_  rm7PolyLog: length(y)= 42 12.9667377243894 45.1242472808751 1 14 0 3 5 TRUE FALSE 
+20210402-025054.157 _global_  rm7PolyLog: length(y)= 42 13.7481420083445 20.522588795065 1 14 0 3 5 TRUE FALSE 
+20210402-025054.161 _global_  rm7PolyLog: length(y)= 42 27.1992275419378 29.9191502961316 1 14 0 3 5 TRUE FALSE 
+20210402-025054.165 _global_  rm7PolyLog: length(y)= 42 6.99676469600457 22.1097764393744 1 14 0 3 5 TRUE FALSE 
+20210402-025054.168 _global_  rm7PolyLog: length(y)= 42 30.886667990381 33.0928585611225 1 14 0 3 5 TRUE FALSE 
+20210402-025054.172 _global_  rm7PolyLog: length(y)= 42 11.1027643520946 37.5604155741074 1 14 0 3 5 TRUE FALSE 
+20210402-025054.175 _global_  rm7PolyLog: length(y)= 42 5.93743839907661 37.049615610238 1 14 0 3 5 TRUE FALSE 
+20210402-025054.179 _global_  rm7PolyLog: length(y)= 42 7.79451071582838 36.1578691539816 1 14 0 3 5 TRUE FALSE 
+20210402-025054.182 _global_  rm7PolyLog: length(y)= 42 12.6899032895791 30.7229237537179 1 14 0 3 5 TRUE FALSE 
+20210402-025054.186 _global_  rm7PolyLog: length(y)= 42 11.2692986739792 34.4555568652697 1 14 0 3 5 TRUE FALSE 
+20210402-025054.190 _global_  rm7PolyLog: length(y)= 42 7.40259155074638 36.6911059471777 1 14 0 3 5 TRUE FALSE 
+20210402-025054.193 _global_  rm7PolyLog: length(y)= 42 25.2076701664292 60.6742758657076 1 14 0 3 5 TRUE FALSE 
+20210402-025054.197 _global_  rm7PolyLog: length(y)= 42 26.1021638693848 27.8423081273438 1 14 0 3 5 TRUE FALSE 
+20210402-025054.226 _global_  rm7PolyLog: length(y)= 42 21.3449702949163 34.5585233346265 1 14 0 3 5 TRUE FALSE 
+20210402-025054.230 _global_  rm7PolyLog: length(y)= 42 10.6964026660784 10.0278774994485 1 14 0 3 5 TRUE FALSE 
+20210402-025054.234 _global_  rm7PolyLog: length(y)= 42 4.55070276608647 20.6369078927177 1 14 0 3 5 TRUE FALSE 
+20210402-025054.238 _global_  rm7PolyLog: length(y)= 42 12.2341845359907 22.2439718836195 1 14 0 3 5 TRUE FALSE 
+20210402-025054.241 _global_  rm7PolyLog: length(y)= 42 14.6644806461884 18.099404040791 1 14 0 3 5 TRUE FALSE 
+20210402-025054.245 _global_  rm7PolyLog: length(y)= 42 17.1620732830994 48.9223735356644 1 14 0 3 5 TRUE FALSE 
+20210402-025054.250 _global_ eventReactive reactiveFileReader:dg.map ./data/COVID-19-CWM-AGES-Prediction.rda 
+20210402-025054.343 ca05570b   output renderPlot ggpIncidenceCounties 
+20210402-025054.346 ca05570b  reactive dg.past sldPastTime 
