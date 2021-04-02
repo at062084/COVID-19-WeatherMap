@@ -293,14 +293,14 @@ ui <- fluidPage(
         sliderInput("sldPastTime",
                     width="220px",
                     label="ZeitRaum (letzte n Monate)",
-                    min=1, max=12, step=1, value=6)),
+                    min=1, max=12, step=1, value=8)),
       
         fluidRow( 
           hr(style = "border-top: 3px solid #777777;"),
           sliderInput("sldModelDays",
                        width="220px",
                        label="Prognose: BerechnungsTage",
-                       min=7, max=56, step=7, value=21)),
+                       min=7, max=63, step=7, value=42)),
       fluidRow(        
         radioButtons("rbsModelOrder",
                      width="220px",
@@ -422,14 +422,14 @@ server <- function(input, output, session) {
   # states by Time
   df.past <- reactive({
     logMsg(" reactive df.past sldPastTime", sessionID)
-    return(df() %>% dplyr::filter(Date > max(Date, na.rm=TRUE)-months(as.integer(input$sldPastTime))))
+    return(df() %>% dplyr::filter(Date > (max(Date, na.rm=TRUE)-months(as.integer(input$sldPastTime)))))
   })
   
   
   # counties by Time
   dg.past <- reactive({
     logMsg(" reactive dg.past sldPastTime", sessionID)
-    return(dg() %>% dplyr::filter(Date > max(Date, na.rm=TRUE)-months(as.integer(input$sldPastTime))))
+    return(dg() %>% dplyr::filter(Date > (max(Date, na.rm=TRUE)-months(as.integer(input$sldPastTime)))))
   })
 
   # state history by regions
@@ -671,8 +671,10 @@ server <- function(input, output, session) {
     inRegions <- isolate(input$cbgRegion)
     dp <- df.past() %>% dplyr::filter(Region %in% inRegions)
     
+    if (bDebug) logMsg(paste("sldPastTime=",input$sldPastTime, "cbLogScale=",input$cbLogScale, "inRegions=",inRegions))
+    
     ggplot(dp, aes(x=Date, y=rm7NewConfPop, color=Region, shape=Region))+
-      cwmConfPopStyle(sldPastTime=input$sldPastTime, cbLogScale=input$cbLogScale, inRegions=inRegions) +
+      cwmConfPopStyle(sldPastTime=as.integer(input$sldPastTime), cbLogScale=input$cbLogScale, inRegions=inRegions) +
       geom_point(size=2)+geom_line()+
       geom_point(data=dp %>% dplyr::filter(Date==max(Date)), size=4)+
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Positiv Getestete pro 100.000 Einw. seit ", min(dp$Date), ".  Basisdaten: AGES"))

@@ -233,7 +233,7 @@ cwmConfPopStyle <- function(sldPastTime=3, cbLogScale=TRUE, inRegions="Österrei
     rvLabels="%d.%m"
   } else {
     rvBreaks="1 months"
-    rvLabels="%B"
+    rvLabels="%b"
   }
 
   idxRegions <- sort(match(inRegions,atRegions))
