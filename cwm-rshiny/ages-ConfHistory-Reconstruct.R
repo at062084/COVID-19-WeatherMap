@@ -45,6 +45,8 @@ for (zipFile in zipFiles) {
   }
 }
 
+# Data for same Evaluated/Reported day may have been read more than once. 
+# Make records unique and record newConfirmed=max(newConfirmed)
 dq <- dp %>% 
   dplyr::arrange(RegionID, Region, DateEvaluated, DateReported) %>%
   dplyr::group_by(RegionID, Region, DateEvaluated, DateReported) %>% 
@@ -53,7 +55,7 @@ dq <- dp %>%
 saveRDS(dq,file=paste0(dataPath,"/",agesProcessedFile))
 
 
-# Postprocess data before writing to disk
+# Add features for further calculations
 do <- dq %>%
   dplyr::mutate(RegionID=as.character(RegionID)) %>%
   dplyr::mutate(WdayReported=as.character(wday(DateReported, week_start=1, label=TRUE, abbr=TRUE))) %>%

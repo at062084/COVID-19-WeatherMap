@@ -80,14 +80,14 @@ df.rfr <- reactiveFileReader(
 df <- eventReactive(df.rfr(), {
   logMsg(paste("eventReactive reactiveFileReader:df", cwmStatesFile)) 
 
-  df.rfr() %>%
+  return(df.rfr() %>%
     dplyr::mutate(RegionID=as.character(RegionID)) %>%
-    dplyr::select(Date,Region,RegionID,Population, starts_with("rma"), starts_with("rm7NewConf"), rm7NewTested, newConfPop, dt7rm7NewConfPop) 
+    dplyr::select(Date,Region,RegionID,Population, starts_with("rma"), starts_with("rm7NewConf"), rm7NewTested, newConfPop, dt7rm7NewConfPop))
 })
 
 # Data for log-linear model for weathermap predictions
 df.predict <- eventReactive(df(), {
-  logMsg(paste("eventReactive reactiveFileReader:df.predict", cwmPredictionFile)) 
+  logMsg(paste("eventReactive reactiveFileReader:df.predict", cwmStatesFile)) 
   
   return(df() %>% 
            dplyr::select(Date, Region, RegionID, rm7NewConfPop, rm7NewConfirmed, rmaNewConfPop, rm7NewTested, rm7NewConfTest) %>% 
@@ -96,7 +96,7 @@ df.predict <- eventReactive(df(), {
 
 # Data for log-linear model for weathermap predictions
 df.model <- eventReactive(df(), {
-  logMsg(paste("eventReactive reactiveFileReader:df.model", cwmPredictionFile)) 
+  logMsg(paste("eventReactive reactiveFileReader:df.model", cwmStatesFile)) 
   
   dx <- df() %>% 
     dplyr::filter(Date>max(Date)-days(nModelDaysPrediction)) %>% 
@@ -107,7 +107,7 @@ df.model <- eventReactive(df(), {
 
 # enriched geomap data for WeatherMap of Bundesländer leaflet plot
 df.map <- eventReactive(df.model(), {
-  logMsg(paste("eventReactive reactiveFileReader:map", cwmPredictionFile)) 
+  logMsg(paste("eventReactive reactiveFileReader:map", cwmStatesFile)) 
 
   # Conjugate model data frame and add some geoRegion attributes
   dm <- data.frame(t(df.model() %>% dplyr::select(-Inzidenz)), stringsAsFactors=FALSE) %>% 
@@ -152,13 +152,13 @@ dg <- eventReactive(dg.rfr(), {
   logMsg(paste("eventReactive reactiveFileReader:dg", cwmCountiesFile)) 
 
     # Select only features currently needed
-  dg.rfr() %>% 
+  return(dg.rfr() %>% 
     dplyr::select(Date, Region, RegionID, County, CountyID, CountyNR, Population, starts_with("rm7"),starts_with("rma")) %>%
-    dplyr::mutate(rmaNewConfPop=rmaNewConfPop, rmaNewConfirmed=rmaNewConfirmed) 
+    dplyr::mutate(rmaNewConfPop=rmaNewConfPop, rmaNewConfirmed=rmaNewConfirmed))
 })
 
 dg.model <- eventReactive(dg(), {
-  logMsg(paste("eventReactive reactiveFileReader:dg.model", cwmPredictionFile)) 
+  logMsg(paste("eventReactive reactiveFileReader:dg.model", cwmCountiesFile)) 
   
   dx <- dg() %>% 
     dplyr::filter(Date>max(Date)-days(nModelDaysPrediction)) %>% 
@@ -169,7 +169,7 @@ dg.model <- eventReactive(dg(), {
 
 # enriched geomap data for WeatherMap of Bundesländer leaflet plot
 dg.map <- eventReactive(dg.model(), {
-  logMsg(paste("eventReactive reactiveFileReader:dg.map", cwmPredictionFile)) 
+  logMsg(paste("eventReactive reactiveFileReader:dg.map", cwmCountiesFile)) 
   
   # Conjugate model data frame and add some geoRegion attributes
   dm <- data.frame(t(dg.model() %>% dplyr::select(-Inzidenz)), stringsAsFactors=FALSE)  %>% 
@@ -188,42 +188,69 @@ dg.map <- eventReactive(dg.model(), {
   return(pMapATCounties)
 })
 
-dg.mapx <- eventReactive(dg(), {
-  logMsg(paste("eventReactive reactiveFileReader:dg.map", cwmCountiesFile)) 
-  dg() %>% dplyr::filter(Date>max(Date)-days(nWeatherForeCastDaysCountyMonth)) })
 
-dg.today <- eventReactive(dg(), {
-  logMsg(paste("eventReactive reactiveFileReader:dg.today", cwmCountiesFile)) 
-  dg() %>% dplyr::filter(Date==max(Date)) %>% 
-    dplyr::mutate(rm7NewConfPop=round(rm7NewConfPop,1), TagesInzidenzAGES=round(rmaNewConfPop,1)) %>%
-    dplyr::select(Date, Region, County, Population, TagesInzidenz=rm7NewConfPop, TagesInzidenzAGES)})
-
-# Prediction ???
-cwmPredictionFile <- "./data/COVID-19-CWM-AGES-Prediction.rda"
-wm.rfr <- reactiveFileReader(
+# ---------------------------------------------------------------------------------
+# AGES-TestedEvaluated: Reactive File Poller: Monitor for new files created by cron
+# ---------------------------------------------------------------------------------
+cwmTestedEvaluatedFile <- "./data/COVID-19-CWM-AGES-TestedEvaluated.rda"
+do.rfr <- reactiveFileReader(
   session=NULL,
   intervalMillis=10000,
-  filePath=cwmPredictionFile,
+  filePath=cwmTestedEvaluatedFile,
   readFunc=readRDS
 )
+# complete timeframe
+do <- eventReactive(do.rfr(), {
+  logMsg(paste("eventReactive reactiveFileReader:do", cwmTestedEvaluatedFile)) 
+  
+  return(do.rfr() %>%
+    select(DateEvaluated, Region, newConfirmed, daysDayN) %>% 
+    dplyr::mutate(NachTragTag=factor(daysDayN, levels=(nSettleDays:1)-1)) %>%
+    dplyr::group_by(Region, DateEvaluated) %>%
+    dplyr::mutate(diffConfirmed=newConfirmed-lag(newConfirmed, default=0)) %>%
+    dplyr::ungroup() %>%
+    dplyr::filter(DateEvaluated>(max(DateEvaluated,na.rm=TRUE)-days(nSettleDays)-weeks(nCalcWeeks))))
+})
+
+
+#dg.mapx <- eventReactive(dg(), {
+#  logMsg(paste("eventReactive reactiveFileReader:dg.map", cwmCountiesFile)) 
+#  dg() %>% dplyr::filter(Date>max(Date)-days(nWeatherForeCastDaysCountyMonth)) })
+
+#dg.today <- eventReactive(dg(), {
+#  logMsg(paste("eventReactive reactiveFileReader:dg.today", cwmCountiesFile)) 
+#  dg() %>% dplyr::filter(Date==max(Date)) %>% 
+#    dplyr::mutate(rm7NewConfPop=round(rm7NewConfPop,1), TagesInzidenzAGES=round(rmaNewConfPop,1)) %>%
+#    dplyr::select(Date, Region, County, Population, TagesInzidenz=rm7NewConfPop, TagesInzidenzAGES)})
+
+# ---------------------------------------------------------------------------------
+# Prediction
+# ---------------------------------------------------------------------------------
+#cwmPredictionFile <- "./data/COVID-19-CWM-AGES-Prediction.rda"
+#wm.rfr <- reactiveFileReader(
+#  session=NULL,
+#  intervalMillis=10000,
+#  filePath=cwmPredictionFile,
+#  readFunc=readRDS
+#)
 
 # ---------------------------------------------------------------------------------
 # Mutations
 # ---------------------------------------------------------------------------------
-cwmStatesMutations <- "./data/COVID-19-CWM-AGES-States-Mutations.rda"
-du.rfr <- reactiveFileReader(
-  session=NULL,
-  intervalMillis=10000,
-  filePath=cwmStatesMutations,
-  readFunc=readRDS
-)
+#cwmStatesMutations <- "./data/COVID-19-CWM-AGES-States-Mutations.rda"
+#du.rfr <- reactiveFileReader(
+#  session=NULL,
+#  intervalMillis=10000,
+#  filePath=cwmStatesMutations,
+#  readFunc=readRDS
+#)
 
 # complete timeframe
-du <- eventReactive(du.rfr(), {
-  logMsg(paste("eventReactive reactiveFileReader:du", cwmStatesMutations)) 
-  
-  du.rfr()
-})
+#du <- eventReactive(du.rfr(), {
+#  logMsg(paste("eventReactive reactiveFileReader:du", cwmStatesMutations)) 
+#  
+#  du.rfr()
+#})
 
 
 
@@ -366,7 +393,12 @@ ui <- fluidPage(
                  p("[Menüauswahl: Region,Zeitbereich]", align = "left", style="color:green"),
                  fluidRow(column(width=9, plotOutput(outputId = "ggpChangeRateStates", height="75vh")),
                           column(width=3, htmlOutput(outputId="hlpChangeRateStates")))),
-
+       
+       tabPanel("Einmeldungen",
+                h4("Anzahl der täglichen Einmeldungen und späteren Nachträge für den Tag der Testung", align = "left", style="color:gray"),
+                p("[Menüauswahl: keine]", align = "left", style="color:green"),
+                fluidRow(column(width=12, plotOutput(outputId = "ggpTestedEvaluated", height="75vh")))),
+       
 #        tabPanel("Mutationen",
 #                 h4("Britische (B.1.1.7, N501Y-V1), Afrikanische (B.1.351, N501Y-V2) und deren Stamm Mutation (N501Y)", align = "left", style="color:gray"),
 #                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
@@ -394,15 +426,15 @@ ui <- fluidPage(
         tabPanel("Erläuterungen",
                  h4("Beschreibung der Graphiken und Hintergrund zu Berechnungen", align = "left", style="color:black"),
                  p("[Menüauswahl: keine]", align = "left", style="color:green"),
-                 htmlOutput(outputId="manDescription")),
+                 htmlOutput(outputId="manDescription"))
 
-        tabPanel("SessionData",
-                 h3("Parsed query string"),
-                 verbatimTextOutput("queryText"),
-                 h3("URL components"),
-                 verbatimTextOutput("sessionText"),
-                 h3("EnvVars"),
-                 verbatimTextOutput("envvarText"))
+#        tabPanel("SessionData",
+#                 h3("Parsed query string"),
+#                 verbatimTextOutput("queryText"),
+#                 h3("URL components"),
+#                 verbatimTextOutput("sessionText"),
+#                 h3("EnvVars"),
+#                 verbatimTextOutput("envvarText"))
       )
     )
   )
@@ -736,7 +768,23 @@ server <- function(input, output, session) {
       ggtitle(paste0("COVID-19 Österreich und Bundesländer: Ausbreitungsgeschwindigkeit in % pro Tag, seit ", min(dp$Date), ".  Basisdaten: AGES"))
   })
   
-  
+ 
+  # -------------------------------------------
+  # TestedEvaluated
+  # -------------------------------------------
+  output$ggpTestedEvaluated <- renderPlot({
+    
+    colPal <- c("#DDDDDD", "#56B4E9","#E69F00",  "#009E73", "#0072B2", "#D55E00",  "#C40000")[7:1]
+    ggplot(data=do(), aes(x=DateEvaluated, y=diffConfirmed)) + 
+      theme(panel.grid.major.x = element_line(color = "darkgray", linetype=2), 
+            axis.text = element_text(size=10), axis.title.x=element_blank()) +
+      geom_col(aes(fill=NachTragTag), width=.95 , color="grey70")+
+      scale_fill_manual(values=colPal) +
+      scale_color_manual(values=colPal) +
+      scale_x_date(date_breaks="1 weeks", date_labels="%d.%m") + 
+      facet_wrap(Region~., scales="free_y", nrow=2) + 
+      ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Rückwirkende Verortung der täglichen Fallzahlen (BMSGPK)  zum TestDatum (AGES).  Basisdaten: AGES"))
+  })  
   
   # -------------------------------------------
   # Mutationen

@@ -523,7 +523,24 @@ ggplot(data=do %>%
   facet_grid(MonthEvaluated~WdayEvaluated)
 #facet_wrap(MonthEvaluated~., ncol=4)
 
+dd <- do %>% 
+  select(DateEvaluated, Region, newConfirmed, daysDayN) %>% 
+  dplyr::mutate(NachTragTag=factor(daysDayN, levels=6:0)) %>%
+  dplyr::group_by(Region, DateEvaluated) %>%
+  dplyr::mutate(diffConfirmed=newConfirmed-lag(newConfirmed, default=0)) %>%
+  dplyr::ungroup()
 
+colPal <- c("#DDDDDD", "#56B4E9","#E69F00",  "#009E73", "#0072B2", "#D55E00",  "#C40000")[7:1]
+ggplot(data=dd %>% dplyr::filter(DateEvaluated>(max(DateEvaluated,na.rm=TRUE)-days(35))), 
+       aes(x=DateEvaluated, y=diffConfirmed)) + 
+  theme(panel.grid.major.x = element_line(color = "darkgray", linetype=2), 
+        axis.text = element_text(size=10), axis.title.x=element_blank()) +
+  geom_col(aes(fill=NachTragTag), width=.95 , color="grey70")+
+  scale_fill_manual(values=colPal) +
+  scale_color_manual(values=colPal) +
+  scale_x_date(date_breaks="1 weeks", date_labels="%d.%m") + 
+  facet_wrap(Region~., scales="free_y", nrow=2) + 
+  ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Rückwirkende Verortung der täglichen Fallzahlen (BMSGPK)  zum TestDatum (AGES).  Basisdaten: AGES"))
 # %>% dplyr::filter(MonthEvaluated!=10, propDayN>.5)
 #, color=as.character(DateEvaluated), fill=as.character(DateEvaluated)
 #  geom_point(, size=1) + scale_y_continuous(limits=c(0.5,1))
