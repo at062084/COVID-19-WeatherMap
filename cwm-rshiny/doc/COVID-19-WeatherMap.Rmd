@@ -34,8 +34,20 @@ auf Basis der von AGES veröffentlichten Daten nicht möglich. Geplant ist daher
 - Das Dashboard wird auf AWS in einer VPC (Virual Private CLoud) auf virtuellen Linux Servern gehostet.
   Die Basis Images für die RShiny Instanzen stammen von [Louis Aslett](https://www.louisaslett.com/RStudio_AMI/), die Lastverteilung erfolgt über einen Apache 2.4 Server.
 - [AWS Architecture](AWS-rshiny-architecture.png)
+- [RShiny Structure](Rshiny-structure.png)
 
 ## History
+### Version 1.1.0 20210404
+
+- New plot 'Einmeldungen': Die vom BMSGPK täglich veröffentlichten Fallzahlen zählen die Anzahl der täglichen Einmeldungen in das EMS.
+  Im Unterschied dazu zählen die Inzidenz Daten der AGES die Anzahl der LaborAuswertungen pro Tag.
+  Nachträgliche Einmeldungen eines Labors für einen bestimmten Tag erhöhen bzw erniedrigen daher bei AGES bereits veröffentlichte Zahlen.
+  Die Graphik zeigt die Änderungen aufgrund von nachträglichen Einmeldungen. Korrekturen nach unten sind durch negative Werte dargestellt.
+
+### Version 1.0.1 20210317
+
+- Bug Fix prediction counties
+
 ### Version 1.0.0 20210316
 
 - Correction of incidence of past three days along AGES 'day of lab processing' and weekday dependent over/under reporting 
@@ -43,6 +55,4 @@ auf Basis der von AGES veröffentlichten Daten nicht möglich. Geplant ist daher
 - News section on front page
 - Move runtime from IBM Kubernetes to AWS EC2
 
-### Version 1.0.1 20210317
 
-- Bug Fix prediction counties
