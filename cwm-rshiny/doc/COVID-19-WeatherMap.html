@@ -445,10 +445,23 @@ summary {
 <li>Der <strong><a href="https://github.com/at062084/COVID-19-WeatherMap">Source code liegt auf github</a></strong>. Rückmeldungen bitte ebendort (Issue anlegen)</li>
 <li>Das Dashboard wird auf AWS in einer VPC (Virual Private CLoud) auf virtuellen Linux Servern gehostet. Die Basis Images für die RShiny Instanzen stammen von <a href="https://www.louisaslett.com/RStudio_AMI/">Louis Aslett</a>, die Lastverteilung erfolgt über einen Apache 2.4 Server.</li>
 <li><a href="AWS-rshiny-architecture.png">AWS Architecture</a></li>
+<li><a href="Rshiny-structure.png">RShiny Structure</a></li>
 </ul>
 </div>
 <div id="history" class="section level2">
 <h2>History</h2>
+<div id="version-1.1.0-20210404" class="section level3">
+<h3>Version 1.1.0 20210404</h3>
+<ul>
+<li>New plot ‘Einmeldungen’: Die vom BMSGPK täglich veröffentlichten Fallzahlen zählen die Anzahl der täglichen Einmeldungen in das EMS. Im Unterschied dazu zählen die Inzidenz Daten der AGES die Anzahl der LaborAuswertungen pro Tag. Nachträgliche Einmeldungen eines Labors für einen bestimmten Tag erhöhen bzw erniedrigen daher bei AGES bereits veröffentlichte Zahlen. Die Graphik zeigt die Änderungen aufgrund von nachträglichen Einmeldungen. Korrekturen nach unten sind durch negative Werte dargestellt.</li>
+</ul>
+</div>
+<div id="version-1.0.1-20210317" class="section level3">
+<h3>Version 1.0.1 20210317</h3>
+<ul>
+<li>Bug Fix prediction counties</li>
+</ul>
+</div>
 <div id="version-1.0.0-20210316" class="section level3">
 <h3>Version 1.0.0 20210316</h3>
 <ul>
@@ -456,12 +469,6 @@ summary {
 <li>Quadratic model prediction states</li>
 <li>News section on front page</li>
 <li>Move runtime from IBM Kubernetes to AWS EC2</li>
-</ul>
-</div>
-<div id="version-1.0.1-20210317" class="section level3">
-<h3>Version 1.0.1 20210317</h3>
-<ul>
-<li>Bug Fix prediction counties</li>
 </ul>
 </div>
 </div>
