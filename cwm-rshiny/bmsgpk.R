@@ -8,25 +8,12 @@ options(error = function() traceback(2))
 #setwd("/home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny")
 source("fun.R")
 
-
-# Scrape bmsgpk Dashboard and append data to raw data history file
-caBmsgpkUpdateDashboard <- function(dataPath="./data",
-                                    bmsgkpScrapedFile="COVID-19-CWM-BMSGPK-Dashboard.scraped.rda") {
- 
-  logMsg("Running caBmsgpkUpdateDashboard ...")
-  logMsg(paste(" Updating bmsgpk dashboard data"))
-  dm <- caBmsgpkScrapeDashBoard()
-  
-  df <- readRDS(paste0(dataPath,"/",bmsgkpScrapedFile))
-  df <- rbind(df, dm) %>% unique()
-  
-  rdaFile <- paste0(dataPath,"/",bmsgkpScrapedFile)
-  logMsg(paste(" Appending new data to", rdaFile))
-  saveRDS(df, rdaFile)
-  
-  logMsg(paste(" Curating data"))
-  dm <- caBmsgpkCurateDashboard()
-}
+BL <- data.frame(ID=c("AT","B","K","Noe","Ooe","Szbg","Stmk","T","V","W"),
+                 Name=c("Oesterreich","Burgenland","Kaernten","Niederoesterreich","Oberoesterreich","Salzburg","Steiermark","Tirol","Vorarlberg","Wien"),
+                 NameUTF8=c("Österreich","Burgenland","Kärnten","Niederösterreich","Oberösterreich","Salzburg","Steiermark","Tirol","Vorarlberg","Wien"),
+                 NameUTF82=c("Österreich gesamt","Burgenland","Kärnten","Niederösterreich","Oberösterreich","Salzburg","Steiermark","Tirol","Vorarlberg","Wien"),
+                 Population=c(8800, 294, 561, 1684, 1490, 558, 1247, 757, 397, 1900),
+                 stringsAsFactors=FALSE)
 
 
 # Download CoronaAmpel file and Scrape Dashboard data
@@ -283,6 +270,25 @@ caBmsgpkCurateDashboard <- function(dataPath="./data",
   return(dm)
 }  
 
+
+# Scrape bmsgpk Dashboard and append data to raw data history file
+caBmsgpkUpdateDashboard <- function(dataPath="./data",
+                                    bmsgkpScrapedFile="COVID-19-CWM-BMSGPK-Dashboard.scraped.rda") {
+  
+  logMsg("Running caBmsgpkUpdateDashboard ...")
+  logMsg(paste(" Updating bmsgpk dashboard data"))
+  dm <- caBmsgpkScrapeDashBoard()
+  
+  df <- readRDS(paste0(dataPath,"/",bmsgkpScrapedFile))
+  df <- rbind(df, dm) %>% unique()
+  
+  rdaFile <- paste0(dataPath,"/",bmsgkpScrapedFile)
+  logMsg(paste(" Appending new data to", rdaFile))
+  saveRDS(df, rdaFile)
+  
+  logMsg(paste(" Curating data"))
+  dm <- caBmsgpkCurateDashboard()
+}
 
 
 

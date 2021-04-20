@@ -60,7 +60,7 @@ de <- caBmsgpkRead_tfe()
 
 # bmsgpk Webpage scraper
 logMsg("Scraping BMSGPK Website ...","__cron__")
-dm <- caBmsgpkScrapeCovid()
+dm <- caBmsgpkUpdateDashboard()
 
 # Construct working data frame 
 logMsg("Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ...","__cron__")
