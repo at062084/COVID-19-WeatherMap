@@ -64,10 +64,13 @@ cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#444444", "#F0D042",
 # ----------------------------------------------------------------------------------
 
 datATRegions <- data.frame(
-  NUTS_ID=c("AT0","AT11","AT12","AT13","AT21","AT22","AT31","AT32","AT33","AT34"),
-  Region= c("Österreich", "Burgenland","Niederösterreich","Wien", "Kärnten","Steiermark", "Oberösterreich","Salzburg","Tirol","Vorarlberg"),
-  RegionS=c("AT","B","NOe","W","K","Stmk","OOe","Szbg","T","V"),
-  RegionID=as.character(c(10,1,3,9,2,6,4,5,7,8)), stringsAsFactors=FALSE) %>% 
+    NUTS_ID=c("AT0","AT11","AT12","AT13","AT21","AT22","AT31","AT32","AT33","AT34"),
+    RegionID=as.character(c(10,1,3,9,2,6,4,5,7,8)), 
+    Region= c("Österreich", "Burgenland", "Niederösterreich", "Wien", "Kärnten", "Steiermark", "Oberösterreich", "Salzburg", "Tirol", "Vorarlberg"),
+    Population=c(8901064,    294436,      1684287,           1911191, 561293,    1246395,      1490279,          558410,      757634,  397139), 
+    RegionS=c(       "AT",   "B",         "NOe",             "W",     "K",       "Stmk",       "OOe",            "Szbg",     "T",      "V"),
+    Regions=c(       "AT",   "B",         "Noe",             "W",     "K",       "Stmk",       "Ooe",            "Szbg",     "T",      "V"),
+    stringsAsFactors=FALSE) %>% 
   dplyr::arrange(Region) %>%
   dplyr::mutate(Shape=c(10,6,7,2,11,5,12,22,1,9)) %>% 
   dplyr::mutate(Palette=c("#999999", "#E69F00", "#56B4E9", "#009E73", "#444444", "#F0D042", "#0072B2", "#D55E00", "#CC79A7", "#C40000")
