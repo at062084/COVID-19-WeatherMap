@@ -16,7 +16,7 @@ logMsg <- function(msg, sessionID="__cron__") {
 
 hostSystem <- system("hostname", intern=TRUE)
 slackMsg <- function (title, msg, hostName = hostSystem) {
-  url <- as.character(read.csv("./secrets/slack.txt",header=FALSE)[1,1])
+  url <- as.character(read.csv("../secrets/slack.txt",header=FALSE)[1,1])
   body <- list(text = paste(paste0(now()," *",title,"*: "), paste0(hostName,": ",msg)))
   r <- POST(url, content_type_json(), body = body, encode = "json")
   invisible(r)
@@ -29,6 +29,8 @@ logMsg("Sourcing fun.R","__cron__")
 source("./fun.R")
 logMsg("Sourcing ages.R","__cron__")
 source("./ages.R")
+logMsg("Sourcing bmsgpk.R","__cron__")
+source("./bmsgpk.R")
 
 # Bundesländer
 logMsg("DownLoading CovidFallzahlen data from AGES ...","__cron__")
@@ -48,6 +50,18 @@ db <- caAgesRead_cfGKZtl()
 #logMsg("Scraping Mutations data from AGES ...","__cron__")
 # dm <-caAgesRead_Mutations()
 
+# Confirmed+Tested BundesLänder 
+logMsg("Downloading timeline-faelle-bundeslaender data from BMSGPK ...","__cron__")
+dd <- caBmsgpkRead_tfb()
+
+# Confirmed EMS 
+logMsg("Downloading timeline-faelle-ems data from BMSGPK ...","__cron__")
+de <- caBmsgpkRead_tfe()
+
+# bmsgpk Webpage scraper
+logMsg("Scraping BMSGPK Website ...","__cron__")
+dm <- caBmsgpkScrapeCovid()
+
 # Construct working data frame 
 logMsg("Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ...","__cron__")
 df <- caAgesRead_tlrm(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile="./data/CovidFallzahlen.rda", bPlot=FALSE, 
@@ -59,6 +73,13 @@ logMsg("Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new 
 
 slackMsg(title="COVID-19-WeatherMap",msg=paste("Complete cron job cron.R"))
 logMsg(paste("cron: Done Running script cron.R in ", getwd()),"__cron__")
+
+
+# Testungen und Fälle
+
+
+
+
 
 
 
