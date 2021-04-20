@@ -292,6 +292,8 @@ htmlExponential <- "<p><b>Rückblick 2020</b></p>
                       d.h. die Zahlen sich nach links und unten bewegen. <br> Für diese Graphik ist eine Auswahl von nur ein oder zwei Bundesländern vorteilhaft. 
                     </p>"
                   
+hlpBmsgpk <- "<p><b>GesundheitsMinisterium</b></p>"
+
 
 htmlDescription <- read_file("./doc/COVID-19-WeatherMap.html")
 

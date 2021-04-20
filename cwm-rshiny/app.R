@@ -213,6 +213,27 @@ do <- eventReactive(do.rfr(), {
 })
 
 
+# ---------------------------------------------------------------------------------
+# BMSGPK-Dashboard: Reactive File Poller: Monitor for new files created by cron
+# ---------------------------------------------------------------------------------
+cwmBMSGPKDashboardFile <- "./data/COVID-19-CWM-BMSGPK-Dashboard.curated.rda"
+dk.rfr <- reactiveFileReader(
+  session=NULL,
+  intervalMillis=10000,
+  filePath=cwmBMSGPKDashboardFile,
+  readFunc=readRDS
+)
+# complete timeframe
+dk <- eventReactive(dk.rfr(), {
+  logMsg(paste("eventReactive reactiveFileReader:dk", cwmBMSGPKDashboardFile)) 
+  
+  return(dk.rfr())
+})
+
+
+
+
+
 #dg.mapx <- eventReactive(dg(), {
 #  logMsg(paste("eventReactive reactiveFileReader:dg.map", cwmCountiesFile)) 
 #  dg() %>% dplyr::filter(Date>max(Date)-days(nWeatherForeCastDaysCountyMonth)) })
@@ -398,7 +419,16 @@ ui <- fluidPage(
                 h4("Anzahl der täglichen Einmeldungen und späteren Nachträge für den Tag der Testung", align = "left", style="color:gray"),
                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
                 fluidRow(column(width=12, plotOutput(outputId = "ggpTestedEvaluated", height="75vh")))),
+
+       tabPanel("Gesundheitsministerium",
+                h4("Daten aus dem Dashboard des Gesundheitsministeriums", align = "left", style="color:gray"),
+                p("[Menüauswahl: Region]", align = "left", style="color:green"),
+                fluidRow(column(width=9, 
+                                plotOutput(outputId = "ggpBmsgpkCTAP", height="60vh"),
+                                plotOutput(outputId = "ggpBmsgpkCHIR", height="60vh")),
+                         column(width=3, htmlOutput(outputId="hlpBmsgpk")))),
        
+              
 #        tabPanel("Mutationen",
 #                 h4("Britische (B.1.1.7, N501Y-V1), Afrikanische (B.1.351, N501Y-V2) und deren Stamm Mutation (N501Y)", align = "left", style="color:gray"),
 #                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
@@ -785,7 +815,53 @@ server <- function(input, output, session) {
       facet_wrap(Region~., scales="free_y", nrow=2) + 
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Rückwirkende Verortung der täglichen Fallzahlen (BMSGPK)  zum TestDatum (AGES).  Basisdaten: AGES"))
   })  
-  
+ 
+  # -------------------------------------------
+  # bmsgpk Data
+  # -------------------------------------------
+  output$ggpBmsgpkCHIR <- renderPlot({
+
+    setStatus100k <- c("newConfirmed","curHospital","curICU","newRecovered")
+    setFacet <- "Region"
+    
+    ggplot(data=dk() %>% dplyr::filter(Date>as.Date("2021-02-01"), Status %in% setStatus100k), aes(x=Date, y=Count, color=Status, shape=Status)) +
+      geom_line(size=.5) +
+      geom_point(size=1.5) +
+      facet_wrap(as.formula(paste0(setFacet,"~.")), nrow=2)+
+      scale_fill_manual(values=cbPalette) +
+      scale_color_manual(values=cbPalette) +
+      scale_x_date(date_breaks="2 weeks", date_labels="%d.%m") +
+      scale_y_continuous(limits=c(1/2,NA), trans="log2", breaks=2^(-5:10)) +
+      geom_line(aes(y=1), size=0.6, color="white") +
+      geom_line(aes(y=2), size=0.6, color="green") +
+      geom_line(aes(y=4), size=0.6, color="orange") +
+      geom_line(aes(y=8), size=0.6, color="magenta") +
+      geom_line(aes(y=16), size=1.0, color="red") +
+      geom_line(aes(y=32), size=1.0, color="darkred") +
+      geom_line(aes(y=64), size=1.0, color="black") +
+      ggtitle("COIVD-19 Österreich: Positive, Spitalsbelegung, Intensivstation und Genesene pro 100.000. Wochenmittel.       Daten: bmsgpk. Datenqualität: schlecht.      Bearbeitung: heuristische Korrektur/Manipulation")
+  })  
+  input$cbgRegion
+  output$ggpBmsgpkCTAP <- renderPlot({
+    
+    setStatusTesting100k <- c("newTested", "newTested_AG", "newTested_PCR", "relConfTest", "relConfTest_AG", "relConfTest_PCR")
+    #setRegionSelect <- c("Burgenland","Vorarlberg","Wien")
+    #setRegionSelect <- c("Tirol","Kärnten","Salzburg")
+    setRegionSelect <- input$cbgRegion
+    setFacet <- "Status"
+    
+    ggplot(data=dk() %>% dplyr::filter(Date>as.Date("2021-02-01"), Status %in% setStatusTesting100k, Region %in% setRegionSelect), 
+           aes(x=Date, y=Count, color=Region, shape=Region)) +
+      geom_line(size=.5) +
+      geom_point(size=1.5) +
+      facet_wrap(as.formula(paste0(setFacet,"~.")), nrow=2, scales="free_y")+
+      scale_fill_manual(values=cbPalette) +
+      scale_color_manual(values=cbPalette) +
+      scale_x_date(date_breaks="2 weeks", date_labels="%d.%m") +
+      scale_y_continuous(limits=c(0,NA), trans="identity") +
+      ggtitle("COIVD-19 Österreich Tested: Oben: Anzahl Gesamt, AG und PCR pro 100.000 (1000=1%). Unten: Prozent Positive pro Test. Wochenmittel.   Daten: bmsgpk. Datenqualität: schlecht.      Bearbeitung: heuristische Korrektur/Manipulation")
+  })  
+   
   # -------------------------------------------
   # Mutationen
   # -------------------------------------------
