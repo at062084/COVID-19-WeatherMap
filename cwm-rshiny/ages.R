@@ -78,6 +78,81 @@ caAgesRead_Mutations <- function(csvFile="COVID-19-AGES-Mutations.csv", bSave=TR
 
 
 # -------------------------------------------------------------------------------------------
+# timeline-faelle-bundeslaender.csv: TimeLine BundesLänder (Tested_*, Confirmed, Recovered, Deaths)
+# https://info.gesundheitsministerium.gv.at/data/timeline-faelle-bundeslaender.csv 
+# (Datum, RegionID, Region, newConfirmed, Tests, Test_PCR, Tests_AntiGen, Hosp, ICU, Deaths, REcovered)
+# -------------------------------------------------------------------------------------------
+caBmsgpkRead_tfb <- function(csvFile="timeline-faelle-bundeslaender.csv", bSave=TRUE) {
+  
+  # "https://info.gesundheitsministerium.gv.at/data/timeline-faelle-bundeslaender.csv"
+  webBMSGPK <- "https://info.gesundheitsministerium.gv.at/data"
+  webFile <- paste0(webBMSGPK,"/",csvFile) 
+  logMsg(paste("Download BMSGPK data from", webFile))
+  dskFile <- paste0("./data/",csvFile)
+  logMsg(paste("Storing BMSGPK data to", dskFile))
+  cmd <- paste(webFile, "-O", dskFile)
+  system2("wget", cmd)
+  
+  dd <- read.csv(dskFile, stringsAsFactors=FALSE, sep=";") %>% 
+    dplyr::mutate(Date=as.POSIXct(Datum)) %>%
+    dplyr::mutate(BundeslandID=as.character(BundeslandID)) %>%
+    dplyr::rename(Region=Name, RegionID=BundeslandID) %>%
+    dplyr::rename(sumConfirmedNUTS2=BestaetigteFaelleBundeslaender, sumRecovered=Genesen, sumDeaths=Todesfaelle) %>%
+    dplyr::rename(sumTested=Testungen, sumTestedAG=TestungenAntigen, sumTestedPCR=TestungenPCR) %>%
+    dplyr::rename(curICU=Intensivstation, curHospital=Hospitalisierung) %>%
+    dplyr::select(-Datum) %>%
+    dplyr::arrange(Date, Region) %>%
+    dplyr::group_by(Region) %>%
+    dplyr::mutate(newConfirmedNUTS2=sumConfirmedNUTS2-lag(sumConfirmedNUTS2)) %>%
+    dplyr::mutate(newTested=sumTested-lag(sumTested)) %>%
+    dplyr::mutate(newTestedAG=sumTestedAG-lag(sumTestedAG)) %>%
+    dplyr::mutate(newTestedPCR=sumTestedPCR-lag(sumTestedPCR)) %>%
+    dplyr::ungroup() %>%
+    dplyr::select(Date,RegionID, Region, starts_with("new"), starts_with("cur"), starts_with("sum"))
+
+  rdaFile <- "./data/timeline-faelle-bundeslaender.rda"   
+  logMsg(paste("Writing", rdaFile))
+  if (bSave) saveRDS(dd, file=rdaFile)  
+  
+  return(dd)
+}
+
+# -------------------------------------------------------------------------------------------
+# timeline-faelle-bundeslaender.csv: TimeLine BundesLänder (Tested_*, Confirmed, Recovered, Deaths)
+# https://info.gesundheitsministerium.gv.at/data/timeline-faelle-ems.csv 
+# (Datum, RegionID, Region, newConfirmedEMS)
+# -------------------------------------------------------------------------------------------
+caBmsgpkRead_tfe <- function(csvFile="timeline-faelle-ems.csv", bSave=TRUE) {
+  
+  # "https://info.gesundheitsministerium.gv.at/data/timeline-faelle-ems.csv"
+  webBMSGPK <- "https://info.gesundheitsministerium.gv.at/data"
+  webFile <- paste0(webBMSGPK,"/",csvFile) 
+  logMsg(paste("Download BMSGPK data from", webFile))
+  dskFile <- paste0("./data/",csvFile)
+  logMsg(paste("Storing BMSGPK data to", dskFile))
+  cmd <- paste(webFile, "-O", dskFile)
+  system2("wget", cmd)
+  
+  de <- read.csv(dskFile, stringsAsFactors=FALSE, sep=";") %>% 
+    dplyr::mutate(Date=as.POSIXct(Datum)) %>%
+    dplyr::mutate(BundeslandID=as.character(BundeslandID)) %>%
+    dplyr::rename(Region=Name, RegionID=BundeslandID) %>%
+    dplyr::rename(sumConfirmedEMS=BestaetigteFaelleEMS) %>%
+    dplyr::select(-Datum)%>%
+    dplyr::arrange(Date, Region) %>%
+    dplyr::group_by(Region) %>%
+    dplyr::mutate(newConfirmedEMS=sumConfirmedEMS-lag(sumConfirmedEMS)) %>%
+    dplyr::ungroup() %>%
+    dplyr::select(Date, RegionID, Region, newConfirmedEMS, sumConfirmedEMS)
+  
+  rdaFile <- "./data/timeline-faelle-ems.rda"   
+  logMsg(paste("Writing", rdaFile))
+  if (bSave) saveRDS(de, file=rdaFile)  
+  
+  return(de)
+}
+
+# -------------------------------------------------------------------------------------------
 # AGES Data files
 # -------------------------------------------------------------------------------------------
 cfGKZtl <- "CovidFaelle_Timeline_GKZ.csv"  # https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv    # caAgesRead_cfGKZtl()
