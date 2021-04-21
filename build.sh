@@ -47,7 +47,7 @@ perl -pi -e "s/$APP_VER/$NEW_VER/" $APP_DIR/$DKR_PRJ/app.R
 [ $DRY_RUN -eq 0 ] &&  echo "`date +%Y%m%d%H%M%S` $GIT_PRJ $GIT_VER" | tee -a ./version
 echo "git tag -a $GIT_TAG -m $GIT_MSG"
 
-[ $DRY_RUN -eq 0 ] && git add version Dockerfile* *.sh *.yaml install.log
+[ $DRY_RUN -eq 0 ] && git add ./version ./Dockerfile* ./*.sh ./*.yaml ./install.log ./$DKR_PRJ/app.R
 [ $DRY_RUN -eq 0 ] && git commit -m "$GIT_MSG"
 [ $DRY_RUN -eq 0 ] && git tag -a $GIT_TAG -m "$GIT_MSG"
 [ $DRY_RUN -eq 0 ] && git push -u origin master
