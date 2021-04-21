@@ -224,6 +224,18 @@ cwm.model <- function(dx, nPoly=2, nModelDays=nModelDaysPrediction, dg=datATRegi
 cwm.predict <- function(df, nPoly=2, nModelDays=nModelDaysPrediction, nPredDays=7, modWeights=NULL) {
 }
 
+cwmFacetTheme.TextScale <- 1.5
+cwmFacetTheme <- theme(
+  axis.title.x = element_blank(),
+  plot.title   = element_text(size=rel(cwmFacetTheme.TextScale)),
+  strip.text.x = element_text(size=rel(cwmFacetTheme.TextScale)),
+  strip.text.y = element_text(size=rel(cwmFacetTheme.TextScale)),
+  axis.text    = element_text(size=rel(cwmFacetTheme.TextScale *.75)),
+  legend.text  = element_text(size=rel(cwmFacetTheme.TextScale *.75)),
+  legend.title = element_text(size=rel(cwmFacetTheme.TextScale *.75))
+)
+# text = element_text(size=rel(cwmFacetTheme.TextScale)
+
 # ----------------------------------------------------------------------------------------------
 # Standard ggplot style for newConfPop~Date
 # ----------------------------------------------------------------------------------------------

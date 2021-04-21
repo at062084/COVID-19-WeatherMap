@@ -15,7 +15,7 @@ logMsg <- function(msg, sessionID="_global_") {
 
 hostSystem <- system("hostname", intern=TRUE)
 slackMsg <- function (title, msg, hostName = hostSystem) {
-  url <- as.character(read.csv("./secrets/slack.txt",header=FALSE)[1,1])
+  url <- as.character(read.csv("../secrets/slack.txt",header=FALSE)[1,1])
   body <- list(text = paste(paste0(now()," *",title,"*: "), paste0(hostName,": ",msg)))
   r <- POST(url, content_type_json(), body = body, encode = "json")
   invisible(r)
@@ -309,7 +309,7 @@ ui <- fluidPage(
     
     # Sidebar panel for inputs ----
     sidebarPanel(
-      p("CWM-V1.2.0-20210421"),
+      p("CWM-V1.2.3-20210421"),
       
       fluidRow(
         column(6,
@@ -419,9 +419,9 @@ ui <- fluidPage(
        tabPanel("Gesundheitsministerium",
                 h4("Historische Daten aus dem tagesaktuellen Dashboard des Gesundheitsministeriums", align = "left", style="color:gray"),
                 p("[Menüauswahl: Österreich Testet: Region. Spitalsbelegung: StufenModell]", align = "left", style="color:green"),
-                fluidRow(column(width=12, 
-                                plotOutput(outputId = "ggpBmsgpkCTAP", height="60vh"),
-                                plotOutput(outputId = "ggpBmsgpkCHIR", height="60vh")))),
+                fluidRow(column(width=12, plotOutput(outputId = "ggpBmsgpkCTAP", height="60vh"))),
+                h1(""),
+                fluidRow(column(width=12, plotOutput(outputId = "ggpBmsgpkCHIR", height="60vh")))),
        
               
 #        tabPanel("Mutationen",
@@ -802,7 +802,12 @@ server <- function(input, output, session) {
     colPal <- c("#DDDDDD", "#56B4E9","#E69F00",  "#009E73", "#0072B2", "#D55E00",  "#C40000")[7:1]
     ggplot(data=do(), aes(x=DateEvaluated, y=diffConfirmed)) + 
       theme(panel.grid.major.x = element_line(color = "darkgray", linetype=2), 
-            axis.text = element_text(size=10), axis.title.x=element_blank()) +
+            plot.title   = element_text(size=rel(cwmFacetTheme.TextScale)),
+            axis.text    = element_text(size=rel(cwmFacetTheme.TextScale*.75)), 
+            axis.title.x=element_blank(),
+            axis.title.y=element_blank(),
+            strip.text.x = element_text(size=rel(cwmFacetTheme.TextScale)),
+            strip.text.y = element_text(size=rel(cwmFacetTheme.TextScale))) +
       geom_col(aes(fill=NachTragTag), width=.95 , color="grey70")+
       scale_fill_manual(values=colPal) +
       scale_color_manual(values=colPal) +
@@ -822,6 +827,7 @@ server <- function(input, output, session) {
     yTrans <- ifelse(input$cbLogScale, "log2","identity")
     
     ggplot(data=dk() %>% dplyr::filter(Date>as.Date("2021-02-01"), Status %in% setStatus100k), aes(x=Date, y=Count, color=Status, shape=Status)) +
+      cwmFacetTheme +
       geom_line(aes(y=1), size=0.25, color="white") +
       geom_line(aes(y=2), size=0.25, color="green") +
       geom_line(aes(y=4), size=0.25, color="orange") +
@@ -829,8 +835,8 @@ server <- function(input, output, session) {
       geom_line(aes(y=16), size=0.5, color="red") +
       geom_line(aes(y=32), size=0.5, color="darkred") +
       geom_line(aes(y=64), size=0.5, color="black") +
-      geom_line(size=.5) +
-      geom_point(size=1) +
+      geom_line(size=1) +
+      geom_point(size=1.5) +
       facet_wrap(as.formula(paste0(setFacet,"~.")), nrow=2)+
       scale_fill_manual(values=cbPalette) +
       scale_color_manual(values=cbPalette) +
@@ -850,8 +856,9 @@ server <- function(input, output, session) {
     
     ggplot(data=dk() %>% dplyr::filter(Date>as.Date("2021-02-01"), Status %in% setStatusTesting100k, Region %in% setRegionSelect), 
            aes(x=Date, y=Count, color=Region, shape=Region)) +
-      geom_line(size=.5) +
-      geom_point(size=1) +
+      cwmFacetTheme +
+      geom_line(size=1) +
+      geom_point(size=2) +
       facet_wrap(as.formula(paste0(setFacet,"~.")), nrow=2, scales="free_y")+
       scale_fill_manual(values=cbPalette) +
       scale_color_manual(values=cbPalette) +
