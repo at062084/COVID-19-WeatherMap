@@ -6,6 +6,7 @@ APP=cwm-rshiny
 
 cd $DIR 
 mkdir -p "./log" 2>/dev/null
+mkdir -p $DIR/$APP/ampel 2>/dev/null
 
 echo "`date +%Y%m%d-%H%M%S` Running $0" | tee -a $LOG
 
