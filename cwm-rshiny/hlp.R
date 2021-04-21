@@ -5,9 +5,11 @@ htmlFrontPageNews <- "<i><b>News:</b>
                       von Öffnungen (Beschleunigung) und Lockdowns (Abbremsung)</b> in den Bundesländern.
                       Details dazu den Reiter '<b>Bundesländer</b>'und '<b>Prognose</b></i>'
                     "
-htmlFrontPageTop <- "<b>News:</b>
-                      <i>Mit Version 1.0.0 vom 16.3.2021 berücksichtigt die Prognose der COVID Inzidenz die Effekte 
-                      von <b>Öffnungen (Beschleunigung)</b> und <b>Lockdowns (Abbremsung)</b> in den Bundesländern.
+htmlFrontPageTop <- "<b>News:</b><i>
+                      <br>Version 1.2.0: (21.4.2021) Daten aus dem Dashboard des Gesundheitsministeriums ab 1.2.2021 für die 'Dritte Welle'
+                      <br>Version 1.1.0: (4.4.2021) Zeitlicher Verlauf der Einmeldungen in das EMS (letzte 5 Wochen)
+                      <br>Version 1.0.0 (16.3.2021) Die Prognose der COVID Inzidenz für die Bundesländer berücksichtigt die Effekte 
+                      von <b>Öffnungen (Beschleunigung)</b> und <b>Lockdowns (Abbremsung)</b>.
                       Details siehe  '<b>Bundesländer</b>' und '<b>Prognose</b></i>'
                       <h4>Zielsetzung und Funktionsweise</h4>
                      <p>
