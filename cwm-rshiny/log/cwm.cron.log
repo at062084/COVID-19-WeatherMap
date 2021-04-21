@@ -795,3 +795,247 @@
 20210402-010523.638 __cron__ Sourcing fun.R 
 20210402-010523.654 __cron__ Sourcing hlp.R 
 20210402-010523.737 __cron__ Sourcing ages.R 
+20210404-122356.176 __cron__ cron: Start Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210404-122356.207 __cron__ Sourcing fun.R 
+20210404-122356.223 __cron__ Sourcing ages.R 
+20210404-122356.232 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210404-122356.306 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210404-122356.306 __cron__ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210404-122357.157 __cron__ Writing ./data/CovidFallzahlen.rda 
+20210404-122357.172 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210404-122357.202 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210404-122357.202 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210404-122358.006 __cron__ Writing ./data/CovidFaelle_Timeline.rda 
+20210404-122358.028 __cron__ Creating history of AGES reports of Confirmed cases ... 
+20210404-122358.147 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedProcessed.rda 
+20210404-122358.354 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedEvaluated.rda 
+20210404-122358.377 __cron__ Downloading CovidFaelle_Timeline_GKZ data from AGES ... 
+20210404-122358.439 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv 
+20210404-122358.440 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline_GKZ.csv 
+20210404-122402.006 __cron__ Writing ./data/CovidFaelle_Timeline_GKZ.rda 
+20210404-122402.581 __cron__ Writing ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210404-122402.798 __cron__ Downloading timeline-faelle-bundeslaender data from BMSGPK ... 
+20210404-122402.906 __cron__ Download BMSGPK data from https://info.gesundheitsministerium.gv.at/data/timeline-faelle-bundeslaender.csv 
+20210404-122402.906 __cron__ Storing BMSGPK data to ./data/timeline-faelle-bundeslaender.csv 
+20210404-122403.293 __cron__ Writing ./data/timeline-faelle-bundeslaender.rda 
+20210404-122403.295 __cron__ Downloading timeline-faelle-ems data from BMSGPK ... 
+20210404-122403.325 __cron__ Download BMSGPK data from https://info.gesundheitsministerium.gv.at/data/timeline-faelle-ems.csv 
+20210404-122403.325 __cron__ Storing BMSGPK data to ./data/timeline-faelle-ems.csv 
+20210404-122403.694 __cron__ Writing ./data/timeline-faelle-ems.rda 
+20210404-122403.695 __cron__ Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ... 
+20210404-122515.644 __cron__ cron: Start Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210404-122515.658 __cron__ Sourcing fun.R 
+20210404-122516.787 __cron__ Sourcing ages.R 
+20210404-122517.001 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210404-122517.052 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210404-122517.052 __cron__ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210404-122517.668 __cron__ Writing ./data/CovidFallzahlen.rda 
+20210404-122517.693 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210404-122517.749 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210404-122517.750 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210404-122518.327 __cron__ Writing ./data/CovidFaelle_Timeline.rda 
+20210404-122518.350 __cron__ Creating history of AGES reports of Confirmed cases ... 
+20210404-122518.516 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedProcessed.rda 
+20210404-122518.664 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedEvaluated.rda 
+20210404-122518.689 __cron__ Downloading CovidFaelle_Timeline_GKZ data from AGES ... 
+20210404-122518.776 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv 
+20210404-122518.777 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline_GKZ.csv 
+20210404-122521.543 __cron__ Writing ./data/CovidFaelle_Timeline_GKZ.rda 
+20210404-122522.092 __cron__ Writing ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210404-122522.314 __cron__ Downloading timeline-faelle-bundeslaender data from BMSGPK ... 
+20210404-122522.333 __cron__ Download BMSGPK data from https://info.gesundheitsministerium.gv.at/data/timeline-faelle-bundeslaender.csv 
+20210404-122522.333 __cron__ Storing BMSGPK data to ./data/timeline-faelle-bundeslaender.csv 
+20210404-122522.613 __cron__ Writing ./data/timeline-faelle-bundeslaender.rda 
+20210404-122522.615 __cron__ Downloading timeline-faelle-ems data from BMSGPK ... 
+20210404-122522.638 __cron__ Download BMSGPK data from https://info.gesundheitsministerium.gv.at/data/timeline-faelle-ems.csv 
+20210404-122522.639 __cron__ Storing BMSGPK data to ./data/timeline-faelle-ems.csv 
+20210404-122522.862 __cron__ Writing ./data/timeline-faelle-ems.rda 
+20210404-122522.864 __cron__ Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ... 
+20210404-122548.187 __cron__ Writing ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210404-122548.288 __cron__ Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features 
+20210404-122548.548 __cron__ cron: Done Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210404-123611.610 __cron__ cron: Start Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210404-123611.642 __cron__ Sourcing fun.R 
+20210404-123611.665 __cron__ Sourcing ages.R 
+20210404-123611.683 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210404-123611.801 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210404-123611.801 __cron__ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210404-123612.372 __cron__ Writing ./data/CovidFallzahlen.rda 
+20210404-123612.389 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210404-123612.426 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210404-123612.426 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210404-123612.986 __cron__ Writing ./data/CovidFaelle_Timeline.rda 
+20210404-123613.009 __cron__ Creating history of AGES reports of Confirmed cases ... 
+20210404-123613.169 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedProcessed.rda 
+20210404-123613.331 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedEvaluated.rda 
+20210404-123613.354 __cron__ Downloading CovidFaelle_Timeline_GKZ data from AGES ... 
+20210404-123613.433 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv 
+20210404-123613.433 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline_GKZ.csv 
+20210404-123615.983 __cron__ Writing ./data/CovidFaelle_Timeline_GKZ.rda 
+20210404-123616.485 __cron__ Writing ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210404-123616.724 __cron__ Downloading timeline-faelle-bundeslaender data from BMSGPK ... 
+20210404-123616.776 __cron__ Download BMSGPK data from https://info.gesundheitsministerium.gv.at/data/timeline-faelle-bundeslaender.csv 
+20210404-123616.776 __cron__ Storing BMSGPK data to ./data/timeline-faelle-bundeslaender.csv 
+20210404-123617.048 __cron__ Writing ./data/timeline-faelle-bundeslaender.rda 
+20210404-123617.051 __cron__ Downloading timeline-faelle-ems data from BMSGPK ... 
+20210404-123617.075 __cron__ Download BMSGPK data from https://info.gesundheitsministerium.gv.at/data/timeline-faelle-ems.csv 
+20210404-123617.076 __cron__ Storing BMSGPK data to ./data/timeline-faelle-ems.csv 
+20210404-123617.309 __cron__ Writing ./data/timeline-faelle-ems.rda 
+20210404-123617.311 __cron__ Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ... 
+20210404-123644.050 __cron__ Writing ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210404-123644.160 __cron__ Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features 
+20210404-123644.407 __cron__ cron: Done Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210404-124825.274 __cron__ Download BMSGPK data from https://info.gesundheitsministerium.gv.at/data/timeline-faelle-bundeslaender.csv 
+20210404-124825.274 __cron__ Storing BMSGPK data to ./data/timeline-faelle-bundeslaender.csv 
+20210404-124825.616 __cron__ Writing ./data/timeline-faelle-bundeslaender.rda 
+20210404-125138.442 __cron__ Download BMSGPK data from https://info.gesundheitsministerium.gv.at/data/timeline-faelle-bundeslaender.csv 
+20210404-125138.442 __cron__ Storing BMSGPK data to ./data/timeline-faelle-bundeslaender.csv 
+20210404-125138.748 __cron__ Writing ./data/timeline-faelle-bundeslaender.rda 
+20210404-130346.986 __cron__ Download BMSGPK data from https://info.gesundheitsministerium.gv.at/data/timeline-faelle-bundeslaender.csv 
+20210404-130346.986 __cron__ Storing BMSGPK data to ./data/timeline-faelle-bundeslaender.csv 
+20210404-130347.375 __cron__ Writing ./data/timeline-faelle-bundeslaender.rda 
+20210404-195300.564 __cron__ cron: Start Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210404-195300.589 __cron__ Sourcing fun.R 
+20210404-195300.609 __cron__ Sourcing ages.R 
+20210404-195300.621 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210404-195300.678 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210404-195300.678 __cron__ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210404-195301.500 __cron__ Writing ./data/CovidFallzahlen.rda 
+20210404-195301.518 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210404-195302.091 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210404-195302.091 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210404-195302.746 __cron__ Writing ./data/CovidFaelle_Timeline.rda 
+20210404-195302.767 __cron__ Creating history of AGES reports of Confirmed cases ... 
+20210404-195302.995 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedProcessed.rda 
+20210404-195303.204 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedEvaluated.rda 
+20210404-195303.242 __cron__ Downloading CovidFaelle_Timeline_GKZ data from AGES ... 
+20210404-195303.437 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv 
+20210404-195303.437 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline_GKZ.csv 
+20210404-195306.683 __cron__ Writing ./data/CovidFaelle_Timeline_GKZ.rda 
+20210404-195307.208 __cron__ Writing ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210404-195307.418 __cron__ Downloading timeline-faelle-bundeslaender data from BMSGPK ... 
+20210404-195307.549 __cron__ Download BMSGPK data from https://info.gesundheitsministerium.gv.at/data/timeline-faelle-bundeslaender.csv 
+20210404-195307.549 __cron__ Storing BMSGPK data to ./data/timeline-faelle-bundeslaender.csv 
+20210404-195307.864 __cron__ Writing ./data/timeline-faelle-bundeslaender.rda 
+20210404-195307.867 __cron__ Downloading timeline-faelle-ems data from BMSGPK ... 
+20210404-195307.897 __cron__ Download BMSGPK data from https://info.gesundheitsministerium.gv.at/data/timeline-faelle-ems.csv 
+20210404-195307.898 __cron__ Storing BMSGPK data to ./data/timeline-faelle-ems.csv 
+20210404-195308.224 __cron__ Writing ./data/timeline-faelle-ems.rda 
+20210404-195308.227 __cron__ Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ... 
+20210404-195333.198 __cron__ Writing ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210404-195333.291 __cron__ Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features 
+20210404-195333.565 __cron__ cron: Done Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210421-003341.255 __cron__ cron: Start Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210421-003341.281 __cron__ Sourcing fun.R 
+20210421-003341.309 __cron__ Sourcing ages.R 
+20210421-003341.328 __cron__ Sourcing bmsgpk.R 
+20210421-003342.061 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210421-003342.110 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210421-003342.111 __cron__ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210421-003343.420 __cron__ Writing ./data/CovidFallzahlen.rda 
+20210421-003343.438 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210421-003343.469 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210421-003343.470 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210421-003344.763 __cron__ Writing ./data/CovidFaelle_Timeline.rda 
+20210421-003344.787 __cron__ Creating history of AGES reports of Confirmed cases ... 
+20210421-003345.003 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedProcessed.rda 
+20210421-003345.272 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedEvaluated.rda 
+20210421-003345.368 __cron__ Downloading CovidFaelle_Timeline_GKZ data from AGES ... 
+20210421-003345.454 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv 
+20210421-003345.454 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline_GKZ.csv 
+20210421-003349.434 __cron__ Writing ./data/CovidFaelle_Timeline_GKZ.rda 
+20210421-003350.037 __cron__ Writing ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210421-003350.310 __cron__ Downloading timeline-faelle-bundeslaender data from BMSGPK ... 
+20210421-003350.361 __cron__ Download BMSGPK data from https://info.gesundheitsministerium.gv.at/data/timeline-faelle-bundeslaender.csv 
+20210421-003350.361 __cron__ Storing BMSGPK data to ./data/timeline-faelle-bundeslaender.csv 
+20210421-003356.450 __cron__ Writing ./data/timeline-faelle-bundeslaender.rda 
+20210421-003356.494 __cron__ Downloading timeline-faelle-ems data from BMSGPK ... 
+20210421-003356.545 __cron__ Download BMSGPK data from https://info.gesundheitsministerium.gv.at/data/timeline-faelle-ems.csv 
+20210421-003356.545 __cron__ Storing BMSGPK data to ./data/timeline-faelle-ems.csv 
+20210421-003357.574 __cron__ Writing ./data/timeline-faelle-ems.rda 
+20210421-003357.576 __cron__ Scraping BMSGPK Website ... 
+20210421-003459.937 __cron__ cron: Start Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210421-003459.957 __cron__ Sourcing fun.R 
+20210421-003459.982 __cron__ Sourcing ages.R 
+20210421-003459.998 __cron__ Sourcing bmsgpk.R 
+20210421-003500.030 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210421-003500.242 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210421-003500.243 __cron__ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210421-003501.571 __cron__ Writing ./data/CovidFallzahlen.rda 
+20210421-003501.599 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210421-003501.644 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210421-003501.645 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210421-003502.986 __cron__ Writing ./data/CovidFaelle_Timeline.rda 
+20210421-003503.018 __cron__ Creating history of AGES reports of Confirmed cases ... 
+20210421-003503.218 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedProcessed.rda 
+20210421-003503.474 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedEvaluated.rda 
+20210421-003503.504 __cron__ Downloading CovidFaelle_Timeline_GKZ data from AGES ... 
+20210421-003503.630 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv 
+20210421-003503.631 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline_GKZ.csv 
+20210421-003507.588 __cron__ Writing ./data/CovidFaelle_Timeline_GKZ.rda 
+20210421-003508.276 __cron__ Writing ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210421-003508.550 __cron__ Downloading timeline-faelle-bundeslaender data from BMSGPK ... 
+20210421-003508.702 __cron__ Download BMSGPK data from https://info.gesundheitsministerium.gv.at/data/timeline-faelle-bundeslaender.csv 
+20210421-003508.702 __cron__ Storing BMSGPK data to ./data/timeline-faelle-bundeslaender.csv 
+20210421-003509.834 __cron__ Writing ./data/timeline-faelle-bundeslaender.rda 
+20210421-003509.885 __cron__ Downloading timeline-faelle-ems data from BMSGPK ... 
+20210421-003509.925 __cron__ Download BMSGPK data from https://info.gesundheitsministerium.gv.at/data/timeline-faelle-ems.csv 
+20210421-003509.925 __cron__ Storing BMSGPK data to ./data/timeline-faelle-ems.csv 
+20210421-003510.947 __cron__ Writing ./data/timeline-faelle-ems.rda 
+20210421-003510.949 __cron__ Scraping BMSGPK Website ... 
+20210421-003510.950 __cron__ Running caBmsgpkUpdateDashboard ... 
+20210421-003510.950 __cron__  Updating bmsgpk dashboard data 
+20210421-003511.077 __cron__ Running caBmsgpkScrapeDashBoard ... 
+20210421-003511.078 __cron__ Download Ampel data from "https://www.sozialministerium.at/Informationen-zum-Coronavirus/Neuartiges-Coronavirus-(2019-nCov).html" 
+20210421-003511.078 __cron__ Storing Ampel data to ./ampel/CoronaAmpel.20210421-0035.js 
+20210421-003512.071 __cron__ Scraping "https://www.sozialministerium.at/Informationen-zum-Coronavirus/Neuartiges-Coronavirus-(2019-nCov).html" 
+20210421-003512.072 __cron__ Dumping page to ./html/COVID-19-austria.bmsgpk.20210421-0035.html 
+20210421-003513.250 __cron__ Parsing dump in ./html/COVID-19-austria.bmsgpk.20210421-0035.html 
+20210421-003513.894 __cron__ Extracting Status table for Bundesländer 
+20210421-004155.317 __cron__ cron: Start Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
+20210421-004155.330 __cron__ Sourcing fun.R 
+20210421-004155.355 __cron__ Sourcing ages.R 
+20210421-004155.444 __cron__ Sourcing bmsgpk.R 
+20210421-004155.495 __cron__ DownLoading CovidFallzahlen data from AGES ... 
+20210421-004155.796 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFallzahlen.csv 
+20210421-004155.796 __cron__ Storing AGES data to ./data/CovidFallzahlen.csv 
+20210421-004157.032 __cron__ Writing ./data/CovidFallzahlen.rda 
+20210421-004157.052 __cron__ Downloading CovidFaelle_Timeline data from AGES ... 
+20210421-004157.095 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv 
+20210421-004157.096 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline.csv 
+20210421-004158.475 __cron__ Writing ./data/CovidFaelle_Timeline.rda 
+20210421-004158.499 __cron__ Creating history of AGES reports of Confirmed cases ... 
+20210421-004159.113 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedProcessed.rda 
+20210421-004159.259 __cron__ Writing ./data/COVID-19-CWM-AGES-TestedEvaluated.rda 
+20210421-004159.286 __cron__ Downloading CovidFaelle_Timeline_GKZ data from AGES ... 
+20210421-004159.356 __cron__ Download AGES data from https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv 
+20210421-004159.356 __cron__ Storing AGES data to ./data/CovidFaelle_Timeline_GKZ.csv 
+20210421-004203.222 __cron__ Writing ./data/CovidFaelle_Timeline_GKZ.rda 
+20210421-004203.774 __cron__ Writing ./data/COVID-19-CWM-AGES-Counties-Curated.rda 
+20210421-004204.026 __cron__ Downloading timeline-faelle-bundeslaender data from BMSGPK ... 
+20210421-004204.116 __cron__ Download BMSGPK data from https://info.gesundheitsministerium.gv.at/data/timeline-faelle-bundeslaender.csv 
+20210421-004204.117 __cron__ Storing BMSGPK data to ./data/timeline-faelle-bundeslaender.csv 
+20210421-004205.260 __cron__ Writing ./data/timeline-faelle-bundeslaender.rda 
+20210421-004205.264 __cron__ Downloading timeline-faelle-ems data from BMSGPK ... 
+20210421-004205.307 __cron__ Download BMSGPK data from https://info.gesundheitsministerium.gv.at/data/timeline-faelle-ems.csv 
+20210421-004205.307 __cron__ Storing BMSGPK data to ./data/timeline-faelle-ems.csv 
+20210421-004206.256 __cron__ Writing ./data/timeline-faelle-ems.rda 
+20210421-004206.259 __cron__ Scraping BMSGPK Website ... 
+20210421-004206.259 __cron__ Running caBmsgpkUpdateDashboard ... 
+20210421-004206.259 __cron__  Updating bmsgpk dashboard data 
+20210421-004206.352 __cron__ Running caBmsgpkScrapeDashBoard ... 
+20210421-004206.353 __cron__ Download Ampel data from "https://www.sozialministerium.at/Informationen-zum-Coronavirus/Neuartiges-Coronavirus-(2019-nCov).html" 
+20210421-004206.353 __cron__ Storing Ampel data to ./ampel/CoronaAmpel.20210421-0042.js 
+20210421-004207.537 __cron__ Scraping "https://www.sozialministerium.at/Informationen-zum-Coronavirus/Neuartiges-Coronavirus-(2019-nCov).html" 
+20210421-004207.537 __cron__ Dumping page to ./html/COVID-19-austria.bmsgpk.20210421-0042.html 
+20210421-004208.724 __cron__ Parsing dump in ./html/COVID-19-austria.bmsgpk.20210421-0042.html 
+20210421-004209.897 __cron__ Extracting Status table for Bundesländer 
+20210421-004210.015 __cron__  Appending new data to ./data/COVID-19-CWM-BMSGPK-Dashboard.scraped.rda 
+20210421-004210.025 __cron__  Curating data 
+20210421-004210.548 __cron__ Running caBmsgpkCurateDashboard ... 
+20210421-004210.555 __cron__  Reading raw timeline dashboard data from ./data/COVID-19-CWM-BMSGPK-Dashboard.scraped.rda 
+20210421-004211.096 __cron__  Writing curated data to ./data/COVID-19-CWM-BMSGPK-Dashboard.curated.rda 
+20210421-004211.112 __cron__ Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ... 
+20210421-004238.305 __cron__ Writing ./data/COVID-19-CWM-AGES-States-Curated.rda 
+20210421-004238.415 __cron__ Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features 
+20210421-004239.190 __cron__ cron: Done Running script cron.R in  /home/at062084/DataEngineering/COVID-19/COVID-19-WeatherMap/cwm-rshiny 
