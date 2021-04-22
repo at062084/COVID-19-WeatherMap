@@ -65,7 +65,7 @@ caBmsgpkScrapeDashBoard <- function(ts=format(now(),"%Y%m%d-%H%M"), htmlPath="./
   
   df <- dx %>%
     dplyr::select(11,2:10) %>% 
-    mutate_all(funs(str_replace_all(., "\\.", ""))) %>% 
+    mutate_all(funs(str_replace_all(., "[\\.\\*, ◊kA]", ""))) %>% 
     mutate_all(funs(as.integer(.))) %>%
     # need this one (!)
     dplyr::mutate(Stamp=Stamp,Status=Status)  %>%
