@@ -99,8 +99,10 @@ caBmsgpkCurateDashboard <- function(dataPath="./data",
     c("2021-03-18","V","Tested_PCR",NA),
     c("2021-03-24","V","Tested_PCR",NA),
     c("2021-03-25","V","Tested_PCR",NA),
+    c("2021-03-26","V","Tested_PCR",NA),
     c("2021-03-24","W","Tested_PCR",NA),
     c("2021-03-25","W","Tested_PCR",NA),
+    c("2021-03-26","W","Tested_PCR",NA),
     c("2021-03-27","W","Tested_PCR",NA),
     c("2021-03-11","W","Tested_AG",NA),
     c("2021-04-05","W","Tested_AG",NA),
@@ -172,8 +174,8 @@ caBmsgpkCurateDashboard <- function(dataPath="./data",
   idx_fake_PCR <- da$Date>=as.Date("2021-03-08") & da$Date<=as.Date("2021-03-17") & da$Status=="Tested_PCR"
   fake_PCR <- da$V[idx_fake_PCR] - da$V[idx_fake_PCR][1]
   da$V[idx_PCR] <- da$V[idx_PCR] + 2* fake_PCR 
-  d_PCR <- da$V[da$Status=="Tested_PCR" & da$Date==as.Date("2021-03-26")] - da$V[da$Status=="Tested_PCR" & da$Date==as.Date("2021-03-28")]
-  da$V[da$Status=="Tested_PCR" & da$Date>=as.Date("2021-03-28")] <- da$V[da$Status=="Tested_PCR" & da$Date>=as.Date("2021-03-28")] + d_PCR
+  d_PCR <- da$V[da$Status=="Tested_PCR" & da$Date==as.Date("2021-03-26")] - da$V[da$Status=="Tested_PCR" & da$Date==as.Date("2021-03-27")]
+  da$V[da$Status=="Tested_PCR" & da$Date>=as.Date("2021-03-27")] <- da$V[da$Status=="Tested_PCR" & da$Date>=as.Date("2021-03-27")] + d_PCR
   # Shift Tested_AG the same amount Tested_PCR was shifted, and add the same fake_PCR numbers
   da$V[da$Status=="Tested_AG" & da$Date>=as.Date("2021-03-28")] <- da$V[da$Status=="Tested_AG" & da$Date>=as.Date("2021-03-28")] - d_PCR + max(fake_PCR)*2
   da$V[da$Status=="Tested"] <- da$V[da$Status=="Tested_PCR"] + da$V[da$Status=="Tested_AG"]
@@ -197,7 +199,8 @@ caBmsgpkCurateDashboard <- function(dataPath="./data",
   db[db$Region=="B" & db$Status=="Tested_AG",] <- smoothCumSumStep(db %>% dplyr::filter(Region=="B",Status=="Tested_AG"), Date=as.Date("2021-02-20")) 
   db[db$Region=="B" & db$Status=="Tested_PCR",] <- smoothCumSumStep(db %>% dplyr::filter(Region=="B",Status=="Tested_PCR"), Date=as.Date("2021-01-19")) 
   db[db$Region=="B" & db$Status=="Tested_PCR",] <- smoothCumSumStep(db %>% dplyr::filter(Region=="B",Status=="Tested_PCR"), Date=as.Date("2021-02-25")) 
-  db[db$Region=="V" & db$Status=="Tested_PCR",] <- smoothCumSumStep(db %>% dplyr::filter(Region=="V",Status=="Tested_PCR"), Date=as.Date("2021-04-07"), numDays=14) 
+  # Corrected by parser update
+  # db[db$Region=="V" & db$Status=="Tested_PCR",] <- smoothCumSumStep(db %>% dplyr::filter(Region=="V",Status=="Tested_PCR"), Date=as.Date("2021-04-07"), numDays=14) 
   db[db$Region=="W" & db$Status=="Tested",] <- smoothCumSumStep(db %>% dplyr::filter(Region=="W",Status=="Tested"), Date=as.Date("2021-03-26"), numDays=35) 
   db[db$Region=="W" & db$Status=="Tested_AG",] <- smoothCumSumStep(db %>% dplyr::filter(Region=="W",Status=="Tested_AG"), Date=as.Date("2021-03-27"), numDays=35) 
   
