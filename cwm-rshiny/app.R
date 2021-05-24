@@ -163,7 +163,7 @@ dg.model <- eventReactive(dg(), {
   dx <- dg() %>% 
     dplyr::filter(Date>max(Date)-days(nModelDaysPrediction)) %>% 
     dplyr::select(Date, Region, RegionID, County, CountyID, CountyNR, Population, rm7NewConfPop, rmaNewConfPop)
-  dy <- cwm.model(dx=dx, nPoly=1, nModelDays=nModelDaysPredictionCounties, dg=datATCounties, locID="CountyID", colID="CountyID")
+  dy <- cwm.model(dx=dx, nPoly=2, nModelDays=nModelDaysPrediction, dg=datATCounties, locID="CountyID", colID="CountyID")
   return(dy)
 })
 

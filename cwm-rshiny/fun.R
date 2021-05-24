@@ -340,9 +340,12 @@ rm7PolyLog <- function(y, nPoly=2, nModelDays=length(y), modWeights=NULL, nNewDa
   #  capture.output(print(sys.call(1))),
   if (bDebug) logMsg(paste(" rm7PolyLog:", "length(y)=", length(y), y[1], y[length(y)], nPoly, nModelDays, length(modWeights), length(nNewData), length(nTransData), bDblDays, bMinMax))
   
+  # --------------------------------------
+  # TODO: This is very unstable and actually wrong if length(y)!=nModelDays, at least for 'Countie' weathermap
+  # --------------------------------------
   Ny <- length(y)                   # may be different from nModelDays if nNewData is not given (such that a complete df is returned)
   Yy=y+0.001                        # adjust zero values (cannot be log'ed)
-  Yx=(1:Ny)-nModelDays              # time values for model days (partly in the past, so <0. today: Yx==0)
+  Yx=(1:Ny)-nModelDays      # ???        # time values for model days (partly in the past, so <0. today: Yx==0)
   Mx <- (1:nModelDays)-nModelDays
   My <- Yy[1:nModelDays]
   if(is.null(modWeights)) {
