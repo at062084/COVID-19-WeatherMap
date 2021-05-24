@@ -41,9 +41,9 @@ nForeCastDaysQuater = 91
 nForeCastDaysCountyWeek =  7
 nForeCastDaysCountyMonth = 28
 nForeCastDaysCountyQuater = 91
-binConfPop <- c(0,1,1.4,2,2.8,4,5.6,8,11,16,22,32,45,64,90,128,512)
+binConfPop <- c(-Inf,1,1.4,2,2.8,4,5.6,8,11,16,22,32,45,64,90,128,Inf)
 palConfPop <- c(brewer.pal(9,"Greens")[c(7,6,5,4)], brewer.pal(9,"YlOrRd"), "#404040", brewer.pal(9,"Greys")[c(8,9)])
-colConfPop <- colorBin(palette=palConfPop, domain=0:256, bins=binConfPop)
+colConfPop <- colorBin(palette=palConfPop, domain=0:1024, bins=binConfPop)
 dblDays <- c(1,14,28,56,-56,-28,-14,-1)
 binDblDays <- sort(round(exp(log(2)/dblDays),3))
 binForeCast <- c(0,4,8,16,32,Inf)
