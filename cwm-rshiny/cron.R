@@ -16,14 +16,13 @@ logMsg <- function(msg, sessionID="__cron__") {
 
 hostSystem <- system("hostname", intern=TRUE)
 slackMsg <- function (title, msg, hostName = hostSystem) {
-  url <- as.character(read.csv("./secrets/slack.txt",header=FALSE)[1,1])
+  url <- as.character(read.csv("../secrets/slack.txt",header=FALSE)[1,1])
   body <- list(text = paste(paste0(now()," *",title,"*: "), paste0(hostName,": ",msg)))
   r <- POST(url, content_type_json(), body = body, encode = "json")
   invisible(r)
 }
 slackMsg(title="COVID-19-WeatherMap",msg=paste("Start cron job cron.R"))
 
-# Download AGES Data Files from AGES website at www.data.gv.at/covid-19
 logMsg(paste("cron: Start Running script cron.R in ", getwd()),"__cron__")
 logMsg("Sourcing fun.R","__cron__")
 source("./fun.R")
@@ -32,23 +31,11 @@ source("./ages.R")
 logMsg("Sourcing bmsgpk.R","__cron__")
 source("./bmsgpk.R")
 
-# Bundesländer
-logMsg("DownLoading CovidFallzahlen data from AGES ...","__cron__")
-dt <- caAgesRead_cfz()
-logMsg("Downloading CovidFaelle_Timeline data from AGES ...","__cron__")
-dc <- caAgesRead_cftl()
 
-logMsg("Creating history of AGES reports of Confirmed cases ...", "__cron__")
-dq <- caAgesConfHistory(dc %>% 
-                        dplyr::select(Date, RegionID, Region, newConfirmed) %>% 
-                        dplyr::filter(Date> max(Date)-days(nSettleDays)))
 
-# Bezirke 
-logMsg("Downloading CovidFaelle_Timeline_GKZ data from AGES ...","__cron__")
-db <- caAgesRead_cfGKZtl()
-
-#logMsg("Scraping Mutations data from AGES ...","__cron__")
-# dm <-caAgesRead_Mutations()
+# -----------------------------------------------------------------------------------
+# DownLoad data from BMSGPK
+# -----------------------------------------------------------------------------------
 
 # Confirmed+Tested BundesLänder 
 logMsg("Downloading timeline-faelle-bundeslaender data from BMSGPK ...","__cron__")
@@ -58,9 +45,37 @@ dd <- caBmsgpkRead_tfb()
 logMsg("Downloading timeline-faelle-ems data from BMSGPK ...","__cron__")
 de <- caBmsgpkRead_tfe()
 
+# bmsgpk data download
+logMsg("Downloading data from BMSGPK Website ...","__cron__")
+bd <- caBmsgpkDownLoad ()
+
 # bmsgpk Webpage scraper
 logMsg("Scraping BMSGPK Website ...","__cron__")
-dm <- caBmsgpkUpdateDashboard()
+#dm <- caBmsgpkUpdateDashboard()
+
+
+# -----------------------------------------------------------------------------------
+# Download data from AGES
+# -----------------------------------------------------------------------------------
+
+# Bundesländer
+logMsg("DownLoading CovidFallzahlen data from AGES ...","__cron__")
+dt <- caAgesRead_cfz()
+
+logMsg("Downloading CovidFaelle_Timeline data from AGES ...","__cron__")
+dc <- caAgesRead_cftl()
+
+logMsg("Creating history of AGES reports of Confirmed cases ...", "__cron__")
+dq <- caAgesConfHistory(dc %>% 
+                          dplyr::select(Date, RegionID, Region, newConfirmed) %>% 
+                          dplyr::filter(Date> max(Date)-days(nSettleDays)))
+
+# Bezirke 
+logMsg("Downloading CovidFaelle_Timeline_GKZ data from AGES ...","__cron__")
+db <- caAgesRead_cfGKZtl()
+
+#logMsg("Scraping Mutations data from AGES ...","__cron__")
+# dm <-caAgesRead_Mutations()
 
 # Construct working data frame 
 logMsg("Start Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features ...","__cron__")
@@ -73,13 +88,4 @@ logMsg("Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new 
 
 slackMsg(title="COVID-19-WeatherMap",msg=paste("Complete cron job cron.R"))
 logMsg(paste("cron: Done Running script cron.R in ", getwd()),"__cron__")
-
-
-# Testungen und Fälle
-
-
-
-
-
-
 

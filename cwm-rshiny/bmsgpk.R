@@ -16,6 +16,164 @@ BL <- data.frame(ID=c("AT","B","K","Noe","Ooe","Szbg","Stmk","T","V","W"),
                  stringsAsFactors=FALSE)
 
 
+# -------------------------------------------------------------------------------------------
+# BMSGKP Data files
+# -------------------------------------------------------------------------------------------
+
+# Links auf AGES zu Daten des BMSGPK (6 files, 5 davon auf AGES)
+# 1 -> bmsgpk: timeline-eimpfpass.csv
+# 2            timeline-bbg.csv
+# 3 -> bmsgpk: tfe <- "timeline-faelle-ems.csv"                                                                                    # caBmsgpkRead_tfe         2
+# 4 -> bmsgpk: tfb <- "timeline-faelle-bundeslaender.csv"                                                                          # caBmsgpkRead_tfb()       1
+# 5 -> bmsgpk: timeline-testungen-apotheken-betriebe.csv
+# 6 -> bmsgpk: Schultestungen -> keine Daten
+# ad 4: BMSGPK::timeline-bundeslaendermeldungen.csv ?=? AGES::timeline-faelle-bundeslaender.csv 
+
+# caBmsgpkDownLoad <- c("timeline-eimpfpass", "timeline-bbg", "timeline-faelle-ems", "timeline-faelle-bundeslaender", "timeline-testungen-apotheken-betriebe", "timeline-testungen-schulen")  
+# caBmsgpkRead_tfe <- function(csvFile="timeline-faelle-ems.csv"),           caBmsgpkDownLoad()
+# caBmsgpkRead_tfb <- function(csvFile="timeline-faelle-bundeslaender.csv"), caBmsgpkDownLoad()
+
+
+
+caBmsgpkDownLoad <- function (ts=format(now(),"%Y%m%d-%H%M"), bSave=TRUE) {
+  
+  # https://info.gesundheitsministerium.gv.at/data/timeline-eimpfpass.csv?v=2021-05-12-01-19 
+  # (Datum;BundeslandID;Bevölkerung;Name;EingetrageneImpfungen;EingetrageneImpfungenPro100;Teilgeimpfte;TeilgeimpftePro100;Vollimmunisierte;VollimmunisiertePro100;
+  # Gruppe_<25_M_1;Gruppe_<25_W_1;Gruppe_<25_D_1;Gruppe_25-34_M_1;Gruppe_25-34_W_1;Gruppe_25-34_D_1;Gruppe_35-44_M_1;Gruppe_35-44_W_1;Gruppe_35-44_D_1;Gruppe_45-54_M_1;Gruppe_45-54_W_1;Gruppe_45-54_D_1;Gruppe_55-64_M_1;Gruppe_55-64_W_1;Gruppe_55-64_D_1;Gruppe_65-74_M_1;Gruppe_65-74_W_1;Gruppe_65-74_D_1;Gruppe_75-84_M_1;Gruppe_75-84_W_1;Gruppe_75-84_D_1;Gruppe_>84_M_1;Gruppe_>84_W_1;Gruppe_>84_D_1;Gruppe_<25_M_2;Gruppe_<25_W_2;Gruppe_<25_D_2;Gruppe_25-34_M_2;Gruppe_25-34_W_2;Gruppe_25-34_D_2;Gruppe_35-44_M_2;Gruppe_35-44_W_2;Gruppe_35-44_D_2;Gruppe_45-54_M_2;Gruppe_45-54_W_2;Gruppe_45-54_D_2;Gruppe_55-64_M_2;Gruppe_55-64_W_2;Gruppe_55-64_D_2;Gruppe_65-74_M_2;Gruppe_65-74_W_2;Gruppe_65-74_D_2;Gruppe_75-84_M_2;Gruppe_75-84_W_2;Gruppe_75-84_D_2;Gruppe_>84_M_2;Gruppe_>84_W_2;Gruppe_>84_D_2;Gruppe_NichtZuordenbar;
+  # EingetrageneImpfungenBioNTechPfizer_1;EingetrageneImpfungenModerna_1;EingetrageneImpfungenAstraZeneca_1;EingetrageneImpfungenBioNTechPfizer_2;EingetrageneImpfungenModerna_2;EingetrageneImpfungenAstraZeneca_2;EingetrageneImpfungenJanssen)
+  
+  # https://info.gesundheitsministerium.gv.at/data/timeline-bbg.csv
+  # (Datum;BundeslandID;Bevölkerung;Name;Auslieferungen;AuslieferungenPro100;Bestellungen;BestellungenPro100)
+  
+  # https://info.gesundheitsministerium.gv.at/data/timeline-faelle-ems.csv?v=0.7073526087667191 
+  # (Datum;BundeslandID;Name;BestaetigteFaelleEMS)
+  
+  # https://info.gesundheitsministerium.gv.at/data/timeline-faelle-bundeslaender.csv?v=0.818485116465528
+  # (Datum;BundeslandID;Name;BestaetigteFaelleBundeslaender;Todesfaelle;Genesen;Hospitalisierung;Intensivstation;Testungen;TestungenPCR;TestungenAntigen)
+  
+  # https://info.gesundheitsministerium.gv.at/data/timeline-testungen-apotheken-betriebe.csv?v=0.3728616675006212
+  # (Datum;BundeslandID;Name;GemeldeteTestsApotheken;GemeldeteTestsBetriebe)
+  
+  # https://info.gesundheitsministerium.gv.at/data/timeline-testungen-schulen.csv?v=0.7568994404841763
+  # (Datum;BundeslandID;Name;GemeldeteTestsSchulen)
+  
+  # https://info.gesundheitsministerium.gv.at/data/faelle-international.csv?v=0.5173385309581437
+
+  logMsg(paste("Downloading files from BMSGPK at https://info.gesundheitsministerium.gv.at/data/"))
+  
+  # List of files to download
+  csvFiles <- c("timeline-eimpfpass", "timeline-bbg", "timeline-faelle-ems", "timeline-faelle-bundeslaender", "timeline-testungen-apotheken-betriebe", "timeline-testungen-schulen")  
+  
+  # Populate new field 'Source' to identify csvFile
+  csvSources <- c("tei","teb","tfe","tfb","ttab","tts")
+  
+  # Iterate csvFiles
+  for (k in 1:length(csvFiles)) {
+    csvFile <- csvFiles[k]
+    csvSource <- csvSources[k]
+    url <- paste0("https://info.gesundheitsministerium.gv.at/data/", csvFile,".csv")
+    logMsg(paste("Fetching", url))
+    # gather to long format
+    rc <- read.csv(url, header=TRUE, sep=";", stringsAsFactors=FALSE) %>% 
+      dplyr::mutate(Datum=as.Date(Datum)) %>% 
+      dplyr::select(-starts_with("Bev")) %>%
+      tidyr::gather(key="Key", value="Value", -Datum, -BundeslandID, -Name) %>%
+      dplyr::mutate(Source=!!csvSource)
+    # logMsg(paste("  nrows:", dim(rc)[1], "firstDate", min(rc$Datum)))
+    
+    # stack csv files
+    if (csvFile==csvFiles[1]) {
+      df <- rc
+    } else {
+      df <- rbind(df,rc)
+    }
+  }
+  rdaFile <- "./data/COVID-19-CWM-BMSGPK-DownLoad.rda"   
+  logMsg(paste("Writing", rdaFile))
+  if (bSave) saveRDS(dg, file=rdaFile)  
+  
+  return(df)
+}
+
+
+# -------------------------------------------------------------------------------------------
+# timeline-faelle-bundeslaender.csv: TimeLine BundesLänder (Tested_*, Confirmed, Recovered, Deaths)
+# https://info.gesundheitsministerium.gv.at/data/timeline-faelle-bundeslaender.csv 
+# (Datum, RegionID, Region, newConfirmed, Tests, Test_PCR, Tests_AntiGen, Hosp, ICU, Deaths, REcovered)
+# -------------------------------------------------------------------------------------------
+caBmsgpkRead_tfb <- function(csvFile="timeline-faelle-bundeslaender.csv", bSave=TRUE) {
+  
+  # "https://info.gesundheitsministerium.gv.at/data/timeline-faelle-bundeslaender.csv"
+  webBMSGPK <- "https://info.gesundheitsministerium.gv.at/data"
+  webFile <- paste0(webBMSGPK,"/",csvFile) 
+  logMsg(paste("Download BMSGPK data from", webFile))
+  dskFile <- paste0("./data/",csvFile)
+  logMsg(paste("Storing BMSGPK data to", dskFile))
+  cmd <- paste(webFile, "-O", dskFile)
+  system2("wget", cmd)
+  
+  dd <- read.csv(dskFile, stringsAsFactors=FALSE, sep=";") %>% 
+    dplyr::mutate(Date=as.POSIXct(Datum)) %>%
+    dplyr::mutate(BundeslandID=as.character(BundeslandID)) %>%
+    dplyr::rename(Region=Name, RegionID=BundeslandID) %>%
+    dplyr::rename(sumConfirmedNUTS2=BestaetigteFaelleBundeslaender, sumRecovered=Genesen, sumDeaths=Todesfaelle) %>%
+    dplyr::rename(sumTested=Testungen, sumTestedAG=TestungenAntigen, sumTestedPCR=TestungenPCR) %>%
+    dplyr::rename(curICU=Intensivstation, curHospital=Hospitalisierung) %>%
+    dplyr::select(-Datum) %>%
+    dplyr::arrange(Date, Region) %>%
+    dplyr::group_by(Region) %>%
+    dplyr::mutate(newConfirmedNUTS2=sumConfirmedNUTS2-lag(sumConfirmedNUTS2)) %>%
+    dplyr::mutate(newTested=sumTested-lag(sumTested)) %>%
+    dplyr::mutate(newTestedAG=sumTestedAG-lag(sumTestedAG)) %>%
+    dplyr::mutate(newTestedPCR=sumTestedPCR-lag(sumTestedPCR)) %>%
+    dplyr::ungroup() %>%
+    dplyr::select(Date,RegionID, Region, starts_with("new"), starts_with("cur"), starts_with("sum"))
+  
+  rdaFile <- "./data/timeline-faelle-bundeslaender.rda"   
+  logMsg(paste("Writing", rdaFile))
+  if (bSave) saveRDS(dd, file=rdaFile)  
+  
+  return(dd)
+}
+
+# -------------------------------------------------------------------------------------------
+# timeline-faelle-bundeslaender.csv: TimeLine BundesLänder (Tested_*, Confirmed, Recovered, Deaths)
+# https://info.gesundheitsministerium.gv.at/data/timeline-faelle-ems.csv 
+# (Datum, RegionID, Region, newConfirmedEMS)
+# -------------------------------------------------------------------------------------------
+caBmsgpkRead_tfe <- function(csvFile="timeline-faelle-ems.csv", bSave=TRUE) {
+  
+  # "https://info.gesundheitsministerium.gv.at/data/timeline-faelle-ems.csv"
+  webBMSGPK <- "https://info.gesundheitsministerium.gv.at/data"
+  webFile <- paste0(webBMSGPK,"/",csvFile) 
+  logMsg(paste("Download BMSGPK data from", webFile))
+  dskFile <- paste0("./data/",csvFile)
+  logMsg(paste("Storing BMSGPK data to", dskFile))
+  cmd <- paste(webFile, "-O", dskFile)
+  system2("wget", cmd)
+  
+  de <- read.csv(dskFile, stringsAsFactors=FALSE, sep=";") %>% 
+    dplyr::mutate(Date=as.POSIXct(Datum)) %>%
+    dplyr::mutate(BundeslandID=as.character(BundeslandID)) %>%
+    dplyr::rename(Region=Name, RegionID=BundeslandID) %>%
+    dplyr::rename(sumConfirmedEMS=BestaetigteFaelleEMS) %>%
+    dplyr::select(-Datum)%>%
+    dplyr::arrange(Date, Region) %>%
+    dplyr::group_by(Region) %>%
+    dplyr::mutate(newConfirmedEMS=sumConfirmedEMS-lag(sumConfirmedEMS)) %>%
+    dplyr::ungroup() %>%
+    dplyr::select(Date, RegionID, Region, newConfirmedEMS, sumConfirmedEMS)
+  
+  rdaFile <- "./data/timeline-faelle-ems.rda"   
+  logMsg(paste("Writing", rdaFile))
+  if (bSave) saveRDS(de, file=rdaFile)  
+  
+  return(de)
+}
+
+
+
+
 # Download CoronaAmpel file and Scrape Dashboard data
 caBmsgpkScrapeDashBoard <- function(ts=format(now(),"%Y%m%d-%H%M"), htmlPath="./html", ampelPath="./ampel") {
   
