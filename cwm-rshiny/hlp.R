@@ -6,6 +6,7 @@ htmlFrontPageNews <- "<i><b>News:</b>
                       Details dazu den Reiter '<b>Bundesländer</b>'und '<b>Prognose</b></i>'
                     "
 htmlFrontPageTop <- "<b>News:</b><i>
+                      <br>Version 1.3.0: (24.5.2021) Korrektur Wetterkarte und Prognose der Bezirke (Prognose ident mit Bundesländern)
                       <br>Version 1.2.0: (21.4.2021) Daten aus dem Dashboard des Gesundheitsministeriums ab 1.2.2021 für die 'Dritte Welle'
                       <br>Version 1.1.0: (4.4.2021) Zeitlicher Verlauf der Einmeldungen in das EMS (letzte 5 Wochen)
                       <br>Version 1.0.0 (16.3.2021) Die Prognose der COVID Inzidenz für die Bundesländer berücksichtigt die Effekte 

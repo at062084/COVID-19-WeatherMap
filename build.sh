@@ -47,7 +47,7 @@ perl -pi -e "s/$APP_VER/$NEW_VER/" $APP_DIR/$DKR_PRJ/app.R
 [ $DRY_RUN -eq 0 ] &&  echo "`date +%Y%m%d%H%M%S` $GIT_PRJ $GIT_VER" | tee -a ./version
 echo "git tag -a $GIT_TAG -m $GIT_MSG"
 
-[ $DRY_RUN -eq 0 ] && git add ./version ./Dockerfile* ./*.sh ./*.yaml ./install.log ./$DKR_PRJ/app.R
+[ $DRY_RUN -eq 0 ] && git add ./version ./Dockerfile* ./*.sh ./*.yaml ./install.log ./$DKR_PRJ/app.R  ./$DKR_PRJ/fun.R ./$DKR_PRJ/ages.R ./$DKR_PRJ/bmsgpk.R ./$DKR_PRJ/cron.R ./$DKR_PRJ/age.R ./$DKR_PRJ/hlp.R
 [ $DRY_RUN -eq 0 ] && git commit -m "$GIT_MSG"
 [ $DRY_RUN -eq 0 ] && git tag -a $GIT_TAG -m "$GIT_MSG"
 [ $DRY_RUN -eq 0 ] && git push -u origin master
@@ -59,7 +59,7 @@ export DKR_TAG="$DKR_PRJ:$GIT_VER"
 export DKR_SHINY_PORT=3838
 CMD="docker build -f $DKR_BLD -t $DKR_TAG ."
 echo $CMD
-[ $DRY_RUN -eq 0 ] && $CMD
+[ $DRY_RUN -eq 0 ] && echo "DISABLED: $CMD"
 
 # run image locally
 CMD="docker run --rm -p $DKR_SHINY_PORT:$DKR_SHINY_PORT --name $DKR_PRJ $DKR_TAG"
