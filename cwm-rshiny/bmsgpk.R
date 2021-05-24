@@ -90,7 +90,7 @@ caBmsgpkDownLoad <- function (ts=format(now(),"%Y%m%d-%H%M"), bSave=TRUE) {
   }
   rdaFile <- "./data/COVID-19-CWM-BMSGPK-DownLoad.rda"   
   logMsg(paste("Writing", rdaFile))
-  if (bSave) saveRDS(dg, file=rdaFile)  
+  if (bSave) saveRDS(df, file=rdaFile)  
   
   return(df)
 }
