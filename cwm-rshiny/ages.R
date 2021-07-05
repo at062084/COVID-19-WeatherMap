@@ -293,7 +293,7 @@ caAgesRead_tlrm <- function(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile=
                             nRm7Days=7, bDt7=TRUE, nDt7Days=7, bLpr=TRUE, nLprDays=19,
                             bResiduals=TRUE, dResFirst=as.Date("2020-07-27"), dResLast=as.Date("2020-11-16"), bShiftDown=TRUE,
                             bDOWCorrection=TRUE, nDOWCorrectionWeeks=4,
-                            bAGESTestEvaluationCorrection=TRUE, agesEvaluatedFile=paste0("./data/COVID-19-CWM-AGES-TestedEvaluated.rda"),
+                            bAGESTestEvaluationCorrection=FALSE, agesEvaluatedFile=paste0("./data/COVID-19-CWM-AGES-TestedEvaluated.rda"),
                             bPredict=TRUE, nPolyDays=7, nPoly=2,
                             bEstimate=FALSE, bCompleteCases=FALSE) {
   
@@ -510,9 +510,9 @@ caAgesRead_tlrm <- function(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile=
       dplyr::mutate(dt7rm7NewDeaths=rolm(Date,rm7NewDeaths)) %>%
       dplyr::mutate(dt7rm7NewConfPop=rolm(Date,rm7NewConfPop)) %>%
       dplyr::mutate(dt7rm7NewConfTest=rolm(Date,rm7NewConfTest)) %>%    # produces some NA's
-      dplyr::mutate(dt7rm7CurConfirmed=rolm(Date,rm7CurConfirmed)) %>%
-      dplyr::mutate(dt7rm7CurHospital=rolm(Date,rm7CurHospital)) %>%
-      dplyr::mutate(dt7rm7CurICU=rolm(Date,rm7CurICU)) %>%
+      # dplyr::mutate(dt7rm7CurConfirmed=rolm(Date,rm7CurConfirmed)) %>%
+      # dplyr::mutate(dt7rm7CurHospital=rolm(Date,rm7CurHospital)) %>%
+      # dplyr::mutate(dt7rm7CurICU=rolm(Date,rm7CurICU)) %>%
       dplyr::ungroup() 
     #dplyr::mutate(dt7NewConfirmed=rolm(Date,newConfirmed)) %>%
     #dplyr::mutate(dt7CurConfirmed=rolm(Date,curConfirmed)) %>%

@@ -15,7 +15,7 @@ logMsg <- function(msg, sessionID="_global_") {
 
 hostSystem <- system("hostname", intern=TRUE)
 slackMsg <- function (title, msg, hostName = hostSystem) {
-  url <- as.character(read.csv("./secrets/slack.txt",header=FALSE)[1,1])
+  url <- as.character(read.csv("../secrets/slack.txt",header=FALSE)[1,1])
   body <- list(text = paste(paste0(now()," *",title,"*: "), paste0(hostName,": ",msg)))
   r <- POST(url, content_type_json(), body = body, encode = "json")
   invisible(r)
@@ -326,7 +326,7 @@ ui <- fluidPage(
                            "Salzburg", 
                            "Tirol", 
                            "Vorarlberg"), 
-            selected = c("Wien","Burgenland","Vorarlberg"))),
+            selected = c("Wien","Niederösterreich","Burgenland","Österreich"))),
         column(6,
           actionButton("abUpdate", "Anzeigen"))),
 
@@ -337,14 +337,14 @@ ui <- fluidPage(
         sliderInput("sldPastTime",
                     width="220px",
                     label="ZeitRaum (letzte n Monate)",
-                    min=1, max=12, step=1, value=8)),
+                    min=1, max=15, step=1, value=12)),
       
         fluidRow( 
           hr(style = "border-top: 3px solid #777777;"),
           sliderInput("sldModelDays",
                        width="220px",
                        label="Prognose: BerechnungsTage",
-                       min=7, max=63, step=7, value=42)),
+                       min=7, max=63, step=7, value=35)),
       fluidRow(        
         radioButtons("rbsModelOrder",
                      width="220px",
@@ -393,12 +393,12 @@ ui <- fluidPage(
                           column(width=4, htmlOutput(outputId="hlpIncidencePrediction")))),
 
         tabPanel("Inzidenz Bundesländer",
-                  h4("TagesInzidenz Bundesländer", align = "left", style="color:gray"),
-                  p("[Menüauswahl: Region,Zeitbereich,StufenModell]", align = "left", style="color:green"),
-                  fluidRow(column(width=9, plotOutput(outputId = "ggpIncidenceStates", height="75vh")),
+                 h4("TagesInzidenz Bundesländer", align = "left", style="color:gray"),
+                 p("[Menüauswahl: Region,Zeitbereich,StufenModell]", align = "left", style="color:green"),
+                 fluidRow(column(width=9, plotOutput(outputId = "ggpIncidenceStates", height="75vh")),
                            column(width=3, htmlOutput(outputId="hlpIncidenceStates")))),
 
-          tabPanel("Inzidenz Bezirke",
+        tabPanel("Inzidenz Bezirke",
                  h4("TagesInzidenz Bezirke", align = "left", style="color:gray"),
                  p("[Menüauswahl: Region,Zeitbereich,StufenModell]", align = "left", style="color:green"),
                  fluidRow(column(width=9, plotOutput(outputId = "ggpIncidenceCounties", height="75vh"),
@@ -411,17 +411,17 @@ ui <- fluidPage(
                  fluidRow(column(width=9, plotOutput(outputId = "ggpChangeRateStates", height="75vh")),
                           column(width=3, htmlOutput(outputId="hlpChangeRateStates")))),
        
-       tabPanel("Einmeldungen",
-                h4("Anzahl der täglichen Einmeldungen und späteren Nachträge für den Tag der Testung", align = "left", style="color:gray"),
-                p("[Menüauswahl: keine]", align = "left", style="color:green"),
-                fluidRow(column(width=12, plotOutput(outputId = "ggpTestedEvaluated", height="75vh")))),
+#       tabPanel("Einmeldungen",
+#                h4("Anzahl der täglichen Einmeldungen und späteren Nachträge für den Tag der Testung", align = "left", style="color:gray"),
+#                p("[Menüauswahl: keine]", align = "left", style="color:green"),
+#                fluidRow(column(width=12, plotOutput(outputId = "ggpTestedEvaluated", height="75vh")))),
 
-       tabPanel("Gesundheitsministerium",
-                h4("Historische Daten aus dem tagesaktuellen Dashboard des Gesundheitsministeriums", align = "left", style="color:gray"),
-                p("[Menüauswahl: Österreich Testet: Region. Spitalsbelegung: StufenModell]", align = "left", style="color:green"),
-                fluidRow(column(width=12, plotOutput(outputId = "ggpBmsgpkCTAP", height="60vh"))),
-                h1(""),
-                fluidRow(column(width=12, plotOutput(outputId = "ggpBmsgpkCHIR", height="60vh")))),
+#       tabPanel("Gesundheitsministerium",
+#                h4("Historische Daten aus dem tagesaktuellen Dashboard des Gesundheitsministeriums", align = "left", style="color:gray"),
+#                p("[Menüauswahl: Österreich Testet: Region. Spitalsbelegung: StufenModell]", align = "left", style="color:green"),
+#                fluidRow(column(width=12, plotOutput(outputId = "ggpBmsgpkCTAP", height="60vh"))),
+#                h1(""),
+#                fluidRow(column(width=12, plotOutput(outputId = "ggpBmsgpkCHIR", height="60vh")))),
        
               
 #        tabPanel("Mutationen",
@@ -432,11 +432,11 @@ ui <- fluidPage(
         tabPanel("Rückblick 2020",
                  h4("Exponentielles Wachstum in zweiten Halbjahr 2020", align = "left", style="color:gray"),
                  p("[Menüauswahl: Region, StufenModell]", align = "left", style="color:green"),
-                 fluidRow(column(width=11, 
+                 fluidRow(column(width=9, 
                                  plotOutput(outputId = "ggpExpDateConfPop", height="60vh"),
                                  plotOutput(outputId = "ggpExpDatedt7ConfPop", height="60vh"),
                                  plotOutput(outputId = "ggpExpConfPopdt7ConfPop", height="60vh")),
-                          column(width=1, htmlOutput(outputId="hlpExponential")))),
+                          column(width=3, htmlOutput(outputId="hlpExponential")))),
 
 #        tabPanel("Rohdaten Bundesländer",
 #          h4("Rohdaten Bundesländer", align = "left", style="color:black"),
