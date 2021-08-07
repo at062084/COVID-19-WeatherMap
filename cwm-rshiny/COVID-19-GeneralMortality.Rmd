@@ -1,0 +1,549 @@
+---
+title: "Allgemeine und COVID-19 Sterblichkeit"
+author: "Thomas.Strehl@at.ibm.com"
+date: "2021-08-01"
+output:
+  html_document:
+    # df_print: kable
+    toc: yes
+    toc_depth: 3
+    number_sections: no
+    fig_caption: no
+    fig_height: 4
+    fig_width: 7
+  always_allow_html: true
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+    number_sections: yes
+    fig_height: 4
+    fig_width: 7
+geometry: margin=1cm
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+#knitr::opts_chunk$set(fig.align="center")
+#options(knitr.table.format = 'html')
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(lubridate)
+library(forcats)
+library(knitr)
+library(gt)
+library(pivottabler)
+library(kableExtra)
+```
+
+```{r}
+source("fun.R")
+cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#444444", "#F0D042", "#0072B2", "#D55E00", "#CC79A7", "#C40000")
+```
+
+```{r}
+# Create standard object for table rendering
+makePT <- function(df, cdg=NULL) {
+  pt <- PivotTable$new(tableStyle  =list("color"="black", "border-color"="black"),
+                       headingStyle=list("color"="black", "border-color"="black", "background-color"="white", "font-style"="italic"), 
+                       cellStyle   =list("color"="black", "border-color"="black", "background-color"="white"),
+                       totalStyle  =list("color"="black", "border-color"="black", "background-color"="lightblue", "font-weight"="bold"))
+  pt$addData(df)
+  # pt$theme <- "default"
+  pt$setDefault(addTotal=FALSE)
+  pt$setDefault(totalPosition="before")
+  #pt$setDefault(totalCaption="Gesamt {value}")
+  pt$setDefault(outlineBefore=list(isEmpty=FALSE, caption="Gesamt {value}", totalPosition="before",
+                                             groupStyleDeclarations=list("color"="black", "border-color"="black", "background-color"="lightgray", "font-style"="italic"),
+                                             cellStyleDeclarations =list("color"="black", "border-color"="black", "background-color"="lightgray", "font-style"="italic")))
+  pt$setDefault(outlineTotal=list(isEmpty=FALSE,  caption="Gesamt {value}", totalPosition="before", 
+                                            groupStyleDeclarations=list("color"="black", "border-color"="black", "background-color"="lightgreen", "font-style"="italic"),
+                                            cellStyleDeclarations =list("color"="black", "border-color"="black", "background-color"="lightgreen", "font-style"="italic")))
+  if (!is.null(cdg)) {
+    pt$addColumnDataGroups(cdg, totalPosition="before", totalCaption="Gesamt", addTotal=TRUE, 
+                         styleDeclarations=list("color"="black", "border-color"="black", "background-color"="lightblue", "font-weight"="bold", "font-style"="italic"))  
+  }
+  # "border"="1px solid blue"
+  return(pt)
+}
+
+makePTcalc <- function(pt, calName, summariseExp) {
+  cat (calName, summariseExp)
+  pt <- pt$defineCalculation(type="summary", calculationName=calName, summariseExpression=summariseExp,
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic"),
+                     cellStyleDeclarations=list("color"="black"))
+  return(pt)
+}
+
+makePTcalc100k <- function(pt, calName, summariseExp) {
+  pt <- pt$defineCalculation(type="summary", calculationName=calName, summariseExpression=summariseExp,
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic", "color"="royalblue"),
+                     cellStyleDeclarations=list("color"="royalblue"))
+  return(pt)
+}
+``` 
+
+
+# Sterblichkeit in Österreich
+
+Die vorliegende Untersuchung versucht das Risiko einer Impfung und die Risiken, die mit einer Erkrankung an COVID-19 verbunden sind miteinander zu vergleichen. Im Vordergrund der Betrachtung steht die Wahrscheinlichkeit eines schweren oder tödlichen Verlaufes einer COVID-19 Erkrankung und die Wahrscheinlichkeit von schweren Nebenwirkungen oder Todesfällen als Nebenwirkung einer Impfung. Es werden  folgende Informationen zusammengestellt:
+
+- Die Wahrscheinlichkeit an COVID-19 schwer zu erkranken (Spitalsaufenthalt) oder zu sterben
+- Die Wahrscheinlichkeit aufgrund der Impfung schwere Nebenwirkungen zu bekommen oder zu sterben
+
+Beide Größen korrelieren sehr stark mit dem Alter, aber auch dem Geschlecht  Zu berücksichtigen sind also u.a.:
+
+- Alter und Geschlecht
+- Eventuelle Vorerkrankungen
+- Der Impfstoff
+- Die vorherrschenden Mutanten im Untersuchungszeitraum und Gebiet
+- Die Anzahl der asypmtomatischen Erkrankungen
+- Die Schwere bei Erkrankung bei COVID-19 bzw. die Schwere der Nebenwirkungen bei Impfung
+- Die Todesursache, deren zeitlicher Zusammenhang zur Impfung, und die Häufigkeit einer Todesursache ohne Impfung
+- Die Verfügbarkeit von Daten
+
+Informationen zu bleibenden Schäden sind weder für die Covid-19 Krankheit selbst noch für die Nebenwirkung der Impfung einfach zugänglich und werden hier nicht betrachtet.
+
+## StatA-Population-2019_AgeGroup_Gender.csv: Demographische Daten 
+
+Im folgenden wird die Anzahl der Nebenwirkungen, Todesfälle und anderer Ereignisse auf die Anzahl pro 100.000 Einwohner bzw Geimpfte umgerechnet. Damit wird der direkte Vergleich von unterschiedlichen Berichten zu Impfnebenwirkungen sowie den im COVID-19 Umfeld üblichen Zahlen wie TagesInzidenz pro 100.000 Einwohner ermöglicht.
+
+Eine entscheidende Rolle bei der Beurteilung der Wirkung, Nebenwirkungen und des Risikos einer Impfung spielen das Alter und das Geschlecht. Deshalb wird zunächst die Altersstruktur und die von Covid-19 unabhängige Sterblichkeit in Österreich dargestellt. Die demographischen Daten dazu werden u.a. von der Statistik Austria veröffentlicht.
+
+https://portal.statistik.at/statistik.at/ext/statcube/jsf/dataCatalogueExplorer.xhtml
+
+### Einwohner nach Altersgruppe und Geschlecht in Österreich
+
+Zunächst die Alterstruktur in Österreich für 2019 in 20 fünf Jahres Intervallen. 
+
+- Bis zu einem Alter von 20 Jahren gibt es etwa 8.000 Einwohner pro Jahrgang
+- Von 25 bis 50 Jahren sind es etwa 15.000, von 55 bis 65 Jahre etwa 18.000 Einwohner pro Jahrgang
+- Ab 65 Jahren nimmt die Anzahl stark ab, über 90 Jahre sind insgesamt etwa 80.000 Menschen (ca. 1%)
+- 7.2 Mio (81%) Einwohner sind unter 65 Jahre, 1.7 Mio (19%) über 65 Jahre
+- Die Anzahl der Personen im erwerbsfähigen Alter ist etwa 5.5 Mio (62 %)
+- Die junge Generation (Jahrgänge ab 2000) ist gegenüber den Erwachsenen (Jahrgänge 1970 bis 1995) um 30% in der Unterzahl
+- Bei den Personen über 65 Jahre ist der Frauenanteil etwa 57%, bei den Personen unter 65 Jahre etwa 51%
+
+
+```{r}
+# "Alter in 5-Jahresgruppen","Values","Time section","Gender <2>","Number","Annotations"
+fName <- "./data/StatA-Population-2019_AgeGroup_Gender.csv"
+col.names=c("AgeGroup20","Values","Year","Gender","Population","Annotation")
+colClasses=c("character","NULL","character", "character","character","NULL")
+
+dp <- read.csv(fName, header=FALSE, skip=7, sep=",", stringsAsFactors=FALSE, 
+               col.names=col.names, colClasses=colClasses, na.strings="not applicable") %>%
+  dplyr::filter(Gender=="male" | Gender=="female") %>%
+  dplyr::mutate(Population=as.integer(Population))
+dp <- dp[1:40,]
+
+dp.y <- dp %>% dplyr::mutate(AgeGroup20=factor(AgeGroup20, levels=unique(dp$AgeGroup20), ordered=TRUE),
+                                 AgeGroupID20=as.integer(AgeGroup20), 
+                                 AgeGroup2=factor(ifelse(AgeGroupID20>=14,"Über65","Unter65"), levels=c("Unter65","Über65")),
+                                 Gender = factor(Gender, levels=c("male","female"), labels=c("M","W")))
+
+```
+
+```{r}
+ggplot(data=dp.y %>% dplyr::mutate(Population=round(Population/1000)),
+       aes(y=Population, x=AgeGroup20)) +
+  geom_col(aes(color=Gender, fill=Gender, alpha=AgeGroup2), position="dodge", size=1) +
+  scale_y_continuous(name="Einwohner (in 1000)") +
+  ggtitle("Österreich: Altersverteilung 2019. Daten: Statistik Austria") +
+  coord_flip()
+```
+
+
+
+
+*Einwohner 2019 nach Altersgruppe und Geschlecht*
+<center>
+```{r}
+pt <- makePT(dp.y, "Gender")
+pt$addRowDataGroups("AgeGroup2", outlineTotal=TRUE)
+
+pt$defineCalculation(calculationName="Einwohner", summariseExpression="paste0(round(sum(Population)/1000), ' k')",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic"))
+pt$renderPivot()
+``` 
+</center>
+
+
+## StatA-Sterbefaelle-Year_AgeGroup_Gender.csv: Todesfälle nach Altersgruppe und Geschlecht in Österreich 2015-2019
+
+Die Todesfälle werden in den Jahren 2015 bis 2019 betrachtet (die letzten fünf Jahre vor der Pandemie)
+
+- Die Altersabhängigkeit ist in den betrachteten Jahren ähnlich
+- Die Anzahl der Todesfälle nimmt mit dem Alter stark zu
+- Die Männer sterben früher als die Frauen
+- Die meisten Männer sterben mit 75-90, die meisten Frauen mit 85-95
+- Etwas geringere Anzahl von Sterbefällen bei den Männern in der Altersgruppe 80-85
+
+```{r}
+fName <- "./data/StatA-Sterbefaelle-Year_AgeGroup_Gender.csv"
+col.names=c("Year","AgeGroup20","xxx","Gender","Deceased","y")
+colClasses=c("character","character","NULL", "character","character","NULL")
+dd <- read.csv(fName, header=TRUE, skip=7, sep=",", stringsAsFactors=FALSE, 
+               col.names=col.names, colClasses=colClasses, na.strings="not applicable") %>%
+    dplyr::filter(Gender=="male" | Gender=="female") %>%
+    dplyr::filter(!is.na(AgeGroup20))
+
+dd.Y <- dd %>%
+  dplyr::mutate(Deceased=as.integer(Deceased)) %>%
+  dplyr::mutate(Gender = factor(Gender, levels=c("male","female"), labels=c("M","W"))) %>%
+  dplyr::mutate(AgeGroup20=factor(dd$AgeGroup20, levels=dd$AgeGroup20 %>% unique(), ordered=TRUE)) %>%
+  dplyr::mutate(AgeGroupID20=as.integer(AgeGroup20)) %>%
+  dplyr::mutate(AgeGroup2=factor(ifelse(AgeGroupID20>=14,"Über65","Unter65"), levels=c("Unter65","Über65"))) %>%
+  dplyr::arrange(Year, AgeGroupID20, Gender)
+
+```
+
+```{r}
+ggplot(data=dd.Y, aes(x=Deceased, y=AgeGroupID20)) +
+  geom_path(aes(color=Year, linetype=Gender)) +
+  geom_point(aes(shape=Gender)) +
+  scale_y_continuous(breaks=1:20, labels=levels(dd$AgeGroup20)) +
+  ggtitle("Österreich: Anzahl Todesfälle pro Jahr und Altersgruppe für 2015-2019")
+```
+
+
+*Verstorbene 2019 nach Altersgruppe und Geschlecht*
+<center>
+```{r}
+pt <- makePT(dd.Y %>% dplyr::filter(Year=="2019"), "Gender")
+pt$addRowDataGroups("AgeGroup2", outlineTotal=TRUE)
+
+pt$defineCalculation(calculationName="Verstorbene", summariseExpression="paste0(round(sum(Deceased)/1000), ' k')",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic"))
+pt$renderPivot()
+``` 
+</center>
+
+### Inkrementelle Summe der Todesfälle nach Alterstufe in 2019
+
+```{r}
+
+# Construct AgeGroup as used by AGES
+dpd.y <- dd.Y %>% dplyr::filter(Year=="2019") %>%
+  dplyr::left_join(dp.y, by=c("AgeGroup20", "Gender", "Year", "AgeGroupID20", "AgeGroup2")) %>%
+  dplyr::mutate(Deceased_100k=Deceased/Population*100000) %>%
+  dplyr::mutate(AgeGroupID=ceiling((pmin(AgeGroupID20,18)+1)/2)) %>%
+  dplyr::mutate(AgeGroup=paste(pmax(0,(AgeGroupID-1)*10-5),"-", ifelse(AgeGroupID*10-5<90,AgeGroupID*10-6,""), sep=""))
+
+# Patch for AGES namings
+idx <- dpd.y$AgeGroup=="0-4"
+dpd.y$AgeGroup[idx] <- "<5"
+idx <- dpd.y$AgeGroup=="85-"
+dpd.y$AgeGroup[idx] <- ">84"
+
+# ensure AgeGroup is ordered
+dpd.y <- dpd.y %>%
+  dplyr::mutate(AgeGroup=factor(dpd.y$AgeGroup, levels=dpd.y$AgeGroup %>% unique(), ordered=TRUE)) %>%
+  dplyr::select(Year, AgeGroupID20, AgeGroup20, AgeGroupID, AgeGroup, AgeGroup2, Gender, Population, Deceased, Deceased_100k)
+
+```
+
+
+
+- In Summe starben in Österreich 2019 etwa 83.000 Personen, das ist ca. 1% (oder 100 von 100k) der Bevölkerung
+- Grob 12.000 davon, das sind ca. 15%, waren unter 65 Jahre, 85 % über 65 Jahre alt
+- Das entspricht 170 von 100k Personen (0.17%) unter 65 Jahre, und 4200 von 100k Personen (4.2%) über 65 Jahre
+- Die normale Sterblichkeit der über 65-jährigen ist also im Mittel 25 mal höher als die der Gruppe der unter 65-jährigen 
+
+Anmerkung: Diese Werte gelten für die aktuelle Altersverteilung in Österreich (siehe Abbildung weiter oben).
+
+```{r}
+
+ggplot(data=dpd.y, color=Gender, shape=Gender) +
+  scale_x_continuous(limits=c(4,NA), breaks=seq(0,50000,5000), trans="identity") +
+  scale_y_continuous(breaks=1:20, labels=levels(dpd.y$AgeGroup20)) +
+  geom_point(data=dpd.y %>% dplyr::filter(Gender=="M"), aes(y=AgeGroupID20, x=cumsum(Deceased), color=Gender, shape=Gender)) + 
+  geom_point(data=dpd.y %>% dplyr::filter(Gender=="W"), aes(y=AgeGroupID20, x=cumsum(Deceased), color=Gender, shape=Gender)) + 
+  geom_path(data=dpd.y %>% dplyr::filter(Gender=="M"), aes(y=AgeGroupID20, x=cumsum(Deceased), color=Gender), linetype=1) + 
+  geom_path(data=dpd.y %>% dplyr::filter(Gender=="W"), aes(y=AgeGroupID20, x=cumsum(Deceased), color=Gender), linetype=1) + 
+  ggtitle("Anzahl der Verstorbenen bis zu einer Alterstufe nach Geschlecht")
+
+```
+
+*Verstorbene 2019 nach Altersgruppe und Geschlecht*
+<center>
+```{r, align="center"}
+pt <- makePT(dpd.y, "Gender")
+pt$addRowDataGroups("AgeGroup2", outlineTotal=TRUE)
+
+pt$defineCalculation(calculationName="TodesFälle", summariseExpression="sum(Deceased)",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic", color=""))
+
+pt$renderPivot()
+```  
+</center>
+
+### Umrechnung auf Todesfälle pro 100k Einwohner und Altersgruppe für 2019
+
+Zur besseren Vergleichbarkeit der Sterblichkeit mit epidemiologischen Daten wird auf Todesfälle pro 100k Einwohner pro Altersgruppe und Geschlecht umgerechnet. 
+
+- In allen nachfolgenden Tabellen sind auf 100k Personen normierte Werte in **blau** dargestellt
+- 1.000 (1k) von 100.000 (100k) Personen entspricht 1%
+- Üblicherweise wird auf '100k Einwohner' normiert, manchmal (z.B. bei den Covid-19 Sterbefällen) auch auf '100k Positiv Getestete' oder (bei den Nebenwirkungen) auf 100k Geimpfte
+
+
+```{r}
+
+ggplot(data=dpd.y, aes(y=AgeGroupID20, x=Deceased_100k, color=Gender, shape=Gender)) +
+  scale_x_continuous(limits=c(1,NA), trans="identity") +
+  scale_y_continuous(breaks=1:20, labels=levels(dpd.y$AgeGroup20)) +
+  geom_point(aes(color=Gender, shape=Gender)) + 
+  geom_path(aes(color=Gender)) + 
+  ggtitle("Verstorbene 2019 pro 100k nach Alter und Geschlecht (lin scale)")
+
+```
+
+*Verstorbene 2019 pro 100k Einwohner nach Altersgruppe und Geschlecht*
+<center>
+```{r}
+pt <- makePT(dpd.y, "Gender")
+pt$addRowDataGroups("AgeGroup2", outlineTotal=TRUE)
+
+pt$defineCalculation(calculationName="TodesFälle", summariseExpression="round(sum(Deceased)/sum(Population)*100000)",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic", "color"="royalblue"),
+                     cellStyleDeclarations=list("color"="royalblue"))
+
+pt$renderPivot()
+```  
+</center>
+
+
+### Exponentielle Zunahme der Sterblichkeit mit zunehmendem Alter
+
+Zur Verdeutlichung des exponentiellen Charakters der Sterblichkeit mit zunehmendem Alter eine logarithmische Darstellung der Fallzahlen.
+
+- Die Wahrscheinlichkeit in einem Jahr zu sterben steigt ab ca. 40 Jahren in 20 Jahren um einen Faktor 10
+- D.h. sie ist mit 60-65 Jahren etwa zehn mal, und mit 80-85 Jahren etwa hundert mal so hoch als mit 40-45 Jahren
+- Pro Jahr sterben im Mittel 40 von 100k 40-45-jährigen, 300 von 100k 60-65-jährigen und 2000 von 100k 80-85-jährigen
+
+
+
+```{r}
+
+ggplot(data=dpd.y, aes(y=AgeGroupID20, x=Deceased_100k, color=Gender, shape=Gender)) +
+  scale_x_continuous(limits=c(4,NA), trans="log10") +
+  scale_y_continuous(breaks=1:20, labels=levels(dpd.y$AgeGroup20)) +
+  geom_point(aes(color=Gender, shape=Gender)) + 
+  geom_path(aes(color=Gender), linetype=1) + 
+  #geom_point(aes(x=Deaths, color=Gender, shape=Gender)) + 
+  #geom_path(aes(x=Deaths, color=Gender), linetype=2) + 
+  ggtitle("Verstorbene 2019 pro 100k nach Alter und Geschlecht (log scale)")
+
+```
+
+
+## Sterblichkeit 2019 in von AGES benutzte Altersklassen
+
+In der folgenden Tabelle sind die Alterstufen in die in den AGES COVID-19 Daten benutzten Intervalle zusammengefasst.
+
+*Demograpische Daten zur Sterblichkeit in Österreich in 2019 umgerechnet auf von AGES für COVID-19 benutze Altersgruppen*
+<center>
+```{r}
+pt <- makePT(dpd.y, "Gender")
+pt$addRowDataGroups("AgeGroup2", outlineBefore=TRUE, outlineTotal=TRUE)
+pt$addRowDataGroups("AgeGroup", outlineTotal=FALSE)
+
+pt$defineCalculation(type="summary", calculationName="Einwohner", summariseExpression="paste0(round(sum(Population)/1000), ' k')",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic"),
+                     cellStyleDeclarations=list("color"="black"))
+pt$defineCalculation(type="summary", calculationName="Gestorben", summariseExpression="paste0(round(sum(Deceased)/1000,2), ' k')",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic"),
+                     cellStyleDeclarations=list("color"="black"))
+pt$defineCalculation(type="summary", calculationName="Gest/100k", summariseExpression="paste0(round(sum(Deceased)/sum(Population)*100,2), ' k')",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic", "color"="royalblue"),
+                     cellStyleDeclarations=list("color"="royalblue"))
+pt$renderPivot()
+```  
+
+</center>
+
+
+
+# Covid-19 Infektionen und Todesfälle
+
+Das Risiko an Covid-19 zu erkranken ist in erheblichem Ausmass von der Zahl der sozialen Kontakte, der Einhaltung der Abstandsregeln, den Hygiene Standards, der TagesInzidenz u.a.m. abhängig, ebenso wie vom Erreichungsgrad der Herdenimmunität. Das Ziel der Impfkampagne ist in jedem Fall die Wiederherstellung des Normalzustandes. Ohne Massnahmen würde die gesamte Bevölkerung in kurzer Zeit an COVID-19 erkranken, obgleich viele Verläufe asymtomatisch verlaufen würden.
+
+Für die folgenden Betrachtungen wird davon ausgegangen, dass im 'Normalbetrieb' jeder/jede an COVID-19 erkranken würde. Es geht daher um die Betrachtung der schweren (Spitalsaufenthalt), schwersten (Intensivstation) und tödlichen Verläufe.
+
+Im Verlauf des ersten Jahres haben sich massgebliche Faktoren geändert, darunter die COVID-19 Behandlungsmethoden in den Spitälern, die Massnahmen zur Eindämmung der Pandemie oder das Auftreten von Mutationen. Insofern ist die Betrachtung des ersten Jahres ein Mittelwert über unterschiedliche Phasen der Pandemie. 
+
+Hinweise zu den nachfolgenden Tabellen und Graphiken:
+
+- Entsprechend der im COVID-19 Umfeld üblichen Darstellung werden die absoluten Zahlen (Positiv Getestete, Erkrankte, Verstorbene) auf die Anzahl pro 100.000 Personen umgerechnet (Spalten in blau)
+- In der nachfolgenden Tabelle werden die Verstorbenen auf 100k Positiv Getestete (Spalte 'PosVerst') und 100k Einwohner (Spalte 'Verstorben') normiert.
+
+
+## CovidFaelle_Altersgruppe.20210228.csv: Das erste Jahr der Pandemie
+
+- Im ersten Jahr wurden 450.000 positive Testergebnisse eingemeldet, das sind 5.1% der Bevölkerung
+- Davon sind 8400 Personen verstorben, das sind etwa 10% aller Todesfälle, 0.1% der Bevölkerung und 1.9% der positiven Testergebnisse
+- 525 Verstorbene (7 von 100k)  waren unter 65 Jahre, 7870 (465 von 100k) über 65 Jahre
+
+Schlussfolgerungen
+
+- Das Risiko an COVID-19 zu sterben war im ersten Jahr der Epidemie in Österreich für die über 65 Jährigen etwa 65 (=465/7) mal höher als für die unter 65-Jährigen
+- Von den über 85-jährigen starb jeder fünfte positiv Getestete
+- Die Altersgruppe bis etwa 50 Jahre war zu etwa 1% an den Sterbefällen beteiligt
+
+```{r}
+# git checkout 4dcb0fe50d4a34fbedf0a413f13f32334d58b873  data/ages/CovidFaelle_Altersgruppe.csv (28.2.2021)
+
+df <- read.csv("./data/CovidFaelle_Altersgruppe.20210228.csv", sep=";", stringsAsFactors=FALSE)
+#str(df)
+#levels(factor(df$Altersgruppe))
+df$Altersgruppe <- fct_reorder(factor(df$Altersgruppe, ordered=TRUE),df$AltersgruppeID,sum)
+#levels(df$Altersgruppe)
+
+dcd.y <- df %>%
+  dplyr::rename(AgeGroup=Altersgruppe, AgeGroupID=AltersgruppeID, 
+                Region=Bundesland, RegionID=BundeslandID, Population=AnzEinwohner) %>%
+  dplyr::mutate(AgeGroup2=ifelse(AgeGroupID<=7,"Unter65","Über65")) %>%
+  dplyr::mutate(AgeGroup2 = factor(AgeGroup2, levels=c("Unter65","Über65"))) %>%
+  dplyr::rename(sumConfirmed=Anzahl, sumRecovered=AnzahlGeheilt, sumDeath=AnzahlTot, Gender=Geschlecht) %>%
+  dplyr::select(Region, RegionID, AgeGroup, AgeGroupID, Gender, AgeGroup2, Population, sumConfirmed, sumDeath) %>%
+  dplyr::mutate(Gender=factor(Gender)) %>%
+  dplyr::mutate(sumConfirmed_100k=sumConfirmed/Population*100000, sumDeath_100k=sumDeath/Population*100000)
+
+dcd.oe <- dcd.y %>% 
+  dplyr::filter(Region=="Österreich") %>% 
+  dplyr::select(-Region, -RegionID)
+#str(dcd.oe)
+```  
+
+
+```{r}
+
+# Aggregate StatistikAustria data into AGES AgeGroups
+dpd.oe <- dpd.y %>%
+  dplyr::select(-Year, -AgeGroupID20, -AgeGroup20) %>%
+  dplyr::group_by (AgeGroupID, AgeGroup, Gender) %>%
+  dplyr::summarize (.groups="drop", AgeGroup2=first(AgeGroup2), Population=sum(Population), Deceased=sum(Deceased), Deceased_100k=sum(Deceased)/sum(Population)*100000)
+# str(dpd.oe)
+
+# Join Statistik Austria data in dpd.y (Österreich, Altersgruppen) with AGES Data (Regions, Altersgruppen)
+dpcd.oe <- dcd.oe %>% 
+  # Take Population from AGES dataset (values 2/2021) rather than of StatistikAustria (2019): Differences less than 1.5%
+  dplyr::inner_join(dpd.oe %>% dplyr::select(-Population), by=c("AgeGroupID", "AgeGroup","AgeGroup2","Gender"))
+  
+# str(dpcd.oe)
+```  
+
+
+
+*Österreich: Einwohner, positiv Getestete und Verstorbene nach Altersgruppe und Geschlecht (Absolute Zahlen)*
+<center>
+
+
+```{r}
+pt <- makePT(dpcd.oe, "Gender")
+pt$addRowDataGroups("AgeGroup2", outlineBefore=TRUE, outlineTotal=TRUE)
+pt$addRowDataGroups("AgeGroup", addTotal=FALSE)
+
+pt$defineCalculation(calculationName="Einwohner", summariseExpression="paste0(round(sum(Population)/1000), ' k')",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic"))
+pt$defineCalculation(calculationName="Positiv", summariseExpression="paste0(round(sum(sumConfirmed)/1000), ' k')",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic"))
+pt$defineCalculation(calculationName="Verstorben", summariseExpression="sum(sumDeath)",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic"))
+pt$renderPivot()
+```  
+
+</center>
+*Österreich: Positive getestete und Verstorbene nach Altersgruppe und Geschlecht (Normiert auf 100k)*
+<center>
+
+```{r}
+pt <- makePT(dpcd.oe, "Gender")
+pt$addRowDataGroups("AgeGroup2", outlineBefore=TRUE, outlineTotal=TRUE)
+pt$addRowDataGroups("AgeGroup", addTotal=FALSE)
+
+pt$defineCalculation(calculationName="Positiv", summariseExpression="paste0(round(sum(sumConfirmed)/sum(Population)*100000/1000,1), ' k')",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic", "color"="royalblue"),
+                     cellStyleDeclarations=list("color"="royalblue"))
+pt$defineCalculation(calculationName="PosVerst", summariseExpression="round(sum(sumDeath)/sum(sumConfirmed)*100000)",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic", "color"="royalblue"),
+                     cellStyleDeclarations=list("color"="royalblue"))
+pt$defineCalculation(calculationName="Verstorben", summariseExpression="round(sum(sumDeath)/sum(Population)*100000,1)",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic", "color"="royalblue"),
+                     cellStyleDeclarations=list("color"="royalblue"))
+pt$renderPivot()
+```  
+</center>
+
+
+### Exponentielle Zunahme der COVID-19 Sterblichkeit ab 45 Jahren
+
+Die Anzahl der Verstorbenen pro 100k positiv Getestete nimmt mit dem Alter exponentiell zu. Das wird mit der im Stufenmodell für die TagesInzidenz vorgestellten y-Achse mit Verdoppelungsschritten deutlich.
+
+```{r}
+
+# Features and labels for plot
+dpcd.of <- dpcd.oe %>% 
+  dplyr::select(AgeGroup, AgeGroup2, Gender, sumDeath_100k, Deceased_100k) %>%
+  dplyr::mutate(relFatalityRate=sumDeath_100k/Deceased_100k*100) 
+
+dpcd.og <- dpcd.of %>%
+  tidyr::gather(key="Ursache", value="Count", sumDeath_100k, Deceased_100k, relFatalityRate) %>%
+  dplyr::mutate(Ursache=factor(Ursache, levels=c("sumDeath_100k","Deceased_100k","relFatalityRate"), labels=c("COVID-19 (2020)","Andere (2019)", "Anteil COVID-19 [%]")))
+
+ggplot(data=dpcd.og %>% dplyr::mutate(AgeGroups=as.integer(AgeGroup)), 
+       aes(x=AgeGroups, y=Count, shape=Gender, color=Ursache)) +
+  scale_x_continuous(breaks=1:10, labels=levels(dpcd.og$AgeGroup)) +
+  scale_y_continuous(limits=c(.1,NA), trans="log10", breaks=c(1,2,5,10,20,50,100,200,500,1000,2000,5000,10000,20000)) +
+  geom_point(size=2) + 
+  geom_path(aes(linetype=Gender)) + 
+  ggtitle("COVID-19 Österreich: Todesursache pro 100k pro Altersgruppe (y=log)")
+```
+
+
+Als Tabelle per kable
+
+```{r}
+
+# TODO: PivotTable
+
+dpcd.og <- dpcd.of %>% 
+  mutate(Verstorbene_100k = round(Deceased_100k,2))  %>%
+  mutate(COVID_19_100k = round(sumDeath_100k,2))  %>%
+  mutate(Anteil_Covid_19 = round(relFatalityRate,2))  %>%
+  dplyr::arrange(Gender, AgeGroup) %>%
+  select(AgeGroup, AgeGroup2, Gender, Verstorbene_100k, COVID_19_100k, Anteil_Covid_19) 
+
+dpcd.og %>% kable()
+```
+
+Als Tabelle per pivot.table
+
+```{r}
+#, "Gender"
+pt <- makePT(dpcd.og, "Gender")
+#pt$addRowDataGroups("Gender", outlineBefore=TRUE, outlineTotal=FALSE)
+pt$addRowDataGroups("AgeGroup2", outlineBefore=TRUE, outlineTotal=TRUE)
+pt$addRowDataGroups("AgeGroup", addTotal=FALSE)
+
+pt$defineCalculation(calculationName="Verst100k", summariseExpression="round(sum(Verstorbene_100k))",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic", "color"="royalblue"),
+                     cellStyleDeclarations=list("color"="royalblue"))
+pt$defineCalculation(calculationName="COVID100k", summariseExpression="round(sum(COVID_19_100k))",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic", "color"="royalblue"),
+                     cellStyleDeclarations=list("color"="royalblue"))
+pt$defineCalculation(calculationName="AnteilCOVID", summariseExpression="round(sum(Anteil_Covid_19),1)",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic", "color"="royalblue"),
+                     cellStyleDeclarations=list("color"="royalblue"))
+pt$renderPivot()
+  
+```
+
+# Referenzen
+
+- 1
+- 2
+- 3
+  
+
+

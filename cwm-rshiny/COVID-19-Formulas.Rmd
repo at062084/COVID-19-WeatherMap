@@ -1,0 +1,293 @@
+---
+title: "Daten und Formeln zu COVID-19"
+author: "Thomas.Strehl@at.ibm.com"
+date: '2021-08-05'
+output:
+  pdf_document:
+    number_sections: yes
+    toc: yes
+    toc_depth: '3'
+  html_document:
+    number_sections: yes
+    toc: yes
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Daten und Formeln
+
+## Datenquellen
+
+- Statistik Austria
+- AGES
+- BMSGPK
+
+
+## Verwendete Kenngrössen
+
+- Die verwendeten Kenngößen sind 'Einwohnerzahl', 'Genesen', 'Verstorben' sowie 'Geimpft', auf Granularität Region, Monat, Altersgruppe und Geschlecht.
+- Daraus errechnet wird die Anzahl der 'Erkrankten' und der 'Ansteckbaren'
+- Nicht verwendet wird die Anzahl der 'Testungen' und 'Positiv Getesteten'
+- Nicht verfügbar sind Daten zur Anzahl der 'Hosptialisierten' und 'Intensivbehandelten'
+
+**Anmerkungen**
+
+- Die '7 Tage Inzidenz' basiert auf der Anzahl der poitiven Corona Tests (Antigen+PCR). Diese Zahl ist von einer Vielzahl sich ständig ändernder Umstände abhängig (TestAngebot, TestKits, Labore, Regelungen, Bundesländer, ...) und als Mass für das epidemiologische Geschehen daher wenig geeignet.
+- Etwas besser geeignet, wenn auch mit einigen Wochen Verspätung, ist die Zahl der 'Genesenen' und 'Verstorbenen' Personen. Die Definition und Ermittlung der Anzahl der 'Genesenen' ist angesicht der weitgehend unbekannten Anzahl von asymtomatisch Erkrankten ebenfalls kein absolutes Mass für die Verbreitung des Virus, passt aber zumindest zeitlich mit der Anzahl der Todesfälle besser zusammen als die Anzahl der positiven Testungen.
+- Ein vermutlch gutes Mass für die Prevalenz der Epidemie in der Bevölkerung wäre die Anzahl der Personen, die in ein Krankenhaus eingeliefert oder einer Intensivstation betreut wurden. Diese Informationen sind weder von AGES noch vom BMSGPK veröffentlicht, zugänglich ist lediglich die Belegung der Spitals- und Intensivbetten, jedoch ohne Aufenthaltsdauer.
+
+### Personengruppen
+
+Die nachfolgenden Daten werden täglich veröffentlicht, die vorliegende Untersuchung aggregiert über die Kalendermonate von 10/2020 bis 08/2021. 
+
+$$
+\begin{aligned}
+P  &= \text{Population (StatistikAustria. possibly by AgeGroup and Gender)} \\
+A  &= \text{ Alter (intervals by AGES) } \\
+G  &= \text{ Geschlecht} \\
+\\
+S  &= \text{Susceptible (calculated, see below)} \\
+C  &= \text{Confirmed (reported by AGES. Tested positive  -> Not considered here)} \\
+I  &= \text{Infected (calculated as Recovered+Death, timeshift of 1 month)} \\
+R  &= \text{Recovered (reported by AGES, timeshift of 1 month) } \\
+D  &= \text{Death (reported by AGES, timeshift of 1 month) } \\
+V  &= \text{Vaccinated (reported by BMSGPK. Immunized, 2nd shot)} \\
+\\
+Z  &= \text{Prevalenz (defined and calculated as (Recovered+Death)/Susceptible, see below) } \\
+F  &= \text{Fatality Rate (various rates, defined and calculated, see below) } \\
+\end{aligned}
+$$
+
+### Zählweise und Anteile
+
+- Die Zahlen werden für Österreich gesamt und nach Bundesländern getrennt betrachtet
+- Der Grossteil der Untersuchung wird für das Bundesland Wien gemacht. Dadurch kann von einigermassen homogenen Regelungen, sozialer Struktur, Mobilität etc. und Datenerfassung ausgegangen werden kann. Auch die frühe Konzentration in Wien auf PCR Tests ist von Vorteil.
+
+Für die nachfolgenden Formeln gelten folgende Namenskonventionen bzw. Schreibweise
+
+$$
+\begin{aligned}
+\text{Counting of cases:} \\
+N_n &= \text{ new cases this time interval } \\
+N_c &= \text{ number of active cases this time interval} \\
+N_s &= \text{ number of cases so far} \\
+\text{Reference entitity for cases:} \\
+_pN &= \text{ number of cases in population} \\
+_aN &= \text{ number of cases in agegroup+gender} \\
+\text{Example:} \\ 
+_{a}R_n &= \text{Number of cases that recovered in this time period in this agegroup+gender}
+\end{aligned}
+$$
+
+
+# Beschreibung des epidemiologischen Geschehens
+
+- Die COVID-19 Sterblichkeit hängt exponentiell vom Alter ab, die Einteilung in Altersgruppen ist daher in allen Betrachtungen von fundamentaler Bedeutung
+- Die getrennte Betrachtung nach Männern und Frauen ist u.a. wegen der unterschiedlichen Lebenserwartung und der Diskussion um die Nebenwirkungen von Impfungen von Bedeutung
+
+
+## Ansteckbare (Susceptible)
+
+Anzahl der ansteckbaren Personen in Österreich/Bundesland pro Alter+Geschlecht. Diese Anzahl 
+
+- sinkt gleichförmig mit steigender Anzahl Genesene
+- sinkt gleichförmig mit steigender Anazhl Geimpfte
+
+$$
+\begin{aligned}
+\text{Ansteckbare}  &= \text{Bevölkerung - (k*Genesene + Geimpfte)} \\
+\\
+_pS_c &= _pP - k*_pR_s - _pV_s & \text{number of current susceptibles in population} \\
+ & _pR_s & \text{number of recovered cases in Austria so far} \\
+ & _pR_s & \text{number of vaccinated cases in Austria so far} \\
+ & k     & \text{multiplication factor for asymptomatic cases} \\
+ aS_c &= _aP - k*_aR_s - _pV_s & \text{number of current susceptibles agegroup}
+\end{aligned}
+$$
+
+
+## Prevalenz
+
+Die Prevalenz, also die Verbreitung der Virus in der Bevölkerung, wird üblicherweise durch die '7 Tages Inzidenz', d.h. die Anzahl 'positiver Testungen', beschrieben. Als  Mass für die 'Infizierten' wird hier statt dessen die Summe aus den besser definierten 'Genesenen' und 'Verstorbenen' verwendet. Die Prevalenz ergibt sich dann wie gehabt aus dem Anteil der 'Infizierten' an der Bevölkerung bzw. Ansteckbaren. Das Verhältnis der beiden Prevalenz Werte auf Basis 'Ansteckbare' und 'Gesamtbevökerung' sind ein Mass für den Grad der Immunisierung pro  Altersgruppe und Geschlecht.
+
+### Gesamt Prevalenz
+
+Die Prevalenz wird, wie die übrigen Kenngrößen, nach Region, Alter, Geschlecht und Monat bestimmt. Die Gesamtprevalenz über alle Altersgruppen und Geschlecht wird nur für Vergleichszwecke verwendet.
+
+$$
+\begin{aligned}
+\text{GesamtPrevalenz Einwohner} &= \frac{\text{Alle Genesenen+Verstorbenen}}{\text{Alle Einwohner}} \\
+\\
+\text{GesamtPrevalenz Ansteckbare} &= \frac{\text{Alle Genesenen+Verstorbenen}}{\text{Alle Ansteckbaren(Vormonat)}} \\
+\\
+_pZ(m) &= \frac{_pR_n(m) + _pD_n(m)}{_pS_c(m-1)} & \text{prevalence in Austria} \\
+& m & \text{month under considereation}
+\end{aligned}
+$$
+
+### Prevalenz nach Alter und Geschlecht
+
+Zeitverschiebung: Nimmt man näherungsweise an, dass an COVID-19 Erkrankte innerhalb eines Monats gesunden bzw. sterben, dann muss mit der Anzahl der ansteckbaren Personen des Vormonates verglichen werden. Das ist insbesondere für die Monate mit hoher Impfaktivität wichtig.
+
+
+$$
+\begin{aligned}
+\text{Prevalenz Ansteckbare} &= \frac{\text{Genesene+Verstorbene}}{\text{Ansteckbare(Vormonat)}} \\
+\\
+_aZ(m) &= \frac{_aR_n(m) + _aD_n(m)}{_aS_c(m-1)} & \text{prevalence in agegroup+gender}  \\
+& m & \text{month under considereation}
+\end{aligned}
+$$
+
+### Relative Prevalenz
+
+Ausgehend von der Prevalenz über alle Altersgruppen und der Prevalenz in den einzelnen Altersgruppen wird die 'relative Prevalenz' der einzelnen Altersgruppen bestimmt. Diese Werte zeigen wie stark die altersgruppen spezifische Prevalenz von der 'mittleren' Prevalenz über alle Altersgruppen abweicht. Diese Werte sollten vom absoluten Wert der Prevalenz über alle Altersgruppen unabhängig sein.
+
+$$
+\begin{aligned}
+\text{Relative Prevalenz einer Altersgruppe} &=  \frac{ \text{Prevalenz in AltersGruppe+Geschlecht} }{ \text{Prevalenz über alle Altersgruppen+Geschlecht} } \\
+\\
+Z_r(m) &= \frac{_aZ(m)}{_pZ(m)}  = 
+\frac { \frac{_aR_n(m) + _aD_n(m)}{_aS_c(m-1)} } { \frac{_pR_n(m) + _pD_n(m)}{_pS_c(m-1)} } = 
+\frac { \frac{_aR_n(m) + _aD_n(m)}{_aS_c(m-1)} } { \frac{\sum^A(_aR_n(m) + _aD_n(m))}{\sum^A{_pS_c(m-1)}} }
+\end{aligned}
+$$
+
+
+## Sterblichkeit
+
+Die Sterblichkeit an COVID-19 wird aus zwei unterschiedlichen Blickwinkeln betrachtet
+
+- Aus der Sicht des Gesundheitssystems geht es um die zu behandelnde Anzahl von Erkrankten und Verstorbenen
+- Aus der Sicht des/der Einzelnen geht es um das Risiko an COVID-19 zu erkranken bzw. zu versterben
+
+### Aufteilung Verstorbene auf Altersgruppen und Geschlecht
+
+Diese Aufteilung dokumentiert die starke Altersabhängigkeit der COVID-19 Sterblichkeit. Der Anteil einer Altersgruppe sollte 
+
+- unabhängig von der Gesamtzahl der Verstorbenen sein
+- sich mit zunehmendem Grad ihrer Immunisierung zu deren Gunsten verschieben, d.h. verringern
+- gegebenenfalls unterschiedliche altersprofile der Sterblichkeit bei verschiedenen Mutanten widerspiegeln
+
+
+$$
+\begin{aligned}
+\text{Anteil Verstorbene in Alter+Geschlecht} &=  \frac{ \text{ Verstorbene nach Alters+Geschlecht} }{ \text{ Verstorbene gesamt} } \\
+\\
+_aF_r &= \frac {_aD_n}{\sum_A{_aD_n}} & \sum_A{_aF_r}=1
+\end{aligned}
+$$
+
+### Sterblichkeitsrate (Anteil Verstorbene an Infizierten)
+
+Dieser Wert ist das Risiko nach Ansteckung mit COVID-19 zu versterben ('Case Fatality Rate') und kann für grobe Überschlagsrechnung ohne Berücksichtigung des Alters oder Geschlechts verwendet werden. Wird hier als Referenzwert (Mittelwert) für die relative Sterblichkeit nach Alter und Geschlecht verwendet (siehe weiter unten).
+
+**Anmerkung:** Dieser Wert ist von der Altersstruktur der Bevölkerung abhängig
+
+$$
+\begin{aligned}
+\text{Allgemeine Sterblichkeitsrate} &=  \frac{ \text{Verstorbene} }{ \text{Infizierte} } \\
+\\
+F &= \frac{D}{I} =  \frac{D}{D+R}  = \frac{\sum_A{_aD_n}}{\sum_A{(_aR_n + _aD_n)}}
+\end{aligned}
+$$
+
+### Sterblichkeitsrate nach Alter und Geschlecht
+
+Dieser Wert ist das individuelle Risiko nach Ansteckung mit COVID-19 zu versterben, nach Alter und Geschlecht. Die Einheit der Sterblichkeitsrate ist Prozent, und kann auf 'Anzahl Verstorbene aus 100k Infizierte' umgerechnet werden (F*100000).
+
+Die Sterblichkeitsrate sollte sein:
+
+- unabhängig von der Prevalenz
+- Eigenschaft des Virus bzw.  Mutante, 
+- abhängig von der ärtzlichen Behandlung, dem Allgemeinzustand des Infizierten, etc
+
+**Anmerkung:** Diese Werte beschreiben die Sterblichkeit innerhalb einer Alters+Geschlechts Gruppe und sind daher von der Altersstrukur der Bevölkerung unabhängig.
+
+$$
+\begin{aligned}
+\text{Alters+Geschlechts spezifische Sterblichkeitsrate} &= \frac{Verstorbene}{Infizierte}   = \frac{Verstorbene}{Genesene+Verstorbene} \\
+\\
+_aF  &= \frac{_aD_n}{_aR_n + _aD_n}  \\
+\end{aligned}
+$$
+
+### Relative Sterblichkeitsrate nach Alter und Geschlecht
+
+Diese Werte verknüpfen die von der Alterstruktur der Bevölkerung unabhängige 'Sterblichkeitsrate nach Alter und Geschlecht' mit der Alterstruktur abhängigen 'Sterblichkeitsrate (Anteil Verstorbene an Infizierten)'. 
+
+**Anmerkung:** Die genaue Bedeutung dieser Größe muss erst noch ermittelt werden. Vermutlich spielt sie eine Rolle beim Vergleich eines Zeitbereichs mit einem Referenzintervall
+
+$$
+\begin{aligned}
+\text{relative Alters+Geschlechts spezifische Sterblichkeitsrate} &= \frac{\text{Alters+Geschlechts spezifische Sterblichkeitsrate}}{\text{Allgemeine Sterblichkeitsrate}}  
+\\
+_aF_r = \frac{_aF}{F}  & \space \text{relative CaseFatalityRate by Agegroup and Gender} \\
+\end{aligned}
+$$
+
+
+## Sterblichkeit in einem Beobachtungs- im Vergleich zu einem Referenzzeitraum
+
+Diese Werte vergleichen die 
+
+- Altersgruppen spezifischen relativen Kennwerte innerhalb einer Messperiode 'm' gegen die 
+- Altersgruppen spezifischen relativen Kennwerte einer Referenzperiode 'n' (m,n e.g. Monate oder Quartale)
+
+Die beiden folgenden Größen sind von der zeitlichen Länge des Mess- und Referenzzeitraumes unabhängig.
+
+### Relative Aufteilung Verstorbene auf Altersgruppen und Geschlecht
+
+Diese Werte vergleichen die 'Aufteilung Verstorbene auf Altersgruppen und Geschlecht' (siehe Punkt 2.3.1) zwischen zwei Beobachtungszeiträumen. 
+
+$$
+\begin{aligned}
+\text{relativer Anteil Verstorbene nach Alter+Geschlecht} &=  \frac{ \text{Anteil Verstorbene nach Alter+Geschlecht im Messzeitraum} }{ \text{Anteil Verstorbene nach Alter+Geschlecht im Referenzzeitraum} } \\
+\\
+_aF_r(t) &= \frac {_aF_r(t)}{_aF_r(t_{ref})}  = \frac{\frac {_aD_n(t)}{\sum_A{_aD_n(t)}}}{\frac {_aD_n(t_{ref})}{\sum_A{_aD_n(t_{ref})}}}\\
+\end{aligned}
+$$
+
+### Relative Sterblichkeitsrate nach Alter und Geschlecht
+
+Diese Werte vergleichen die 'Sterblichkeitsrate nach Alter und Geschlecht' (siehe Punkt 2.3.3) zwischen zwei Beobachtungszeiträumen. 
+
+$$
+\begin{aligned}
+\text{relative Sterblichkeitsrate nach Alter+Geschlecht} &=   \frac{ \text{Sterblichkeitrate  nach Alter+Geschlecht in Messzeitraum} }{ \text{Sterblichkeitrate  nach Alter+Geschlecht im Referenzzeitraum} } \\
+\\
+_aF_r(t) &=  \frac{_aF(t)}{_aF(t_{ref})} = \frac{\frac{_aD_n(t)}{_aR_n(t) + _aD_n(t)}}{\frac{_aD_n(t_{ref})}{_aR_n(t_{ref}) + _aD_n(t_{ref})}} \\
+\end{aligned}
+$$
+
+
+## Ausblick auf den weiteren Verlauf
+
+### Zu erwartende Todesfälle ohne Massnahmen
+
+Gegeben die aktuelle Zahl an immunisierten Personen (Genesene und Geimpfte) nach Alter und Geschlecht kann aus der verbleibenden Anzahl von Ansteckbaren und der altersabhängigen Sterblichkeitsrate eine Abschätzung für die Anzahl der zu erwartenden Todesopfer ohne weitere Massnahmen, d.h. bei vollständiger Durchseuchung, getroffen werden. Dieser Wert ist eine obere Schranke für die Anzahl der zu erwartenden Toten unter der Voraussetzung, dass Genesene und Immunisierte bei Wiedererkrankung einer sehr geringen Sterblichkeit unterliegen.
+
+$$
+\begin{aligned}
+\text{Zu erwartende Tote} &=  \text{Summe(Alters+Geschlechts spezifische Sterblichkeitsrate} * \text{Alters+Geschlechts spezifische  Anzahl Ansteckbare)} \\
+\\
+\hat{T} &=\sum_A{_aF * _aS}
+\end{aligned}
+$$
+
+In einem genaueren Modell ist die Sterblichkeit der Genesenen (G) und Immunisierten (V) bei Wiederansteckung zu berücksichtigen
+
+$$
+\begin{aligned}
+\\
+\hat{T} &= \sum_A{_aF_s  * _aS}  + \sum_A{_aF_g * _aG} + \sum_A{_aF_v  * _aV}
+\end{aligned}
+$$
+
+
+
+
+

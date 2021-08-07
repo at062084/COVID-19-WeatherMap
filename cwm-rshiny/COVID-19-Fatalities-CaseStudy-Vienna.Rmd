@@ -1,0 +1,935 @@
+---
+title: "COVID-19 Sterblichkeit: Fallstudie Wien"
+author: "Thomas.Strehl@at.ibm.com"
+date: "4/11/2021"
+output:
+  html_document:
+    df_print: kable
+    fig_caption: no
+    fig_height: 4
+    fig_width: 7
+    number_sections: no
+    toc: yes
+    toc_depth: 3
+  always_allow_html: true
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+    fig_height: 4
+    fig_width: 7
+geometry: margin=1cm
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+#knitr::opts_chunk$set(fig.align="center")
+#options(knitr.table.format = 'html')
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(lubridate)
+library(forcats)
+library(knitr)
+library(gt)
+library(pivottabler)
+library(kableExtra)
+```
+
+```{r}
+source("fun.R")
+cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#444444", "#F0D042", "#0072B2", "#D55E00", "#CC79A7", "#C40000")
+```
+
+```{r}
+# Create standard object for table rendering
+makePT <- function(df, cdg=NULL) {
+  pt <- PivotTable$new(tableStyle  =list("color"="black", "border-color"="black"),
+                       headingStyle=list("color"="black", "border-color"="black", "background-color"="white", "font-style"="italic"), 
+                       cellStyle   =list("color"="black", "border-color"="black", "background-color"="white"),
+                       totalStyle  =list("color"="black", "border-color"="black", "background-color"="lightblue", "font-weight"="bold"))
+  pt$addData(df)
+  # pt$theme <- "default"
+  pt$setDefault(addTotal=FALSE)
+  pt$setDefault(totalPosition="before")
+  #pt$setDefault(totalCaption="Gesamt {value}")
+  pt$setDefault(outlineBefore=list(isEmpty=FALSE, caption="Gesamt {value}", totalPosition="before",
+                                             groupStyleDeclarations=list("color"="black", "border-color"="black", "background-color"="lightgray", "font-style"="italic"),
+                                             cellStyleDeclarations =list("color"="black", "border-color"="black", "background-color"="lightgray", "font-style"="italic")))
+  pt$setDefault(outlineTotal=list(isEmpty=FALSE,  caption="Gesamt {value}", totalPosition="before", 
+                                            groupStyleDeclarations=list("color"="black", "border-color"="black", "background-color"="lightgreen", "font-style"="italic"),
+                                            cellStyleDeclarations =list("color"="black", "border-color"="black", "background-color"="lightgreen", "font-style"="italic")))
+  if (!is.null(cdg)) {
+    pt$addColumnDataGroups(cdg, totalPosition="before", totalCaption="Gesamt", addTotal=TRUE, 
+                         styleDeclarations=list("color"="black", "border-color"="black", "background-color"="lightblue", "font-weight"="bold", "font-style"="italic"))  
+  }
+  # "border"="1px solid blue"
+  return(pt)
+}
+
+makePTcalc <- function(pt, calName, summariseExp) {
+  cat (calName, summariseExp)
+  pt <- pt$defineCalculation(type="summary", calculationName=calName, summariseExpression=summariseExp,
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic"),
+                     cellStyleDeclarations=list("color"="black"))
+  return(pt)
+}
+
+makePTcalc100k <- function(pt, calName, summariseExp) {
+  pt <- pt$defineCalculation(type="summary", calculationName=calName, summariseExpression=summariseExp,
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic", "color"="royalblue"),
+                     cellStyleDeclarations=list("color"="royalblue"))
+  return(pt)
+}
+``` 
+
+
+# Source Data 
+
+## Statistik Austria
+
+
+### Population 2019
+
+```{r}
+# "Alter in 5-Jahresgruppen","Values","Time section","Gender <2>","Number","Annotations"
+fName <- "./data/StatA-Population-2019_AgeGroup_Gender.csv"
+col.names=c("AgeGroup20","Values","Year","Gender","Population","Annotation")
+colClasses=c("character","NULL","character", "character","character","NULL")
+
+dp <- read.csv(fName, header=FALSE, skip=7, sep=",", stringsAsFactors=FALSE, 
+               col.names=col.names, colClasses=colClasses, na.strings="not applicable") %>%
+  dplyr::filter(Gender=="male" | Gender=="female") %>%
+  dplyr::mutate(Population=as.integer(Population))
+dp <- dp[1:40,]
+dp <- dp %>% 
+  dplyr::mutate(AgeGroup20=factor(AgeGroup20, levels=unique(dp$AgeGroup20), ordered=TRUE)) %>%
+  dplyr::select(-Year)
+
+dp <- dp %>% 
+  dplyr::mutate(AgeGroupID20=as.integer(AgeGroup20), 
+                 AgeGroup2=factor(ifelse(AgeGroupID20>=14,"Über65","Unter65"), levels=c("Unter65","Über65")),
+                 Gender = factor(Gender, levels=c("male","female"), labels=c("M","W")))
+
+```
+
+### Deaths 2019
+
+```{r}
+fName <- "./data/StatA-Sterbefaelle-Year_AgeGroup_Gender.csv"
+col.names=c("Year","AgeGroup20","xxx","Gender","Deceased","y")
+colClasses=c("character","character","NULL", "character","character","NULL")
+dd <- read.csv(fName, header=TRUE, skip=7, sep=",", stringsAsFactors=FALSE, 
+               col.names=col.names, colClasses=colClasses, na.strings="not applicable") %>%
+  dplyr::filter(!is.na(AgeGroup20)) %>%
+  dplyr::filter(Gender=="male" | Gender=="female")
+
+dd <- dd %>%
+  dplyr::mutate(Deceased=as.integer(Deceased)) %>%
+  dplyr::mutate(AgeGroup20=factor(dd$AgeGroup20, levels=dd$AgeGroup20 %>% unique(), ordered=TRUE)) %>%
+  dplyr::filter(Year=="2019") %>%
+  dplyr::select(-Year)
+```
+
+### Population and Deaths 2019
+
+```{r}
+
+# Construct AgeGroup as used by AGES
+dpd <-  dd %>%
+  dplyr::left_join(dp, by=c("AgeGroup20", "Gender")) %>%
+  dplyr::mutate(Gender=factor(Gender, levels=c("male","female"), labels=c("M","W"))) %>%
+  dplyr::mutate(AgeGroupID20=as.integer(AgeGroup20)) %>%
+  dplyr::mutate(AgeGroup2=factor(ifelse(AgeGroupID20>=14,"Über65","Unter65"), levels=c("Unter65","Über65"), ordered=TRUE)) %>%
+  dplyr::mutate(AgeGroupID=ceiling((pmin(AgeGroupID20,18)+1)/2)) %>%
+  dplyr::mutate(AgeGroup=paste(pmax(0,(AgeGroupID-1)*10-5),"-", ifelse(AgeGroupID*10-5<90,AgeGroupID*10-6,""), sep=""))
+  
+# Patch for AGES namings
+idx <- dpd$AgeGroup=="0-4"
+dpd$AgeGroup[idx] <- "<5"
+idx <- dpd$AgeGroup=="85-"
+dpd$AgeGroup[idx] <- ">84"
+
+# ensure AgeGroup is ordered
+dpd <- dpd %>%
+  dplyr::mutate(AgeGroup=factor(AgeGroup, levels=dpd$AgeGroup %>% unique(), ordered=TRUE))
+
+# Beautify cols order
+dpd <- dpd %>%
+  dplyr::select(AgeGroup20, AgeGroupID20, AgeGroup, AgeGroupID, AgeGroup2, Gender, Population, Deceased)
+
+```
+
+
+## AGES
+
+### Erstes Jahr
+
+```{r}
+# git checkout 4dcb0fe50d4a34fbedf0a413f13f32334d58b873  data/ages/CovidFaelle_Altersgruppe.csv (28.2.2021)
+
+df <- read.csv("./data/CovidFaelle_Altersgruppe.20210228.csv", sep=";", stringsAsFactors=FALSE)
+#str(df)
+#levels(factor(df$Altersgruppe))
+df$Altersgruppe <- fct_reorder(factor(df$Altersgruppe, ordered=TRUE),df$AltersgruppeID,sum)
+#levels(df$Altersgruppe)
+
+dcd.y <- df %>%
+  dplyr::rename(AgeGroup=Altersgruppe, AgeGroupID=AltersgruppeID, 
+                Region=Bundesland, RegionID=BundeslandID, Population=AnzEinwohner) %>%
+  dplyr::mutate(AgeGroup2=ifelse(AgeGroupID<=7,"Unter65","Über65")) %>%
+  dplyr::mutate(AgeGroup2 = factor(AgeGroup2, levels=c("Unter65","Über65"))) %>%
+  dplyr::rename(sumConfirmed=Anzahl, sumRecovered=AnzahlGeheilt, sumDeath=AnzahlTot, Gender=Geschlecht) %>%
+  dplyr::select(Region, RegionID, AgeGroup, AgeGroupID, Gender, AgeGroup2, Population, sumConfirmed, sumDeath) %>%
+  dplyr::mutate(Gender=factor(Gender)) %>%
+  dplyr::mutate(sumConfirmed_100k=sumConfirmed/Population*100000, sumDeath_100k=sumDeath/Population*100000)
+
+dcd.oe <- dcd.y %>% 
+  dplyr::filter(Region=="Österreich") %>% 
+  dplyr::select(-Region, -RegionID)
+#str(dcd.oe)
+```  
+
+
+```{r}
+
+# Aggregate StatistikAustria data into AGES AgeGroups
+dpd.oe <- dpd.y %>%
+  dplyr::select(-Year, -AgeGroupID20, -AgeGroup20) %>%
+  dplyr::group_by (AgeGroupID, AgeGroup, Gender) %>%
+  dplyr::summarize (.groups="drop", AgeGroup2=first(AgeGroup2), Population=sum(Population), Deceased=sum(Deceased), Deceased_100k=sum(Deceased)/sum(Population)*100000)
+# str(dpd.oe)
+
+# Join Statistik Austria data in dpd.y (Österreich, Altersgruppen) with AGES Data (Regions, Altersgruppen)
+dpcd.oe <- dcd.oe %>% 
+  # Take Population from AGES dataset (values 2/2021) rather than of StatistikAustria (2019): Differences less than 1.5%
+  dplyr::inner_join(dpd.oe %>% dplyr::select(-Population), by=c("AgeGroupID", "AgeGroup","AgeGroup2","Gender"))
+  
+# str(dpcd.oe)
+```  
+
+
+
+## COVID-19 Pandemie am Beispiel Wien
+
+Als konkretes Fallbeispiel werden die COVID-19 Infektionen in Wien herangezogen, wie von AGES auf der 'Open Data Platform' veröffentlicht. Die Daten zu Altersgruppen und Bundesländern werden jeden Tag kummuliert seit 26.2.2020 zusammengestellt. Betrachtet wird zunächst das gesamte erste Jahr der Pandemie.
+
+In weiterer Folge wird mit Q4/2020 das letzte Quartal vor Begin der Impfungen untersucht, mit Q1/2021 und Q2/2021 die ersten beiden Impf-Quartale, sowie mit Q3/2021 das Quartal der Ausbreitung der Delta-Variante.
+
+Die Beschränkung auf Wien wurde aus folgenden Gründen gewählt
+
+- Einheitliches Umfeld: Homogene Struktur (Grossstadt), eine zuständige Landesregierung, einheitliche Massnahmen, einheitliche Rückmeldungskette in das EMS
+
+### Positiv Getestete und Verstorbene im ersten Jahr
+
+- Der Anteil der unter/über 65 Jährigen an der Bevölkerung ist 84% bzw 16%
+- Der Anteil der unter/über 65 Jährigen an den Positiven ist   86% bzw 14%
+- Der Anteil der unter/über 65 Jährigen an den Verstorbenen ist 7% bzw 93%
+- Bei den unter/über 65 Jährigen sterben ca. 0.15% bzw 12% der positiv Getesteten unter/über 65 Jährigen
+- Bei den unter 65 Jährigen ist der Anteil Männern doppelt so hoch wie der der Frauen
+
+```{r }
+# Filter data for Wien
+dcd.w <- dcd.y %>% 
+  dplyr::filter(Region=="Wien") %>% 
+  dplyr::select(-Region, -RegionID)
+``` 
+
+```{r }
+# Naming conventions for next plot
+dcd.u <- dcd.w %>% 
+  dplyr::select(AgeGroupID, AgeGroup, Gender,
+                Posit          =sumConfirmed,           Verst=sumDeath,
+                Posit100k      =sumConfirmed_100k,      Verst100k=sumDeath_100k)
+``` 
+
+```{r}
+dcd.m <- dcd.u %>% 
+  dplyr::select(AgeGroup, Gender, Posit, Posit100k, Verst, Verst100k) %>%
+  tidyr::gather(key="Cases", value="Count", Posit, Posit100k, Verst, Verst100k) %>%
+  dplyr::mutate(Cases=factor(Cases), AgeGroup=as.integer(AgeGroup))
+
+ggplot(data=dcd.m, aes(x=AgeGroup, y=Count, color=Gender, shape=Gender)) +
+  scale_x_continuous(breaks=1:10, labels=levels(dcd.u$AgeGroup)) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(limits=c(0,NA)) +
+  geom_point(size=3) + 
+  geom_path() +
+  facet_wrap(Cases~., ncol=2, scales="free_y") +
+  ggtitle("COVID-19 Wien: Positive und Verstorbene pro Altersgruppe (bis 2/2021)")
+```
+
+
+*Wien: Positive getestete und Verstorbene nach Altersgruppe und Geschlecht (Absolute Zahlen)*
+<center>
+```{r}
+
+pt <- makePT(dcd.w, "Gender")
+pt$addRowDataGroups("AgeGroup2", outlineBefore=FALSE, outlineTotal=TRUE, totalCaption="Wien")
+
+pt$defineCalculation(calculationName="Positive", summariseExpression="paste0(round(sum(sumConfirmed)/1000), 'k')",
+                     headingStyleDeclarations=list("background-color"="lightblue", "color"="black", "font-weight"="bold", "font-style"="italic"))
+pt$defineCalculation(calculationName="Verstorben", summariseExpression="sum(sumDeath)",
+                     headingStyleDeclarations=list("background-color"="lightblue", "color"="black", "font-weight"="bold", "font-style"="italic"))
+pt$renderPivot()
+
+```  
+</center>
+
+
+*Wien: Positive getestete und Verstorbene nach Altersgruppe und Geschlecht (Normiert auf 100k)*
+<center>
+```{r}
+pt <- makePT(dcd.w, "Gender")
+pt$addRowDataGroups("AgeGroup2", outlineBefore=FALSE, outlineTotal=TRUE, totalCaption="Wien")
+
+pt$defineCalculation(calculationName="Positiv", summariseExpression="paste0(round(sum(sumConfirmed)/sum(Population)*100000/1000,1), ' k')",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic", "color"="royalblue"),
+                     cellStyleDeclarations=list("color"="royalblue"))
+pt$defineCalculation(calculationName="PosVerst", summariseExpression="round(sum(sumDeath)/sum(sumConfirmed)*100000)",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic", "color"="royalblue"),
+                     cellStyleDeclarations=list("color"="royalblue"))
+pt$defineCalculation(calculationName="Verstorben", summariseExpression="round(sum(sumDeath)/sum(Population)*100000,1)",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic", "color"="royalblue"),
+                     cellStyleDeclarations=list("color"="royalblue"))
+pt$renderPivot()
+```  
+</center>
+
+
+Schlussfolgerungen:
+
+- Bei positiver Testung ist das Risiko zu Sterben bei den über 65-Jährigen etwa 80 mal so hoch wie bei den unter 65-Jährigen
+
+Zusammenfassung (stark gerundet)
+
+- Von AGES für Wien erfasst sind knapp 2 Mio Menschen. 1 Mio Männer und 1 Mio Frauen. 84% unter und 16% (ca. 300k) über 65 Jahre
+- Bisher wurden 120.000 = 6% Menschen positiv getestet, 60.000 Männer und 60.000 Frauen. 87% unter und 13% (ca.  15k) über 65 Jahre 
+- Bisher verstarben an COVID-19 2.000 = 0.1% Menschen, 1.000 Männer und 1.000 Frauen. 8% unter und 92% (ca. 1.8k) über 65 Jahre
+
+Das bedeutet
+
+- 92% der Todesfälle ereigneten sich in dem 13 Prozent der Wiener Bevölkerung umfassenden Anteil an Menschen über 65 Jahre
+- Aus 100k unter 65-Jährigen verstarben 10 Menschen an COVID-19, aus 100k über 65-Jährigen verstarben 500 Menschen.
+- Die Wahrscheinlichkeit an COVID-19 zu sterben ist in Wien für die über 65-Jährigen etwa 50 mal so hoch wie für die unter 65-Jährigen
+
+Anmerkung: Diese Werte gelten für die Altersstruktur in Wien. Die Anzahl der positiv Getesteten pro 100.000 Einwohner je Altersgruppe und Geschlecht liegt in Wien bisher zwischen 4% (65-74 Jahre) und 8% (15-24 Jahre).
+
+Anzahl pro 100.000: Positive und Verstorbene nach Altersklasse und Geschlecht
+
+Um den Gesamtanteil der Menschen zu bestimmen, die sich im bisherigen Verlauf der Pandemie bereits mit  COVID-19 infiziert haben, wird der Anteil der Asymptomatischen Infektionen benötigt. Eine Abschätzung dazu wird weiter unten auf Basis einer Prevalenz Studie der Statistik Austria im November 2020 versucht.
+
+Normierung der positiv Getesteten und Verstorbenen auf 100k pro Altersgruppe
+
+Zusammenfassung auf zwei Altersgruppen
+
+Die Daten zu den Nebenwirkungen der COVID-19 Impfungen nennen zumeist nur zwei Altersgruppen (Jung <-> Alt, Trennung 60-65 Jahre) und das Geschlecht. Für die folgenden Betrachtungen werden die AGES Daten zur Altersverteilung ebenfalls in die zwei Gruppen jünger/älter als 65 Jahre geteilt.
+
+
+Die Gesamtanzahl der Verstorbenen, auf 100k Menschen umgerechnet, liegt in der Gruppe 'working' bei zwei, und in der Gruppe 'retired' bei knapp 100. 
+
+Das ist ein erster Anhaltspunkt für den Vergleich mit den vermuteten tödlichen Nebenwirkungen z.B. des AstraZeneka und Jonsson Impfstoffes. Wie bereits angemerkt muss zuvor noch von 'Positiv Getesteten' auf 'Infizierte' umgerechnet werden. Bei einer Dunkelziffer von 50% (also die Hälfte der Infektionen asymptomatisch) verringern sich die Werte auf 1 bzw 50 Todesfälle je 100.000 in den beiden Altersgruppen.
+
+Die Sterblichkeit für COVID-19 ist für die Altersgruppe 'retired' etwa 50 (Frauen: 70) mal so hoch wie für die Altersgruppe 'working'
+
+Abschätzung der Infektionen mit Todesfolge pro 100.000 Infektionen
+
+Um diese Zahlen mit den letalen Nebenwirkungen einer COVID-19 Impfung pro 100.000 Menschen vergleichen zu können, muss von den 'positiv Getesteten' auf die 'Infizierten' hochgerechnet werden, also die 'Asymptomatischen' mitbetrachtet werden. 
+
+(bob)
+Nimmt man an, dass die Anzahl der Asymptomatischen zwischen 2 und 5 mal so hoch ist wir die der positiv getesteten, dann ergeben sich zwischen 2 und 5 Todesfälle pro 100.000 bei den Werktätigen, und zwischen 100 und 250 Todesfälle pro 100.000 bei den Pensionisten.
+
+
+*Wien: Einwohner, positiv Getestete und Verstorbene nach Altersgruppe und Geschlecht (Absolute Zahlen)*
+<center>
+```{r}
+pt <- makePT(dcd.w, "Gender")
+pt$addRowDataGroups("AgeGroup2", outlineBefore=TRUE, outlineTotal=TRUE)
+pt$addRowDataGroups("AgeGroup", addTotal=FALSE)
+
+pt$defineCalculation(calculationName="Einwohner", summariseExpression="paste0(round(sum(Population)/1000), ' k')",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic"))
+pt$defineCalculation(calculationName="Positiv", summariseExpression="paste0(round(sum(sumConfirmed)/1000), ' k')",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic"))
+pt$defineCalculation(calculationName="Verstorben", summariseExpression="sum(sumDeath)",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic"))
+pt$renderPivot()
+```  
+</center>
+ 
+
+*Wien: Positive getestete und Verstorbene nach Altersgruppe und Geschlecht (Normiert auf 100k)*
+<center>
+```{r}
+pt <- makePT(dcd.w, "Gender")
+pt$addRowDataGroups("AgeGroup2", outlineBefore=TRUE, outlineTotal=TRUE)
+pt$addRowDataGroups("AgeGroup", addTotal=FALSE)
+
+pt$defineCalculation(calculationName="Positiv", summariseExpression="paste0(round(sum(sumConfirmed)/sum(Population)*100000/1000,1), ' k')",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic", "color"="royalblue"),
+                     cellStyleDeclarations=list("color"="royalblue"))
+pt$defineCalculation(calculationName="PosVerst", summariseExpression="round(sum(sumDeath)/sum(sumConfirmed)*100000)",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic", "color"="royalblue"),
+                     cellStyleDeclarations=list("color"="royalblue"))
+pt$defineCalculation(calculationName="Verstorben", summariseExpression="round(sum(sumDeath)/sum(Population)*100000,1)",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic", "color"="royalblue"),
+                     cellStyleDeclarations=list("color"="royalblue"))
+pt$renderPivot()
+```
+</center>
+
+  
+ 
+
+
+
+
+## Entwicklung Positive, Gesundete und Verstorbene nach Altersgruppe seit 10/2020
+
+*AGES: CovidFaelle_Altersgruppe.csv*
+
+- Kummulative Daten zu Positiven, Gesundeten und Verstorbenen nach Altersgruppen werden von AGES seit 2020-10-06 veröffentlicht
+- Für die nachfolgende Untersuchung wurden SnapShots an den bisherigen Monats-Ersten gezogen (6.10.2020, 1.11.2020, ....., 1.7.2021)
+- Die Differenz zum jeweils vorhergehenden Monats-Ersten ergibt die Anzahl der Positiven bzw Verstorbenen im vergangenen Monat
+- Die Daten vom 6.10.2020 sind die Anzahl der Positiven bzw Verstorbenen seit 26.2.2020 (also nicht für eine Monatsauswertung geeignet)
+
+
+
+```{r}
+
+# AGES: CovidFaelle_Altersgruppe.csv
+# Datafiles extracted from the daily zip files provided by AGES starting from 20201006
+
+# Monthly snapshots
+DataDates <- c("20201006","20201101","20201201","20210101","20210201","20210301","20210401","20210501","20210601","20210701")
+FirstDataDate=as.POSIXct(DataDates[1], format="%Y%m%d")
+
+# Quarterly snapshots
+DataQuarts <- c("2020Q0",rep("2020Q4",3),rep("2021Q1",3),rep("2021Q2",3))
+bDataQuarts <- c(TRUE,rep(c(FALSE,FALSE,TRUE),3))
+
+# The AGES files are UNICODE and have Windws CRLF style linefeeds, so process in R rather than bash
+df <- data.frame()
+for (d in 1:length(DataDates)) {
+  DataDate <- DataDates[d]
+  DataQuart <- DataQuarts[d]
+  bDataQuart <- bDataQuarts[d]
+  DataFile <- paste0("./AgeGroup/CovidFaelle_Altersgruppe_",DataDate,".csv")
+  tmp <- read.csv(DataFile, sep=";", stringsAsFactors=FALSE) %>% 
+    dplyr::mutate(Date=as.POSIXct(DataDate, format="%Y%m%d")) %>%
+    dplyr::mutate(Year=strftime(Date-days(15), format="%Y")) %>% 
+    dplyr::mutate(Month=strftime(Date-days(15), format="%b")) %>%
+    dplyr::mutate(Stamp=as.POSIXct(paste0(Year, "-",Month,"-01"), format="%Y-%b-%d")) %>%
+    dplyr::mutate(Quart=DataQuart, bQuart=bDataQuart)
+  df <- rbind(df,tmp)
+}
+df$Altersgruppe <- fct_reorder(factor(df$Altersgruppe, ordered=TRUE),df$AltersgruppeID,sum)
+df <- df %>% 
+  dplyr::filter(Geschlecht=="M" | Geschlecht=="W") %>% # remove non M,W entries (one in OÖ)
+  dplyr::mutate(Gender=factor(Geschlecht)) %>%
+  dplyr::select(-Geschlecht)
+
+# DataFrame Confirmed+Deaths
+tcd <- df %>%
+  dplyr::rename(AgeGroup=Altersgruppe, AgeGroupID=AltersgruppeID, 
+                Region=Bundesland, RegionID=BundeslandID, Population=AnzEinwohner) %>%
+  #dplyr::left_join(datATRegions %>% dplyr::select(Region,Population), by="Region") %>%
+  dplyr::mutate(AgeGroup2=ifelse(AgeGroupID<=7,"Unter65","Über65")) %>%
+  dplyr::mutate(AgeGroup2 = factor(AgeGroup2, levels=c("Unter65","Über65"), ordered=TRUE)) %>%
+  dplyr::rename(sumConfirmed=Anzahl, sumDeath=AnzahlTot, sumRecovered=AnzahlGeheilt) %>%
+  dplyr::select(Date, Stamp, Year, Month, Quart, bQuart, Region, RegionID, Population, AgeGroup, AgeGroupID,  Gender, AgeGroup2, sumConfirmed, sumRecovered, sumDeath)
+
+# Monthly snapshots: calculate newConfirmed and newDeath. Move DateStamp to beginning of previous month (snapshots taken on 1st of month)
+tcd.m <- tcd %>% 
+  dplyr::arrange(Region, AgeGroup, Gender, Date) %>%
+  dplyr::group_by(Region, AgeGroup, Gender) %>%
+  dplyr::mutate(newConfirmed=sumConfirmed-dplyr::lag(sumConfirmed)) %>%
+  dplyr::mutate(newRecovered=sumRecovered-dplyr::lag(sumRecovered)) %>%
+  dplyr::mutate(newDeath=sumDeath-dplyr::lag(sumDeath)) %>%
+  # Throw away first snapshot (denotes data since first day of pandemic)
+  #dplyr::filter(Date != min(Date)) %>%
+  # Date calculated is new Data for last month
+  #dplyr::mutate(Date=Date-days(28)) %>%
+  dplyr::ungroup()
+
+# Fill NA's introduced by 'lag' operation with initial 'sum*' values
+idx <- is.na(tcd.m$newConfirmed)
+tcd.m$newConfirmed[idx] <- tcd.m$sumConfirmed[idx]
+idx <- is.na(tcd.m$newRecovered)
+tcd.m$newRecovered[idx] <- tcd.m$sumRecovered[idx]
+idx <- is.na(tcd.m$newDeath)
+tcd.m$newDeath[idx] <- tcd.m$sumDeath[idx]
+
+tcd.mw <- tcd.m %>% dplyr::filter(Region=="Wien")
+#str(tcd.mw)
+
+# 3 Quarterly snapshots: Q4/2020, Q1/2021, Q2/2021
+# no AgeGroup/Gender specific data available before 20201006
+tcd.q <- tcd %>% 
+  dplyr::filter(bQuart==TRUE) %>%
+  dplyr::mutate(Quart=factor(Quart, ordered=TRUE)) %>%
+  dplyr::arrange(Region, AgeGroup, Gender, Quart) %>%
+  dplyr::group_by(Region, AgeGroup, Gender) %>%
+  dplyr::mutate(newConfirmed=sumConfirmed-dplyr::lag(sumConfirmed)) %>%
+  dplyr::mutate(newRecovered=sumRecovered-dplyr::lag(sumRecovered)) %>%
+  dplyr::mutate(newDeath=sumDeath-dplyr::lag(sumDeath)) %>%
+  # Throw away first snapshot (denotes data since first day of pandemic)
+  #dplyr::filter(Quart != "2020Q0") %>%
+  #dplyr::mutate(Quart = factor(Quart, ordered=TRUE)) %>%
+  # Date calculated is new Data for last month
+  #dplyr::mutate(Date=Date-days(28)) %>%
+  dplyr::ungroup()
+
+# Fill NA's introduced by 'lag' operation with initial 'sum*' values
+idx <- is.na(tcd.q$newConfirmed)
+tcd.q$newConfirmed[idx] <- tcd.q$sumConfirmed[idx]
+idx <- is.na(tcd.q$newRecovered)
+tcd.q$newRecovered[idx] <- tcd.q$sumRecovered[idx]
+idx <- is.na(tcd.q$newDeath)
+tcd.q$newDeath[idx] <- tcd.q$sumDeath[idx]
+
+
+tcd.qw <- tcd.q %>% dplyr::filter(Region=="Wien")
+#str(tcd.qw)
+#summary(tcd.qw, maxsum=10)
+
+```  
+
+### Darstellung nach Quartalen (Q1-3/2020, Q4/2020, Q1/2021 und Q2/2021)
+
+- Die Anzahl der Verstorbenen pro 100k positiv Getestete steigt Q1 und Q2 2021 auf das doppelte im Vergleich zu Q4/2020
+- TODO: Normierung auf die allgemeine Prevalenz: Daraus sollte sich eine geringere Prevalenz bei den Geimpften ergeben !
+
+```{r}
+dx <- tcd.qw %>%
+  dplyr::mutate(Quartal=as.integer(Quart), VerstProz=newDeath/(newRecovered+newDeath)) %>%
+  dplyr::rename(Positiv=newConfirmed, Gesundet=newRecovered, Verstorben=newDeath) %>%
+  tidyr::gather(key="Cases", value="Count", Positiv,  Gesundet, Verstorben, VerstProz) %>%
+  dplyr::mutate(Cases=factor(Cases))
+
+ggplot(data=dx %>% dplyr::filter(as.integer(AgeGroup)>4) , aes(x=AgeGroupID, y=Count, color=Gender, shape=Gender)) +
+  scale_x_continuous(limits=c(4.5,10.5), breaks=5:10, labels=levels(tcd.qw$AgeGroup)[5:10]) +
+  #scale_y_continuous(trans="log10") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  geom_point(size=3) + 
+  geom_path() + 
+  facet_grid(Cases~Quart, scales="free_y") +
+  ggtitle("COVID-19 Wien: Positive, Gesundete und Verstorbene nach Altersgruppe")
+```
+
+```{r}
+
+# Convert Quartal to numeric so ggplot can plot a path
+dx <- tcd.qw %>%
+  dplyr::mutate(Quartal=as.integer(Quart)) %>%
+  dplyr::mutate(Posit100k=newConfirmed/Population*100000, Gesund100k=newRecovered/Population*100000, 
+                Verst100k=newDeath/Population*100000, VerstProz=newDeath/(newRecovered+newDeath)) %>%
+  tidyr::gather(key="Cases", value="Count", Posit100k,  Gesund100k, Verst100k, VerstProz) %>%
+  dplyr::mutate(Cases=factor(Cases))
+
+
+ggplot(data=dx %>% dplyr::filter(as.integer(AgeGroup)>4) , aes(x=AgeGroupID, y=Count, color=Gender, shape=Gender)) +
+  scale_x_continuous(limits=c(4.5,10.5), breaks=5:10, labels=levels(tcd.qw$AgeGroup)[5:10]) +
+  #scale_y_continuous(trans="log10") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  geom_point(size=3) + 
+  geom_path() + 
+  facet_grid(Cases~Quart, scales="free_y") +
+  ggtitle("COVID-19 Wien: Positive, Gesundete und Verstorbene pro 100k Einwohner")
+```
+
+```{r}
+
+# remove agegroups with nofew cases
+ggplot(data=dx %>% dplyr::filter(as.integer(AgeGroup)>4) , aes(x=Quartal, y=Count, color=Gender, shape=Gender)) +
+  scale_x_continuous(limits=c(0.5,4.5), breaks=1:4, labels=levels(tcd.qw$Quart)) +
+  #scale_y_continuous(trans="log10") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  geom_point(size=3) + 
+  geom_path() + 
+  facet_grid(Cases~AgeGroup, scales="free_y") +
+  ggtitle("COVID-19 Wien: Positive, Gesundete und Verstorbene pro 100k Einwohner")
+```
+
+
+
+
+### Änderung des Anteils der Sterbefälle an den Erkrankten
+
+- Unabhängig von der Altersgruppe nimmt die Anzahl der Verstorbenen reöativ zur Anzahl der positiv gemeldeten Testung um einen Faktor 2 zu
+- In Q1/2020 sind es 25-50% mehr Sterbefälle gegenüber Q4/2020, in Q2/2021 sind es etwa doppelt so viele wie Q4/2020
+- Anmerkung: Fehlende Datenpunkte liegen wegen Nullwerten oder zu geringer Statistik ausserhalb der dargestellten Skala
+
+Anmerkung: Erklärung offen
+
+```{r}
+tcd.qw.p <- tcd.qw %>%
+  dplyr::mutate(Quartal=as.integer(Quart)) %>%
+  dplyr::mutate(Posit100k=newConfirmed/Population*100000, Gesund100k=newRecovered/Population*100000,
+                Verst100k=newDeath/Population*100000,  VerstProz=newDeath/(newRecovered+newDeath)) %>%
+  dplyr::arrange(AgeGroup, Gender, Stamp) %>%
+  dplyr::group_by(AgeGroup, Gender) %>%
+  dplyr::mutate(VerstRel = VerstProz/VerstProz[2]) %>%
+  dplyr::ungroup()
+
+
+ggplot(data=tcd.qw.p %>% dplyr::filter(as.integer(AgeGroup)>4, newDeath>0) , aes(x=Quartal, y=VerstRel, color=Gender, shape=Gender)) +
+  scale_x_continuous(limits=c(0.5,4.5), breaks=1:4, labels=levels(tcd.qw$Quart)) +
+  scale_y_continuous(limits=c(0.5,3.5)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  geom_point(size=3) + 
+  geom_path() + 
+  facet_grid(.~AgeGroup) +
+  ggtitle("COVID-19 Wien: Änderung Anteil Verstorbene an Erkrankten gegenüber Q4/2020 ")
+```
+
+### Darstellung nach Monaten (10/2020 - 6/2021)
+
+- Die 'zweite' (Nov/2020) und 'dritte' (Mar/2021) Welle sind gut zu erkennen
+
+```{r}
+tcd.mw <- tcd.mw %>%
+  dplyr::mutate(Posit100k=newConfirmed/Population*100000) %>%
+  dplyr::mutate(Gesund100k=newRecovered/Population*100000) %>%
+  dplyr::mutate(Verst100k=newDeath/Population*100000) %>%
+  dplyr::mutate(VerstProz=newDeath/(newRecovered+newDeath)) %>%
+  dplyr::mutate(Posit=newConfirmed, Gesund=newRecovered, Verst=newDeath)
+
+dx <- tcd.mw %>%
+  tidyr::gather(key="Cases", value="Count", Posit,  Gesund, Verst, VerstProz) %>%
+  dplyr::mutate(Cases=factor(Cases))
+
+ggplot(data=dx %>% dplyr::filter(as.integer(AgeGroup)>4, Count<60000) , aes(x=Date, y=Count, color=Gender)) +
+  scale_x_datetime(breaks="2 months", date_labels="%b.%y") +
+  #scale_y_continuous(limits=c(0,60000), trans="identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  geom_point(size=1) + 
+  geom_path() + 
+  facet_grid(Cases~AgeGroup, scales="free_y") +
+  ggtitle("COVID-19 Wien: Positive und Verstorbene pro Monat und Altersgruppe")
+```
+
+
+
+
+```{r}
+dx <- tcd.mw %>%
+  tidyr::gather(key="Cases", value="Count", Posit100k,Gesund100k,Verst100k,VerstProz) %>%
+  dplyr::mutate(Cases=factor(Cases))
+  
+ggplot(data=dx %>% dplyr::filter(as.integer(AgeGroup)>4, Count<60000) , aes(x=Stamp, y=Count, color=Gender)) +
+  scale_x_datetime(breaks="2 months", date_labels="%b.%y") +
+  #scale_y_continuous(limits=c(0,60000), trans="identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust=0.5)) +
+  geom_point(size=1) + 
+  geom_path() + 
+  facet_grid(Cases~AgeGroup, scales="free_y") +
+  ggtitle("COVID-19 Wien: Positive und Verstorbene pro 100k pro Monat und Altersgruppe")
+```
+
+
+
+
+
+# Zeitliche Entwicklung der Impfungen
+
+*AGES: timeline-eimpfpass.csv*
+
+
+
+```{r}
+
+df <- read.csv("./data/timeline-eimpfpass.csv", sep=";", stringsAsFactors=FALSE) %>%
+  dplyr::mutate(Date=as.POSIXct(Datum))
+# str(df)
+
+ti <- df %>%
+  dplyr::rename(RegionID=BundeslandID, Region=Name, Population=Bevölkerung, AgeX_X_X=Gruppe_NichtZuordenbar) %>%
+  dplyr::select(Date, RegionID, Region, Population, starts_with("Gruppe_")) %>%
+  dplyr::rename_at(vars(starts_with("Gruppe_")), list(~ paste0("Age",substring(.,8)))) %>%
+  tidyr::pivot_longer(starts_with("Age"), names_sep="_", names_to=c("AgeGroup","Gender","ShotNo"), values_to="sumVaccinated") %>%
+  dplyr::filter(Gender!="D", Region!="KeineZuordnung") %>%
+  dplyr::select(-Population)
+
+# levels(factor(ti$AgeGroup))
+
+ti <- ti %>%
+  dplyr::mutate(AgeGroup=stringr::str_replace(AgeGroup, fixed("Age.15"), "5-14")) %>%
+  dplyr::mutate(AgeGroup=stringr::str_replace(AgeGroup, fixed("Age.84"), ">84")) %>%
+  dplyr::mutate(AgeGroup=stringr::str_replace(AgeGroup, fixed("Age"), "")) %>%
+  dplyr::mutate(AgeGroup=stringr::str_replace(AgeGroup, fixed("."), "-")) %>%
+  dplyr::mutate(AgeGroup =factor(AgeGroup, levels=levels(tcd.mw$AgeGroup), ordered=TRUE)) %>%
+  dplyr::mutate(Gender=factor(Gender), ShotNo=factor(ShotNo, levels=c("1","2"), labels=c("1_Shot","2_Shots")))
+
+# Add Population per Region and AgeGroup
+dcd.p <- dcd.y %>% 
+  dplyr::select(Region, AgeGroup, Gender, Population) %>%
+  dplyr::group_by(Region, AgeGroup, Gender) %>%
+  dplyr::summarize(.groups="drop", Population=max(Population))
+
+tip <- ti %>%
+  dplyr::inner_join(dcd.p) %>%
+  dplyr::mutate(sumVaccinated_100k=sumVaccinated/Population*100000, sumVaccinated_proz=sumVaccinated/Population)
+
+tip.w <- tip %>%
+  dplyr::filter(Region=="Wien")
+
+# str(tip.wm)
+
+```  
+
+
+## Erster und Zweiter Stich nach Altersgruppe und Geschlecht
+
+```{r}
+
+ggplot(data=tip.w, aes(x=Date, y=sumVaccinated_proz, color=AgeGroup, shape=Gender)) +
+  scale_x_datetime(breaks="months", date_labels="%b") +
+  scale_y_continuous(limits=c(0,1), breaks=seq(0,1,by=.2)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust=0.5)) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_line(aes(linetype=Gender)) + 
+  facet_grid(.~ShotNo) +
+  ggtitle("COVID-19 Wien: Anteil Geimpfte pro Altersgruppe")
+```
+
+
+## Ansteckbare (Susceptibles) nach Altersgruppe: Weder gesundet noch geimpft
+
+- Die Zahl der Susceptibles pro Altersgruppe, Geschlecht und Region ist die Einwohnerzahl - (Genesene*n [n=2-4] + Immunisierte (2 Stiche))
+- n wird als konservative Schätzung (wenige asymptomatische Gesundete) mit einem Wert von zwei angemommen
+
+```{r }
+# sumConfirmed, sumDeaths, 10 snapshots on 1st of ten months from 20201006 -> 20210701 
+# taken from daily snapshots of sumConfirmed and sumDeaths in CovidFaelle_Altersgruppe.csv AGES zip files
+
+# Impfungen seit 20201226 täglich, nach Bundesländern und Altersgruppen
+dy <- tip.w %>%
+  dplyr::filter(ShotNo=="2_Shots") %>%
+  dplyr::select(Date, AgeGroup, Gender, sumVaccinated)
+
+# 7 Dates * 2 Genders * 9 AgeGroups = 126
+# left_join to retain months 10,11 from 2020 with no corresponding entries in the vaccination data
+dz <- tcd.mw %>%
+  dplyr::left_join(dy, by=c("Date","AgeGroup","Gender"))
+dz$sumVaccinated[is.na(dz$sumVaccinated)] <- 0
+
+# Calculation Susceptibles (analog SIR model)
+tcdvs.mw <- dz %>%
+  dplyr::mutate(curSusceptible = Population - 2*sumRecovered - sumVaccinated) %>%
+  dplyr::mutate(proSusceptible = curSusceptible/Population) 
+
+```
+
+
+```{r }
+
+# Plot Susceptibles
+dp <- tcdvs.mw %>%
+  dplyr::select(-sumConfirmed, -sumVaccinated, -sumDeath) %>%
+  tidyr::gather(key="Cases", value="Count", curSusceptible, proSusceptible)
+
+ggplot(data=dp, aes(x=Stamp, y=Count, color=Gender, shape=Gender)) +
+  scale_y_continuous() + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust=0.5)) +
+  geom_point() + 
+  geom_path() +
+  facet_grid(Cases~AgeGroup, scales="free_y") + 
+  ggtitle("COVID-19 Wien: Ansteckbare nach Altersgruppe")
+
+``` 
+
+### Entwicklung der positiv getesteten im Umfeld der Impfung
+
+Um die Auswirkung der Impfung auf das epidemiologische Geschehen zu untersuchen werden die ersten beiden Quartale 2021 verglichen. Die mittlere Anzahl der Impfungen ist im ersten Quartal (bis auf die Altersgruppe über 85 Jahre mit ca. 15%) zu vernachlässigen. Im zweiten Quartal sind die Altersgruppen über 75 Jahre im Mittel zu etwa 50%, die Altersgruppen 55-75 Jahre im Mittel zu etwa 30% geimpft. Es werden zwei Indikatoren untersucht:
+
+- Der Anteil an positiv Getesteten pro Altersgruppe und Geschlecht relativ zur mittleren Prevalenz der gesamten Bevölkerung
+- Der Anteil an COVID Verstorbener pro Altersgruppe und Geschlecht relativ zur mittleren Sterblichkeit normiert auf die mittlere Prevalenz der gesamten Bevölkerung
+
+Zusammen mit den Gesundeten und den asymptomatisch Erkrankten (hier konservativ gleich mit der Anzahl Gesundeter angesetzt) ergibt sich jener Anteil der Bevölkerung, bei dem davon ausgegangen werden kann, dass die Gefahr einer symptomatischen Erkrankung niedrig ist. Der Rest (die 'Susceptibles', d.h. die Gefährdeten/Ansteckbaren) sind die Ausgangsbasis für eine Abschätzung der oberen Grenze für die Gefahr für den weiteren Verlauf der Pandemie ohne Massnahmen.
+
+- Results below seem weird: Deaths increase even while caccination increases. Could be due to the factor of two seen for death rates seen above
+
+```{r}
+# 4 Quarts, 2 Genders = 8
+ds <- tcdvs.mw %>%
+  
+  # summarize over AgeGroups /sum up AgeGroups
+  dplyr::group_by(Stamp, Gender) %>%
+  dplyr::summarize(.groups="drop", Quart=first(Quart), totPopulation=sum(Population), totSusceptible=sum(curSusceptible), 
+                                                       totConfirmed=sum(newConfirmed), totRecovered=sum(newRecovered), totDeath=sum(newDeath)) %>%
+
+  # summarize over AgeGroups and Months/Quart
+  dplyr::group_by(Quart, Gender) %>%
+  # 10 dates, 10 AgeGroups, 2 Genders = 20
+  dplyr::summarize(.groups="drop", totConfirmed=sum(totConfirmed), totRecovered=sum(totRecovered), totDeath=sum(totDeath), 
+                                   totSusceptible=mean(totSusceptible), totPopulation=first(totPopulation))
+  
+
+# 4 Quarts, 10 AgeGroups, 2 Genders = 80
+tcdvs.qw <- tcdvs.mw %>%
+  dplyr::group_by(Quart, AgeGroup, Gender) %>%
+  # sumConfirmed is the mean number of total confirmed cases during the quartal period
+  dplyr::summarize(.groups="drop", newConfirmed=sum(newConfirmed), newRecovered=sum(newRecovered), newDeath=sum(newDeath), 
+                                   meanSusceptible=mean(curSusceptible), meanVaccinated=mean(sumVaccinated),
+                                   Population=first(Population), sumConfirmed=mean(sumConfirmed), sumRecovered=mean(sumRecovered), sumDeath=mean(sumDeath)) %>%
+  dplyr::left_join(ds, by=c("Quart","Gender")) %>%
+  dplyr::mutate(Quart=factor(Quart, ordered=TRUE)) %>%
+  dplyr::mutate(Quartal=as.integer(Quart))
+
+# Tested:
+#   sumConfirmed/Population: OK
+#   newConfirmed/meanSusceptible: ?
+#   newDeath/Population*100000
+
+dp <- tcdvs.qw %>%
+  tidyr::gather(key="Cases", value="Count", newDeath, newRecovered, meanVaccinated)
+
+ggplot(data=dp , aes(x=Quartal, y=Count, color=Gender, shape=Gender)) +
+  scale_x_continuous(limits=c(0.5,4.5), breaks=1:4, labels=levels(tcdvs.qw$Quart)) +
+  scale_y_continuous(trans="identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  geom_point() +
+  geom_path() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust=0.5)) +
+  facet_grid(Cases~AgeGroup, scales="free_y") +
+  ggtitle("COVID-19 Wien: newDeath, newRecovered, meanVaccinated")
+  
+```
+
+
+```{r}
+ggplot(data=tcdvs.qw , aes(x=Quartal, y=newConfirmed/meanSusceptible, color=Gender, shape=Gender)) +
+  scale_x_continuous(limits=c(0.5,4.5), breaks=1:4, labels=levels(tcdvs.qw$Quart)) +
+  scale_y_continuous(trans="identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  geom_point() +
+  geom_path() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust=0.5)) +
+  facet_grid(.~AgeGroup) +
+  ggtitle("COVID-19 Wien: newConfirmed/meanSusceptible")
+```
+
+
+```{r}
+dp <- tcdvs.qw %>%
+  # This is a measure of the power of the Pandemic on the Population per Quartal
+  dplyr::mutate(absDeathRate100k=totDeath/totPopulation*100000) %>%
+  # This is a measure of the power of the Pandemic per Agegroup relative to the overall power
+  dplyr::mutate(ageDeathRate100k=newDeath/Population*100000) %>%
+  # this corrects the deathrate per agegroup with the overall power of the pandemic by Quart and Gender
+  dplyr::mutate(relDeathRate100k=ageDeathRate100k/absDeathRate100k)
+
+ggplot(data=dp , aes(x=Quartal, y=relDeathRate100k, color=Gender, shape=Gender)) +
+  scale_x_continuous(limits=c(0.5,4.5), breaks=1:4, labels=levels(tcdvs.qw$Quart)) +
+  scale_y_continuous(trans="identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  geom_point() +
+  geom_path() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust=0.5)) +
+  facet_grid(.~AgeGroup) +
+  ggtitle("COVID-19 Wien: relDeathRate100k")
+  
+```
+
+```{r}
+
+``` 
+
+```{r}
+#pt <- makePT(dq, "Gender")
+#pt$addRowDataGroups("AgeGroup2", outlineBefore=TRUE, outlineTotal=TRUE)
+#pt$addRowDataGroups("AgeGroup", addTotal=FALSE)
+
+#pt$defineCalculation(calculationName="Einwohner", summariseExpression="sum(Population)",
+#                     headingStyleDeclarations=list("background-color"="lightblue", "color"="black", "font-weight"="bold", "font-style"="italic"))
+#pt$defineCalculation(calculationName="Ansteckbar", summariseExpression="sum(curSusceptible)",
+#                     headingStyleDeclarations=list("background-color"="lightblue", "color"="black", "font-weight"="bold", "font-style"="italic"))
+#pt$defineCalculation(calculationName="Prozent", summariseExpression="round(sum(meanSusceptible)/sum(Population)*100)",
+#                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic", "color"="royalblue"),
+#                     cellStyleDeclarations=list("color"="royalblue"))
+#pt$defineCalculation(calculationName="TotePop", summariseExpression="round(sum(totDeaths))",
+#                     headingStyleDeclarations=list("background-color"="lightblue", "color"="black", "font-weight"="bold", "font-style"="italic"))
+#pt$defineCalculation(calculationName="ToteInf100k", summariseExpression="round(sum(newDeaths/newConfirmed)*100000)",
+#                     headingStyleDeclarations=list("background-color"="lightblue", "color"="black", "font-weight"="bold", "font-style"="italic"))
+#pt$defineCalculation(calculationName="ToteAnst", summariseExpression="round(sum(newDeaths))",
+#                     headingStyleDeclarations=list("background-color"="lightblue", "color"="black", "font-weight"="bold", "font-style"="italic"))
+#pt$renderPivot()
+
+```  
+
+
+## Zusammenhang Impfung und Todesfälle
+
+```{r }
+# Filter data for Wien
+
+``` 
+
+
+
+
+
+
+# Prevalenz von COVID-19
+
+Die Standardmethode zur Ermittlung der Prevalenz (d.h. Anzahl der angesteckten Personen) von COVID-19 zu einem Zeitpunkt ist die Durchführung eines PCR Tests an Personen einer zufällig ausgewählten Stichprobe. Man geht davon aus, dass ein solcher Test das Virus in infizierten Personen mit hoher Wahrscheinlichkeit nachweist (ausser in einer sehr frühen Phase der Krankheit) und wenige 'False Positives' erzeugt (also eine Infektion nur anzeigt wenn eine vorhanden ist). Mit diesem Verfahren werden sowohl symptomatische als auch asymptomatische Infektionen gefunden.
+
+Dem gegenüber stehen die Daten über die TagesInzidenz (die Anzahl der täglich durchgeführten Tests und die dabei positiv getesteten Personen). Bei diese Zahlen wird zwischen symptomatisch und asymptomatisch nicht unterschieden. Für die Zeit vor den ersten Massentests kann man davon ausgehen, dass die meisten '1450' Tests an symptomatischen Personen durchgeführt wurden. Ab Anfang 2021 ist die Datenlage infolge Massentests, Schnupfenbox, Berufsgruppen, Eintrittstests, Schultest sowie die unterschiedlichen Testverfahren (PCR, Schnell, Nasenbohrer, ...) wenig übersichtlich. Einen gewissen Anhaltspunkt geben, mit einiger Verzögerung, die Daten über die COVID-19 Belegung in den Spitälern und Intensivstationen.
+
+## StatistikAustria: PrevalenzStudie 11/2020
+
+Die Statistik Austria hat bisher drei Prevalenzstudien durchgeführt, in 4/2020, 5/2020 und 11/2020, letztere am Höhepunkt der '2ten Welle' vor dem zweiten LockDown.
+
+- http://www.statistik.at/web_de/statistiken/menschen_und_gesellschaft/gesundheit/covid19/index.html
+- http://www.statistik.at/wcm/idc/idcplg?IdcService=GET_PDF_FILE&RevisionSelectionMethod=LatestReleased&dDocName=125521
+
+
+### Zusammenfassung
+
+Die Ergebnisse der Studie von 11/2020 lassen sich wie folgt zusammenfassen:
+
+- Zeitraum 12-14.11.2020
+- Hochrechnung Statistik Austria: 3.2% der Bevölkerung, das entspricht 239k Personen, sind in Österreich akut mit COVID-19 infiziert
+- 53% der in der Studie positiv getesteten waren noch nicht behördlich erfasst (alle hatten keine oder wenige Symptome)
+- Hochrechnung Statistik Austria: Antikörper haben 4.6% der Bevökerung entwickelt, das entspricht 349k Personen
+- 61% davon sind nicht behördlich erfasst
+
+### Details
+
+- Repräsentative Stichprobe von 7823 Personen aus dem ZMR, >16 Jahre, entspricht 7,5M Einwohner
+- PCR Test durch Rotes Kreuz, Auswertung UnivMed.
+- Antikörper Tests mit Blutabnahme. Vor Ort Antikörper Schnelltest (Wantai SARS-CoV-2
+Rapid Test; Wantai, Peking, China). Im Labor zwei Auswertungen (SARS-CoV-2 IgG ELISA der Firma Euroimmun und lecsys Anti-SARS-CoV2-ECLIA)
+- 2711 Rückmeldungen, pseodonymisierter Abgleich mit EMS um den individuellen Status der behördlichen Erfassung festzustellen
+- 2500 Testtermine vereinbart, davon 2263 verwertbare PCR Proben, 2229 Blut Proben.
+- 253 non-Response, davon 153 mit Begründung, zeitlich bzw. Quarantäne
+
+### Ergebnisse
+
+- 48 von 2263 Personen positiv
+- 20 symptomfrei, 9 ein Symptom (Schnupfen, ...), 43 mindestens 2 Symptome, 3 andere
+- 24 Personenen der Stichprobe waren zum Testzeitpunkt bereits behördlich unter Quarantäte gestellt (noShow)
+- **Hochrechnung:** bei 72 positiven aus 2263 ergibt sich eine Prevalenz von 3.2% = 239k (72/2263 * 7.5M = 239k, mit 95% KI 195k bis 261k)
+ 
+
+## Zeitgleiche Tagesinzidenz Werte der AGES
+
+- Die TagesInzidenz Mitte 11/2020 für Österreich ist ca. 75 pro 100k, entsprechend 75 * 80 = 6k Positive pro Tag.
+- Bei einer mittleren PCR Nachweisbarkeitsdauer von 10 Tagen ergibt das 60k nachweisbare COVID-19 Erkrankte.
+- Crosscheck von 'bisherPositive - bisherGenesene' zur selben Zeit ergibt 172980 - 103759 = ~69k Erkrankte.
+
+## Vergleich AGES TagesInzidenz mit der StatA Prevalenzstudie 11/2020
+
+- Hochrechnung StatA: 239k COVID erkrankte
+- Abschätzung aus AGES: 60k - 70k behördlich erfasste
+- **Anteil der in AGES erfassten Infizierten 11/2020: 25-30%** 
+
+# Referenzen
+
+- 1
+- 2
+- 3
+
+
+
