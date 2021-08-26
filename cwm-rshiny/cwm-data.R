@@ -19,7 +19,7 @@ library(ggplot2)
 # -------------------------------------------------------------------------------------------
 # StatA: General Mortility Österreich
 # -------------------------------------------------------------------------------------------
-caStatAData_m_ag <- function() {
+caStatAData_p_ag <- function() {
   
   # "Alter in 5-Jahresgruppen","Values","Time section","Gender <2>","Number","Annotations"
   fName <- "./data/StatA-Population-2019_AgeGroup_Gender.csv"
@@ -44,6 +44,30 @@ caStatAData_m_ag <- function() {
 }
 
 # -------------------------------------------------------------------------------------------
+# StatA: General Mortility Österreich
+# -------------------------------------------------------------------------------------------
+caStatAData_m_ag <- function() {
+  
+  fName <- "./data/StatA-Sterbefaelle-Year_AgeGroup_Gender.csv"
+  col.names=c("Year","AgeGroup20","xxx","Gender","Deceased","y")
+  colClasses=c("character","character","NULL", "character","character","NULL")
+  df <- read.csv(fName, header=TRUE, skip=7, sep=",", stringsAsFactors=FALSE, 
+                 col.names=col.names, colClasses=colClasses, na.strings="not applicable") %>%
+    dplyr::filter(Gender=="male" | Gender=="female") %>%
+    dplyr::filter(!is.na(AgeGroup20))
+  
+  df <- df %>%
+    dplyr::mutate(Deceased=as.integer(Deceased)) %>%
+    dplyr::mutate(Gender = factor(Gender, levels=c("male","female"), labels=c("M","W"))) %>%
+    dplyr::mutate(AgeGroup20=factor(dd$AgeGroup20, levels=df$AgeGroup20 %>% unique(), ordered=TRUE)) %>%
+    dplyr::mutate(AgeGroupID20=as.integer(AgeGroup20)) %>%
+    dplyr::mutate(AgeGroup2=factor(ifelse(AgeGroupID20>=14,"Über65","Unter65"), levels=c("Unter65","Über65"))) %>%
+    dplyr::arrange(Year, AgeGroupID20, Gender)
+  
+  return(df)
+}
+
+# -------------------------------------------------------------------------------------------
 # AGES: CovidFaelle_Altersgruppe.csv: Confirmed, Recovered, Deaths by  Region, AgeGroup10, Gender
 # -------------------------------------------------------------------------------------------
 caAgesData_crd_rag <- function(rollMeanDays=7) {
@@ -62,8 +86,11 @@ caAgesData_crd_rag <- function(rollMeanDays=7) {
     dplyr::mutate(AgeGroup2=ifelse(AgeGroupID<=7,"Unter65","Über65")) %>%
     dplyr::mutate(AgeGroup2 = factor(AgeGroup2, levels=c("Unter65","Über65"), ordered=TRUE)) %>%
     dplyr::rename(sumConfirmed=Anzahl, sumRecovered=AnzahlGeheilt, sumDeath=AnzahlTot, Gender=Geschlecht) %>%
-    dplyr::mutate(Gender=factor(Gender)) %>%
+    dplyr::mutate(Gender=factor(Gender)) 
     
+  
+  dcrd <- dcrd %>%
+    dplyr::mutate(AgeGroup3=factor(AgeGroup, levels=levels(dcrd$AgeGroup), labels=c(rep("Jugendliche",3), rep("Erwachsene",4), rep("Senioren",3)), ordered=TRUE)) %>%
     # smooth for weekly means
     dplyr::arrange(Region, AgeGroup, Gender, Date) %>%
     dplyr::group_by(Region, AgeGroup, Gender) %>%
@@ -76,7 +103,7 @@ caAgesData_crd_rag <- function(rollMeanDays=7) {
     dplyr::ungroup() %>%
     
     # Beautify data frame
-    dplyr::select(Date, Region, RegionID, AgeGroup, AgeGroupID, AgeGroup2, Gender, Population, starts_with("new"), starts_with("sum"))
+    dplyr::select(Date, Region, RegionID, AgeGroup, AgeGroupID, AgeGroup2, AgeGroup3, Gender, Population, starts_with("new"), starts_with("sum"))
   
   idx <- is.na(dcrd$newConfirmed)
   dcrd$newConfirmed[idx] <- 0
@@ -92,7 +119,7 @@ caAgesData_crd_rag <- function(rollMeanDays=7) {
 # -------------------------------------------------------------------------------------------
 # AGES: Inzidenz_vollstaendig_unvollstaendig_geimpft_2021-08-20.csv: Confirmed, Vaccinated by AgeGroup3
 # -------------------------------------------------------------------------------------------
-caAgesData_cv_a <- function(rollMeanDays=7, bSave=TRUE) {
+caAgesData_cv_a3 <- function(rollMeanDays=7, bSave=TRUE) {
   
   # Data seem to be published with a timestamp in the filename
   yesterday = format(now() -days(1), "%Y-%m-%d")
@@ -100,24 +127,27 @@ caAgesData_cv_a <- function(rollMeanDays=7, bSave=TRUE) {
   
   baseurl <- "https://www.ages.at/fileadmin/AGES2015/Themen/Krankheitserreger_Dateien/Coronavirus/Inzidenz_Impfstatus"
   url <- paste0(baseurl, "/Inzidenz_vollstaendig_unvollstaendig_geimpft_", yesterday,".csv")
-  colnames=c("Datum","Date","AgeGroup3", "bVaccinated_2", "newConfirmed")
+  colnames=c("Datum","Date","AgeGroup3", "Immunized", "newInzidenz7")
   df<- read.csv(url, header=FALSE, skip=1, sep=";", dec=",", stringsAsFactors=FALSE, col.names=colnames) 
   
   dcv <- df %>% 
     dplyr::select(-1) %>%
-    dplyr::mutate(Date=as.POSIXct((Date)))
-  str(df)
+    dplyr::mutate(Date=as.POSIXct((Date))) %>%
+    dplyr::mutate(Immunized=factor(Immunized, levels=c("Ja","Nein"), labels=c("Ja","Nein"))) %>%
+    dplyr::mutate(AgeGroup3=factor(AgeGroup3, 
+                                   levels=c("12-17 Jahre","18-59 Jahre", "60+ Jahre"), 
+                                   labels=c("Jugendliche","Erwachsene","Senioren"), ordered=TRUE)) %>%
+    tidyr::pivot_wider(names_from="Immunized", values_from="newInzidenz7", names_prefix="inz7Immunized")
+  # str(dcv)
   
   if (bSave) {
     yesterday = format(now() -days(1), "%Y%m%d")
     rdaFile <- paste0("./data/COVID-19-CWM-AGES-ConfVacc-",yesterday,".rda")   
-    logMsg(paste("Writing", rdaFile))
+    # logMsg(paste("Writing", rdaFile))
     saveRDS(dcv, file=rdaFile)  
   }
   return(dcv)
 }
-
-
 
 # -------------------------------------------------------------------------------------------
 # BMSGPK: timeline-eimpfpass.csv: TimeLine Impfungen (Region, AgeGroup, Gender, Shot1, Shot2)
@@ -144,6 +174,9 @@ caBmsgpkData_v_rag <- function(rollMeanDays=7) {
     tidyr::pivot_wider(names_from=ShotNo, names_prefix="sumVaccinated_", values_from=sumVaccinated)
   
   di <- df %>%
+    dplyr::mutate(AgeGroup3=factor(AgeGroup, 
+                                   levels=levels(df$AgeGroup), 
+                                   labels=c(rep("Jugendliche",3), rep("Erwachsene",4), rep("Senioren",3)), ordered=TRUE)) %>%
     dplyr::arrange(Region, RegionID, AgeGroup, Gender, Date) %>%
     dplyr::group_by(Region, RegionID, AgeGroup, Gender) %>%
     dplyr::mutate(sumVaccinated_1=rollmean(sumVaccinated_1, k=rollMeanDays, align="right", fill=0)) %>%
@@ -151,7 +184,7 @@ caBmsgpkData_v_rag <- function(rollMeanDays=7) {
     dplyr::mutate(newVaccinated_1=sumVaccinated_1-dplyr::lag(sumVaccinated_1)) %>%
     dplyr::mutate(newVaccinated_2=sumVaccinated_2-dplyr::lag(sumVaccinated_2)) %>%
     dplyr::ungroup() %>%
-    dplyr::select(Date, Region, RegionID, AgeGroup, Gender, starts_with("new"), starts_with("sum"))
+    dplyr::select(Date, Region, RegionID, AgeGroup, AgeGroup3, Gender, starts_with("new"), starts_with("sum"))
   
   idx <- is.na(di$newVaccinated_1)
   di$newVaccinated_1[idx] <- 0
@@ -161,4 +194,3 @@ caBmsgpkData_v_rag <- function(rollMeanDays=7) {
   # str(di)
   return(di)
 }
-

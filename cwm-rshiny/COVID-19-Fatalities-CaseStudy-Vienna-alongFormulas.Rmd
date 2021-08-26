@@ -1,0 +1,1067 @@
+---
+title: "COVID-19 Sterblichkeit: Fallstudie Wien"
+author: "Thomas.Strehl@at.ibm.com"
+date: "4/11/2021"
+output:
+  html_document:
+    df_print: kable
+    fig_caption: no
+    fig_height: 6
+    fig_width: 9
+    number_sections: no
+    toc: yes
+    toc_depth: 3
+  always_allow_html: true
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+    fig_height: 4
+    fig_width: 7
+geometry: margin=1cm
+---
+
+# Globals
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
+#knitr::opts_chunk$set(fig.align="center")
+#options(knitr.table.format = 'html')
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(lubridate)
+library(forcats)
+library(knitr)
+library(gt)
+library(pivottabler)
+library(kableExtra)
+library(zoo)
+```
+
+```{r}
+source("cwm-data.R")
+source("cwm-util.R")
+#cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#444444", "#F0D042", "#0072B2", "#D55E00", "#CC79A7", "#C40000")
+
+cbPalette <- c("#AAAAAA", "#E69F00", "#56B4E9", "#009E73", "#666666", "#F0D042", "#0072B2", "#D55E00", "#CC79A7", "#C40000")
+atShapes <- c(10,6,7,2,11,5,12,22,1,9)
+
+rollMeanDays <- 7
+#leadDaysRecovered <- 18
+#leadDaysDeath <- 14
+lagDaysVaccinated_1 <- 21
+lagDaysVaccinated_2 <- 14
+
+# Optimized heuristically for AgeGroups 65-84 (most populated endagered groups)
+leadDaysRecovered=21
+leadDaysDeath=20
+
+asyptomaticCorrectionFactor = 2
+vaccinationImmunizationFaktor = 0.9
+
+```
+
+## Table Formats
+
+
+
+
+# Source Data 
+
+## AGES
+
+### CovidFaelle TimeLine für AgeGroups
+
+```{r, results='hide'}
+
+# fetch new data from Ages (openData)
+dcrd <- caAgesData_crd_rag(rollMeanDays=rollMeanDays)
+str(dcrd)
+```  
+
+### Vaccination Timeline für AgeGroups
+
+```{r, results='hide'}
+# Read new data from bmsgpk website
+dv <- caBmsgpkData_v_rag(rollMeanDays=rollMeanDays)
+str(dv)
+``` 
+
+### Confirmed Timeline für AgeGroups with Immunization Status
+
+```{r, results='hide'}
+# Read new data from bmsgpk website
+dcv <- caAgesData_cv_a3()
+str(dcv)
+``` 
+
+### Join CovidFaelle and Vaccination timelines
+
+```{r, results='hide'}
+
+dcrdv <- dcrd %>%
+  dplyr::left_join(dv, by=c("Date","RegionID","Region","AgeGroup","AgeGroup3","Gender")) %>%
+  dplyr::select(Date, Region, RegionID, AgeGroup, AgeGroupID, AgeGroup3, AgeGroup2, Gender, Population, starts_with("new"), starts_with("sum")) %>%
+  dplyr::mutate(Gender=factor(Gender))
+
+idx <- is.na(dcrdv$newVaccinated_1)
+dcrdv$newVaccinated_1[idx] <- 0
+idx <- is.na(dcrdv$sumVaccinated_1)
+dcrdv$sumVaccinated_1[idx] <- 0
+
+idx <- is.na(dcrdv$newVaccinated_2)
+dcrdv$newVaccinated_2[idx] <- 0
+idx <- is.na(dcrdv$sumVaccinated_2)
+dcrdv$sumVaccinated_2[idx] <- 0
+
+str(dcrdv)
+```  
+
+### Join Covid+Vaccination  and ConfirmedByImmunizationStatus timelines
+
+```{r, results='hide'}
+
+dcrdvi <- dcrdv %>%
+  dplyr::group_by(Date, AgeGroup3) %>%
+  dplyr::summarize(.groups="drop",
+                   across(starts_with("new"), sum),
+                   across(starts_with("sum"), sum),
+                   Population=sum(Population)) %>%
+  dplyr::left_join(dcv, by=c("Date","AgeGroup3")) %>%
+  dplyr::select(Date, AgeGroup3, Population, starts_with("inz7"), starts_with("new"), starts_with("sum"))
+
+idx <- is.na(dcrdvi$inz7ImmunizedJa)
+dcrdvi$inz7ImmunizedJa[idx] <- 0
+idx <- is.na(dcrdvi$inz7ImmunizedNein)
+dcrdvi$inz7ImmunizedNein[idx] <- 0
+
+str(dcrdvi)
+```  
+
+```{r, results='hide'}
+
+dp <- dcrdvi %>% 
+  dplyr::filter(Date > as.POSIXct("2021-06-01"), Date < as.POSIXct("2021-08-20")) %>%
+  dplyr::mutate(newConfPop=newConfirmed/Population*100000*7) %>%
+  tidyr::pivot_longer(cols=c("newConfPop", "inz7ImmunizedJa", "inz7ImmunizedNein"), names_to="Status", values_to="Inzidenz")
+str(dp)
+
+
+ggplot(data=dp, aes(x=Date, y=Inzidenz, shape=AgeGroup3, color=Status)) +
+  scale_y_continuous(limits=c(.5,NA), trans="log2", breaks=2^(0:10), labels=2^(0:10), sec.axis=dup_axis(labels=0:10)) +
+  geom_point() + 
+  geom_line() +
+  facet_grid(AgeGroup3~., scales="free_y") +
+  ggtitle("COVID-19 Österreich: TageInzidenz nach Altersgruppe und Impfstatus")
+
+``` 
+
+```{r, results='hide'}
+
+dp <- dcrdvi %>% 
+  dplyr::filter(Date > as.POSIXct("2021-06-01"), Date < as.POSIXct("2021-08-20")) %>%
+  dplyr::mutate(newConfPop=newConfirmed/Population*100000*7) %>%
+  dplyr::mutate(sumSusceptibles = Population-sumVaccinated_2) %>%
+  dplyr::mutate(inzImmJaVacc=inz7ImmunizedJa/sumVaccinated_2) %>%
+  dplyr::mutate(inzImmNeinSusc=inz7ImmunizedNein/sumSusceptibles) %>%
+  tidyr::pivot_longer(cols=c("inzImmJaVacc", "inzImmNeinSusc"), names_to="Status", values_to="Inzidenz")
+str(dp)
+
+
+ggplot(data=dp, aes(x=Date, y=Inzidenz*1000000, shape=AgeGroup3, color=Status)) +
+  scale_y_continuous(limits=c(.1,NA), trans="log10") +
+  geom_point() + 
+  geom_line() +
+  facet_grid(AgeGroup3~., scales="free_y") +
+  ggtitle("COVID-19 Österreich: TageInzidenz nach Altersgruppe und Impfstatus")
+
+```
+
+# Vienna
+
+## Raw Data Vienna
+
+### Format
+
+```{r}
+
+# Raw Data filtered for Vienna
+dcrdv.w.r <- dcrdv %>%
+  dplyr::filter(Region=="Wien") %>%
+  dplyr::select(-Region, -RegionID)
+
+# Add Susceptibles to raw data
+dcrdvs.w.r <- dcrdv.w.r  %>%
+  dplyr::mutate(sumSusceptibles= 
+                  Population - 
+                  sumRecovered*asyptomaticCorrectionFactor - 
+                  sumVaccinated_2*vaccinationImmunizationFaktor) 
+
+str(dcrdvs.w.r)
+```
+
+## Data inspection
+
+- Recovered values seem to be simply timeshifted by 21 days from Confirmation (date of positive test)
+- Death values take on weird distributions as compared to Confirmed. Value optimized for agegroups 65-84
+
+### Überblick zu den nach Alter und Geschlecht verfügbaren COVID-19 Daten 
+
+```{r}
+# Sum over gender. Don't go into Gender details yet
+dp <- dcrdvs.w.r %>%
+  dplyr::filter(Date> as.POSIXct("2020-09-01")) %>%
+  dplyr::group_by(Date, AgeGroup) %>%
+  dplyr::summarize(.groups="drop", 
+                   sumVaccinated_1=sum(sumVaccinated_1, na.rm=TRUE), 
+                   sumVaccinated_2=sum(sumVaccinated_2, na.rm=TRUE), 
+                   newConfirmed=sum(newConfirmed, na.rm=TRUE), 
+                   newRecovered=sum(newRecovered, na.rm=TRUE), 
+                   newDeath=sum(newDeath, na.rm=TRUE),
+                   Population=sum(Population)) %>%
+  
+  # calculate relative measures with AgeGroup
+  dplyr::group_by(AgeGroup) %>%
+  dplyr::mutate(newConfirmed=newConfirmed/sum(newConfirmed)*100, 
+                newRecovered=newRecovered/sum(newRecovered)*100, 
+                newDeath=newDeath/sum(newDeath)*100,
+                sumVaccinated_1=sumVaccinated_1/Population, 
+                sumVaccinated_2=sumVaccinated_2/Population) %>%
+  dplyr::ungroup() %>%
+  tidyr::gather(key="Item", value="Count", newConfirmed, newRecovered, newDeath, sumVaccinated_1, sumVaccinated_2)
+
+# Sanity plot for above data transforms 
+ggplot(dp%>% dplyr::filter(Date < as.POSIXct("2021-06-01")) , aes(x=Date, y=Count, shape=Item, color=Item)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  scale_x_datetime(date_breaks="months", date_labels="%Y-%m") +
+  scale_y_continuous(limits=c(0,1), breaks=seq(0,2,by=.2)) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  #geom_point(size=.5) + 
+  geom_line() +
+  facet_wrap(.~AgeGroup, nrow=5) + 
+  ggtitle("COVID-19 Wien: Schematischer Verlauf der epidemiologischen Kenndaten nach AltersGruppe")
+
+
+```
+
+## Data Preperation
+
+### Timeshift features for correlation with 'Date Confirmed'
+
+```{r, fig.show='hide'}
+
+# Set in header section
+#leadDaysRecovered=21
+#leadDaysDeath=20
+
+dp <- dcrdv %>%
+  dplyr::filter(Region=="Wien") %>%
+  dplyr::mutate(dplyr::across(starts_with("new"), ~ rollmean(.x, k=28, align="center", fill=0))) %>%
+  dplyr::group_by(AgeGroup, Gender) %>%
+  dplyr::mutate(newRecovered=dplyr::lead(newRecovered,leadDaysRecovered), 
+                newDeath=dplyr::lead(newDeath,leadDaysDeath)) %>%
+  dplyr::mutate(propConfirmed=newConfirmed/max(newConfirmed, na.rm=TRUE),
+                propRecovered=newRecovered/max(newRecovered, na.rm=TRUE), 
+                propDeath=newDeath/max(newDeath, na.rm=TRUE),
+                propDiff=-propConfirmed+propDeath) %>%
+  dplyr::ungroup() %>%
+  dplyr::filter(Date > as.POSIXct("2020-09-01"), Date < as.POSIXct("2021-06-01")) %>%
+  tidyr::pivot_longer(cols=starts_with("prop"), names_to="Item", values_to="Proportion")
+
+ggplot(data=dp %>% dplyr::filter(as.integer(AgeGroup)>5), aes(x=Date, y=Proportion, color=Item, fill=AgeGroup, shape=Gender)) +
+  scale_x_datetime(breaks="months", date_labels="%m") +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_line() + facet_grid(AgeGroup~Gender)
+
+```
+
+
+
+```{r, results='hide'}
+# Vienna specific timeshifts to Recovered and Deaths. General Timeshift to Vaccinated 1 and 2
+dcrdv.w <- dcrdv.w.r %>%
+  dplyr::arrange(AgeGroup, Gender, Date) %>%
+  dplyr::group_by(AgeGroup, Gender) %>%
+  dplyr::mutate(
+            newRecovered=dplyr::lead(newRecovered,leadDaysRecovered), 
+            newDeath=dplyr::lead(newDeath,leadDaysDeath),
+            newVaccinated_1=dplyr::lag(newVaccinated_1,lagDaysVaccinated_1), 
+            newVaccinated_2=dplyr::lag(newVaccinated_2,lagDaysVaccinated_2), 
+            
+            sumRecovered=dplyr::lead(sumRecovered,leadDaysRecovered), 
+            sumDeath=dplyr::lead(sumDeath,leadDaysDeath),
+            sumVaccinated_1=dplyr::lag(sumVaccinated_1,lagDaysVaccinated_1),
+            sumVaccinated_2=dplyr::lag(sumVaccinated_2,lagDaysVaccinated_2)) %>%
+  dplyr::ungroup()
+
+# Fill empty Vaccinated dates with 0
+idx <- is.na(dcrdv.w$newVaccinated_1)
+dcrdv.w$newVaccinated_1[idx] <- 0
+idx <- is.na(dcrdv.w$sumVaccinated_1)
+dcrdv.w$sumVaccinated_1[idx] <- 0
+
+idx <- is.na(dcrdv.w$newVaccinated_2)
+dcrdv.w$newVaccinated_2[idx] <- 0
+idx <- is.na(dcrdv.w$sumVaccinated_2)
+dcrdv.w$sumVaccinated_2[idx] <- 0
+
+# reduce dataset to complete cases (ommit NA's introduced by timeshifts in this section, that is, 21 days with current settings)
+idx <- complete.cases(dcrdv.w)
+unique(dcrdv.w$Date[!idx])
+
+# remove non-complete cases (should be towards today only)
+dcrdv.w <- dcrdv.w[complete.cases(dcrdv.w),]
+
+str(dcrdv.w)
+```
+
+
+```{r}
+
+dp <- dcrdv.w %>%
+  dplyr::filter(Date > as.POSIXct("2020-09-01")) %>%
+  dplyr::arrange(AgeGroup, Gender, Date) %>%
+  # sum over Gender
+  dplyr::group_by(AgeGroup, Gender, Date) %>%
+  dplyr::summarize(.groups="drop", across(starts_with("new"), ~ sum(.x, na.rm=TRUE))) %>%
+  # within AgeGroup calculations
+  dplyr::group_by(AgeGroup,Gender) %>%
+  dplyr::mutate(propConfirmed=newConfirmed/max(newConfirmed, na.rm=TRUE),
+                propRecovered=newRecovered/max(newRecovered, na.rm=TRUE), 
+                propDeath=newDeath/max(newDeath, na.rm=TRUE)) %>%
+  dplyr::ungroup() %>%
+  dplyr::filter(Date < as.POSIXct("2021-06-01")) %>%
+  
+  tidyr::pivot_longer(cols=starts_with("prop"), names_to="Item", values_to="Proportion", )
+
+
+ggplot(data=dp %>% dplyr::filter(as.integer(AgeGroup)>4), aes(x=Date, y=Proportion, color=Item, fill=AgeGroup, shape=Gender)) +
+  scale_x_datetime(breaks="months", date_labels="%m") +
+  geom_line() + facet_grid(AgeGroup~Gender) +
+  ggtitle("COVID-19 Wien: Verschiebung der epidemiologischen Kenndaten an den Zeitpunkt der Infektion")
+
+```
+
+### Add Susceptibles
+
+```{r, results='hide'}
+
+
+# Add Susceptibles to timeshifted data
+dcrdvs.w <- dcrdv.w  %>%
+  dplyr::mutate(sumSusceptibles= 
+                  Population - 
+                  sumRecovered*asyptomaticCorrectionFactor - 
+                  sumVaccinated_2*vaccinationImmunizationFaktor) 
+str(dcrdvs.w)
+
+```
+
+
+
+- Sanity Check 1: Anzahl Geimpfte, Genesene und Immunisierte
+
+```{r}
+dp <- dcrdvs.w %>%
+  tidyr::gather(key="Item", value="Count", sumSusceptibles, sumRecovered, sumVaccinated_1, sumVaccinated_2)
+
+ggplot(data=dp %>% dplyr::filter(Date>as.POSIXct("2021-01-01")), aes(x=Date, y=Count, color=Item, shape=Item, linetype=Gender)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  scale_x_datetime(date_breaks="2 months", date_labels="%b", sec.axis=dup_axis()) +
+  scale_y_continuous(breaks=seq(0,200000,by=20000), labels=paste(seq(0,200,by=20),"k"), sec.axis=dup_axis()) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_line(size=.8) +
+  facet_wrap(AgeGroup~., nrow=2) +
+  ggtitle("COVID-19 Wien: Anzahl Geimpfte, Genesene und Ansteckbare nach Altersgruppe und Geschlecht")
+```
+
+
+- Sanity Check 2: Impfrate, Genesene und Immunisierung
+
+```{r}
+# Sanity check on data
+
+dp <- dcrdvs.w %>%
+  dplyr::group_by(AgeGroup, Gender) %>%
+  dplyr::mutate(across(starts_with("sum"),  ~.x/Population)) %>%
+  dplyr::ungroup() %>%
+  tidyr::gather(key="Item", value="Count", sumSusceptibles, sumRecovered, sumVaccinated_1, sumVaccinated_2)
+
+ggplot(data=dp %>% dplyr::filter(Date>as.POSIXct("2020-11-01")), aes(x=Date, y=Count, color=Item, shape=Item, linetype=Gender)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  scale_x_datetime(date_breaks="2 months", date_labels="%b", sec.axis=dup_axis()) +
+  scale_y_continuous(breaks=seq(0,1,by=.1), labels=paste(seq(0,100,by=10),"%"), sec.axis=dup_axis()) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_line(size=.8) +
+  facet_wrap(AgeGroup~., nrow=2) +
+  ggtitle("COVID-19 Wien: Impfrate, Anteil Genesene und Immunisierungsgrad nach Altersgruppe und Geschlecht")
+
+```
+
+##  Aggreagation nach Wochen und Monaten
+
+
+```{r, results='hide'}
+# Vienna by Week
+dcrdvs.ww <- dcrdvs.w %>%
+  # watch out for correct format ! Do not use %Y here !!!
+  dplyr::mutate(yearWeek=factor(format(Date, format="%G%V"), ordered=TRUE)) %>%
+  # remove last, potentially incomplete week (TODO: retain last week if complete)
+  dplyr::filter(yearWeek != levels(yearWeek)[nlevels(yearWeek)]) %>%
+  
+  # Aggregate over Dates by yearWeek, AgeGroup and Gender
+  dplyr::group_by(yearWeek, AgeGroup, Gender) %>%
+  dplyr::summarize(.groups="drop",
+                   Population=first(Population),
+                   AgeGroup2 = first(AgeGroup2),
+                   dplyr::across(starts_with("new"), ~ sum(.x, na.rm=TRUE)),
+                   dplyr::across(starts_with("sum"), ~ mean(.x, na.rm=TRUE))) %>%
+  
+  # Add proportion of feature across AgeGroups (prop* sums up to 1 within weekYear and Gender)
+  dplyr::group_by(yearWeek, Gender) %>%
+  dplyr::mutate(propConfirmed=newConfirmed/sum(newConfirmed, na.rm=TRUE)) %>%
+  dplyr::mutate(propRecovered=newRecovered/sum(newRecovered, na.rm=TRUE)) %>%
+  dplyr::mutate(propDeath=newDeath/sum(newDeath, na.rm=TRUE)) %>%
+  dplyr::mutate(propVaccinated_1=sumVaccinated_1/sum(sumVaccinated_1, na.rm=TRUE)) %>%
+  dplyr::mutate(propVaccinated_2=sumVaccinated_2/sum(sumVaccinated_2)) %>%
+  dplyr::ungroup()
+
+
+# Fill empty Vaccinated dates with 0
+idx <- is.na(dcrdvs.ww$propVaccinated_1)
+dcrdvs.ww$propVaccinated_1[idx] <- 0
+idx <- is.na(dcrdvs.ww$propVaccinated_2)
+dcrdvs.ww$propVaccinated_2[idx] <- 0
+
+str(dcrdvs.ww)
+
+```
+
+
+
+```{r, results='hide'}
+
+# Vienna by Month
+dcrdvs.wm <- dcrdvs.w %>%
+  dplyr::mutate(yearMonth=factor(format(Date, format="%Y%m"), ordered=TRUE)) %>%
+  # remove last, potentially incomplete month (TODO: retain last week if complete)
+  dplyr::filter(yearMonth != levels(yearMonth)[nlevels(yearMonth)]) %>%
+
+  dplyr::group_by(yearMonth, AgeGroup, Gender) %>%
+  dplyr::summarize(.groups="drop",
+                   Population=first(Population),
+                   AgeGroup2 = first(AgeGroup2),
+                   dplyr::across(starts_with("new"), ~ mean(.x, na.rm=TRUE)),
+                   dplyr::across(starts_with("sum"), ~ mean(.x, na.rm=TRUE))) %>%
+  
+  # Add proportion of feature across AgeGroups (prop* sums up to 1 within yearMonth and Gender)
+  dplyr::group_by(yearMonth, Gender) %>%
+  dplyr::mutate(propConfirmed=newConfirmed/sum(newConfirmed, na.rm=TRUE)) %>%
+  dplyr::mutate(propRecovered=newRecovered/sum(newRecovered, na.rm=TRUE)) %>%
+  dplyr::mutate(propDeath=newDeath/sum(newDeath, na.rm=TRUE)) %>%
+  dplyr::mutate(propVaccinated_1=sumVaccinated_1/sum(sumVaccinated_1)) %>%
+  dplyr::mutate(propVaccinated_2=sumVaccinated_2/sum(sumVaccinated_2)) %>%
+  dplyr::ungroup()
+
+# Fill empty Vaccinated dates with 0
+idx <- is.na(dcrdvs.wm$propVaccinated_1)
+dcrdvs.wm$propVaccinated_1[idx] <- 0
+idx <- is.na(dcrdvs.wm$propVaccinated_2)
+dcrdvs.wm$propVaccinated_2[idx] <- 0
+
+str(dcrdvs.wm)
+```
+
+
+
+ 
+
+### KennGrössen nach Monaten
+
+```{r}
+
+# Vienna by Month
+dcrdvs.wm.c <- dcrdvs.w %>%
+  dplyr::filter(Date >= as.POSIXct("2020-08-01")) %>%
+  dplyr::mutate(yearMonth=factor(format(Date, format="%Y%m"), ordered=TRUE)) %>%
+  # remove last, potentially incomplete month (TODO: retain last week if complete)
+  dplyr::filter(yearMonth != levels(yearMonth)[nlevels(yearMonth)]) %>%
+  
+  dplyr::group_by(AgeGroup, Gender) %>%
+  dplyr::mutate(meanDeathConf=sum(newDeath, na.rm=TRUE)/sum(newConfirmed)) %>%
+  dplyr::mutate(maxDeathPop=max(newDeath/Population, na.rm=TRUE)) %>%
+  dplyr::ungroup() %>%
+
+  dplyr::group_by(yearMonth, AgeGroup, Gender) %>%
+  dplyr::summarize(.groups="drop",
+                   Population=first(Population),
+                   AgeGroup2 = first(AgeGroup2),
+                   meanDeathConf = first(meanDeathConf),
+                   meanNewDeath = mean(newDeath),
+                   dplyr::across(starts_with("new"), ~ sum(.x, na.rm=TRUE)),
+                   dplyr::across(starts_with("sum"), ~ mean(.x, na.rm=TRUE))) %>%
+
+    dplyr::mutate(log2NewDeath=log2(newDeath),
+                newConfSusc100k=newConfirmed/sumSusceptibles*100000,
+                log2NewDeathPop100k=log2(newDeath/Population*100000),
+                log2NewDeathSusc100k=log2(newDeath/sumSusceptibles*100000),
+                log2NewDeathConf100=log2(newDeath/newConfirmed*100),
+                newDeathPop=newDeath/Population,
+                newConfPop=newConfirmed/Population, 
+                newDeathConf=newDeath/newConfirmed,
+                sumImmunized=Population-sumSusceptibles,
+                sumSuscPop=sumSusceptibles/Population,
+                sumImmPop=sumImmunized/Population) %>%
+  dplyr::mutate(moreDeaths = round(meanDeathConf * sumSusceptibles)) %>%
+  
+  dplyr::group_by(AgeGroup,Gender) %>%
+  dplyr::mutate(maxDeathPop=max(newDeathPop), relDeathPop = newDeathPop/maxDeathPop) %>%
+  dplyr::ungroup()
+
+
+dp <- dcrdvs.wm.c %>%
+  tidyr::gather(key="Item", value="Anzahl", 
+                newDeath, relDeathPop, log2NewDeath,  newDeathConf, newConfSusc100k,  sumImmPop, log2NewDeathSusc100k, log2NewDeathConf100, moreDeaths) %>%
+  dplyr::mutate(Item=factor(Item, levels=c("newDeath","log2NewDeath", "newDeathConf", "log2NewDeathConf100", "relDeathPop",
+                                           "newConfSusc100k","log2NewDeathSusc100k","sumImmPop","moreDeaths")))
+
+ggplot(data=dp, aes(x=AgeGroup, y=Anzahl, color=Gender, fill=Gender, linetype=Gender, group=Gender, shape=Item)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  scale_y_continuous(limits=c(NA,NA)) +
+  scale_shape_manual(values=atShapes) +
+  geom_line() + geom_point(size=.5) +
+  facet_grid(Item~yearMonth, scale="free_y") +
+  ggtitle("COVID-19 Wien: Überblick Kenngrößen nach Monat, Altersgruppe und Geschlecht")
+
+```
+
+
+```{r}
+ggplot(data=dp, aes(x=yearMonth, y=Anzahl, color=Gender, fill=Gender, linetype=Gender, group=Gender, shape=Item)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  scale_y_continuous(limits=c(NA,NA)) +
+  scale_shape_manual(values=atShapes) +
+  geom_line() + geom_point(size=.5) +
+  facet_grid(Item~AgeGroup, scale="free_y") +
+  ggtitle("COVID-19 Wien: Überblick Kenngrößen nach Monat, Altersgruppe und Geschlecht")
+```
+
+### KennGrössen nach Wochen
+
+```{r}
+
+# Vienna by Week
+dcrdvs.wm.c <- dcrdvs.w %>%
+  dplyr::filter(Date >= as.POSIXct("2020-08-01")) %>%
+  dplyr::mutate(yearWeek=factor(format(Date, format="%G%V"), ordered=TRUE)) %>%
+  # remove last, potentially incomplete month (TODO: retain last week if complete)
+  dplyr::filter(yearWeek != levels(yearWeek)[nlevels(yearWeek)]) %>%
+  
+  dplyr::group_by(AgeGroup, Gender) %>%
+  dplyr::mutate(meanDeathConf=sum(newDeath)/sum(newConfirmed)) %>%
+  dplyr::mutate(maxDeathPop=max(newDeath/Population)) %>%
+  dplyr::ungroup() %>%
+
+  dplyr::group_by(yearWeek, AgeGroup, Gender) %>%
+  dplyr::summarize(.groups="drop",
+                   Population=first(Population),
+                   AgeGroup2 = first(AgeGroup2),
+                   meanDeathConf = first(meanDeathConf),
+                   maxDeathPop = first(maxDeathPop),
+                   meanNewDeath = mean(newDeath),
+                   dplyr::across(starts_with("new"), ~ sum(.x, na.rm=TRUE)),
+                   dplyr::across(starts_with("sum"), ~ mean(.x, na.rm=TRUE))) %>%
+  dplyr::mutate(log2NewDeath=log2(newDeath),
+                newConfSusc100k=newConfirmed/sumSusceptibles*100000,
+                log2NewDeathPop100k=log2(newDeath/Population*100000),
+                log2NewDeathSusc100k=log2(newDeath/sumSusceptibles*100000),
+                log2NewDeathConf100=log2(newDeath/newConfirmed*100),
+                newConfPop=newConfirmed/Population, 
+                newDeathConf=newDeath/newConfirmed,
+                relDeathPop=(meanNewDeath/Population)/maxDeathPop,
+                sumImmunized=Population-sumSusceptibles,
+                sumSuscPop=sumSusceptibles/Population,
+                sumImmPop=sumImmunized/Population) %>%
+  dplyr::mutate(moreDeaths = round(meanDeathConf * sumSusceptibles))
+
+dp <- dcrdvs.wm.c %>%
+  tidyr::gather(key="Item", value="Anzahl", 
+                newDeath, relDeathPop, log2NewDeath,  newDeathConf, newConfSusc100k,  sumImmPop, log2NewDeathSusc100k, log2NewDeathConf100, moreDeaths) %>%
+  dplyr::mutate(Item=factor(Item, levels=c("newDeath","log2NewDeath", "newDeathConf", "log2NewDeathConf100", "relDeathPop",
+                                           "newConfSusc100k","log2NewDeathSusc100k","sumImmPop","moreDeaths")))
+yWidx=(1:nlevels(dp$yearWeek)) %% 4 ==1
+ggplot(data=dp, aes(x=as.integer(yearWeek), y=Anzahl, color=Gender, fill=Gender, linetype=Gender, group=Gender, shape=Item)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  scale_x_continuous(breaks=((1:nlevels(dp$yearWeek))[yWidx]), labels=levels(dp$yearWeek)[yWidx]) + 
+  scale_y_continuous(limits=c(NA,NA)) +
+  scale_shape_manual(values=atShapes) +
+  geom_line() + geom_point(size=.5) +
+  facet_grid(Item~AgeGroup, scale="free_y") +
+  ggtitle("COVID-19 Wien: Überblick Kenngrößen nach Woche, Altersgruppe und Geschlecht")
+```
+
+
+## Abschwächung der Sterberate durch die Impfung in den Altersgruppen
+
+### Vergleich der Anzahl der Sterbefälle zwischen den Altersgruppen
+
+Die Erwartungshaltung ist, dass die Sterbefälle bei höherer Immunisierungsrate relativ gesehen niedriger sind als bei niedriger Immunisierungsrate. Betrachtet wird hier das Verhältnis der Sterbefälle der 3 Altersgruppen  über 65 Jahre mit der Altersgruppe der 55-64 jährigen.
+
+
+Zunächst die absoluten Sterbezahlen. Obwohl die Daten über eine Woche gemittelt sind, zeigt sich ein sehr inhomegener Verlauf. Vermutlich ein Effekt der unzulänglichen Datenanlieferung aus den Spitälern. Erschwerend kommt hinzu, dass die Fallzahlen gerade im Zeitraum mit steigender Immunisierung, d.h. Mai und Juni, stark abnehmen
+
+```{r}
+
+dq <- dcrdvs.w %>% 
+  dplyr::filter(Date >= as.POSIXct("2020-10-01")) %>%
+  dplyr::filter(as.integer(AgeGroup)>6) %>%
+  dplyr::mutate(AgeGroup = factor(AgeGroup, 
+                                  levels=c("55-64","65-74","75-84",">84"), 
+                                  labels=c("A_55_64","A_65_74","A_75_84","A__84"), ordered=TRUE)) %>%
+  dplyr::select(Date, AgeGroup, Gender, newDeath)
+
+ggplot(data=dq, aes(x=Date, y=newDeath, color=Gender, fill=Gender, linetype=Gender, group=Gender)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  scale_x_datetime(date_breaks="months", date_labels="%Y %m") +
+  scale_y_continuous(limits=c(0,5), breaks=1:10) +
+  scale_shape_manual(values=atShapes) +
+  geom_line() + geom_point(size=.5) +
+  facet_grid(AgeGroup~Gender, scales="free_y") +
+  ggtitle("COVID-19 Wien: Anzahl Sterbefälle pro Tag nach Altergruppen und Geschlecht")
+
+```
+
+
+Der inhomegene Verlauf der Sterbezahlen in den einzelnen Altersgruppen und der Grosse Unterschied zwischen Männern und Frauen lässt für den Vergleich wenig Gutes erwarten. In der Tat ist  kein Trend Richtung niedriger Anzahl Sterbefälle bei zunehmendem Immunisierungsgrad im Mai und Juni ablesebar. Während bei den Männern der Effekt noch erahnt werden könnte, sind die Daten bei den Frauen völlig uneinheitlich.  
+
+
+```{r}
+
+dq <- dq %>%
+  tidyr::pivot_wider(names_from=AgeGroup, values_from=newDeath) 
+
+dq[,3:6] <- dq[,3:6] / rep(dq[,3],4)  
+
+dq <- dq %>%
+  tidyr::pivot_longer(cols=starts_with("A_"), names_to="AgeGroup", values_to="relDeath") %>%
+  dplyr::mutate(AgeGroup = factor(AgeGroup, levels=c("A_55_64","A_65_74","A_75_84","A__84"), ordered=TRUE))
+    
+ggplot(data=dq, aes(x=Date, y=relDeath, color=Gender, fill=Gender, linetype=Gender, group=Gender)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  scale_x_datetime(date_breaks="months", date_labels="%Y %m") +
+  scale_y_continuous(limits=c(0,5), breaks=1:10) +
+  scale_shape_manual(values=atShapes) +
+  geom_line() + geom_point(size=.5) +
+  facet_grid(AgeGroup~Gender, scales="free_y") +
+  ggtitle("COVID-19 Wien:  Anzahl Sterbefälle im Verhältnis zur Altersgruppe 55-64")
+
+```
+
+
+
+
+
+
+## Estimates
+
+### First estimate of future deaths
+
+- Die Case FatalityRate wird aus der dritten Welle 02-04/2021 bestimmt 
+
+```{r, results='hide'}
+dp <- dcrdvs.w %>%
+  dplyr::filter(Date>=as.POSIXct("2021-02-01"), Date<as.POSIXct("2021-05-01")) %>%
+  dplyr::mutate(meanDeathConf=newDeath/newConfirmed)
+
+ggplot(data=dp, aes(x=AgeGroup, y=meanDeathConf, color=Gender, fill=Gender, group=AgeGroup)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  scale_y_continuous(trans="log10", breaks=c(.001,.002,.005,.01,.02,.05,.1,.2,.5))+
+  geom_boxplot(notch=TRUE) +
+  facet_grid(.~Gender) +
+  ggtitle("COVID-19 Wien dritte Welle: Sterblichkeitsrate in % nach Alter und Geschlecht")
+
+```
+
+```{r, results='hide'}
+#asyptomaticCorrectionFactor = 2
+#vaccinationImmunizationFaktor = 0.9
+
+dcfr <- dcrdvs.w %>%
+  dplyr::filter(Date>=as.POSIXct("2021-02-01"), Date<as.POSIXct("2021-05-01")) %>%
+  dplyr::group_by(AgeGroup, Gender) %>%
+  dplyr::summarize(.groups="drop", meanDeathConf=sum(newDeath)/sum(newConfirmed)) 
+
+df <- dcrdvs.w.r %>%
+  dplyr::filter(Date>as.POSIXct(("2021-01-01"))) %>%
+  dplyr::left_join(dcfr, by=c("AgeGroup","Gender")) %>%
+  
+  # recalc sumSusceptibles
+  dplyr::mutate(sumSusceptibles = Population - sumRecovered  * asyptomaticCorrectionFactor -sumVaccinated_2 * vaccinationImmunizationFaktor) %>%
+
+  # Total number of deaths expected for 
+  dplyr::mutate(popDeath=round(Population * meanDeathConf / asyptomaticCorrectionFactor)) %>%
+
+  # Deaths so far
+  dplyr::mutate(pastDeath=round((sumRecovered+sumDeath) * meanDeathConf)) %>%
+  
+  # Deaths that will not longer occure due to recovered status
+  dplyr::mutate(recovNOTDeath=round(sumRecovered  * meanDeathConf * asyptomaticCorrectionFactor )) %>%
+  # Deaths that will not occure due to vaccination
+  dplyr::mutate(vacc2NOTDeath=round(sumVaccinated_2 * vaccinationImmunizationFaktor * meanDeathConf / asyptomaticCorrectionFactor)) %>%
+  dplyr::mutate(vacc1NOTDeath=round(sumVaccinated_1 * vaccinationImmunizationFaktor * meanDeathConf / asyptomaticCorrectionFactor)) %>%
+  
+  # Remaining deaths to occure
+  dplyr::mutate(futureDeath=round(sumSusceptibles * meanDeathConf / asyptomaticCorrectionFactor)) %>%
+  
+  dplyr::mutate(across(starts_with("sum"), round)) %>%
+  dplyr::mutate(meanDeathConf=round(meanDeathConf,4)) %>%
+
+  dplyr::select(Date, Population, AgeGroup, Gender, sumSusceptibles, sumRecovered, sumVaccinated_2, meanDeathConf, 
+                popDeath,  pastDeath, recovNOTDeath, vacc1NOTDeath, vacc2NOTDeath, futureDeath)
+
+str(df)
+
+dp <- df %>% 
+  dplyr::filter(as.integer(AgeGroup)>6) %>%
+  tidyr::pivot_longer(cols=c(ends_with("death")), names_to="Group", values_to="Count")
+
+ggplot(data=dp, aes(x=Date, y=Count, color=Group, fill=Group, shape=Group)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  scale_x_datetime(date_breaks="months", date_labels="%Y %m") +
+  scale_y_continuous(sec.axis=dup_axis()) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_line() +
+  facet_grid(Gender~AgeGroup, scales="free_y")
+
+```
+
+ - Tabelle
+```{r}
+df %>% dplyr::filter(Date==max(Date)) %>% dplyr:::select(AgeGroup,  Gender, Population, sumRecovered, sumVaccinated_2, sumSusceptibles)
+```
+
+- Plot
+
+```{r}
+
+dp <- df %>% 
+  dplyr::filter(as.integer(AgeGroup)>6) %>%
+  tidyr::pivot_longer(cols=c(ends_with("death"), -vacc1NOTDeath), names_to="Group", values_to="Count") %>%
+  dplyr::filter(Date==max(Date)) %>% dplyr::select(AgeGroup, Gender, Group, Count) %>%
+  dplyr::mutate(Group = factor(Group, levels=c("popDeath","pastDeath","recovNOTDeath","vacc2NOTDeath","futureDeath")))
+
+ggplot(data=dp, aes(x=AgeGroup, y=Count, color=Group, fill=Group, shape=Group)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  #scale_x_datetime(date_breaks="months", date_labels="%Y %m") +
+  scale_y_continuous(sec.axis=dup_axis()) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_col() +
+  facet_grid(Group~Gender) +
+  ggtitle(paste("COVID-19 Wien: Abschätzung künftige Todesfälle bei aktuellem Durchimpfungsgrad. Stand", max(dq$Date)))
+
+```
+
+- Tabelle
+
+```{r}
+dg <- df %>% dplyr::filter(Date==max(Date)) %>% dplyr::select(AgeGroup, Gender, popDeath,pastDeath,recovNOTDeath,vacc2NOTDeath,futureDeath )
+dg
+```
+
+
+- Stand
+
+```{r}
+dk <- dg %>% summarize(across(c(ends_with("Death")), ~ sum(.x)))
+dl <- data.frame(t(dk))
+colnames(dl)="Anzahl"
+dl
+```
+
+## Analysis along COVID-19 Formulas
+
+### Proportion of Deaths in AgeGroups per Month
+
+```{r}
+
+dp <- dcrdvs.wm %>%
+  tidyr::pivot_longer(cols=c(propConfirmed, propDeath, propVaccinated_2), names_to="Item", values_to="Count")
+
+ggplot(data=dp, aes(x=yearMonth, y = Count, color=Gender, fill=Gender, shape=AgeGroup)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  scale_y_continuous(limits=c(0,.7)) +
+  scale_shape_manual(values=atShapes) +
+  geom_col(position="dodge")+
+  #facet_grid(Item~AgeGroup, scale="free_y")+
+  facet_grid(AgeGroup~Item)+
+  ggtitle("COVID-19 Wien: Anteil an Positiven und Verstorbenen in den Altersgruppen")
+
+```
+
+
+### Mean value of features across observation period
+
+```{r}
+
+# Reference values for derived properties
+# Mean values across entire observation period
+dcrdvs.w.ag <- dcrdvs.w %>% 
+  dplyr::filter(Date>=as.POSIXct("2020-10-01"), Date<=as.POSIXct("2020-12-31"))  %>%
+  # mean value of new* features across all dates
+  dplyr::group_by(AgeGroup,Gender) %>%
+  dplyr::summarize(.groups="drop",
+                   Population=first(Population),
+                   sumSusceptibles=mean(sumSusceptibles),
+                   across(.cols=starts_with("new"),  
+                       .fns = list(mean=mean), 
+                       .names="ref_{.col}")) %>%
+  dplyr::mutate(ref_newConfPop = ref_newConfirmed/Population,
+                ref_newConfSusc = ref_newConfirmed/sumSusceptibles, #<<<<<###################################
+                ref_newDeathPop = ref_newDeath/Population,
+                ref_newDeathSusc = ref_newDeath/sumSusceptibles,
+                ref_newDeathConf = ref_newDeath/ref_newConfirmed)
+  str(dcrdvs.w.ag)
+  
+  dp <- dcrdvs.w.ag %>% tidyr::pivot_longer(cols=c(ref_newConfPop, ref_newDeathPop, ref_newDeathConf), 
+                                            names_to="Item", values_to="ReferenceFraction")
+  ggplot(data=dp, aes(x=AgeGroup, y=ReferenceFraction, color=Gender, fill=Gender, shape=Item)) +
+    geom_col(position="dodge") +
+    facet_grid(Item~., scales="free_y") + 
+    ggtitle("Daily reference values")
+  
+```
+
+### Proportion of Deaths in Susceptibles by AgeGroups per Month
+
+```{r, results='hide'}
+
+str(dcrdvs.wm)
+str(dcrdvs.w.ag)
+
+# add mean values of new* features across entire observation period
+dcrdvs.wm.ag <- dcrdvs.wm %>%
+  dplyr::left_join(dcrdvs.w.ag %>% dplyr::select(-Population), by=c("AgeGroup","Gender")) %>%
+  
+# Calc fractions of monthly new* features
+  dplyr::mutate(newConfPop = newConfirmed/Population,
+                newDeathPop = newDeath/Population,
+                newDeathConf = newDeath/newConfirmed) %>%
+  
+  dplyr::mutate(rel_newConfPop = newConfPop/ref_newConfPop,
+              rel_newDeathPop = newDeathPop/ref_newDeathPop,
+              rel_newDeathConf = newDeathConf/ref_newDeathConf)
+
+str(dcrdvs.wm.ag)
+
+dp <- dcrdvs.wm.ag %>%
+#tidyr::pivot_longer(cols=c("rel_newConfPop", "rel_newDeathPop", "rel_newDeathConf"), names_to="Item", values_to="Fraction") %>%
+tidyr::pivot_longer(cols=c("newDeath", "rel_newDeathConf"), names_to="Item", values_to="Fraction")  %>%
+  dplyr::mutate(p1 =1)
+  
+ggplot(data=dp, aes(x=yearMonth, y=Fraction, fill=Gender, color=Gender)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  scale_y_continuous(limit=c(0,5))+
+  scale_shape_manual(values=25) +
+  #scale_fill_manual(values=cbPalette) +
+  #scale_color_manual(values=cbPalette) +
+  geom_col(position="dodge")+
+  geom_point(aes(y=p1), color="black", size=0.25) +
+  facet_grid(AgeGroup~Item, scales="free")+
+  ggtitle("..")
+  
+```
+
+### Proportion of Deaths in Susceptibles by AgeGroups per Week
+
+```{r, results='hide'}
+
+str(dcrdvs.ww)
+str(dcrdvs.w.ag)
+
+# add mean values of new* features across entire observation period
+dcrdvs.ww.ag <- dcrdvs.ww %>%
+  dplyr::left_join(dcrdvs.w.ag %>% dplyr::select(-Population), by=c("AgeGroup","Gender")) %>%
+  
+# Calc fractions of weekly new* features
+  dplyr::mutate(newConfPop = newConfirmed/Population,
+                newDeathPop = newDeath/Population,
+                newDeathConf = newDeath/newConfirmed) %>%
+  
+  dplyr::mutate(rel_newConfPop = newConfPop/ref_newConfPop,
+              rel_newDeathPop = newDeathPop/ref_newDeathPop,
+              rel_newDeathConf = newDeathConf/ref_newDeathConf)
+
+str(dcrdvs.ww.ag)
+
+dp <- dcrdvs.ww.ag %>%
+tidyr::pivot_longer(cols=c("rel_newConfPop", "rel_newDeathPop", "rel_newDeathConf"), names_to="Item", values_to="Fraction", )
+  
+ggplot(data=dp, aes(x=yearWeek, y=Fraction, fill=Gender, color=Gender, shape=Gender)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  scale_y_continuous(limits=c(0,25)) +
+  scale_shape_manual(values=atShapes) +
+  #scale_fill_manual(values=cbPalette) +
+  #scale_color_manual(values=cbPalette) +
+  geom_col(position="dodge")+
+  facet_grid(AgeGroup~Item)+
+  ggtitle("..")
+  
+```
+
+
+```{r, results='hide'}
+
+dp <- dp %>%    
+  dplyr::group_by(yearWeek, AgeGroup) %>%
+  dplyr::summarize(.groups="drop",
+                 Population=sum(Population),
+                 AgeGroup2 = first(AgeGroup2),
+                 sumSusceptibles=mean(sumSusceptibles.x),
+                 dplyr::across(starts_with("new"),  ~ sum(.x,  na.rm=TRUE)),
+                 dplyr::across(starts_with("sum"),  ~ mean(.x, na.rm=TRUE)),
+                 dplyr::across(starts_with("mean"), ~ sum(.x,  na.rm=TRUE))) %>%
+  
+  # Confirmed and Death relative rates  
+  dplyr::mutate(relConfirmedSusceptibles = newConfirmed/sumSusceptibles) %>%
+  dplyr::mutate(relDeathInfected = newDeath/(newDeath+newRecovered)) %>%
+  dplyr::mutate(relDeathSusceptibles = newDeath/sumSusceptibles) %>%
+  dplyr::mutate(relDeathPopulation = newDeath/Population) %>%
+    
+  # compare to means over complete period (see mutate by AgeGroup above)
+  dplyr::mutate(cmpConfirmedSusceptibles = newConfirmed/sumSusceptibles/(1/1)) %>%
+  dplyr::mutate(cmpDeathInfected         = newDeath/(newDeath+newRecovered)/(1/1)) %>%
+  dplyr::mutate(cmpoDeathSusceptibles    = newDeath/sumSusceptibles/(1/1)) %>%
+  dplyr::mutate(cmpDeathPopulation       = newDeath/Population/(1/1)) %>%
+  dplyr::ungroup()
+
+  str(dp)
+
+dq <- dp %>%
+  tidyr::pivot_longer(cols=c("relConfirmedSusceptibles", "relDeathInfected", "relDeathSusceptibles","relDeathPopulation"), names_to="Item", values_to="Fraction", )
+# str(dq)
+
+ggplot(data=dq, aes(x=yearWeek, y=Fraction, fill=AgeGroup, shape=AgeGroup)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  scale_shape_manual(values=atShapes) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_col(position="stack", width=1)+
+  facet_grid(AgeGroup~Item, scales="free_y")+
+  ggtitle("COVID-19 Wien: Anteil Verstorbene an Infizierten")
+
+```
+
+
+```{r, results='hide'}
+str(dcrdvs.wm)
+
+# Sanity plot for above data transforms 
+ggplot(dcrdvs.wm %>% dplyr::filter(as.integer(AgeGroup)>4, yearMonth!="202107"), aes(x=as.integer(yearMonth), y=propDeath, shape=Gender, color=Gender)) +
+  #scale_x_datetime(date_breaks="weeks", date_labels="%W") +
+  #scale_x_continuous(breaks=seq(1,10,by=1), labels=levels(dcrdvs.wm$yearMonth)) +
+  scale_y_continuous(limits=c(0,.8), breaks=seq(0,1,by=.1)) +
+  #scale_fill_manual(values=cbPalette) +
+  #scale_color_manual(values=cbPalette) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  #geom_col(aes(fill=Gender), position="dodge") + 
+  geom_point() + 
+  geom_path() + 
+  geom_path(aes(y=propVaccinated_2, color=Gender), linetype=2) +
+  facet_wrap(AgeGroup~., ncol=2)
+
+```
+
+
+```{r}
+# Sanity plot for above data transforms 
+ggplot(dcrdvs.ww %>% dplyr::filter(as.integer(AgeGroup)>4, as.integer(as.character(yearWeek))<202125), aes(x=as.integer(yearWeek), y=propDeath, shape=Gender, color=Gender)) +
+  #scale_x_datetime(date_breaks="weeks", date_labels="%W") +
+  #scale_x_continuous(breaks=seq(1,10,by=1), labels=levels(dcrdv.wm$yearMonth)) +
+  scale_y_continuous(limits=c(0,.8), breaks=seq(0,1,by=.1)) +
+  #scale_fill_manual(values=cbPalette) +
+  #scale_color_manual(values=cbPalette) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  #geom_col(aes(fill=Gender), position="dodge") + 
+  geom_point() + 
+  geom_path() + 
+  geom_path(aes(y=propVaccinated_2, color=Gender), linetype=2) +
+  facet_wrap(AgeGroup~., ncol=2)
+```
+
+
+
+
+
+
+
+
+
+
+
+# Prevalenz von COVID-19
+
+Die Standardmethode zur Ermittlung der Prevalenz (d.h. Anzahl der angesteckten Personen) von COVID-19 zu einem Zeitpunkt ist die Durchführung eines PCR Tests an Personen einer zufällig ausgewählten Stichprobe. Man geht davon aus, dass ein solcher Test das Virus in infizierten Personen mit hoher Wahrscheinlichkeit nachweist (ausser in einer sehr frühen Phase der Krankheit) und wenige 'False Positives' erzeugt (also eine Infektion nur anzeigt wenn eine vorhanden ist). Mit diesem Verfahren werden sowohl symptomatische als auch asymptomatische Infektionen gefunden.
+
+Dem gegenüber stehen die Daten über die TagesInzidenz (die Anzahl der täglich durchgeführten Tests und die dabei positiv getesteten Personen). Bei diese Zahlen wird zwischen symptomatisch und asymptomatisch nicht unterschieden. Für die Zeit vor den ersten Massentests kann man davon ausgehen, dass die meisten '1450' Tests an symptomatischen Personen durchgeführt wurden. Ab Anfang 2021 ist die Datenlage infolge Massentests, Schnupfenbox, Berufsgruppen, Eintrittstests, Schultest sowie die unterschiedlichen Testverfahren (PCR, Schnell, Nasenbohrer, ...) wenig übersichtlich. Einen gewissen Anhaltspunkt geben, mit einiger Verzögerung, die Daten über die COVID-19 Belegung in den Spitälern und Intensivstationen.
+
+## StatistikAustria: PrevalenzStudie 11/2020
+
+Die Statistik Austria hat bisher drei Prevalenzstudien durchgeführt, in 4/2020, 5/2020 und 11/2020, letztere am Höhepunkt der '2ten Welle' vor dem zweiten LockDown.
+
+- http://www.statistik.at/web_de/statistiken/menschen_und_gesellschaft/gesundheit/covid19/index.html
+- http://www.statistik.at/wcm/idc/idcplg?IdcService=GET_PDF_FILE&RevisionSelectionMethod=LatestReleased&dDocName=125521
+
+
+### Zusammenfassung
+
+Die Ergebnisse der Studie von 11/2020 lassen sich wie folgt zusammenfassen:
+
+- Zeitraum 12-14.11.2020
+- Hochrechnung Statistik Austria: 3.2% der Bevölkerung, das entspricht 239k Personen, sind in Österreich akut mit COVID-19 infiziert
+- 53% der in der Studie positiv getesteten waren noch nicht behördlich erfasst (alle hatten keine oder wenige Symptome)
+- Hochrechnung Statistik Austria: Antikörper haben 4.6% der Bevökerung entwickelt, das entspricht 349k Personen
+- 61% davon sind nicht behördlich erfasst
+
+### Details
+
+- Repräsentative Stichprobe von 7823 Personen aus dem ZMR, >16 Jahre, entspricht 7,5M Einwohner
+- PCR Test durch Rotes Kreuz, Auswertung UnivMed.
+- Antikörper Tests mit Blutabnahme. Vor Ort Antikörper Schnelltest (Wantai SARS-CoV-2
+Rapid Test; Wantai, Peking, China). Im Labor zwei Auswertungen (SARS-CoV-2 IgG ELISA der Firma Euroimmun und lecsys Anti-SARS-CoV2-ECLIA)
+- 2711 Rückmeldungen, pseodonymisierter Abgleich mit EMS um den individuellen Status der behördlichen Erfassung festzustellen
+- 2500 Testtermine vereinbart, davon 2263 verwertbare PCR Proben, 2229 Blut Proben.
+- 253 non-Response, davon 153 mit Begründung, zeitlich bzw. Quarantäne
+
+### Ergebnisse
+
+- 48 von 2263 Personen positiv
+- 20 symptomfrei, 9 ein Symptom (Schnupfen, ...), 43 mindestens 2 Symptome, 3 andere
+- 24 Personenen der Stichprobe waren zum Testzeitpunkt bereits behördlich unter Quarantäte gestellt (noShow)
+- **Hochrechnung:** bei 72 positiven aus 2263 ergibt sich eine Prevalenz von 3.2% = 239k (72/2263 * 7.5M = 239k, mit 95% KI 195k bis 261k)
+ 
+
+## Zeitgleiche Tagesinzidenz Werte der AGES
+
+- Die TagesInzidenz Mitte 11/2020 für Österreich ist ca. 75 pro 100k, entsprechend 75 * 80 = 6k Positive pro Tag.
+- Bei einer mittleren PCR Nachweisbarkeitsdauer von 10 Tagen ergibt das 60k nachweisbare COVID-19 Erkrankte.
+- Crosscheck von 'bisherPositive - bisherGenesene' zur selben Zeit ergibt 172980 - 103759 = ~69k Erkrankte.
+
+## Vergleich AGES TagesInzidenz mit der StatA Prevalenzstudie 11/2020
+
+- Hochrechnung StatA: 239k COVID erkrankte
+- Abschätzung aus AGES: 60k - 70k behördlich erfasste
+- **Anteil der in AGES erfassten Infizierten 11/2020: 25-30%** 
+
+# Referenzen
+
+- 1
+- 2
+- 3
+
+

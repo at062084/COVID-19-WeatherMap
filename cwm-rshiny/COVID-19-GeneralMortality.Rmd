@@ -85,7 +85,7 @@ Die wichtigsten Beobachtungen der vorliegenden Untersuchung sind:
 - StatA-Population-2019_AgeGroup_Gender.csv: Der Datensatz enthält Angaben zu Jahr, Geschlecht, Altersgruppe (in 20 fünf Jahres Schritten) und Anzahl Einwohner.
 - StatA-Sterbefaelle-Year_AgeGroup_Gender.csv: Der Datensatz enthält Angaben zu Jahr, Geschlecht, Altersgruppe (in 20 fünf Jahres Schritten) und Anzahl Sterbefälle.
 - AGES-CovidFaelle_Altersgruppe.20210228.csv: Positiv Gesteste und an/mit COVID-19 Verstorbene nach Geschlecht und Altersgruppe (in 10 zehn Jahres Schritten) bis zum 28.2.2021
-
+- AGES-eimpfpass.csv:
 
 # Sterblichkeit in Österreich
 
@@ -94,12 +94,12 @@ Die wichtigsten Beobachtungen der vorliegenden Untersuchung sind:
 Zunächst die Alterstruktur in Österreich für 2019 in 20 fünf Jahres Intervallen. Die beiden Altersgruppen 'Unter65' und 'Über65' teilen in 'weniger Gefährdete' und 'stark Gefährdete'.
 
 ```{r}
-df <- caStatAData_m_ag()
-dp.y <- df
+# get population data
+dp.y <- caStatAData_p_ag()
 ```
 
 ```{r}
-ggplot(data=df %>% dplyr::mutate(Population=round(Population/1000)),
+ggplot(data=dp.y %>% dplyr::mutate(Population=round(Population/1000)),
        aes(y=Population, x=AgeGroup20)) +
   geom_col(aes(color=Gender, fill=Gender, alpha=AgeGroup2), position="dodge", size=1) +
   scale_y_continuous(name="Einwohner (in 1000)") +
@@ -126,7 +126,7 @@ Altersstruktur:
 <center>
 **Einwohner 2019 nach Altersgruppe und Geschlecht**
 ```{r}
-dp <- df %>% dplyr::select(Gender, AgeGroup20, AgeGroup2, Population)
+dp <- dp.y %>% dplyr::select(Gender, AgeGroup20, AgeGroup2, Population)
 pt <- makePT(dp, "Gender")
 pt$addRowDataGroups("AgeGroup2", outlineBefore=TRUE, outlineTotal=TRUE)
 pt$addRowDataGroups("AgeGroup20", outlineTotal=FALSE)
@@ -147,24 +147,9 @@ pt$renderPivot()
 Die Anzahl der Todesfälle ist in erster Linie vom Alter beeinflusst. Gewisse Unterschiede zwischen verschiedenen Jahren sind zu erkennen, aber vom allgemeinen Trend dominiert. 
 
 ```{r}
-fName <- "./data/StatA-Sterbefaelle-Year_AgeGroup_Gender.csv"
-col.names=c("Year","AgeGroup20","xxx","Gender","Deceased","y")
-colClasses=c("character","character","NULL", "character","character","NULL")
-dd <- read.csv(fName, header=TRUE, skip=7, sep=",", stringsAsFactors=FALSE, 
-               col.names=col.names, colClasses=colClasses, na.strings="not applicable") %>%
-    dplyr::filter(Gender=="male" | Gender=="female") %>%
-    dplyr::filter(!is.na(AgeGroup20))
-
-dd.Y <- dd %>%
-  dplyr::mutate(Deceased=as.integer(Deceased)) %>%
-  dplyr::mutate(Gender = factor(Gender, levels=c("male","female"), labels=c("M","W"))) %>%
-  dplyr::mutate(AgeGroup20=factor(dd$AgeGroup20, levels=dd$AgeGroup20 %>% unique(), ordered=TRUE)) %>%
-  dplyr::mutate(AgeGroupID20=as.integer(AgeGroup20)) %>%
-  dplyr::mutate(AgeGroup2=factor(ifelse(AgeGroupID20>=14,"Über65","Unter65"), levels=c("Unter65","Über65"))) %>%
-  dplyr::arrange(Year, AgeGroupID20, Gender)
-
+# Get mortality data
+ddY <- caStatAData_m_ag()
 ```
-
 
 ```{r}
 
