@@ -1,7 +1,7 @@
 ---
-title: "COVID-19 Sterblichkeit: Fallstudie Wien"
+title: "COVID-19 ImpfStatus und Auswirkungen"
 author: "Thomas.Strehl@at.ibm.com"
-date: "4/11/2021"
+date: "2021-09-01"
 output:
   html_document:
     df_print: kable
@@ -61,41 +61,33 @@ vaccinationImmunizationFaktor = 0.9
 
 ```
 
-## Table Formats
-
-
-
 
 # Source Data 
 
-## AGES
+## Alle Daten die für Bundesland, Altersgruppe und Geschlecht verfügbar sind
 
-### CovidFaelle TimeLine für AgeGroups
+Hier werden alle Daten zusammegetragen die auf Granularität Bundesland, Altersgruppe und Geschlecht verfügbar sind 
+
+### Confirmed, Recovered, Death ab 2020-02-26
 
 ```{r, results='hide'}
-
-# fetch new data from Ages (openData)
+# CovidFaell_Altersgruppe.csv aus AGES zip
+# --> obsoletes CovidFaelle_Timeline.csv (same time frame, but Bundesland only)
 dcrd <- caAgesData_crd_rag(rollMeanDays=rollMeanDays)
 str(dcrd)
 ```  
 
-### Vaccination Timeline für AgeGroups
+### Vaccinated ab 2020-12-27
 
 ```{r, results='hide'}
-# Read new data from bmsgpk website
+# https://info.gesundheitsministerium.gv.at/data/timeline-eimpfpass.csv
 dv <- caBmsgpkData_v_rag(rollMeanDays=rollMeanDays)
 str(dv)
 ``` 
 
-### Confirmed Timeline für AgeGroups with Immunization Status
+### Datensatz nach Bundesland, Altersgruppe und Geschlecht: Confirmed, Recovered, Death, Vaccinated
 
-```{r, results='hide'}
-# Read new data from bmsgpk website
-dcv <- caAgesData_cv_a3()
-str(dcv)
-``` 
-
-### Join CovidFaelle and Vaccination timelines
+Die Daten sind vollständig in dem Sinne als die verfügbaren Features über den ganzen Lifecycle ihrer Existenz vorhanden sind. Die Daten sind unvollständig in dem Sinn, dass es eine Reihe weiterer Features gibt, die nicht auf Granularität  Bundesland, Altersgruppe und Geschlecht verfügbar sind.
 
 ```{r, results='hide'}
 
@@ -117,11 +109,171 @@ dcrdv$sumVaccinated_2[idx] <- 0
 str(dcrdv)
 ```  
 
-### Join Covid+Vaccination  and ConfirmedByImmunizationStatus timelines
+
+## Bundesland
+
+Hier werden alle Daten zusammegetragen die auf Granularität Bundesland verfügbar sind
+
+### Confirmed, Recovered, Death, Inzidenz seit 2020-02-26
+
+```{r, results='hide'}
+# CovidFaelle_Timeline.csv aus AGES zip
+bcrdz <- caAgesData_crd_r(rollMeanDays=7)
+str(bcrdz)
+```
+
+### Tested, Hospital, ICU seit 2020-04-01
+
+```{r, results='hide'}
+# CovidFallzahlen.csv aus AGES zip
+bthi <- caAgesData_thi_r(rollMeanDays=7)
+str(bthi)
+```
+
+### Datensatz nach Bundesland: Confirmed, Recovered, Death, Inzidenz, Tested, Hospital, ICU
+
+```{r, results='hide'}
+# Merge bcrdz and bthi
+btcrdzhi <- bcrdz %>%
+  dplyr::left_join(bthi, by=c("Date","Region")) %>%
+  dplyr::select(Date, Region, Population, starts_with("new"), starts_with("cur") , starts_with("sum"))
+str(btcrdzhi)
+```
+
+
+```{r, results='hide'}
+### Hospital, ICU seit 2021-01-24. Redundant, not required
+# Hospitalisierung.csv aus AGES zip (OpenData: https://covid19-dashboard.ages.at/data/Hospitalisierung.csv)
+# --> gleiche Daten sollten in CovidFallzahlen.csv aber schon mit 2020-04-01 vorhanden sein
+hi <- caAgesData_hi_r(rollMeanDays=7)
+str(hi)
+```
+
+## AgeGroup3 
+
+Hier werden alle Daten zusammengetragen, die auf Granularität 3 Altersgruppen vorliegen, ohne Details zu den Bundesländern. Aktuell sind das nur die Inzidenz für VollständigGeimpfte vs. NichtVollständigGeimpfte. Die Behandlung der 'Genesenen' ist nicht klar.
+
+### Inzidenz mit Immunization Status ab 2021-06-01
+
+```{r, results='hide'}
+# Read new data from bmsgpk website
+az3 <- caAgesData_z_a3()
+str(az3)
+``` 
+
+### Join mit btcrdzhi
 
 ```{r, results='hide'}
 
-dcrdvi <- dcrdv %>% 
+# Flatten AgeGroup3 and ImmuStatus for join with btcrdzhi
+bz3 <- az3 %>%
+  tidyr::pivot_wider(names_from="AgeGroup3", values_from=c("newInzImmuYes","newInzImmuNo"))
+
+btcrdzhi3 <- btcrdzhi %>%
+  dplyr::filter(Region=="Österreich") %>%
+  dplyr::select(-Region) %>%
+  dplyr::left_join(bz3, by="Date")
+
+str(btcrdzhi3)
+```
+
+### WorkPlot AgeGroup3
+
+```{r, results='hide'}
+
+str(btcrdzhi3)
+dp <- btcrdzhi3 %>% 
+  dplyr::filter(Date > as.POSIXct("2021-06-01")) %>%
+  dplyr::mutate(newConfPop100k=newConfirmed/Population*100000) %>%
+  tidyr::pivot_longer(cols=c( "newInzImmuNo_Jugendliche", "newInzImmuNo_Erwachsene","newInzImmuNo_Senioren", 
+                             "newInzImmuYes_Jugendliche", "newInzImmuYes_Erwachsene","newInzImmuYes_Senioren"), 
+                      names_to=c("ImmuYesNo","AgeGroup3"), values_to="Anzahl", names_sep="_") %>%
+  dplyr::mutate(AgeGroup3=factor(AgeGroup3, levels=c("Jugendliche", "Erwachsene", "Senioren"), labels=c("Jugendliche", "Erwachsene", "Senioren")))
+
+dp$Anzahl[dp$Anzahl==0] <- NA
+
+ggplot(data=dp, aes(x=Date, y=Anzahl, shape=ImmuYesNo, color=ImmuYesNo)) +
+  # scale_y_continuous( sec.axis=dup_axis(), trans="log2", breaks=2^(seq(-4,10,by=1)), labels=sprintf("%g",2^(seq(-4,10,by=1)))) ) +
+  scale_y_continuous(name="Inzidenz", trans="log2", 
+                     breaks=2^(seq(-4,10,by=1)), labels=sprintf("%g",2^(seq(-4,10,by=1))), 
+                     sec.axis=dup_axis(name="Inzidenz_Stufe = log2(Inzidenz)", labels=seq(-4,10,by=1))) +
+  scale_x_datetime(date_breaks="2 weeks", date_labels="%d.%m") +
+  #scale_fill_manual(values=cbPalette) +
+  #scale_color_manual(values=cbPalette) +
+  geom_point(size=2) + 
+  geom_line() +
+  facet_grid(.~AgeGroup3) +
+  ggtitle("COVID-19 Österreich: Inzidenz nach Altersgruppe und ImpfStatus. Stand: 2021-08-28")
+
+``` 
+
+
+
+### WorkPlot1  Wave2 - Wave 4
+
+```{r, results='hide'}
+
+# str(btcrdzhi3)
+
+selCols=c("newConfirmed", "curHospital", "curICU", "newDeath")
+dp <- btcrdzhi3 %>% 
+  dplyr::select(c(Date, selCols)) %>%
+  tidyr::pivot_longer(cols=selCols, 
+                      names_to="Parameter", values_to="Anzahl") %>%
+  dplyr::mutate(Parameter = factor(Parameter, levels=selCols, labels=selCols, ordered=TRUE))
+ str(dp)
+
+ggplot(data=dp, aes(x=Date, y=Anzahl, color=Parameter)) +
+  scale_y_continuous(name="Anzahl", trans="log2", breaks=2^(seq(0,15,by=1)),
+                     sec.axis=dup_axis(name="Anzahl_Stufe = log2(Anzahl)", labels=seq(0,15,by=1))) +
+  scale_x_datetime(limits=c(as.POSIXct("2020-08-01"),as.POSIXct("2020-11-30")),  date_breaks="months", date_labels="%m") +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  # scale_shape_manual(values=atShapes) +
+  geom_point(aes(x=Date-days(322)),size=2) + 
+  geom_line(size=1) +
+  facet_wrap(Parameter~., nrow=1) +
+  ggtitle("COVID-19 Österreich: Vergleich 2. und 4. Welle mittels Überlagerung von Absolut Werten (Pos, Hosp, ICU, Verst)")
+
+``` 
+
+
+### WorkPlot2  Wave2 - Wave 4
+
+```{r, results='hide'}
+
+# str(btcrdzhi3)
+
+selCols=c("newConfirmed", "curHospital", "curICU", "newDeath")
+dp <- btcrdzhi3 %>% 
+  dplyr::select(c(Date, selCols)) %>%
+  dplyr::mutate(across(.cols=selCols, .fns= ~ .x/max(.x, na.rm=TRUE))) %>%
+  tidyr::pivot_longer(cols=selCols, 
+                      names_to="Parameter", values_to="Anzahl") %>%
+  dplyr::mutate(Parameter = factor(Parameter, levels=selCols, labels=selCols, ordered=TRUE))
+ str(dp)
+
+ggplot(data=dp, aes(x=Date, y=Anzahl, color=Parameter)) +
+  #scale_y_continuous(trans="log2", limits=c(1/256,1), breaks=2^(seq(-8,0,by=1))) +
+  scale_y_continuous(name="Prozent(max)", trans="log2", limits=c(1/256,1), breaks=2^(seq(-8,0,by=1)),
+                     sec.axis=dup_axis(name="Prozent_Stufe = log2(Prozent(max))", labels=seq(-8,0,by=1))) +
+  scale_x_datetime(limits=c(as.POSIXct("2020-08-01"),as.POSIXct("2020-12-31")),  date_breaks="months", date_labels="%m") +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  # scale_shape_manual(values=atShapes) +
+  geom_point(aes(x=Date-days(322)),size=2) + 
+  geom_line(size=1) +
+  facet_wrap(Parameter~., nrow=1) +
+  ggtitle("COVID-19 Österreich: Vergleich 2. und 4. Welle mittels Überlagerung der Werte relativ zum Maximum der 2ten Welle")
+
+``` 
+
+
+
+
+
+```{r, results='hide'}
+atcrdzhi <- dcrdv %>% 
   dplyr::filter(Region=="Österreich") %>%
   dplyr::group_by(Date, AgeGroup3) %>%
   dplyr::summarize(.groups="drop",
@@ -138,6 +290,177 @@ dcrdvi$inz7ImmunizedNein[idx] <- 0
 
 str(dcrdvi)
 ```  
+
+### COVID timeline: crdhit & crd & cv
+
+
+```{r, results='hide'}
+# Read new data from bmsgpk website
+thi <- caAgesData_thi_r(rollMeanDays=7)
+crd <- caAgesData_crd_r(rollMeanDays=7)
+
+# Dataframe with Population for AgeGroup3
+dcrd <- caAgesData_crd_rag(rollMeanDays=rollMeanDays)
+a3p <- dcrd %>%
+  dplyr::filter(Region=="Österreich") %>%
+  dplyr::group_by(Date, AgeGroup3) %>%
+  dplyr::summarize(.groups="drop", Population=sum(Population)) %>%
+  dplyr::group_by(AgeGroup3) %>%
+  dplyr::summarize(.groups="drop", Population=first(Population))
+  
+
+# Provides data on Immunized by AgeGroup3 for Austria
+di <- caBmsgpkData_v_rag(rollMeanDays=7) %>%
+  dplyr::filter(Region=="Österreich") %>%
+  dplyr::group_by(Date, AgeGroup3) %>%
+  dplyr::summarize(.groups="drop", sumVaccinated_2=sum(sumVaccinated_2)) %>%
+  dplyr::left_join(a3p, by="AgeGroup3")
+
+# Data on fully vaccinated
+dv <- caBmsgpkData_v_rag(rollMeanDays=rollMeanDays) %>%
+  dplyr::group_by(Date) %>%
+  dplyr::summarize(.groups="drop", sumVaccinated = sum(sumVaccinated_2))
+
+dis <- caAgesData_cv_a3() %>%
+# Add Population and sumVaccinated_2 by AgeGroup3
+  dplyr::left_join(di, by=c("Date","AgeGroup3")) %>%
+  dplyr::rename(sumImmunized=sumVaccinated_2) %>%
+  dplyr::mutate(sumSusceptible=Population-sumImmunized) %>%
+  dplyr::mutate(newConfImmuYes=inz7ImmunizedJa/100000*sumImmunized) %>%
+  dplyr::mutate(newConfImmuNo=inz7ImmunizedJa/100000*sumSusceptible) %>%
+  dplyr::filter(Date==max(Date))
+
+
+
+
+crdthi <- crd %>%
+  dplyr::left_join(thi, by=c("Date","Region")) %>%
+  dplyr::filter(Region=="Österreich") %>%
+  dplyr::left_join(dv, by="Date") %>%
+  dplyr::left_join(cv, by="Date") %>%
+  dplyr::mutate(sumImmunized = sumVaccinated + sumRecovered*2) %>%
+  dplyr::mutate(sumSusceptible = Population-sumImmunized) %>%
+  dplyr::mutate(newConfImmuYes = newConfImmuYes/100000*sumImmunized/7) %>%
+  dplyr::mutate(newConfImmuNo = newConfImmuNo/100000*sumSusceptible/7) %>%
+  dplyr::mutate(newConfImmuAll = newConfImmuYes+newConfImmuNo) %>%
+  dplyr::select(Date, Population, starts_with("new"), starts_with("cur"), starts_with("sum"))
+
+
+str(crdthi)
+```
+
+
+
+```{r, results='hide'}
+
+dp <- crdthi %>% 
+  dplyr::filter(Region=="Österreich") %>%
+
+  dplyr::mutate(curHospital=dplyr::lead(curHospital,21), 
+                curICU=dplyr::lead(curICU,28), 
+                newDeath=dplyr::lead(newDeath,7)) %>%
+
+  dplyr::mutate(propConfirmed=newConfirmed/max(newConfirmed, na.rm=TRUE),
+                propHospital=curHospital/max(curHospital, na.rm=TRUE), 
+                propICU=curICU/max(curICU, na.rm=TRUE), 
+                propDeath=newDeath/max(newDeath, na.rm=TRUE)) %>%
+  
+  tidyr::pivot_longer(cols=c("propConfirmed", "propDeath", "propHospital", "propICU"), names_to="Parameter", values_to="Anzahl")
+#str(dp)
+
+
+ggplot(data=dp, aes(x=Date, y=Anzahl, shape=Parameter, color=Parameter)) +
+  scale_y_continuous(limits=c(0,1), breaks=seq(0,1,by=.1), sec.axis=dup_axis()) +
+  scale_x_datetime(date_breaks="2 weeks", date_labels="%d.%m") +
+  geom_point(size=2) + 
+  geom_line() +
+  ggtitle("COVID-19 Österreich: Vergleich 3. und 4. Welle mittels Überlagerung von Posit,Hosp,ICU,Verst")
+
+``` 
+
+```{r, results='hide'}
+
+dp <- crdthi %>% 
+  dplyr::filter(Date > as.POSIXct("2020-08-01")) %>%
+
+  #dplyr::mutate(curHospital=dplyr::lead(curHospital,0), 
+  #              curICU=dplyr::lead(curICU,0), 
+  #              newDeath=dplyr::lead(newDeath,0)) %>%
+
+  #dplyr::mutate(propConfirmed=newConfirmed/max(newConfirmed, na.rm=TRUE),
+  #              propHospital=curHospital/max(curHospital, na.rm=TRUE), 
+  #              propICU=curICU/max(curICU, na.rm=TRUE), 
+  #              propDeath=newDeath/max(newDeath, na.rm=TRUE)) %>%
+  #dplyr::mutate(curICU=curICU*4) %>%
+  #dplyr::mutate(newDeath=newDeath*4*18) %>%
+  #dplyr::mutate(newConfirmed=newConfirmed/1.42) %>%
+  #dplyr::mutate(newRecovered=newRecovered/1.42) %>%
+
+  dplyr::mutate(newConfirmed=newConfirmed/Population*100000) %>%
+  
+  #tidyr::pivot_longer(cols=c("propConfirmed", "propDeath", "propHospital", "propICU"), names_to="Parameter", values_to="Anzahl")
+  tidyr::pivot_longer(cols=c("newConfirmed","newConfImmuAll","newConfImmuYes",  "curHospital", "curICU", "newDeath"), 
+                      names_to="Parameter", values_to="Anzahl") #%>%
+  #dplyr::mutate(Parameter=factor(Parameter, 
+  #                               levels=c("newConfirmed", "newConfImmuAll","newConfImmuYes", "curHospital", "newDeath", "curICU"), 
+  #                               labels=c("newConfirmed", "newConfImmuAll","newConfImmuYes", "curHospital", "newDeath", "curICU"), ordered=TRUE))
+
+ggplot(data=dp, aes(x=Date, y=Anzahl, shape=Parameter, color=Parameter)) +
+  #scale_y_continuous( sec.axis=dup_axis(), trans="log2", breaks=2^(seq(0,10,by=1)-10)) +
+  scale_y_continuous( sec.axis=dup_axis(), trans="log2") +
+  scale_x_datetime(date_breaks="months", date_labels="%m") +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_point(size=2) + 
+  geom_line() +
+  facet_wrap(Parameter~., nrow=2, scales="free_y") +
+  ggtitle("COVID-19 Österreich: Vergleich 3. und 4. Welle mittels Überlagerung von Posit,Hosp,ICU,Verst")
+
+``` 
+
+# ImpfFortschritt überregional
+
+## Auswirkungen auf Inzidenz
+
+```{r, results='hide'}
+
+dp <- dcrdvi %>% 
+  dplyr::filter(Date > as.POSIXct("2021-06-01"), Date < as.POSIXct("2021-08-20")) %>%
+  dplyr::mutate(inz7Bevölkerung=newConfirmed/Population*100000*7) %>%
+  tidyr::pivot_longer(cols=c("inz7Bevölkerung", "inz7ImmunizedJa", "inz7ImmunizedNein"), names_to="Status", values_to="Inzidenz")
+str(dp)
+
+
+ggplot(data=dp, aes(x=Date, y=Inzidenz, shape=AgeGroup3, color=Status)) +
+  scale_y_continuous(limits=c(.5,256), trans="log2", breaks=2^(0:10), labels=2^(0:10), sec.axis=dup_axis(labels=0:10)) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_point(size=.75) + 
+  geom_line() +
+  facet_grid(.~AgeGroup3, scales="free_y") +
+  ggtitle("COVID-19 Österreich: Inzidenz nach Impfstatus und Altersgruppe")
+
+``` 
+
+```{r, results='hide'}
+
+dp <- dcrdvi %>% 
+  dplyr::filter(Date > as.POSIXct("2021-06-01"), Date < as.POSIXct("2021-08-20")) %>%
+  dplyr::mutate(InzidenzVerhältnis=inz7ImmunizedNein/inz7ImmunizedJa)
+
+
+ggplot(data=dp, aes(x=Date, y=InzidenzVerhältnis, shape=AgeGroup3, color=AgeGroup3)) +
+  scale_y_continuous(limits=c(1,32), breaks=2^(0:10), trans="log2", sec.axis=dup_axis(labels=0:10)) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_point() + 
+  geom_line() +
+  ggtitle("COVID-19 Österreich: Inzidenz: Verhältnis Ungeimpfte/Geimpfte nach Altersgruppe")
+
+```
+
+## Auswirkungen auf Todesfälle
+
 
 
 # Vienna

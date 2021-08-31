@@ -121,6 +121,11 @@ caAgesData_crd_rag <- function(rollMeanDays=7) {
 # -------------------------------------------------------------------------------------------
 caAgesData_cv_a3 <- function(rollMeanDays=7, bSave=TRUE) {
   
+  # new files as of 2021-08-27
+  # https://www.ages.at/fileadmin/AGES2015/Themen/Krankheitserreger_Dateien/Coronavirus/Inzidenz_Impfstatus/Inzidenz_Impfstatus_12bis17Jahre.csv
+  # https://www.ages.at/fileadmin/AGES2015/Themen/Krankheitserreger_Dateien/Coronavirus/Inzidenz_Impfstatus/Inzidenz_Impfstatus_18bis59Jahre.csv
+  # https://www.ages.at/fileadmin/AGES2015/Themen/Krankheitserreger_Dateien/Coronavirus/Inzidenz_Impfstatus/Inzidenz_Impfstatus_60plus.csv
+  
   # Data seem to be published with a timestamp in the filename
   yesterday = format(now() -days(1), "%Y-%m-%d")
   yesterday = "2021-08-20"
@@ -150,6 +155,49 @@ caAgesData_cv_a3 <- function(rollMeanDays=7, bSave=TRUE) {
 }
 
 # -------------------------------------------------------------------------------------------
+# AGES: Inzidenz_vollstaendig_unvollstaendig_geimpft_2021-08-20.csv: Confirmed, Vaccinated by AgeGroup3
+# -------------------------------------------------------------------------------------------
+caAgesData_z_a3 <- function(rollMeanDays=7, bSave=TRUE) {
+  
+  # new files as of 2021-08-27
+  Urls=c(
+  "https://www.ages.at/fileadmin/AGES2015/Themen/Krankheitserreger_Dateien/Coronavirus/Inzidenz_Impfstatus/Inzidenz_Impfstatus_12bis17Jahre.csv",
+  "https://www.ages.at/fileadmin/AGES2015/Themen/Krankheitserreger_Dateien/Coronavirus/Inzidenz_Impfstatus/Inzidenz_Impfstatus_18bis59Jahre.csv",
+  "https://www.ages.at/fileadmin/AGES2015/Themen/Krankheitserreger_Dateien/Coronavirus/Inzidenz_Impfstatus/Inzidenz_Impfstatus_60plus.csv")
+  AgeGroups3=c("Jugendliche","Erwachsene","Senioren")
+  
+  col.names=c("Date","newInzImmuYes","newInzImmuNo")
+  colClasses = c("character", rep("numeric",2))
+  for (i in 1:length(Urls)) {
+    df <- read.csv(Urls[i], header=FALSE, skip=1, sep=";", dec=",", stringsAsFactors=FALSE, col.names=col.names, colClasses=colClasses) 
+    df$AgeGroup3 <- AgeGroups3[i]
+    # Lots of empty rows
+    df <- df[complete.cases(df),]
+    if(i==1)
+      dfs <- df
+    else
+      dfs <- rbind(dfs,df)
+  }
+  za3 <- dfs %>%
+    dplyr::mutate(Date=as.POSIXct(Date, format="%d.%m.%Y")) %>%
+    dplyr::mutate(AgeGroup3=factor(AgeGroup3, levels=AgeGroups3, labels=AgeGroups3, ordered=TRUE)) %>%
+    # scale from 7-TagesInzidenz to Inzidenz
+    dplyr::mutate(newInzImmuYes=newInzImmuYes/7, newInzImmuNo=newInzImmuNo/7) %>%
+    dplyr::select(Date, AgeGroup3, starts_with("new"))
+  #str(za3)
+  #summary(za3)
+
+  if (bSave) {
+    rdaFile <- paste0("./data/COVID-19-CWM-AGES-ConfVacc-AgeGroup3.rda")   
+    # logMsg(paste("Writing", rdaFile))
+    saveRDS(za3, file=rdaFile)  
+  }
+  return(za3)
+}
+
+
+
+# -------------------------------------------------------------------------------------------
 # BMSGPK: timeline-eimpfpass.csv: TimeLine Impfungen (Region, AgeGroup, Gender, Shot1, Shot2)
 # -------------------------------------------------------------------------------------------
 caBmsgpkData_v_rag <- function(rollMeanDays=7) {
@@ -161,11 +209,10 @@ caBmsgpkData_v_rag <- function(rollMeanDays=7) {
   
   df <- df %>%
     dplyr::rename(RegionID=BundeslandID, Region=Name, Population=Bevölkerung, AgeX_X_X=Gruppe_NichtZuordenbar) %>%
-    dplyr::select(Date, RegionID, Region, Population, starts_with("Gruppe_")) %>%
+    dplyr::select(Date, RegionID, Region, starts_with("Gruppe_")) %>%
     dplyr::rename_at(vars(starts_with("Gruppe_")), list(~ paste0("Age",substring(.,8)))) %>%
     tidyr::pivot_longer(starts_with("Age"), names_sep="_", names_to=c("AgeGroup","Gender","ShotNo"), values_to="sumVaccinated") %>%
     dplyr::filter(Gender!="D", Region!="KeineZuordnung") %>%
-    dplyr::select(-Population) %>%
     dplyr::mutate(AgeGroup=stringr::str_replace(AgeGroup, fixed("Age.15"), "5-14")) %>%
     dplyr::mutate(AgeGroup=stringr::str_replace(AgeGroup, fixed("Age.84"), ">84")) %>%
     dplyr::mutate(AgeGroup=stringr::str_replace(AgeGroup, fixed("Age"), "")) %>%
@@ -179,8 +226,8 @@ caBmsgpkData_v_rag <- function(rollMeanDays=7) {
                                    labels=c(rep("Jugendliche",3), rep("Erwachsene",4), rep("Senioren",3)), ordered=TRUE)) %>%
     dplyr::arrange(Region, RegionID, AgeGroup, Gender, Date) %>%
     dplyr::group_by(Region, RegionID, AgeGroup, Gender) %>%
-    dplyr::mutate(sumVaccinated_1=rollmean(sumVaccinated_1, k=rollMeanDays, align="right", fill=0)) %>%
-    dplyr::mutate(sumVaccinated_2=rollmean(sumVaccinated_2, k=rollMeanDays, align="right", fill=0)) %>%
+    dplyr::mutate(sumVaccinated_1=rollmean(sumVaccinated_1, k=rollMeanDays, align="center", fill=0)) %>%
+    dplyr::mutate(sumVaccinated_2=rollmean(sumVaccinated_2, k=rollMeanDays, align="center", fill=0)) %>%
     dplyr::mutate(newVaccinated_1=sumVaccinated_1-dplyr::lag(sumVaccinated_1)) %>%
     dplyr::mutate(newVaccinated_2=sumVaccinated_2-dplyr::lag(sumVaccinated_2)) %>%
     dplyr::ungroup() %>%
@@ -194,3 +241,212 @@ caBmsgpkData_v_rag <- function(rollMeanDays=7) {
   # str(di)
   return(di)
 }
+
+
+
+
+# -------------------------------------------------------------------------------------------
+# AGES: Inzidenz_vollstaendig_unvollstaendig_geimpft_2021-08-20.csv: Confirmed, Vaccinated by AgeGroup3
+# -------------------------------------------------------------------------------------------
+caAgesData_hi_r <- function(rollMeanDays=7, bSave=TRUE) {
+
+  url <- "https://covid19-dashboard.ages.at/data/Hospitalisierung.csv"
+  df<- read.csv(url, header=TRUE, sep=";", stringsAsFactors=FALSE) %>%
+    dplyr::mutate(Date=as.POSIXct(Meldedatum, format="%d.%m.%Y %H:%M:%S")) %>%
+    dplyr::select(c(Date,-1,-2,3,4,6)) %>%
+    dplyr::rename(Region=Bundesland, curHospital=NormalBettenBelCovid19, curICU=IntensivBettenBelCovid19) %>%
+    dplyr::arrange(Region, Date) %>%
+    dplyr::group_by(Region) %>%
+    dplyr::mutate(dplyr::across(starts_with("cur"), ~ rollmean(.x, k=rollMeanDays, align="right", fill=NA))) %>%
+    dplyr::ungroup()
+  # str(df)
+
+  return(df)
+}
+  
+# -------------------------------------------------------------------------------------------
+# AGES: Inzidenz_vollstaendig_unvollstaendig_geimpft_2021-08-20.csv: Confirmed, Vaccinated by AgeGroup3
+# -------------------------------------------------------------------------------------------
+caAgesData_crdhit_r <- function(rollMeanDays=7, bSave=TRUE) {
+  
+  url <- "https://info.gesundheitsministerium.gv.at/data/timeline-faelle-bundeslaender.csv"
+  df<- read.csv(url, header=TRUE, sep=";", stringsAsFactors=FALSE) %>%
+    dplyr::mutate(Date=as.POSIXct(Datum)) %>%
+    dplyr::select(-1) %>%
+    dplyr::rename(RegionID=BundeslandID, Region=Name, 
+                  sumConfirmed=BestaetigteFaelleBundeslaender, sumDeath=Todesfaelle, sumRecovered=Genesen, 
+                  sumTested=Testungen, sumTestedPCR=TestungenPCR, sumTestedAG=TestungenAntigen,
+                  curHospital=Hospitalisierung, curICU=Intensivstation) %>%
+    dplyr::select(Date, RegionID, Region, starts_with("cur"), starts_with("sum"))
+  # str(df)
+  
+  crdhit <- df %>% 
+    dplyr::arrange(Region, Date) %>%
+    dplyr::group_by(Region) %>%
+    dplyr::mutate(
+                  # test: don't smooth the hospitaö and icu current readings 
+                  # dplyr::across(starts_with("cur"), ~ rollmean(.x, k=rollMeanDays, align="right", fill=NA)),
+                  dplyr::across(starts_with("sum"), ~ rollmean(.x, k=rollMeanDays, align="center", fill=NA))) %>%
+    # calc new* from sum*
+    #dplyr::mutate(dplyr::across(starts_with("new"), ~ .x - dplyr::lag(.x))) %>%
+    dplyr::mutate(newTested=sumTested-dplyr::lag(sumTested),
+                  newConfirmed=sumConfirmed-dplyr::lag(sumConfirmed), 
+                  newRecovered=sumRecovered-dplyr::lag(sumRecovered), 
+                  newDeath=sumDeath-dplyr::lag(sumDeath)) %>%
+    dplyr::ungroup() %>%
+    
+    # Beautify data frame
+    dplyr::select(Date, Region, RegionID, starts_with("new"), starts_with("cur") , starts_with("sum"))
+  # str(crdhit)
+  
+  return(crdhit)
+}
+
+
+# -------------------------------------------------------------------------------------------
+# BMSGPK: timeline-eimpfpass.csv: TimeLine Impfungen (Region, AgeGroup, Gender, Shot1, Shot2)
+# -------------------------------------------------------------------------------------------
+caBmsgpkData_crdhit_r0 <- function(rollMeanDays=7) {
+
+  atRegionsShort=c("B","K","Noe","Ooe","AT","Szbg","Stmk","T","V","W")
+  atRegions=c("Burgenland","Kärnten","Niederösterreich","Oberösterreich","Österreich","Salzburg","Steiermark","Tirol","Vorarlberg","Wien")
+  
+  url <- "https://raw.githubusercontent.com/at062084/COVID-19-Austria/master/bmsgpk/data/COVID-19-austria.csv"
+  df<- read.csv(url, header=TRUE, sep=",", stringsAsFactors=FALSE) %>%
+    dplyr::mutate(Stamp=as.POSIXct(Stamp)) %>%
+    tidyr::pivot_longer(cols=c("AT","B","K","Noe","Ooe","Szbg","Stmk","T","V","W"), names_to="Region", values_to="Count") %>%
+    dplyr::mutate(Region=factor(Region, levels=atRegionsShort, labels=atRegions)) %>%
+    tidyr::pivot_wider(id_cols=c("Stamp", "Status","Region"), values_fn = list(Count=mean), names_from="Status", values_from="Count") %>%
+    dplyr::rename(sumConfirmed=Confirmed, sumDeath=Deaths, sumRecovered=Recovered, 
+                  sumTested=Tested, sumTestedPCR=Tested_PCR, sumTestedAG=Tested_AG,
+                  curHospital=Hospitalisierung, curICU=Intensivstation) %>%
+    # handle NA's
+    dplyr::mutate(Date=as.POSIXct(format(Stamp,"%Y-%m-%d"))) %>%
+    dplyr::group_by(Date, Region) %>%
+    dplyr::summarize_all(.groups="drop", .funs=mean, na.rm=TRUE) %>%
+    # tidy cols
+    dplyr::select(Date, Region, starts_with("cur"), starts_with("sum"))
+  str(df)
+  
+  crdhit_r0 <-df  %>%
+    dplyr::arrange(Region, Date) %>%
+    dplyr::group_by(Region) %>%
+    dplyr::mutate(dplyr::across(starts_with("sum"), ~ rollmean(.x, k=rollMeanDays, align="center", fill=NA))) %>%
+    dplyr::mutate(newTested=sumTested-dplyr::lag(sumTested),
+                  newConfirmed=sumConfirmed-dplyr::lag(sumConfirmed), 
+                  newRecovered=sumRecovered-dplyr::lag(sumRecovered), 
+                  newDeath=sumDeath-dplyr::lag(sumDeath)) %>%
+    dplyr::ungroup() %>%
+    dplyr::select(Date, Region, starts_with("new"), starts_with("cur") , starts_with("sum"))
+  str(crdhit_r0)
+  
+  return(crdhit_r0)
+}
+
+
+
+# -------------------------------------------------------------------------------------------
+# BMSGPK: timeline-eimpfpass.csv: TimeLine Impfungen (Region, AgeGroup, Gender, Shot1, Shot2)
+# -------------------------------------------------------------------------------------------
+caBmsgpkData_crdhit_r0 <- function(rollMeanDays=7) {
+  
+  zipFile=paste0("./data/data.zip")
+  unzipDir="./data/unzip"
+  agesDir="./data"
+  url="https://covid19-dashboard.ages.at/data/data.zip"
+  
+  cmd <- paste0("\"",url,"\"", " -O ", zipFile)
+  system2("wget", cmd)
+  
+  cmd <- paste("-fo", zipFile, "-d", unzipDir)
+  system2("unzip",cmd)
+  
+
+  return(0)
+}
+
+
+
+# -------------------------------------------------------------------------------------------
+# AGES: Download AGES zip file
+# -------------------------------------------------------------------------------------------
+scrapeZIP_AGES <- function() {
+  
+  zipFile=paste0("./data/ages.data.zip")
+  unzipDir="./data/tmp.zip"
+  csvDir="./data"
+  url="https://covid19-dashboard.ages.at/data/data.zip"
+  
+  #  logMsg(paste("Downloading", url, "to", zipFile))
+  cmd <- paste0("\"",url,"\"", " -O ", zipFile)
+  system2("wget", cmd)
+  
+  cmd <- paste("-o", zipFile, "-d", unzipDir)
+  system2("unzip",cmd)
+  
+  parms <- paste0("-f ",unzipDir, "/*.csv", " ", csvDir)
+  system2("mv", parms)
+  
+  return(0)
+}
+
+# -------------------------------------------------------------------------------------------
+# AGES: curHospital, curICU by Region
+# -------------------------------------------------------------------------------------------
+caAgesData_thi_r <- function(rollMeanDays=7) {
+  
+  # "Alter in 5-Jahresgruppen","Values","Time section","Gender <2>","Number","Annotations"
+  fName <- "./data/CovidFallzahlen.csv"
+  col.names=c("Date","sumTested","NULL", "curHospital", "curICU", "NULL", "NULL", "RegionID", "Region")
+  colClasses=c("character","numeric","NULL","numeric", "numeric","NULL","NULL","character","character")
+  
+  df <- read.csv(fName, header=TRUE,  sep=";", stringsAsFactors=FALSE, 
+                 col.names=col.names, colClasses=colClasses) %>%
+    dplyr::mutate(Date=as.POSIXct(Date, format="%d.%m.%Y"))
+  
+  df$Region[df$Region=="Alle"] <- "Österreich"
+ 
+  thi_r <- df %>%
+    dplyr::arrange(Region, Date) %>%
+    dplyr::group_by(Region) %>%
+    dplyr::mutate(dplyr::across(starts_with("sum"), ~ rollmean(.x, k=rollMeanDays, align="right", fill=NA))) %>%
+    dplyr::mutate(dplyr::across(starts_with("cur"), ~ rollmean(.x, k=rollMeanDays, align="right", fill=NA))) %>%
+    dplyr::mutate(newTested=sumTested-dplyr::lag(sumTested)) %>%
+    dplyr::ungroup() %>%
+    dplyr::select(Date, Region, starts_with("new"), starts_with("cur"), starts_with("sum"))
+   
+  return(thi_r)
+}
+
+
+# -------------------------------------------------------------------------------------------
+# AGES: sumConfirmed, sumRecovered,  sumDeath by Region
+# -------------------------------------------------------------------------------------------
+caAgesData_crd_r <- function(rollMeanDays=7) {
+  
+  # "Alter in 5-Jahresgruppen","Values","Time section","Gender <2>","Number","Annotations"
+  fName <- "./data/CovidFaelle_Timeline.csv"
+  col.names=c("Date", "Region", "RegionID", "Population", "newConfirmed","sumConfirmed", "newConfirmed7","newInzidenz7", "newDeath","sumDeath", "newRecovered","sumRecovered")
+  colClasses=c(rep("character",2),rep("numeric",10))
+  df <- read.csv(fName, header=TRUE,  sep=";", dec=",", stringsAsFactors=FALSE, col.names=col.names, colClasses=colClasses) %>% 
+    dplyr::mutate(Date=as.POSIXct(Date, format="%d.%m.%Y %H:%M:%S")) %>%
+    dplyr::mutate(newInzidenz=newInzidenz7/7) %>%
+    dplyr::select(-newConfirmed7, -newInzidenz7, -RegionID)
+    #str(df)
+  
+  crd_r <- df %>%
+    dplyr::arrange(Region, Date) %>%
+    dplyr::group_by(Region) %>%
+    # align right to fit with AGES way of calculating Inzidenz
+    dplyr::mutate(dplyr::across(starts_with("sum"), ~ rollmean(.x, k=rollMeanDays, align="right", fill=0))) %>%
+    dplyr::mutate(newConfirmed=sumConfirmed-dplyr::lag(sumConfirmed)) %>%
+    dplyr::mutate(newRecovered=sumRecovered-dplyr::lag(sumRecovered)) %>%
+    dplyr::mutate(newDeath=sumDeath-dplyr::lag(sumDeath)) %>%
+    dplyr::ungroup() %>%
+    dplyr::select(Date, Region, Population, starts_with("new"), starts_with("cur"), starts_with("sum"))
+  #str(crd_r)
+  
+  return(crd_r)
+}
+
+
