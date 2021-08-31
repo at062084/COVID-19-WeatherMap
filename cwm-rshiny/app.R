@@ -15,7 +15,7 @@ logMsg <- function(msg, sessionID="_global_") {
 
 hostSystem <- system("hostname", intern=TRUE)
 slackMsg <- function (title, msg, hostName = hostSystem) {
-  url <- as.character(read.csv("./secrets/slack.txt",header=FALSE)[1,1])
+  url <- as.character(read.csv("../secrets/slack.txt",header=FALSE)[1,1])
   body <- list(text = paste(paste0(now()," *",title,"*: "), paste0(hostName,": ",msg)))
   r <- POST(url, content_type_json(), body = body, encode = "json")
   invisible(r)
@@ -371,7 +371,12 @@ ui <- fluidPage(
                  p("", align = "center", style="color:green"),
                  fluidRow(column(width=6, plotOutput(outputId="ggpFrontPage", height="50vh")),
                           column(width=6, htmlOutput(outputId = "htmlFrontPageBot")))),
-                 
+
+        tabPanel("Aktuelles",
+                 h4("Darstellung und Interpretation von aktuellen Daten", align = "left", style="color:black"),
+                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
+                 htmlOutput(outputId="blogNews")),
+        
        tabPanel("Bundesländer",
                  h4("Lage und Aussichten Bundesländer", align = "left", style="color:gray"),
                  p("[Menüauswahl: keine]", align = "left", style="color:green"),
@@ -428,7 +433,18 @@ ui <- fluidPage(
 #                 h4("Britische (B.1.1.7, N501Y-V1), Afrikanische (B.1.351, N501Y-V2) und deren Stamm Mutation (N501Y)", align = "left", style="color:gray"),
 #                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
 #                 fluidRow(column(width=12, plotOutput(outputId = "ggpMutations", height="75vh")))),
-                          
+
+        tabPanel("Formeln",
+                 h4("Zur Berechnung der epidemiologischen Parameter und abgeleiteter Grössen", align = "left", style="color:black"),
+                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
+                 htmlOutput(outputId="blogFormulas")),
+
+
+        tabPanel("Gefährdung",
+                h4("Alters- und Geschlechtsabhängigkeit der Bedrohung durch COVID-19", align = "left", style="color:black"),
+                p("[Menüauswahl: keine]", align = "left", style="color:green"),
+                htmlOutput(outputId="blogAge")),
+         
         tabPanel("Rückblick 2020",
                  h4("Exponentielles Wachstum in zweiten Halbjahr 2020", align = "left", style="color:gray"),
                  p("[Menüauswahl: Region, StufenModell]", align = "left", style="color:green"),
@@ -1014,6 +1030,9 @@ server <- function(input, output, session) {
   # Erläuterungen
   # -------------------------------------------
   output$manDescription <- renderText({ htmlDescription })
+  output$blogNews <- renderText({ htmlNews })
+  output$blogAge <- renderText({ htmlAge })
+  output$blogFormulas <- renderText({ htmlFormulas })
   
   
   

@@ -252,7 +252,7 @@ ggplot(data=dp, aes(x=Date, y=Anzahl, color=Parameter)) +
 
 ## Werte relativ zum Maximum der 2. Welle 
 
-Um die Dynamik der 2. und 4. Welle besser vergleichen zu können sind hier die Fallzahlen als Prozentsatz des Maximums am Höhepunkte der 2. Welle dargestellt (1=100%)
+Um die Dynamik der epidemiologischen Parameter der 2. und 4. Welle besser vergleichen zu können sind hier die Fallzahlen als Prozentsatz des jeweiligen Maximums am Höhepunkt der 2. Welle dargestellt (1=100%)
 
 - Die beiden Wellen sehen auch aus dieser Persprektive sehr ähnlich aus
 - Aus aktueller Sicht gibt es keinen Grund anzunehmen, dass sich dieses Verhalten ändern wird
