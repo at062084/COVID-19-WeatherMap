@@ -37,20 +37,22 @@ source("./bmsgpk.R")
 # DownLoad data from BMSGPK
 # -----------------------------------------------------------------------------------
 
-# Confirmed+Tested BundesLänder 
-logMsg("Downloading timeline-faelle-bundeslaender data from BMSGPK ...","__cron__")
-dd <- caBmsgpkRead_tfb()
-
-# Confirmed EMS 
-logMsg("Downloading timeline-faelle-ems data from BMSGPK ...","__cron__")
-de <- caBmsgpkRead_tfe()
-
-# bmsgpk data download
+# DownLoad list of 6 data files:
+# "timeline-eimpfpass", "timeline-bbg", "timeline-faelle-ems", "timeline-faelle-bundeslaender", 
+# "timeline-testungen-apotheken-betriebe", "timeline-testungen-schulen"
 logMsg("Downloading data from BMSGPK Website ...","__cron__")
 bd <- caBmsgpkDownLoad ()
 
+# https://info.gesundheitsministerium.gv.at/data/timeline-faelle-bundeslaender.csv
+logMsg("Downloading timeline-faelle-bundeslaender data from BMSGPK ...","__cron__")
+dd <- caBmsgpkRead_tfb()
+
+# "https://info.gesundheitsministerium.gv.at/data/timeline-faelle-ems.csv"
+logMsg("Downloading timeline-faelle-ems data from BMSGPK ...","__cron__")
+de <- caBmsgpkRead_tfe()
+
 # bmsgpk Webpage scraper
-logMsg("Scraping BMSGPK Website ...","__cron__")
+logMsg("DISABLED: Scraping BMSGPK Website ...","__cron__")
 #dm <- caBmsgpkUpdateDashboard()
 
 
@@ -58,23 +60,31 @@ logMsg("Scraping BMSGPK Website ...","__cron__")
 # Download data from AGES
 # -----------------------------------------------------------------------------------
 
-# Bundesländer
+# Download zip File from AGES. Contains 7 Files 
+logMsg("DownLoading zip File from AGES ...","__cron__")
+dz <- caAgesData_zipFile()
+
+# "http://covid19-dashboard.ages.at/data/CovidFallzahlen.csv" -> ./data/CovidFallzahlen.csv
 logMsg("DownLoading CovidFallzahlen data from AGES ...","__cron__")
 dt <- caAgesRead_cfz()
 
+# "http://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv" -> ./data/CovidFaelle_Timeline.csv
 logMsg("Downloading CovidFaelle_Timeline data from AGES ...","__cron__")
 dc <- caAgesRead_cftl()
 
+# agesProcessedFile="COVID-19-CWM-AGES-TestedProcessed.rda", 
+# agesEvaluatedFile="COVID-19-CWM-AGES-TestedEvaluated.rda"
 logMsg("Creating history of AGES reports of Confirmed cases ...", "__cron__")
 dq <- caAgesConfHistory(dc %>% 
                           dplyr::select(Date, RegionID, Region, newConfirmed) %>% 
                           dplyr::filter(Date> max(Date)-days(nSettleDays)))
 
-# Bezirke 
+# "http://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv" -> ./data/CovidFaelle_Timeline_GKZ.csv
 logMsg("Downloading CovidFaelle_Timeline_GKZ data from AGES ...","__cron__")
 db <- caAgesRead_cfGKZtl()
 
-#logMsg("Scraping Mutations data from AGES ...","__cron__")
+# "https://www.ages.at/themen/krankheitserreger/coronavirus/sars-cov-2-varianten-in-oesterreich"
+logMsg("DISABLED: Scraping Mutations data from AGES ...","__cron__")
 # dm <-caAgesRead_Mutations()
 
 # Construct working data frame 
@@ -85,6 +95,7 @@ df <- caAgesRead_tlrm(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile="./dat
                       bPredict=TRUE, nPolyDays=7, nPoly=2,
                       bEstimate=FALSE, bCompleteCases=FALSE)
 logMsg("Done Joining CovidFaelle_Timeline with CovidFallzahlen and creating new features","__cron__")
+
 
 slackMsg(title="COVID-19-WeatherMap",msg=paste("Complete cron job cron.R"))
 logMsg(paste("cron: Done Running script cron.R in ", getwd()),"__cron__")

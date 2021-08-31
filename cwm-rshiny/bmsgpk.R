@@ -34,7 +34,38 @@ BL <- data.frame(ID=c("AT","B","K","Noe","Ooe","Szbg","Stmk","T","V","W"),
 # caBmsgpkRead_tfb <- function(csvFile="timeline-faelle-bundeslaender.csv"), caBmsgpkDownLoad()
 
 
+# -------------------------------------------------------------------------------------------
+# AGES: zipFile
+# -------------------------------------------------------------------------------------------
+caAgesData_zipFile <- function() {
+  
+  zipFile=paste0("./data/data.zip")
+  unzipDir="./data/tmp"
+  
+  url="https://covid19-dashboard.ages.at/data/data.zip"
+  cmd <- paste0(url, " -O ", zipFile)
+  logMsg(paste("Executing", "wget", cmd))
+  system2("wget", cmd)
 
+  cmd <- paste0("-rf ./data/tmp/*")
+  logMsg(paste("Executing", "rm", cmd))
+  system2("rm", cmd)
+  
+  cmd <- paste("-o", zipFile, "-d", unzipDir)
+  logMsg(paste("Executing", "unzip", cmd))
+  system2("unzip",cmd)
+
+  cmd <- paste("cd", unzipDir, "; for i in *; do mv $i ../COVID-19-CWM-AGESZIP-$i; done")
+  logMsg(paste("Executing", cmd))
+  system(cmd)
+  
+  return(0)
+}
+
+
+# -------------------------------------------------------------------------------------------
+# AGES: Downoad data from Bmsgpk
+# -------------------------------------------------------------------------------------------
 caBmsgpkDownLoad <- function (ts=format(now(),"%Y%m%d-%H%M"), bSave=TRUE) {
   
   # https://info.gesundheitsministerium.gv.at/data/timeline-eimpfpass.csv?v=2021-05-12-01-19 
@@ -62,7 +93,8 @@ caBmsgpkDownLoad <- function (ts=format(now(),"%Y%m%d-%H%M"), bSave=TRUE) {
   logMsg(paste("Downloading files from BMSGPK at https://info.gesundheitsministerium.gv.at/data/"))
   
   # List of files to download
-  csvFiles <- c("timeline-eimpfpass", "timeline-bbg", "timeline-faelle-ems", "timeline-faelle-bundeslaender", "timeline-testungen-apotheken-betriebe", "timeline-testungen-schulen")  
+  csvFiles <- c("timeline-eimpfpass", "timeline-bbg", "timeline-faelle-ems", "timeline-faelle-bundeslaender", 
+                "timeline-testungen-apotheken-betriebe", "timeline-testungen-schulen")  
   
   # Populate new field 'Source' to identify csvFile
   csvSources <- c("tei","teb","tfe","tfb","ttab","tts")
@@ -74,7 +106,15 @@ caBmsgpkDownLoad <- function (ts=format(now(),"%Y%m%d-%H%M"), bSave=TRUE) {
     url <- paste0("https://info.gesundheitsministerium.gv.at/data/", csvFile,".csv")
     logMsg(paste("Fetching", url))
     # gather to long format
-    rc <- read.csv(url, header=TRUE, sep=";", stringsAsFactors=FALSE) %>% 
+    rc <- read.csv(url, header=TRUE, sep=";", stringsAsFactors=FALSE)
+    
+    if(bSave) {
+      csvWrite <- paste0("./data/COVID-19-CWM-BMSGPK-", csvFile, ".csv")
+      logMsg(paste("Writing", csvWrite))
+      write.csv(rc, csvWrite, sep=";", dec=".", row.names=FALSE, quote=FALSE)
+    }
+    
+    rc <- rc %>% 
       dplyr::mutate(Datum=as.Date(Datum)) %>% 
       dplyr::select(-starts_with("Bev")) %>%
       tidyr::gather(key="Key", value="Value", -Datum, -BundeslandID, -Name) %>%
@@ -88,10 +128,12 @@ caBmsgpkDownLoad <- function (ts=format(now(),"%Y%m%d-%H%M"), bSave=TRUE) {
       df <- rbind(df,rc)
     }
   }
-  rdaFile <- "./data/COVID-19-CWM-BMSGPK-DownLoad.rda"   
-  logMsg(paste("Writing", rdaFile))
-  if (bSave) saveRDS(df, file=rdaFile)  
   
+  if (bSave) { 
+    rdaFile <- "./data/COVID-19-CWM-BMSGPK-DownLoad.rda"   
+    logMsg(paste("Writing", rdaFile))
+    saveRDS(df, file=rdaFile)  
+  }
   return(df)
 }
 
