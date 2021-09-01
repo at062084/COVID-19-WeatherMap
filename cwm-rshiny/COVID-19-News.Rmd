@@ -1,6 +1,5 @@
 ---
-title: "COVID-19 Aktuelles"
-author: "Thomas.Strehl@at.ibm.com"
+title: "Aktuelles"
 date: "2021-09-01"
 output:
   html_document:
@@ -154,7 +153,6 @@ btcrdzhi3 <- btcrdzhi %>%
 str(btcrdzhi3)
 ```
 
-# Aktuelles
 
 Die Auswirkung der Impfungen auf das epidemiologische Geschehen wird hier anhand einiger Indizien dargestellt 
 
@@ -223,7 +221,7 @@ Zunächst die absoluten Zahlen (wie üblich mit log2 Skalierung in Verdoppelungs
 
 
 ```{r, results='hide'}
-
+daysDiff42 <- 333
 # str(btcrdzhi3)
 
 selCols=c("newConfirmed", "curHospital", "curICU", "newDeath")
@@ -231,18 +229,17 @@ dp <- btcrdzhi3 %>%
   dplyr::select(c(Date, selCols)) %>%
   tidyr::pivot_longer(cols=selCols, 
                       names_to="Parameter", values_to="Anzahl") %>%
-  dplyr::mutate(Parameter = factor(Parameter, levels=selCols, labels=selCols, ordered=TRUE))
- str(dp)
+  dplyr::mutate(Parameter = factor(Parameter, levels=selCols, labels=selCols, ordered=TRUE))%>%
+  dplyr::rename(Wave2=Date) %>%
+  dplyr::mutate(Wave4=Wave2-days(daysDiff42)) %>%
+  tidyr::pivot_longer(cols=c(Wave2, Wave4), values_to="Date", names_to="Wave")
+ #str(dp)
 
-ggplot(data=dp, aes(x=Date, y=Anzahl, color=Parameter)) +
-  scale_x_datetime(name="2. Welle", limits=c(as.POSIXct("2020-08-01"),as.POSIXct("2020-12-15")),  date_breaks="months", date_labels="%b",
-                   sec.axis=sec_axis(name="4. Welle", trans = (~ . +hms::hms(days=322)))) +
+ggplot(data=dp, aes(x=Date, y=Anzahl, color=Wave)) +
+  scale_x_datetime(name="2. Welle 8/2020", limits=c(as.POSIXct("2020-08-01"),as.POSIXct("2020-12-15")),  date_breaks="months", date_labels="%b",
+                   sec.axis=sec_axis(name="4. Welle 7/2021", trans = (~ . +hms::hms(days=daysDiff42)))) +
   scale_y_continuous(name="Anzahl", trans="log2", breaks=2^(seq(0,15,by=1)),
                      sec.axis=dup_axis(name="Anzahl_Stufe = log2(Anzahl)", labels=seq(0,15,by=1))) +
-  scale_fill_manual(values=cbPalette) +
-  scale_color_manual(values=cbPalette) +
-  # scale_shape_manual(values=atShapes) +
-  geom_point(aes(x=Date-days(322)),size=2) + 
   geom_line(size=1) +
   facet_wrap(Parameter~., nrow=1) +
   ggtitle("COVID-19 Österreich: Vergleich 2. und 4. Welle mittels Überlagerung von Absolut Werten (Pos, Hosp, ICU, Verst)")
@@ -262,6 +259,7 @@ Um die Dynamik der epidemiologischen Parameter der 2. und 4. Welle besser vergle
 Ein Abschätzung der Anzahl zu erwartenden Todesfälle folgt in Kürze.
 
 
+
 ```{r, results='hide'}
 
 # str(btcrdzhi3)
@@ -272,21 +270,19 @@ dp <- btcrdzhi3 %>%
   dplyr::mutate(across(.cols=selCols, .fns= ~ .x/max(.x, na.rm=TRUE))) %>%
   tidyr::pivot_longer(cols=selCols, 
                       names_to="Parameter", values_to="Anzahl") %>%
-  dplyr::mutate(Parameter = factor(Parameter, levels=selCols, labels=selCols, ordered=TRUE))
- str(dp)
+  dplyr::mutate(Parameter = factor(Parameter, levels=selCols, labels=selCols, ordered=TRUE)) %>%
+  dplyr::rename(Wave2=Date) %>%
+  dplyr::mutate(Wave4=Wave2-days(daysDiff42)) %>%
+  tidyr::pivot_longer(cols=c(Wave2, Wave4), values_to="Date", names_to="Wave")
+# str(dp)
 
-ggplot(data=dp, aes(x=Date, y=Anzahl, color=Parameter)) +
-  scale_x_datetime(name="2. Welle", limits=c(as.POSIXct("2020-08-01"),as.POSIXct("2020-12-15")),  date_breaks="months", date_labels="%b",
-                   sec.axis=sec_axis(name="4. Welle", trans = (~ . +hms::hms(days=322)))) +
+ggplot(data=dp, aes(x=Date, y=Anzahl, color=Wave)) +
+  scale_x_datetime(name="2. Welle 8/2020", limits=c(as.POSIXct("2020-08-01"),as.POSIXct("2020-12-15")),  date_breaks="months", date_labels="%b",
+                   sec.axis=sec_axis(name="4. Welle 7/2021", trans = (~ . +hms::hms(days=daysDiff42)))) +
   scale_y_continuous(name="Prozent(max)", trans="log2", limits=c(1/256,1), breaks=round(2^(seq(-8,0,by=1)),3),
                      sec.axis=dup_axis(name="Prozent_Stufe = log2(Prozent(max))", labels=seq(-8,0,by=1))) +
-  scale_fill_manual(values=cbPalette) +
-  scale_color_manual(values=cbPalette) +
-  # scale_shape_manual(values=atShapes) +
-  geom_point(aes(x=Date-days(322)),size=2) + 
   geom_line(size=1) +
   facet_wrap(Parameter~., nrow=2) +
   ggtitle("COVID-19 Österreich: Vergleich 2. und 4. Welle mittels Überlagerung der Werte relativ zum Maximum der 2. Welle")
 
 ``` 
-

@@ -1,6 +1,5 @@
 ---
 title: "COVID-19 und Sterblichkeit in Österreich"
-author: "Thomas.Strehl@at.ibm.com"
 date: '2021-08-01'
 output:
   html_document:
