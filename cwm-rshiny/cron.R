@@ -31,9 +31,25 @@ source("./ages.R")
 logMsg("Sourcing bmsgpk.R","__cron__")
 source("./bmsgpk.R")
 
+# Functions for new data structure (download, prepare, curate)
+logMsg("Sourcing cwmDataDownload.R","__cron__")
+source("./cwmDataDownload.R")
+logMsg("Sourcing cwmDataPreperation.R","__cron__")
+source("./cwmDataPreperation.R")
 
 
 # -----------------------------------------------------------------------------------
+# Run Data Ingestion Pipeline: 
+# This Reads/Writes to the new ./data/[download|prepared|curated] directory tructure
+# -----------------------------------------------------------------------------------
+
+caDataDownload()
+caDatePrepare()
+caDatCurate()
+
+
+# -----------------------------------------------------------------------------------
+# Old style. leave intact for now
 # DownLoad data from BMSGPK
 # -----------------------------------------------------------------------------------
 
