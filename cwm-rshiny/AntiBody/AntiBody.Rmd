@@ -1,6 +1,6 @@
 ---
 title: "COVID-19: Impfung und Antikörper Messung"
-author: "Thomas.Strehl@gmx.at"
+author: Thomas Strehl  https://www.linkedin.com/in/strehl-thomas-122867110
 date: "2021-09-21"
 output:
   pdf_document:
@@ -23,11 +23,11 @@ library(tidyr)
 \newpage
 # COVID-19: Impfungen und Messung der Antikörper
 
-Dieses Dokument beschreibt den zeitlichen Verlauf der COVID-19 Impfungen und die Ergebnisse einer Reihe von IgG Antikörper Tests. Die Daten umfassen
+Dieses Dokument beschreibt anhand zweier Testpersonen den zeitlichen Verlauf der COVID-19 Impfungen und die Ergebnisse einer Reihe von IgG Antikörper Tests. Die Daten umfassen
 
 - Zeitreihen von 2 Pesonen (M, W, beide Altersgruppe 55-65)
-- Je zwei Impfungen (zwei W=AstraZenecca, zwei M=BiontecPfizer)
-- Mehrmalige Messung der Antikörper (IgG, einschl. neutralisierende AK gegen Spike RBD der S1-Untereinheit des Spike-Proteins von SARS-CoV-2, durchgeführt bei SYNLAB/IMCL)
+- Je zwei Impfungen (Serie1: W=AstraZeneca, Serie 2: M=BiontecPfizer)
+- Mehrmalige Messung der Antikörper (Einheit BAU/ml, IgG, einschl. neutralisierende AK gegen Spike RBD der S1-Untereinheit des Spike-Proteins von SARS-CoV-2, durchgeführt bei SYNLAB/IMCL)
 
 
 
@@ -54,7 +54,7 @@ df <- df %>%
 
 ```{r}
 # Regression Models
-Monat=seq(-4,12,by=.1)
+Monat=seq(0,12,by=.1)
 
 ds1 <- df %>% dplyr::filter(ImpfStoff=="BiontecPfizer", ImpfStatus=="ZweiteImpfung", Aktion=="AntiKörper")
 lm1 <- lm(formula=log2(Wert)~Monat, data=ds1)
@@ -64,10 +64,10 @@ dp1 <- data.frame(Monat=Monat, Wert=pred1, ImpfStoff="BiontecPfizer")
 
 
 ```{r}
-ds2 <- df %>% dplyr::filter(ImpfStoff=="AstraZenecca", ImpfStatus=="ZweiteImpfung", Aktion=="AntiKörper")
+ds2 <- df %>% dplyr::filter(ImpfStoff=="AstraZeneca", ImpfStatus=="ZweiteImpfung", Aktion=="AntiKörper")
 lm2 <- lm(formula=log2(Wert)~Monat, data=ds2)
 pred2 <- 2^predict(lm2, newdata=data.frame(Monat=Monat))
-dp2 <- data.frame(Monat=Monat, Wert=pred2, ImpfStoff="AstraZenecca")
+dp2 <- data.frame(Monat=Monat, Wert=pred2, ImpfStoff="AstraZeneca")
 ```
 
 
@@ -78,11 +78,10 @@ In der folgenden Darstellung sind die Zeitreihen der Antikörper Messungen der b
 - Die Zeitachsen der beiden Verläufe sind auf den Zeitpunkt der zweiten Impfung syncronisiert
 - Zeitpunkte vor der zweiten Impfung haben negative Werte
 - Die Einheit der Werte auf der y-Achse sind BAU/ml
-
-- Die maximal erreichten Werte liegen bei Testperson W mit AstraZenecca bei 550
+- Die maximal erreichten Werte liegen bei Testperson W mit AstraZeneca bei 550
 - Die maximal erreichten Werte liegen bei Testperson M mit BiontecPfizer bei 1800
 
-In beiden Fällen nehmen die Werte mit der Zeit in etwa exponentiell ab (Für TestPerson W mit AstraZenecca wäre rein mathematisch auch eine lineare Abnahme möglich, aber aus medizinischen Gründen wenig wahrscheinlich)
+In beiden Fällen nehmen die Werte mit der Zeit in etwa exponentiell ab (Für TestPerson W mit AstraZeneca wäre rein mathematisch auch eine lineare Abnahme möglich, aber aus medizinischen Gründen wenig wahrscheinlich)
 
 ```{r}
 ggplot(data=df %>% dplyr::filter(Aktion=="AntiKörper"), aes(x=Monat, y=Wert, shape=ImpfStatus, color=ImpfStatus, group=ImpfStatus)) +
@@ -94,7 +93,7 @@ ggplot(data=df %>% dplyr::filter(Aktion=="AntiKörper"), aes(x=Monat, y=Wert, sh
   facet_grid(ImpfStoff~.) +
   geom_line(data=dp1, aes(x=Monat, y=Wert), inherit.aes=FALSE, linetype=3) +
   geom_line(data=dp2, aes(x=Monat, y=Wert), inherit.aes=FALSE, linetype=3) +
-  ggtitle("Vaccination and AntiBody Test results: 2 Samples (AgeGroup 55-65, M and W), \nExponential Model, BAU/ml units")
+  ggtitle("Vacination and AntiBody Test results: 2 Samples (AgeGroup 55-65, M and W), \nExponential Model, BAU/ml units")
 ```
 \newpage
 ## Exponentielle Abnahme der Antiköper Werte
@@ -106,12 +105,12 @@ Die These einer exponentiellen Abnahme der Antikörper Messwerte mit der Zeit l�
 
 Die Halbwertszeit, d.h. die Dauer bis zu einer Halbierung der Messwerte,  ist
 
-- 60 Tage (2.0 Monate) für TestPerson W mit AstraZenecca
+- 60 Tage (2.0 Monate) für TestPerson W mit AstraZeneca
 - 35 Tage (1.2 Monate) für TestPerson M mit BiontecPfizer
 
-Trotz wesentlich höherer Maximalwerte bei Testperson M mit BiontecPfizer sind die Antikörper bereits nach ca. 10 Monaten nicht mehr nachweisbar. Bei TestPerson W mit AstraZenecca sind die maximalen Antikörperwerte vergleichsweise wesentlich niedriger, nehmen aber wesentlich langsamer ab, sodass der Nachweis erst nach etwas über einem Jahr nicht mehr möglich ist.
+Trotz wesentlich höherer Maximalwerte bei Testperson M mit BiontecPfizer sind die Antikörper bereits nach ca. 10 Monaten nicht mehr nachweisbar sein werden. Bei TestPerson W mit AstraZeneca sind die maximalen Antikörperwerte vergleichsweise niedrig, nehmen aber wesentlich langsamer ab, sodass der Nachweis erst nach etwas über einem Jahr nicht mehr möglich sein wird.
 
-**Anmerkung:** Die Prognosen für die Antikörper Werte sind bestenfalls erste Anhaltspunkte und müssen durch fortgesetzte Messungen an beiden Testpersonen präzisiert werden
+**Anmerkung:** Die Prognosen für die Antikörper Werte sind bestenfalls erste Anhaltspunkte und müssen durch fortgesetzte Messungen an den beiden (sowie weiteren) Testpersonen präzisiert werden.
 
 
 ```{r}
@@ -124,7 +123,7 @@ ggplot(data=df %>% dplyr::filter(Aktion=="AntiKörper"), aes(x=Monat, y=Wert, sh
   facet_grid(ImpfStoff~.) +
   geom_line(data=dp1, aes(x=Monat, y=Wert), inherit.aes=FALSE, linetype=3) +
   geom_line(data=dp2, aes(x=Monat, y=Wert), inherit.aes=FALSE, linetype=3) +
-  ggtitle("Vaccination and AntiBody Test results: 2 Samples (AgeGroup 55-65, M and W), \nExponential Model, logScale y, BAU/ml units for half/double")
+  ggtitle("Vacination and AntiBody Test results: 2 Samples (AgeGroup 55-65, M and W), \nExponential Model, logScale y, BAU/ml units for half/double")
 ```
 
 
