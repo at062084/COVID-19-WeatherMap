@@ -1,0 +1,17 @@
+ID,Alter,Geschlecht,Datum,ImpfStatus,ImpfStoff,Aktion,Wert
+1,62,M,2021-04-30,ErsteImpfung,BiontecPfizer,Impfung,0
+1,62,M,2021-04-30,ErsteImpfung,BiontecPfizer,AntiKörper,1
+1,62,M,2021-05-12,ErsteImpfung,BiontecPfizer,AntiKörper,70
+1,62,M,2021-05-26,ErsteImpfung,BiontecPfizer,AntiKörper,50
+1,62,M,2021-05-26,ZweiteImpfung,BiontecPfizer,Impfung,0
+1,62,M,2021-06-15,ZweiteImpfung,BiontecPfizer,AntiKörper,1803
+1,62,M,2021-07-09,ZweiteImpfung,BiontecPfizer,AntiKörper,940
+1,62,M,2021-08-11,ZweiteImpfung,BiontecPfizer,AntiKörper,527
+1,62,M,2021-09-09,ZweiteImpfung,BiontecPfizer,AntiKörper,323
+2,57,W,2021-03-16,ErsteImpfung,AstraZenecca,Impfung,0
+2,57,W,2021-04-30,ErsteImpfung,AstraZenecca,AntiKörper,60
+2,57,W,2021-06-15,ErsteImpfung,AstraZenecca,AntiKörper,47
+2,57,W,2021-06-15,ZweiteImpfung,AstraZenecca,Impfung,0
+2,57,W,2021-07-16,ZweiteImpfung,AstraZenecca,AntiKörper,554
+2,57,W,2021-08-11,ZweiteImpfung,AstraZenecca,AntiKörper,419
+2,57,W,2021-09-09,ZweiteImpfung,AstraZenecca,AntiKörper,295
