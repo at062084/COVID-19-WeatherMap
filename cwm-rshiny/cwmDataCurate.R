@@ -9,17 +9,14 @@ library(tibbletime)
 library(scales)
 library(forcats)
 
-
-
-
 # -------------------------------------------------------------------------------------------
 # Globals
 # -------------------------------------------------------------------------------------------
 # Mandatory smoothing of raw data (sum* -> new*, cur*)
 rollMeanDays <- 7
-rollMeanTimeShift <- 14
 
 # Optimized heuristically for AgeGroups 65-84 (most populated endagered groups)
+rollMeanTimeShift <- 14
 leadDaysRecovered=21
 leadDaysDeath=20
 
@@ -28,19 +25,36 @@ lagDaysVaccinated_1 <- 21
 lagDaysVaccinated_2 <- 14
 
 
+# ===========================================================================================
+# Data Ingestion
+# ===========================================================================================
+caDataIngestionPipeline <- function() {
+
+  logMsg("Running caDataIngestionPipeline ...")
+  
+  caDataDownload()
+  caDataPrepare()
+  caDataCurate()
+  
+  logMsg("Done Running caDataIngestionPipeline")
+  # caGitCommitPush()
+  return(TRUE)
+}
 
 # -------------------------------------------------------------------------------------------
 # CWM: GIT commit and push
 # -------------------------------------------------------------------------------------------
 caGitCommitPush <- function() {
+
+  logMsg("Executing caGitCommitPush")
   
   LogMsg("Adding files to git commit: *.csv")
   cmd <- paste0("\"add ./data/*/*.csv\"")
   system2("git", cmd)
   
-  LogMsg("Adding files to git commit: *.rda")
-  cmd <- paste0("\"add ./data/*/*.rda\"")
-  system2("git", cmd)
+  #LogMsg("Adding files to git commit: *.rda")
+  #cmd <- paste0("\"add ./data/*/*.rda\"")
+  #system2("git", cmd)
   
   LogMsg("Commiting files to git: *.csv")
   cmd <- paste0("\"commit -m AutoCommit\"")
@@ -50,30 +64,38 @@ caGitCommitPush <- function() {
   cmd <- paste0("\"push\"")
   system2("git", cmd)
   
-  return(0)
+  return(TRUE)
 }
+
 
 
 # ===========================================================================================
 # CWM: DATA CURATION
 # ===========================================================================================
-
 caDataCurate <- function() {
+  
+  logMsg("Running caDataCurate ...")
   
   caDataCurate_crdv_rag()
   caDataCurate_crdv_rag_ts()
   caDataCurate_tcrdzhi_r()
+  caDataCurate_yz_a3()
   
+  caDataStatic_CFR_2nd()
+  caDataStatic_POP_2021()
+  
+  logMsg("Done Running caDataCurate")
   return(TRUE)
 }
-
 
 # -------------------------------------------------------------------------------------------
 # Confirmed, Recovered, Death, Vaccinated by Region, AgeGroup, Gender
 # -------------------------------------------------------------------------------------------
 caDataCurate_crdv_rag <- function(bSave=TRUE) {
   
-  # dv <- caPrepareDataBmsgpk_v_rag(rollMeanDays=rollMeanDays)
+  logMsg("Executing caDataCurate_crdv_rag")
+
+    # dv <- caPrepareDataBmsgpk_v_rag(rollMeanDays=rollMeanDays)
   rdaFile <- paste0("./data/prepared/Bmsgpk/v_rag.rda")
   logMsg(paste("Reading", rdaFile))
   dv <- readRDS(file=rdaFile)  
@@ -113,6 +135,8 @@ caDataCurate_crdv_rag <- function(bSave=TRUE) {
 # -------------------------------------------------------------------------------------------
 caDataCurate_crdv_rag_ts <- function(bSave=TRUE, rollMeanTimeShift=14) {
   
+  logMsg("Executing caDataCurate_crdv_rag_ts")
+
   # Read non-timeshifted data
   rdaFile <- "./data/curated/crdv_rag.rda"  
   logMsg(paste("Reading", rdaFile))
@@ -140,21 +164,31 @@ caDataCurate_crdv_rag_ts <- function(bSave=TRUE, rollMeanTimeShift=14) {
 # -------------------------------------------------------------------------------------------
 caDataCurate_tcrdzhi_r <- function(bSave=TRUE, rollMeanDays=7) {
   
+  logMsg("Executing caDataCurate_tcrdzhi_r")
+
   # interactive download from original websites
   #dcrdz <- caAgesData_crd_r(rollMeanDays=7)
   rdaFile <- "./data/prepared/Ages/crd_r.rda"
   logMsg(paste("Reading", rdaFile))
   dcrdz <- readRDS(file=rdaFile)  
+  # str(dcrdz)
   
   #dthi <- caAgesData_thi_r(rollMeanDays=7)
   rdaFile <- "./data/prepared/Ages/thi_r.rda"
   logMsg(paste("Reading", rdaFile))
   dthi <- readRDS(file=rdaFile)  
+  # str(dthi)
   
   
   dtcrdzhi <- dcrdz %>%
     dplyr::left_join(dthi, by=c("Date","Region")) %>%
+    dplyr::arrange(Region, Date) %>%
+    dplyr::group_by(Region) %>%
+    #dplyr::mutate(dplyr::across(starts_with("sum"), ~ rollmean(.x, k=rollMeanDays, align="center", fill=NA))) %>%
+    dplyr::mutate(newTested=sumTested-dplyr::lag(sumTested)) %>%
+    dplyr::ungroup() %>%
     dplyr::select(Date, Region, Population, starts_with("new"), starts_with("cur") , starts_with("sum"))
+  # str(dtcrdzhi)
   
   if (bSave) {
     rdaFile <- "./data/curated/tcrdzhi_r.rda"
@@ -164,3 +198,90 @@ caDataCurate_tcrdzhi_r <- function(bSave=TRUE, rollMeanDays=7) {
   
   return(dtcrdzhi) 
 }
+
+
+
+# -------------------------------------------------------------------------------------------
+#  Inzidenz General and Symptomatic by AgeGroup3
+# -------------------------------------------------------------------------------------------
+caDataCurate_yz_a3 <- function (bSave=TRUE) {
+  yi <- readRDS("./data/prepared/Ages/yi_a3.rda")
+  zi <- readRDS("./data/prepared/Ages/zi_a3.rda")
+  
+  df <- rbind(yi,zi) 
+  # str(df)
+  
+  yzi_a3 <- df %>%
+    tidyr::pivot_longer(cols=starts_with("new"),  names_to=c("tmpNewConfPop", "tmpVacc", "Vaccinated"), values_to="newConfPop", names_sep="_") %>%
+    dplyr::mutate(Vaccinated=factor(Vaccinated), Symptomatic=factor(Symptomatic)) %>%
+    dplyr::select(-starts_with("tmp"))
+  # str(yzi_a3)
+  
+  if (bSave) {
+    rdaFile <- "./data/curated/yzi_a3.rda"
+    logMsg(paste("Writing", rdaFile))
+    saveRDS(yzi_a3, file=rdaFile)  
+  }
+  
+  return(yzi_a3)
+}
+
+
+
+# -------------------------------------------------------------------------------------------
+#  CFR.2nd
+# -------------------------------------------------------------------------------------------
+caDataStatic_CFR_2nd <- function(bSave=TRUE) {
+  
+  rdaFile <- "./data/curated/crdv_rag_ts.rda"
+  logMsg(paste("Reading", rdaFile))
+  df <- readRDS(rdaFile) %>% 
+    # COVID-19 Österreich: Zweite Welle
+    dplyr::filter(Date>as.POSIXct("2020-10-15"), Date<as.POSIXct("2020-12-31")) %>%
+    dplyr::select(Date, Region,Population, AgeGroup, Gender, newConfirmed, newDeath) # %>%
+  # dplyr::group_by(AgeGroup, Gender) %>%
+  # dplyr::mutate(newConf100 = newConfirmed/max(newConfirmed), newDeath100 = newDeath/max(newDeath)) %>%
+  # dplyr::ungroup()
+  # ggplot(data=df%>%dplyr::filter(as.integer(AgeGroup)>5), aes(x=Date)) + 
+  # geom_line(aes(y=newConf100), color="red") +  
+  # geom_line(aes(y=newDeath100), color="blue") +
+  # facet_grid(Gender~AgeGroup, scales="free_y") 
+  # str(df)
+  CFR.2nd <- df %>% 
+    dplyr::group_by(Region, AgeGroup, Gender) %>%
+    dplyr::summarize(.groups="drop", CFR = sum(newDeath)/sum(newConfirmed))
+  # str(CFR.2nd)
+  
+  if (bSave) {
+    rdaFile <- "./data/curated/CFR_2nd.rda"
+    logMsg(paste("Writing", rdaFile))
+    saveRDS(CFR.2nd, file=rdaFile)  
+  }
+  
+  return(CFR.2nd)
+}
+
+# -------------------------------------------------------------------------------------------
+#  POP
+# -------------------------------------------------------------------------------------------
+caDataStatic_POP_2021 <- function(bSave=TRUE) {
+  
+  rdaFile <- "./data/curated/crdv_rag.rda"
+  logMsg(paste("Reading", rdaFile))
+  df <- readRDS(rdaFile) %>% 
+    dplyr::filter(Date==as.POSIXct("2021-01-01")) %>%
+    dplyr::select(Region, Population, AgeGroup, AgeGroup2, AgeGroup3, Gender)
+  # str(df)
+  
+  if (bSave) {
+    rdaFile <- "./data/curated/POP_2021.rda"
+    logMsg(paste("Writing", rdaFile))
+    saveRDS(df, file=rdaFile)  
+  }
+  return(df)
+}
+
+
+
+
+
