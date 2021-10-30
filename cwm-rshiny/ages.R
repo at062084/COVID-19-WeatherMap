@@ -53,10 +53,14 @@ library(ggplot2)
 # CovidFaelle_Altersgruppe.csv: TimeLine BundesLänder (Confirmed, Recovered, Deaths)
 # -------------------------------------------------------------------------------------------
 caAgesRead_cfag <- function(rollMeanDays=7) {
-  
+
+  logMsg("Executing caAgesRead_cfag")  
   # df <- read.csv(".//AgeGroup/CovidFaelle_Altersgruppe.csv", sep=";", stringsAsFactors=FALSE)
+  #url <- "https://covid19-dashboard.ages.at/data/CovidFaelle_Altersgruppe.csv"
   
-  url <- "https://covid19-dashboard.ages.at/data/CovidFaelle_Altersgruppe.csv"
+  # Downloaded and extracted from zip already
+  url <- "./data/download/Ages/CovidFaelle_Altersgruppe.csv"
+  logMsg(paste("Reading", url))
   df<- read.csv(url, header=TRUE, sep=";", stringsAsFactors=FALSE)
   
   dcrd <- df %>%
@@ -100,7 +104,13 @@ caAgesRead_cfag <- function(rollMeanDays=7) {
 # -------------------------------------------------------------------------------------------
 caBmsgpkRead_eimpfpass <- function(rollMeanDays=7) {
   
-  url <- "https://info.gesundheitsministerium.gv.at/data/timeline-eimpfpass.csv"
+  logMsg("Executing caBmsgpkRead_eimpfpass")  
+  
+  # url <- "https://info.gesundheitsministerium.gv.at/data/timeline-eimpfpass.csv"
+  
+  # Downloaded already
+  url <- "./data/download/Bmsgpk/timeline-eimpfpass.csv" 
+  logMsg(paste("Reading", url))
   df<- read.csv(url, header=TRUE, sep=";", stringsAsFactors=FALSE) %>%
     dplyr::mutate(Date=as.POSIXct(Datum))
   # str(df)
@@ -140,15 +150,19 @@ caBmsgpkRead_eimpfpass <- function(rollMeanDays=7) {
 
 # -------------------------------------------------------------------------------------------
 # CovidFaelle_Altersgruppe.csv: TimeLine BundesLänder (Confirmed, Recovered, Deaths)
+# Obsolete, file does not exist any more
 # -------------------------------------------------------------------------------------------
 caAgesRead_cv <- function(rollMeanDays=7, bSave=TRUE) {
   
-  # Data seem to be published with a timestamp in the filename
+  logMsg("Executing caAgesRead_cv")  
+
+    # Data seem to be published with a timestamp in the filename
   yesterday = format(now() -days(1), "%Y-%m-%d")
   yesterday = "2021-08-20"
   
   baseurl <- "https://www.ages.at/fileadmin/AGES2015/Themen/Krankheitserreger_Dateien/Coronavirus/Inzidenz_Impfstatus"
   url <- paste0(baseurl, "/Inzidenz_vollstaendig_unvollstaendig_geimpft_", yesterday,".csv")
+  logMsg(paste("Reading", url))
   colnames=c("Datum","Date","AgeGroup3", "bVaccinated_2", "newConfirmed")
   df<- read.csv(url, header=FALSE, skip=1, sep=";", dec=",", stringsAsFactors=FALSE, col.names=colnames) 
   
@@ -168,6 +182,8 @@ caAgesRead_cv <- function(rollMeanDays=7, bSave=TRUE) {
 
 # Mutations
 caAgesRead_Mutations <- function(csvFile="COVID-19-AGES-Mutations.csv", bSave=TRUE) {
+
+  logMsg("Executing caAgesRead_Mutations")  
   
   ts=format(now(),"%Y%m%d")
   url <- "https://www.ages.at/themen/krankheitserreger/coronavirus/sars-cov-2-varianten-in-oesterreich"
@@ -226,16 +242,20 @@ caAgesRead_Mutations <- function(csvFile="COVID-19-AGES-Mutations.csv", bSave=TR
 # CovidFaelle_Timeline_GKZ.csv: TimeLine Bezirke (Confirmed, Recovered, Deaths)
 # -------------------------------------------------------------------------------------------
 caAgesRead_cfGKZtl <- function(csvFile="CovidFaelle_Timeline_GKZ.csv", nRm7Days=7, bSave=TRUE) {
+
+  logMsg("Executing caAgesRead_cfGKZtl")  
   
   # "http://covid19-dashboard.ages.at/data/CovidFaelle_Timeline_GKZ.csv"
-  webAGES <- "https://covid19-dashboard.ages.at/data"
-  webFile <- paste0(webAGES,"/",csvFile) 
-  logMsg(paste("Download AGES data from", webFile))
-  dskFile <- paste0("./data/",csvFile)
-  logMsg(paste("Storing AGES data to", dskFile))
-  cmd <- paste(webFile, "-O", dskFile)
-  system2("wget", cmd)
+  #webAGES <- "https://covid19-dashboard.ages.at/data"
+  #webFile <- paste0(webAGES,"/",csvFile) 
+  #logMsg(paste("Download AGES data from", webFile))
+  #dskFile <- paste0("./data/",csvFile)
+  #logMsg(paste("Storing AGES data to", dskFile))
+  #cmd <- paste(webFile, "-O", dskFile)
+  #system2("wget", cmd)
   
+  dskFile <- paste0("./data/download/Ages/",csvFile)
+  logMsg(paste("Reading", dskFile))
   df <- read.csv(dskFile, stringsAsFactors=FALSE, sep=";") %>% 
     dplyr::mutate(Stamp=as.POSIXct(Time, format="%d.%m.%Y %H:%M:%S"), Date=date(Stamp)) %>%
     dplyr::rename(Region=Bezirk, Population=AnzEinwohner) %>%
@@ -279,19 +299,14 @@ caAgesRead_cfGKZtl <- function(csvFile="CovidFaelle_Timeline_GKZ.csv", nRm7Days=
 }
 
 # -------------------------------------------------------------------------------------------
-# CovidFaelle_Timeline.csv: TimeLine BundesLänder (Confirmed, Recovered, Deaths)
+# Ages: CovidFaelle_Timeline.csv: TimeLine BundesLänder (Confirmed, Recovered, Deaths)
 # -------------------------------------------------------------------------------------------
 caAgesRead_cftl <- function(csvFile="CovidFaelle_Timeline.csv", bSave=TRUE) {
-  
-  # "http://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv"
-  webAGES <- "https://covid19-dashboard.ages.at/data"
-  webFile <- paste0(webAGES,"/",csvFile) 
-  logMsg(paste("Download AGES data from", webFile))
-  dskFile <- paste0("./data/",csvFile)
-  logMsg(paste("Storing AGES data to", dskFile))
-  cmd <- paste(webFile, "-O", dskFile)
-  system2("wget", cmd)
 
+  logMsg("Executing caAgesRead_cftl")  
+  
+  dskFile="./data/download/Ages/CovidFaelle_Timeline.csv"
+  logMsg(paste("Reading", dskFile))
   dc <- read.csv(dskFile, stringsAsFactors=FALSE, sep=";") %>% 
     dplyr::mutate(Stamp=as.POSIXct(Time, format="%d.%m.%Y %H:%M:%S"), Date=date(Stamp)) %>%
     dplyr::rename(newConfirmed=AnzahlFaelle, newRecovered=AnzahlGeheiltTaeglich, newDeaths=AnzahlTotTaeglich) %>%
@@ -299,10 +314,12 @@ caAgesRead_cftl <- function(csvFile="CovidFaelle_Timeline.csv", bSave=TRUE) {
     dplyr::rename(Region=Bundesland, RegionID=BundeslandID, Population=AnzEinwohner) %>%
     dplyr::mutate(curConfirmed=sumConfirmed-sumRecovered-sumDeaths, rmaNewConfPop=as.numeric(str_replace(SiebenTageInzidenzFaelle,",","."))) %>%
     dplyr::select(Date,Region,RegionID,Population, starts_with("cur"), starts_with("new"), starts_with("rma"), starts_with("sum"))
-
-  rdaFile <- "./data/CovidFaelle_Timeline.rda"   
-  logMsg(paste("Writing", rdaFile))
-  if (bSave) saveRDS(dc, file=rdaFile)  
+  
+  if (bSave) {
+    rdaFile <- paste0("./data/CovidFaelle_Timeline.rda")   
+    logMsg(paste("Writing", rdaFile))
+    saveRDS(dc, file=rdaFile)  
+  }
   
   return(dc)
 }
@@ -312,6 +329,8 @@ caAgesRead_cftl <- function(csvFile="CovidFaelle_Timeline.csv", bSave=TRUE) {
 # -------------------------------------------------------------------------------------------
 caAgesRead_cfz <- function(csvFile="CovidFallzahlen.csv", bSave=TRUE) {
 
+  logMsg("Executing caAgesRead_cfz")  
+  
   # prepare imputation of some weird problems in AGES data. TODO: check and enhance !!!
   cfzImpute <- function(newTested) {
     newTested[newTested<0]=0
@@ -330,6 +349,7 @@ caAgesRead_cfz <- function(csvFile="CovidFallzahlen.csv", bSave=TRUE) {
   cmd <- paste(webFile, "-O", dskFile)
   system2("wget", cmd)
   
+  logMsg(paste("Reading", dskFile))
   dt <- read.csv(dskFile, stringsAsFactors=FALSE, sep=";") %>% 
     dplyr::mutate(Stamp=as.POSIXct(MeldeDatum, format="%d.%m.%Y %H:%M:%S"), Date=date(as.POSIXct(Meldedat, format="%d.%m.%Y"))) %>%
     dplyr::rename(RegionID=BundeslandID, Region=Bundesland, sumTested=TestGesamt) %>%
@@ -345,10 +365,11 @@ caAgesRead_cfz <- function(csvFile="CovidFallzahlen.csv", bSave=TRUE) {
   #summary(dt)
   dt$Region[dt$Region=="Alle"] <- "Österreich"
   
-  rdaFile <- "./data/CovidFallzahlen.rda"   
-  logMsg(paste("Writing", rdaFile))
-  if (bSave) saveRDS(dt, file=rdaFile)  
-  
+  if (bSave) {
+    rdaFile <- "./data/CovidFallzahlen.rda"   
+    logMsg(paste("Writing", rdaFile))
+    saveRDS(dt, file=rdaFile)  
+  }
   return(dt)
 }
 
@@ -360,7 +381,9 @@ caAgesConfHistory <- function (df, nCalcWeeks=4, nSettleDays=7, dataPath="./data
                                agesProcessedFile="COVID-19-CWM-AGES-TestedProcessed.rda", 
                                agesEvaluatedFile="COVID-19-CWM-AGES-TestedEvaluated.rda") {
   
-  # df as read by caAgesRead_cftl(). i.e. ages data preprocessed into cwm naming conventions (prefiltered by cron.R)
+  logMsg("Executing caAgesConfHistory")  
+
+    # df as read by caAgesRead_cftl(). i.e. ages data preprocessed into cwm naming conventions (prefiltered by cron.R)
   df <- df %>%
     dplyr::filter(Date>(max(Date)-days(nSettleDays))) %>%
     dplyr::mutate(DateReported = max(Date)) %>%
@@ -369,6 +392,7 @@ caAgesConfHistory <- function (df, nCalcWeeks=4, nSettleDays=7, dataPath="./data
     dplyr::select(DateReported, DateEvaluated, RegionID, Region, newConfirmed)
   
   # read history accumulated so far (same data format as above)
+  logMsg(paste("Reading", paste0(dataPath,"/",agesProcessedFile)))
   dp <- readRDS(paste0(dataPath,"/",agesProcessedFile))
   
   # make sure no double entries and save with today's additions
@@ -376,11 +400,10 @@ caAgesConfHistory <- function (df, nCalcWeeks=4, nSettleDays=7, dataPath="./data
   dp <- dp %>% 
     dplyr::arrange(RegionID, Region, DateEvaluated, DateReported) %>%
     dplyr::group_by(RegionID, Region, DateEvaluated, DateReported) %>% 
-    dplyr::summarize(newConfirmed=max(newConfirmed)) %>%
-    dplyr::ungroup()
+    dplyr::summarize(.groups="drop", newConfirmed=max(newConfirmed))
   
   rdaFile <- paste0(dataPath,"/",agesProcessedFile)
-  logMsg(paste("Writing", rdaFile))
+  logMsg(paste("Updating", rdaFile))
   saveRDS(dp,file=rdaFile)
   
   # Enrich data and write to disk
@@ -415,11 +438,15 @@ caAgesRead_tlrm <- function(cftlFile="./data/CovidFaelle_Timeline.rda", cfzFile=
                             bAGESTestEvaluationCorrection=FALSE, agesEvaluatedFile=paste0("./data/COVID-19-CWM-AGES-TestedEvaluated.rda"),
                             bPredict=TRUE, nPolyDays=7, nPoly=2,
                             bEstimate=FALSE, bCompleteCases=FALSE) {
+
+  logMsg("Executing caAgesRead_tlrm")  
   
   # Read timeline of confirmed, hospitalized, deaths
+  logMsg(paste("Reading", cftlFile))
   dc <- readRDS(cftlFile)
 
   # Read timeline of tested
+  logMsg(paste("Reading", cfzFile))
   dt <- readRDS(cfzFile)
 
   # need to check if both datasets are available up to the same date
