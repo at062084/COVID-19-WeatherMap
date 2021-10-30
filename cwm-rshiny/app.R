@@ -15,7 +15,7 @@ logMsg <- function(msg, sessionID="_global_") {
 
 hostSystem <- system("hostname", intern=TRUE)
 slackMsg <- function (title, msg, hostName = hostSystem) {
-  url <- as.character(read.csv("./secrets/slack.txt",header=FALSE)[1,1])
+  url <- as.character(read.csv("../secrets/slack.txt",header=FALSE)[1,1])
   body <- list(text = paste(paste0(now()," *",title,"*: "), paste0(hostName,": ",msg)))
   r <- POST(url, content_type_json(), body = body, encode = "json")
   invisible(r)
@@ -54,6 +54,22 @@ source("ages.R", local=TRUE)
 # --------------------------------------------------------------------------------------------------------------------------
 # Global section. Data available to all sessions
 # --------------------------------------------------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------------------------
+# Static global datasets
+# -------------------------------------------------------------------------------------------------
+# Case Fatality Ratio from 2nd wave (Deaths alinged to Confirmed time line)
+rdaFile <- "./data/curated/CFR_2nd.rda"
+logMsg(paste("Reading",rdaFile))
+CFR.2nd <- readRDS(rdaFile) 
+# Population by Region and Gender
+rdaFile <- "./data/curated/POP_2021.rda"
+logMsg(paste("Reading",rdaFile))
+POP.2021 <- readRDS(rdaFile) 
+POP.2021.a3 <- POP.2021 %>%
+  dplyr::group_by(Region, AgeGroup3) %>%
+  dplyr::summarize(.groups="drop", Population=sum(Population))
+
 # --------------------------------------------------------------------------------------------
 # Map Austria data structures
 # --------------------------------------------------------------------------------------------
@@ -68,7 +84,11 @@ datATCounties <- mapATCounties@data %>%
 # ---------------------------------------------------------------------------------
 # States: Reactive File Poller: Monitor for new files created by cron
 # ---------------------------------------------------------------------------------
+logMsg("Setting up reactive file readers")
+
+# >>> caAgesRead_tlrm()
 cwmStatesFile <- "./data/COVID-19-CWM-AGES-States-Curated.rda"
+logMsg(paste("Setting up ",cwmStatesFile))
 df.rfr <- reactiveFileReader(
   session=NULL,
   intervalMillis=10000,
@@ -141,7 +161,9 @@ de <- eventReactive(df.rfr(), {
 # ---------------------------------------------------------------------------------
 # Counties: Reactiv File Poller: Monitor for new files created by cron
 # ---------------------------------------------------------------------------------
+# >>> caAgesRead_cfGKZtl()
 cwmCountiesFile <- "./data/COVID-19-CWM-AGES-Counties-Curated.rda"
+logMsg(paste("Setting up ",cwmCountiesFile))
 dg.rfr <- reactiveFileReader(
   session=NULL,
   intervalMillis=10000,
@@ -192,7 +214,9 @@ dg.map <- eventReactive(dg.model(), {
 # ---------------------------------------------------------------------------------
 # AGES-TestedEvaluated: Reactive File Poller: Monitor for new files created by cron
 # ---------------------------------------------------------------------------------
+# >>> caAgesConfHistory()
 cwmTestedEvaluatedFile <- "./data/COVID-19-CWM-AGES-TestedEvaluated.rda"
+logMsg(paste("Setting up ",cwmTestedEvaluatedFile))
 do.rfr <- reactiveFileReader(
   session=NULL,
   intervalMillis=10000,
@@ -216,19 +240,19 @@ do <- eventReactive(do.rfr(), {
 # ---------------------------------------------------------------------------------
 # BMSGPK-Dashboard: Reactive File Poller: Monitor for new files created by cron
 # ---------------------------------------------------------------------------------
-cwmBMSGPKDashboardFile <- "./data/COVID-19-CWM-BMSGPK-Dashboard.curated.rda"
-dk.rfr <- reactiveFileReader(
-  session=NULL,
-  intervalMillis=10000,
-  filePath=cwmBMSGPKDashboardFile,
-  readFunc=readRDS
-)
+#cwmBMSGPKDashboardFile <- "./data/COVID-19-CWM-BMSGPK-Dashboard.curated.rda"
+#dk.rfr <- reactiveFileReader(
+#  session=NULL,
+#  intervalMillis=10000,
+#  filePath=cwmBMSGPKDashboardFile,
+#  readFunc=readRDS
+#)
 # complete timeframe
-dk <- eventReactive(dk.rfr(), {
-  logMsg(paste("eventReactive reactiveFileReader:dk", cwmBMSGPKDashboardFile)) 
-  
-  return(dk.rfr())
-})
+#dk <- eventReactive(dk.rfr(), {
+#  logMsg(paste("eventReactive reactiveFileReader:dk", cwmBMSGPKDashboardFile)) 
+#  
+#  return(dk.rfr())
+#})
 
 #dg.mapx <- eventReactive(dg(), {
 #  logMsg(paste("eventReactive reactiveFileReader:dg.map", cwmCountiesFile)) 
@@ -269,9 +293,98 @@ dk <- eventReactive(dk.rfr(), {
 #  du.rfr()
 #})
 
+# -------------------------------------------------------------------------------------------------
+# ITEM: Estimate of future Deaths based on Age, Gender, Vaccination Status
+# New DataSouce for Confirmed, Recovered, Deaths and Vaccinated by Region, AgeGroup and Gender
+# This all data available for Region, AgeGroup10 and Gender
+# --------------------------------------------------------------------------------------------------
+
+# Original raw data
+# >>> caDataCurate_crdv_rag()
+cwmStatesFile_crdv <- "./data/curated/crdv_rag.rda"
+logMsg(paste("Setting up ",cwmStatesFile_crdv))
+crdv.rag.rfr <- reactiveFileReader(
+  session=NULL,
+  intervalMillis=10000,
+  filePath=cwmStatesFile_crdv,
+  readFunc=readRDS
+)
+crdv <- eventReactive(crdv.rag.rfr(), {
+  logMsg(paste("eventReactive reactiveFileReader:crdv.rag", cwmStatesFile_crdv)) 
+  return(crdv.rag.rfr())
+})
 
 
-# Weather Icons
+
+# Timeshifted for best match of Recoverd/Death with Confirmed
+# >>> caDataCurate_crdv_rag_ts()
+cwmStatesFile_crdv_ts <- "./data/curated/crdv_rag_ts.rda"
+logMsg(paste("Setting up ",cwmStatesFile_crdv_ts))
+crdv.rag.ts.rfr <- reactiveFileReader(
+  session=NULL,
+  intervalMillis=10000,
+  filePath=cwmStatesFile_crdv_ts,
+  readFunc=readRDS
+)
+# Raw data
+crdv.ts <- eventReactive(crdv.rag.ts.rfr(), {
+  logMsg(paste("eventReactive reactiveFileReader:crdv.rag.ts", cwmStatesFile_crdv_ts)) 
+  return(crdv.rag.ts.rfr())
+})
+
+
+
+# -------------------------------------------------------------------------------------------------
+# ITEM: Comparison of Wave 2 with Wave 4 based on Confirmed, Hostpitalized, ICU, Recovered 
+# --------------------------------------------------------------------------------------------------
+# >>> caDataCurate_tcrdzhi_r()
+cwmStatesFile_dtcrdzh <- "./data/curated/tcrdzhi_r.rda"
+logMsg(paste("Setting up ",cwmStatesFile_dtcrdzh))
+dtcrdzhi.r.rfr <- reactiveFileReader(
+  session=NULL,
+  intervalMillis=10000,
+  filePath=cwmStatesFile_dtcrdzh,
+  readFunc=readRDS
+)
+dtcrdzhi <- eventReactive(dtcrdzhi.r.rfr(), {
+  logMsg(paste("eventReactive reactiveFileReader:dtcrdzhi.r", cwmStatesFile_dtcrdzh)) 
+  return(dtcrdzhi.r.rfr())
+})
+dtcrdzhi.rm <- eventReactive(dtcrdzhi.r.rfr(), {
+  logMsg(paste("eventReactive reactiveFileReader:dtcrdzhi.r.rm", cwmStatesFile_dtcrdzh)) 
+  dtcrdzhi.rm <- dtcrdzhi.r.rfr() %>%
+    dplyr::arrange(Date, Region, Date) %>%
+    dplyr::group_by(Region) %>%
+    dplyr::mutate(newConfirmed = rollmean(newConfirmed, k=7, align="center", fill=NA)) %>%
+    dplyr::mutate(newDeath = rollmean(newDeath, k=7, align="center", fill=NA)) %>%
+    dplyr::ungroup()
+    return(dtcrdzhi.rm)
+})
+
+
+# -------------------------------------------------------------------------------------------------
+# Confirmed by Immunization status
+# --------------------------------------------------------------------------------------------------
+cwmStatesFile_yzi_a3 <- "./data/curated/yzi_a3.rda"
+logMsg(paste("Setting up ",cwmStatesFile_yzi_a3))
+yzi.a3.rfr <- reactiveFileReader(
+  session=NULL,
+  intervalMillis=10000,
+  filePath=cwmStatesFile_yzi_a3,
+  readFunc=readRDS
+)
+yzi.a3 <- eventReactive(yzi.a3.rfr(), {
+  logMsg(paste("eventReactive reactiveFileReader: yzi.a3", cwmStatesFile_yzi_a3))
+  return(yzi.a3.rfr())
+})
+
+
+
+# -------------------------------------------------------------------------------------------------
+# Icons
+# -------------------------------------------------------------------------------------------------
+logMsg(paste("Initializing icons"))
+
 iconSizeWeather=40
 iconsWeather <- iconList (
   Sun =       makeIcon(iconUrl="./www/iconWeather-Sun.png",       iconWidth=iconSizeWeather, iconHeight=iconSizeWeather),
@@ -297,6 +410,7 @@ iconsDirection <- iconList (
 # --------------------------------------------------------------------------------------------------------------------------
 # GUI definition
 # --------------------------------------------------------------------------------------------------------------------------
+logMsg(paste("Defining UI"))
 
 # Define UI for app that draws a histogram ----
 ui <- fluidPage(
@@ -330,8 +444,8 @@ ui <- fluidPage(
         column(6,
           actionButton("abUpdate", "Anzeigen"))),
 
-        fluidRow(
-          checkboxInput("cbLogScale", label="StufenModell", value=TRUE, width="220px")),
+      fluidRow(
+        checkboxInput("cbLogScale", label="StufenModell", value=TRUE, width="220px")),
         
       fluidRow( 
         sliderInput("sldPastTime",
@@ -339,12 +453,12 @@ ui <- fluidPage(
                     label="ZeitRaum (letzte n Monate)",
                     min=1, max=15, step=1, value=12)),
       
-        fluidRow( 
-          hr(style = "border-top: 3px solid #777777;"),
-          sliderInput("sldModelDays",
-                       width="220px",
-                       label="Prognose: BerechnungsTage",
-                       min=7, max=63, step=7, value=35)),
+      fluidRow( 
+        hr(style = "border-top: 3px solid #777777;"),
+        sliderInput("sldModelDays",
+                     width="220px",
+                     label="Prognose: BerechnungsTage",
+                     min=7, max=63, step=7, value=35)),
       fluidRow(        
         radioButtons("rbsModelOrder",
                      width="220px",
@@ -352,6 +466,19 @@ ui <- fluidPage(
                      choices = list("Linear (Gerade)" = "1",
                                     "Quadratisch (Parabel)" = "2"),
                      selected="2")),
+      # Asympomatic, Vaccination efficiency
+      fluidRow( 
+        hr(style = "border-top: 3px solid #777777;"),
+        sliderInput("sldAsymptomatic",
+                    width="220px",
+                    label="Anzahl Asymtopmatische: Symptomatische*k",
+                    min=0, max=4, step=1, value=1)),
+      fluidRow( 
+        sliderInput("sldVaccinationEfficiency",
+                    width="220px",
+                    label="Impfung: Schutz vor tötlicher Infektion [%]",
+                    min=50, max=100, step=5, value=90)),
+
       width=2
   ),
 
@@ -372,6 +499,30 @@ ui <- fluidPage(
                  fluidRow(column(width=6, plotOutput(outputId="ggpFrontPage", height="50vh")),
                           column(width=6, htmlOutput(outputId = "htmlFrontPageBot")))),
 
+        tabPanel("DurchSeuchung",
+                 h4("Einschätzung der Auswirkung der Impfung auf die zu erwartenden Todesfälle", align = "left", style="color:gray"),
+                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
+                 fluidRow(column(width=9, plotOutput(outputId="ggpDissemination1")),
+                          column(width=3, htmlOutput(outputId="hlpDissemination1"))
+                        ),
+                 fluidRow(column(width=9, DT::dataTableOutput(outputId="dtoDissemination1")),
+                          column(width=3, htmlOutput(outputId="hlpDissemination2"))
+                        ),
+                 fluidRow(column(width=12, DT::dataTableOutput(outputId="dtoDissemination2"))
+                          ),
+                 fluidRow(column(width=12, plotOutput(outputId="ggpDissemination2"))
+                          )
+                 ),
+                
+        tabPanel("2.vs.4.Welle",
+                 h4("Vergleich des Verlaufes der 2. und 4. Welle", align = "left", style="color:gray"),
+                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
+                 fluidRow(column(width=9, 
+                                 plotOutput(outputId = "ggpWave42Abs", height="60vh"),
+                                 plotOutput(outputId = "ggpWave42Prop", height="60vh"),
+                                 plotOutput(outputId = "ggpWave42Wien", height="60vh")),
+                          column(width=3, htmlOutput(outputId="hlpWave42")))),
+        
         tabPanel("Aktuelles",
                  h4("Darstellung und Interpretation von aktuellen Daten", align = "left", style="color:black"),
                  p("[Menüauswahl: keine]", align = "left", style="color:green"),
@@ -434,14 +585,9 @@ ui <- fluidPage(
 #                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
 #                 fluidRow(column(width=12, plotOutput(outputId = "ggpMutations", height="75vh")))),
 
-        tabPanel("Formeln",
-                 h4("Zur Berechnung der epidemiologischen Parameter und abgeleiteter Grössen", align = "left", style="color:black"),
-                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
-                 htmlOutput(outputId="blogFormulas")),
 
-
-        tabPanel("Gefährdung",
-                h4("Alters- und Geschlechtsabhängigkeit der Bedrohung durch COVID-19", align = "left", style="color:black"),
+        tabPanel("Sterblichkeit",
+                h4("Alters- und Geschlechtsabhängigkeit der Sterblichkeit und Vergleich mit COVID-19", align = "left", style="color:black"),
                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
                 htmlOutput(outputId="blogAge")),
          
@@ -453,6 +599,11 @@ ui <- fluidPage(
                                  plotOutput(outputId = "ggpExpDatedt7ConfPop", height="60vh"),
                                  plotOutput(outputId = "ggpExpConfPopdt7ConfPop", height="60vh")),
                           column(width=3, htmlOutput(outputId="hlpExponential")))),
+
+        tabPanel("Formeln",
+                 h4("Zur Berechnung der epidemiologischen Parameter und abgeleiteter Grössen", align = "left", style="color:black"),
+                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
+                 htmlOutput(outputId="blogFormulas")),
 
 #        tabPanel("Rohdaten Bundesländer",
 #          h4("Rohdaten Bundesländer", align = "left", style="color:black"),
@@ -832,8 +983,190 @@ server <- function(input, output, session) {
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Rückwirkende Verortung der täglichen Fallzahlen (BMSGPK)  zum TestDatum (AGES).  Basisdaten: AGES"))
   })  
  
+  
   # -------------------------------------------
-  # bmsgpk Data
+  # Dissemination
+  # -------------------------------------------
+  output$hlpDissemination1 <- renderText({ htmlDissemination1 })
+  output$hlpDissemination2 <- renderText({ htmlDissemination2 })
+  
+  # Estimate deaths expected for Durchseuchung
+  output$dtoDissemination1 <- DT::renderDataTable({
+    df <- CFR.2nd %>% 
+      dplyr::inner_join(POP.2021, by=c("Region","AgeGroup","Gender")) %>% 
+      dplyr::filter(Region=="Österreich") %>% 
+      dplyr::select("AgeGroup", "Gender", "CFR", "Population")
+    df %>%
+      dplyr::mutate(allDeaths = round(Population*CFR/(1+input$sldAsymptomatic))) %>% # input$sldAsymptomatic
+      dplyr::mutate(CFR = round(CFR*100,3)) %>%
+      dplyr::select(AgeGroup, Gender, allDeaths, CFR, Population)
+  }) 
+  
+  output$dtoDissemination2 <- DT::renderDataTable({
+    crdv() %>% 
+      dplyr::filter(Date==max(Date)-days(3), Region=="Österreich") %>% 
+      dplyr::mutate(sumDeath=round(sumDeath), sumRecovered=round(sumRecovered), sumVaccinated_2=round(sumVaccinated_2*input$sldVaccinationEfficiency)/100) %>%
+      dplyr:::select(AgeGroup,  Gender, Population, sumDeath, sumRecovered, sumVaccinated_2)
+  }) 
+  
+  # COVID-19 Zweite Welle: Sterblichkeitsrate in % nach Alter und Geschlecht
+  output$ggpDissemination1 <- renderPlot({
+    
+    dp <- crdv() %>% 
+      dplyr::filter(Region=="Österreich") %>%
+      dplyr::filter(Date>=as.POSIXct("2020-10-15"), Date<as.POSIXct("2020-12-31")) %>%
+      dplyr::mutate(meanDeathConf=newDeath/newConfirmed)
+    
+    ggplot(data=dp, aes(x=AgeGroup, y=meanDeathConf, color=Gender, fill=Gender, group=AgeGroup)) +
+      theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+      scale_y_continuous(trans="log10", breaks=c(.001,.002,.005,.01,.02,.05,.1,.2,.5), limits=c(0.0005,1))+
+      geom_boxplot(notch=TRUE, fill=NA) +
+      geom_point(data=CFR.2nd %>% dplyr::filter(Region=="Österreich"), aes(x=AgeGroup, y=CFR), color="black") +
+      facet_grid(.~Gender) +
+      ggtitle("COVID-19 Österreich: Zweite Welle: Sterblichkeitsrate bei Infektion in % nach Alter und Geschlecht")
+  }) 
+  
+  # Zeitliche Entwicklung
+  output$ggpDissemination2 <- renderPlot({
+    
+    df <- crdv() %>% 
+      dplyr::left_join(CFR.2nd, by=c("AgeGroup","Gender","Region")) %>%
+      dplyr::filter(Region=="Österreich", Date>as.POSIXct("2020-11-01")) %>%
+      dplyr::mutate(sumAsymptomatic = sumRecovered * input$sldAsymptomatic) %>% # input$sldAsymptomatic
+      # assume most of the recovereds have not been vaccinated, and that asymptomatic have a vaccination rate similar to standard population
+      dplyr::mutate(sumSusceptible = Population - sumRecovered - sumVaccinated_2 * input$sldVaccinationEfficiency/100) %>% #input$sldVaccinationEfficiency/100
+      dplyr::mutate(sumImmunized = Population - sumSusceptible) %>%
+      dplyr::mutate(moreDeaths = (Population-sumImmunized) * CFR - sumDeath)
+    
+    dp <- df %>% 
+      dplyr::filter(as.integer(AgeGroup)>5, Date<max(Date-days(3))) %>%
+      #dplyr::mutate(sumVaccinated_2k=sumVaccinated_2/10) %>%
+      tidyr::pivot_longer(cols=c(contains("Death"), -CFR), names_to="Group", values_to="Count")
+    
+    ggplot(data=dp, aes(x=Date, y=Count, color=Group, fill=Group, shape=Group)) +
+      theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+      scale_x_datetime(date_breaks="months", date_labels="%Y %m") +
+      scale_y_continuous(name="Anzahl Verstorbene", sec.axis=dup_axis(name="Anzahl Verstorbene")) +
+      scale_fill_manual(values=cbPalette) +
+      scale_color_manual(values=cbPalette) +
+      geom_line() +
+      facet_grid(Gender~AgeGroup)
+  }) 
+  
+  # COVID-19 Wien: Abschätzung künftige Todesfälle bei aktuellem Durchimpfungsgrad
+  #output$ggpDissemination3 <- renderPlot({
+
+    #dp <- crdv() %>% 
+    #  dplyr::filter(as.integer(AgeGroup)>0) %>%
+    #  tidyr::pivot_longer(cols=c(contains("Death"), -meanDeathConf), names_to="Group", values_to="Count") %>%
+    #  dplyr::filter(Date==max(Date)-days(3)) %>% dplyr::select(AgeGroup, Gender, Group, Count) %>%
+    #  dplyr::mutate(Group = factor(Group, levels=c("popDeath","pastDeath","futureDeath11","futureDeath13")))
+    
+    #ggplot(data=dp, aes(x=AgeGroup, y=Count, color=Group, fill=Group, shape=Group)) +
+    #  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    #  #scale_x_datetime(date_breaks="months", date_labels="%Y %m") +
+    #  scale_y_continuous(sec.axis=dup_axis()) +
+    #  scale_fill_manual(values=cbPalette) +
+    #  scale_color_manual(values=cbPalette) +
+    #  geom_col() +
+    #  facet_grid(Group~Gender) +
+    #  ggtitle(paste("COVID-19 Wien: Abschätzung künftige Todesfälle bei aktuellem Durchimpfungsgrad. Stand", max(dp$Date)))    
+ 
+  #}) 
+  
+  
+
+  
+  # -------------------------------------------
+  # 2. vs. 4. Welle
+  # -------------------------------------------
+ 
+  output$hlpWave42 <- renderText({ htmlWave42 })
+  
+  output$ggpWave42Abs <- renderPlot({
+  
+    daysDiff42 <- 326
+    selCols=c("newConfirmed", "curHospital", "curICU", "newDeath")
+
+    dp <- dtcrdzhi.rm() %>% 
+      dplyr::filter(Region=="Österreich") %>%
+      dplyr::select(c(Date, selCols)) %>%
+      tidyr::pivot_longer(cols=selCols, 
+                          names_to="Parameter", values_to="Anzahl") %>%
+      dplyr::mutate(Parameter = factor(Parameter, levels=selCols, labels=selCols, ordered=TRUE))%>%
+      dplyr::rename(Wave2=Date) %>%
+      dplyr::mutate(Wave4=Wave2-days(daysDiff42)) %>%
+      tidyr::pivot_longer(cols=c(Wave2, Wave4), values_to="Date", names_to="Wave")
+    #str(dp)
+    
+    ggplot(data=dp, aes(x=Date, y=Anzahl, color=Wave)) +
+      scale_x_datetime(name="2. Welle 8/2020", limits=c(as.POSIXct("2020-08-01"),as.POSIXct("2020-12-15")),  date_breaks="months", date_labels="%b",
+                       sec.axis=sec_axis(name="4. Welle 7/2021", trans = (~ . +hms::hms(days=daysDiff42)))) +
+      scale_y_continuous(name="Anzahl", trans="log2", breaks=2^(seq(0,15,by=1)),
+                         sec.axis=dup_axis(name="Anzahl_Stufe = log2(Anzahl)", labels=seq(0,15,by=1))) +
+      geom_line(size=1) +
+      facet_wrap(Parameter~., nrow=1) +
+      ggtitle("COVID-19 Österreich: Vergleich 2. und 4. Welle mittels zeitlicher Überlagerung der Kennzahlen (Positiv, Spital, ICU, Verstorben)")
+  })  
+  
+  output$ggpWave42Prop <- renderPlot({
+    
+    daysDiff42 <- 326
+    selCols=c("newConfirmed", "curHospital", "curICU", "newDeath")
+    
+    dp <- dtcrdzhi.rm() %>% 
+      dplyr::filter(Region=="Österreich") %>%
+      dplyr::select(c(Date, selCols)) %>%
+      dplyr::mutate(across(.cols=selCols, .fns= ~ .x/max(.x, na.rm=TRUE))) %>%
+      tidyr::pivot_longer(cols=selCols, 
+                          names_to="Parameter", values_to="Anzahl") %>%
+      dplyr::mutate(Parameter = factor(Parameter, levels=selCols, labels=selCols, ordered=TRUE)) %>%
+      dplyr::rename(Wave2=Date) %>%
+      dplyr::mutate(Wave4=Wave2-days(daysDiff42)) %>%
+      tidyr::pivot_longer(cols=c(Wave2, Wave4), values_to="Date", names_to="Wave")
+    # str(dp)
+    
+    ggplot(data=dp, aes(x=Date, y=Anzahl, color=Wave)) +
+      scale_x_datetime(name="2. Welle 8/2020", limits=c(as.POSIXct("2020-08-01"),as.POSIXct("2020-12-15")),  date_breaks="months", date_labels="%b",
+                       sec.axis=sec_axis(name="4. Welle 7/2021", trans = (~ . +hms::hms(days=daysDiff42)))) +
+      scale_y_continuous(name="Prozent(max)", trans="log2", limits=c(1/256,1), breaks=round(2^(seq(-8,0,by=1)),3),
+                         sec.axis=dup_axis(name="Prozent_Stufe = log2(Prozent(max))", labels=seq(-8,0,by=1))) +
+      geom_line(size=1) +
+      facet_wrap(Parameter~., nrow=1) +
+      ggtitle("COVID-19 Österreich: Vergleich 2. und 4. Welle mittels zeitlicher Überlagerung der Kennzahlen relativ zum Maximum der 2. Welle")
+  })  
+  
+  output$ggpWave42Wien <- renderPlot({
+    
+    daysDiff42 <- 333
+    selCols=c("newConfirmed", "curHospital", "curICU", "newDeath")
+    
+    dp <- dtcrdzhi.rm() %>% 
+      dplyr::filter(Region=="Wien") %>%
+      dplyr::select(c(Date, selCols)) %>%
+      # max(ICU) liegt in der 3. Welle -> confine calc to 2. Welle (2020)
+      dplyr::mutate(across(.cols=selCols, .fns= ~ .x/max(.x[1:300], na.rm=TRUE))) %>%
+      tidyr::pivot_longer(cols=selCols, 
+                          names_to="Parameter", values_to="Anzahl") %>%
+      dplyr::mutate(Parameter = factor(Parameter, levels=selCols, labels=selCols, ordered=TRUE)) %>%
+      dplyr::rename(Wave2=Date) %>%
+      dplyr::mutate(Wave4=Wave2-days(daysDiff42)) %>%
+      tidyr::pivot_longer(cols=c(Wave2, Wave4), values_to="Date", names_to="Wave")
+    # str(dp)
+    
+    ggplot(data=dp, aes(x=Date, y=Anzahl, color=Wave)) +
+      scale_x_datetime(name="2. Welle 8/2020", limits=c(as.POSIXct("2020-08-01"),as.POSIXct("2020-12-15")),  date_breaks="months", date_labels="%b",
+                       sec.axis=sec_axis(name="4. Welle 7/2021", trans = (~ . +hms::hms(days=daysDiff42)))) +
+      scale_y_continuous(name="Prozent(max)", trans="log2", limits=c(1/256,1), breaks=round(2^(seq(-8,0,by=1)),3),
+                         sec.axis=dup_axis(name="Prozent_Stufe = log2(Prozent(max))", labels=seq(-8,0,by=1))) +
+      geom_line(size=1) +
+      facet_wrap(Parameter~., nrow=1) +
+      ggtitle("COVID-19 Wien: Vergleich 2. und 4. Welle mittels zeitlicher Überlagerung der Kennzahlen relativ zum Maximum der 2. Welle")
+  })  
+  
+  
+  # -------------------------------------------
+  # bmsgpk Data --> NOT USED. Data is NOT beeing generated !!!
   # -------------------------------------------
   output$ggpBmsgpkCHIR <- renderPlot({
 
@@ -907,6 +1240,8 @@ server <- function(input, output, session) {
       scale_x_date(date_breaks="1 weeks", date_labels="%d.%m") +
       scale_y_continuous()
   }) 
+  
+  
   # -------------------------------------------
   # 2020
   # -------------------------------------------

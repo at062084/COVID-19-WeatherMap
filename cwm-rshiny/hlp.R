@@ -298,6 +298,26 @@ htmlExponential <- "<p><b>Rückblick 2020</b></p>
                   
 hlpBmsgpk <- "<p><b>GesundheitsMinisterium</b></p>"
 
+htmlWave42 <- "<p><b>Vergleich 2. und 4. Welle</b></p>"
+
+htmlDissemination1 <- "<p><b>Inzidenz und Ausbreitungsgeschwindigkeit</b><br>Für die Beurteilung der aktuellen Lage muss die Inzidenz
+                      zusammen mit der Ausbreitungsgeschwindigkeit (dem Reproduktionsfaktor) betrachtet werden.
+                      (wie insbesondere vom Gesundheitsministerium immer wieder betont wird).
+                      Die dritte Graphik zeigt den Zusammenhang zwischen Inzidenz und Ausbreitungsgeschwindigkeit. Die Kurve beschreibt den <b>Weg Österreichs 
+                      durch die Pandemie</b> (bzw. eines Bundeslandes). Die Monate sind durch unterschiedliche Symbole erkennbar.
+                      Die Lage ist kritisch bei hoher Inzidenz und hoher Ausbreitungsgeschwindigkeit, also im oberen rechten Quadranten der Graphik.
+                      Die Situation verbessert sich, je weiter die Inzidenz und Ausbreitungsgeschwindigkeit abnehmen, 
+                      d.h. die Zahlen sich nach links und unten bewegen. <br> Für diese Graphik ist eine Auswahl von nur ein oder zwei Bundesländern vorteilhaft. 
+                    </p>"
+htmlDissemination2 <- "<p><b>Inzidenz und Ausbreitungsgeschwindigkeit</b><br>Für die Beurteilung der aktuellen Lage muss die Inzidenz
+                      zusammen mit der Ausbreitungsgeschwindigkeit (dem Reproduktionsfaktor) betrachtet werden.
+                      (wie insbesondere vom Gesundheitsministerium immer wieder betont wird).
+                      Die dritte Graphik zeigt den Zusammenhang zwischen Inzidenz und Ausbreitungsgeschwindigkeit. Die Kurve beschreibt den <b>Weg Österreichs 
+                      durch die Pandemie</b> (bzw. eines Bundeslandes). Die Monate sind durch unterschiedliche Symbole erkennbar.
+                      Die Lage ist kritisch bei hoher Inzidenz und hoher Ausbreitungsgeschwindigkeit, also im oberen rechten Quadranten der Graphik.
+                      Die Situation verbessert sich, je weiter die Inzidenz und Ausbreitungsgeschwindigkeit abnehmen, 
+                      d.h. die Zahlen sich nach links und unten bewegen. <br> Für diese Graphik ist eine Auswahl von nur ein oder zwei Bundesländern vorteilhaft. 
+                    </p>"
 
 htmlDescription <- read_file("./blog/COVID-19-WeatherMap.html")
 htmlNews <- read_file("./blog/COVID-19-News.html")
