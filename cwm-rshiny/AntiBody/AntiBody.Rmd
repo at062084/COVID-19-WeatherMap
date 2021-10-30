@@ -1,7 +1,8 @@
 ---
 title: "COVID-19: Impfung und Antikörper Messung"
+subtitle: "http://cwm.rshiny.world"
 author: Thomas Strehl  https://www.linkedin.com/in/strehl-thomas-122867110
-date: "2021-09-21"
+date: "2021-10-10"
 output:
   pdf_document:
     fig_height: 6
@@ -81,7 +82,7 @@ In der folgenden Darstellung sind die Zeitreihen der Antikörper Messungen der b
 - Die maximal erreichten Werte liegen bei Testperson W mit AstraZeneca bei 550
 - Die maximal erreichten Werte liegen bei Testperson M mit BiontecPfizer bei 1800
 
-In beiden Fällen nehmen die Werte mit der Zeit in etwa exponentiell ab (Für TestPerson W mit AstraZeneca wäre rein mathematisch auch eine lineare Abnahme möglich, aber aus medizinischen Gründen wenig wahrscheinlich)
+In beiden Fällen nehmen die Werte mit der Zeit in etwa exponentiell ab (Mit den Daten der TestPerson W mit AstraZeneca wäre statt des exponentiellen auch ein linears Modell verträglich; ein zerfallsprozessartigen Vorgang kann aber nicht durch ein lineares Modell modelliert werden)
 
 ```{r}
 ggplot(data=df %>% dplyr::filter(Aktion=="AntiKörper"), aes(x=Monat, y=Wert, shape=ImpfStatus, color=ImpfStatus, group=ImpfStatus)) +
@@ -105,10 +106,10 @@ Die These einer exponentiellen Abnahme der Antikörper Messwerte mit der Zeit l�
 
 Die Halbwertszeit, d.h. die Dauer bis zu einer Halbierung der Messwerte,  ist
 
-- 60 Tage (2.0 Monate) für TestPerson W mit AstraZeneca
+- 70 Tage (2.4 Monate) für TestPerson W mit AstraZeneca
 - 35 Tage (1.2 Monate) für TestPerson M mit BiontecPfizer
 
-Trotz wesentlich höherer Maximalwerte bei Testperson M mit BiontecPfizer sind die Antikörper bereits nach ca. 10 Monaten nicht mehr nachweisbar sein werden. Bei TestPerson W mit AstraZeneca sind die maximalen Antikörperwerte vergleichsweise niedrig, nehmen aber wesentlich langsamer ab, sodass der Nachweis erst nach etwas über einem Jahr nicht mehr möglich sein wird.
+Trotz wesentlich höherer Maximalwerte werden bei Testperson M mit BiontecPfizer die Antikörper bereits nach ca. 10 Monaten vermutlich nicht mehr nachweisbar sein. Bei TestPerson W mit AstraZeneca sind die maximalen Antikörperwerte vergleichsweise niedrig, nehmen aber wesentlich langsamer ab, sodass der Nachweis vermutlich erst nach über einem Jahr nicht mehr möglich sein wird.
 
 **Anmerkung:** Die Prognosen für die Antikörper Werte sind bestenfalls erste Anhaltspunkte und müssen durch fortgesetzte Messungen an den beiden (sowie weiteren) Testpersonen präzisiert werden.
 
@@ -145,7 +146,9 @@ df %>% select(ID, Alter, Geschlecht, Datum, ImpfStatus, ImpfStoff, Aktion, Wert)
 ```
 
 \newpage
-## Exponentielles Modell
+## Exponentielles Modell und Halbwertszeit der BAU
+
+Halbwertszeit der BAU Werte in Monaten
 
 ### TestPerson 1
 
@@ -158,8 +161,8 @@ summary(lm1)
 ### TestPerson 2
 
 ```{r}
-summary(lm1)
-(HalbwertsZeit = -1/coef(lm1)[2])
+summary(lm2)
+(HalbwertsZeit = -1/coef(lm2)[2])
   
 ```
 
