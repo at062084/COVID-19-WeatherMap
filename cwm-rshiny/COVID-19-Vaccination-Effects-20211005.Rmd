@@ -1,0 +1,1036 @@
+---
+title: "COVID-19 ImpfStatus und Auswirkungen"
+author: "Thomas.Strehl@at.ibm.com"
+date: "2021-10-01"
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+    fig_height: 3
+    fig_width: 7.5
+  always_allow_html: true
+  html_document:
+    df_print: kable
+    fig_caption: no
+    fig_height: 6
+    fig_width: 9
+    number_sections: no
+    toc: yes
+    toc_depth: 3
+geometry: margin=1.5cm
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, cache=FALSE)
+#knitr::opts_chunk$set(fig.align="center")
+#options(knitr.table.format = 'html')
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(lubridate)
+library(forcats)
+library(knitr)
+library(gt)
+library(pivottabler)
+library(kableExtra)
+library(zoo)
+```
+
+```{r}
+#cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#444444", "#F0D042", "#0072B2", "#D55E00", "#CC79A7", "#C40000")
+cbPalette <- c("#AAAAAA", "#E69F00", "#56B4E9", "#009E73", "#666666", "#F0D042", "#0072B2", "#D55E00", "#CC79A7", "#C40000")
+atShapes <- c(10,6,7,2,11,5,12,22,1,9)
+
+asyptomaticCorrectionFactor = 2
+vaccinationImmunizationFaktor = 0.9
+```
+
+\newpage
+
+# Allgemeine Vorbemerkungen
+
+Ziel dieser Untersuchung ist es die Auswirkungen der Impfung gegen COVID-19 und überstandener Erkrankung an COVID-19 auf das epidemiologische Geschehen nachvollziehbar zu machen. Es geht darum herauszufinden ob sich ein Schutz vor (neuerlicher) Ansteckung, symptomatischem, schwerem oder tötlichem Verlauf der Krankheit aus den von Bmsgpk und AGES veröffentlichten Daten herauslesen lässt. 
+
+## Wirkung der Impfung
+
+Die Immunisierten und NichtImmunisierten  sind  die Personengruppen in denen sich das Virus ausbreitet. Bei den Immunisierten ist die Ausbreitung nicht Null, sondern um den Schutzfaktor reduziert.  Dieser Schutzfaktor hängt u.a. von Art der Immunisierung (Impfung oder Erkrankung), Alter und Geschlecht, dem Impfstoff, der Dauer seit der letzten Impfung, der aktuellen COVID Variante aber auch der Konstitution des Individuums ab.
+
+Der Schutz durch Immunisierung (Impfung oder Genesung) ist dabei auf zwei Arten denkbar:
+
+- *Komplettschutz von bestimmten Immunisierten*: Von den Immunisierten ist ein bestimmter Prozentsatz zu 100% geschützt, erkrankt also auch nicht bei beliebig vielen und intensiven 'Ansteckungsereignissen'. Bei den übrigen greift die Immunisierung nicht und diese sind ähnlich vulnerabel wie die nicht Immunisierten
+- *Teilschutz von allen Immunisierten*: Bei den Immunisierten führt ein bestimmter Prozentsatz von 'Ansteckungsereignissen' nicht zur Vermehrung des Virus im Körper. Bei dieser Wirkungsweise ist kein Immunisierte zu 100% geschützt und das individuelle Verhalten führt zu Anstieg oder Veringerung des Risikos an COVID zu erkranken.
+- Es ist eine Mischform der beiden Wirkungsarten denkbar und auch wahrscheinlich: hohe <-> niedrige individuelle Immunisierung, Toleranz gegen hohe <-> niedrige Virus Dosis bei Ansteckungsereignissen
+
+Die Messung des *Schutzfaktors gegen Infektion* fusst definitionsgemäß auf der Zählung der Infektionen, also der Anzahl positiver Tests.  Die Berechnung des Schutzfaktors basiert im Wesentlichen auf einem Vergleich der Inzidenz unter den Vulnerablen und den Geschützten (siehe dazu Abschnitt 'Methode zur Abschätzung des Schutzes vor Ansteckung durch die Impfung' weiter unten). Eine Infektion bei den 2xGeimpften bzw. Genesenen wird als 'Impfdurchbruch' bzw. 'Wiederansteckung' bezeichnet. *Je höher der Schutzfaktor umso niedriger die Inzidenz unter Geschützen im Vergleich zu Vulnerablen*. 
+
+Für den Wirkmechanismus 'Teilschutz von allen Immunisierten' sind die unterschiedlichen Inzidenzwerte aber nicht nur Folge der Schutzwirkung selbst sondern sind auch durch *unterschiedliches Verhalten der beiden Gruppen* beeinflusst (z.B. mehr soziale Kontake, Besuche von Gastronomie, Veranstaltungen, etc. bei den Immunisierten). Das macht die Abschätzung der eigentlichen Schutzwirkung schwierig.
+
+Für den Verlauf des epidemiologischen Geschehens ist der Grad der 'effektiven' Immunisierung relevant, der die Anzahl der verbleibenden Vulnerablen abschätzt. Die Daten der AGES enthalten Angaben zum Impfstatus (2xGeimpft Ja/Nein), nicht jedoch 1xGeimpft oder Genesen. Die Anteil der Genesenen liegt vermutlich im Bereich von 10% der Bevölkerung (davon vermutlch etwa die Hälfte amtlich erfasst), darf also nicht vernachlässigt werden.
+
+Die Schutzwirkung der Impfung umfasst mehrere Aspekte, darunter
+
+- Schutz vor Ansteckung (definiert z.B. durch Nachweisbarkeit des Virus im Körper durch PCR Test)
+- Verringerung der Infektiosität (Weitergabe des Virus im Falle einer Ansteckung)
+- Schutz vor symptomatischem Ausbruch
+- Schutz vor schwerem Krankheitsverlauf, Spitalsaufenthalt, IntensivStation und Tod
+
+
+## Schlechte Datenlage
+
+Die Datenlage für eine allgemeine Untersuchung der Schutzwirkung duch Immunisierung ist denkbar schlecht, gibt es doch keine oder nur dürftige Daten zum Impf- bzw. Genesungsstatus von Spitalspatienten, Intensivbetreuung und Sterbefällen. Daten ohne Zuordnung in das übliche 10 Altersgruppen Schema der AGES, ohne Geschlechtsangabe oder Gliederung nach Bundesländern sind der Fragestellung wegen der starken alters- sowie regionalen Unterschiede nicht angemessen und können bestenfalls als vage Hinweise dienen.
+
+Die folgenden Betrachtung beschäftigen sich daher in erster Linie mit dem Schutz vor Ansteckung anhand der verfügbaren Zahlen zur Inzidenz nach Impfstatus.
+
+Die einzigen mir bekannten offiziellen und öffentlich zugänglichen epidemiologischen Daten zur Inzidenz mit Angabe des Impfstatus werden von AGES auf  https://www.ages.at/themen/krankheitserreger/coronavirus/ bekanntgegeben. Bei näherer Betrachtung erweisen sich diese Daten als mäßig sachdienlich: Die Konsistenz mit der zeitlichen Entwicklung der Durchimpfungsrate sowie den täglich veröffentlichen Inzidenz Daten ist defakto nicht nachvollziehbar, und Angaben zu Region, Alter und Geschlecht sind nicht verhanden oder unzulänglich.
+
+## TODO: Gliederung
+
+Im folgenden Abschnitt zunächst eine Darstellung dieser Daten und als erster Sanity check der Vergleich mit den täglichen Inzidenz Werten. Dann folgt ein Überblick zur Durchimpfungsrate und abschliessend wird versucht diese Daten anhand der Durchimpfungsrate zu erklären. Wie sich zeigen wird mit mässigem Erfolg. 
+
+
+```{r, results='hide'}
+# Reference data for crdv by Region, AgeGroup and Gender
+crdv <- readRDS("./data/curated/crdv_rag.rda") %>%
+  dplyr::select(Date, Region, AgeGroup, AgeGroup3, Gender, Population, newConfirmed, starts_with("sum")) %>%
+  dplyr::filter(Date>=as.POSIXct("2021-01-01"), Date<max(Date)-days(3))
+
+#str(crdv)
+
+asymFactor=2
+immuFactor=0.9
+
+# Austria complete
+crdv.at <- crdv %>%
+  dplyr::filter(Region=="Österreich") %>%
+  dplyr::group_by(Date) %>%
+  dplyr::summarize(.groups="drop", Population = sum(Population),
+                   dplyr::across(.cols=starts_with("new"), ~ sum(.x, na.rm=TRUE)),
+                   dplyr::across(.cols=starts_with("sum"), ~ sum(.x, na.rm=TRUE))) %>%
+  dplyr::mutate(newConfPop=newConfirmed/Population*100000) %>%
+  dplyr::mutate(sumImmunized = sumRecovered*asymFactor + sumVaccinated_2/Population*(Population-sumRecovered*asymFactor)) %>%
+  # assume as many asymptomatic as recovered -> asymptomatics are immunnized, but may have been vaccinated
+  dplyr::mutate(sumSusceptibles = Population - sumImmunized)  %>%
+  dplyr::mutate(sumVaccinated_X = Population - sumVaccinated_2) 
+# str(crdv.at)
+
+# Austria by AgeGroup
+crdv.a.at <- crdv %>%
+  dplyr::filter(Region=="Österreich") %>%
+  dplyr::arrange(Date, AgeGroup) %>%
+  dplyr::group_by(Date, AgeGroup) %>%
+  dplyr::summarize(.groups="drop", Population = sum(Population),
+                   dplyr::across(.cols=starts_with("new"), ~ sum(.x, na.rm=TRUE)),
+                   dplyr::across(.cols=starts_with("sum"), ~ sum(.x, na.rm=TRUE))) %>%
+  dplyr::mutate(newConfPop=newConfirmed/Population*100000) %>%
+  dplyr::mutate(sumVaccinated_X = Population - sumVaccinated_2) %>%
+  # assume as many asymptomatic as recovered -> asymptomatics are immunnized, but may have been vaccinated
+  dplyr::mutate(sumImmunized = sumRecovered*asymFactor + sumVaccinated_2/Population*(Population-sumRecovered*asymFactor)) %>%
+  dplyr::mutate(sumSusceptibles = Population - sumImmunized)  # %>%
+
+  # Estimate Inzidenz among Immunized and Susceptibles  --> calc with specific immuFactor when needed
+  ## dplyr::mutate(newConfImm=newConfirmed*sumImmunized/Population^2*100000) %>%
+  ## dplyr::mutate(newConfSus=newConfirmed*sumSusceptibles/Population^2*100000) %>%
+  ## dplyr::select(Date, AgeGroup3, Population, starts_with("new"), starts_with("sum"))
+#str(crdv.a.at)
+
+# Austria by AgeGroup3
+crdv.a3.at <- crdv %>%
+  dplyr::filter(Region=="Österreich") %>%
+  dplyr::arrange(Date, AgeGroup3) %>%
+  dplyr::group_by(Date, AgeGroup3) %>%
+  dplyr::summarize(.groups="drop", Population = sum(Population),
+                   dplyr::across(.cols=starts_with("new"), ~ sum(.x, na.rm=TRUE)),
+                   dplyr::across(.cols=starts_with("sum"), ~ sum(.x, na.rm=TRUE))) %>%
+  dplyr::mutate(newConfPop=newConfirmed/Population*100000) %>%
+  dplyr::mutate(sumVaccinated_X = Population - sumVaccinated_2)  %>%
+  # assume as many asymptomatic as recovered -> asymptomatics are immunnized, but may have been vaccinated
+  dplyr::mutate(sumImmunized = sumRecovered*asymFactor + sumVaccinated_2/Population*(Population-sumRecovered)) %>%
+  dplyr::mutate(sumSusceptibles = Population - sumImmunized)
+#str(crdv.a3.at)
+
+# Vienna by AgeGroup
+crdv.a.w <- crdv %>%
+  dplyr::filter(Region=="Wien") %>%
+  dplyr::arrange(Date, AgeGroup) %>%
+  dplyr::group_by(Date, AgeGroup) %>%
+  dplyr::summarize(.groups="drop", Population = sum(Population),
+                   dplyr::across(.cols=starts_with("new"), ~ sum(.x, na.rm=TRUE)),
+                   dplyr::across(.cols=starts_with("sum"), ~ sum(.x, na.rm=TRUE))) %>%
+  dplyr::mutate(newConfPop=newConfirmed/Population*100000) %>%
+  dplyr::mutate(sumVaccinated_X = Population - sumVaccinated_2)  %>%
+  # assume as many asymptomatic as recovered -> asymptomatics are immunnized, but may have been vaccinated
+  dplyr::mutate(sumImmunized = sumRecovered*asymFactor + sumVaccinated_2/Population*(Population-sumRecovered*asymFactor)) %>%
+  dplyr::mutate(sumSusceptibles = Population - sumImmunized)
+#str(crdv.a.w)
+
+```
+
+
+```{r, results='hide'}
+# Read new data from bmsgpk website
+yzi.a3 <- readRDS("./data/curated/yzi_a3.rda")
+# str(yzi.a3)
+
+# Sum Inzidenz for Immunized and notImmunized
+yz.a3 <- yzi.a3 %>%
+  # confine to dataset without Symptomatic feature
+  dplyr::filter(Symptomatic=="YesNo") %>%
+  dplyr::group_by(Date, AgeGroup3) %>%
+  dplyr::summarize(.groups="drop", newConfPop=sum(newConfPop), Symptomatic=first(Symptomatic), Vaccinated="YesNo")
+#str(yz.a3)
+``` 
+
+
+# AGES: Informationen zum Impfstatus der positiv Getesteten
+
+Die AGES veröffentlicht seit Ende August eine Aufgliederung der österreichweiten Inzidenz nach Status der Immunisierung und "Krankheitsstatus" ab 1.7.2021, gegliedert in drei Altersgruppen die man grob als 'Jugendliche (12-17)', 'Erwachsene (18-59)' und 'Senioren (60+)' bezeichnen kann. 
+
+Wie diese drei Altersgruppen zustande kommen ist nicht dokumentiert, ebensowenig warum genau diese statt der bei AGES üblichen zehn Altersgruppen dargestellt werden. Die Zahlen selbst sind lt. Beschreibung die 7-Tages Inzidenz (1) aller Getesteten und (2) der Symptomatischen, jeweils nach Impfstatus ("Vollständig geimpft","Unvollständig/nicht geimpft") pro 100.000 der Population. Auf welche Population normiert und wie groß diese ist, ist nicht dokumentiert. Die 'NichtGeimpften' umfassen auch die 1x Geimpften und die Genesenen. Deren Inzidenz müsste für genauere Betrachtungen seperat erfasst und herausgerechnet werden.
+
+
+## Methode zur Abschätzung des Schutzes vor Ansteckung durch die Impfung
+
+Das Ausmass der Verbreitung des Virus wird durch die Inzidenz gemessen. 
+
+- Der Schutz vor Ansteckung durch Genesung oder Impfung bestimmt sich aus dem Verhältnis der Inzidenz unter den Geimpften bzw. Genesenen gegenüber den NichtImmunisierten (weder Genesen noch 2xGeimpft). In den Formeln sind diese Gruppen mit 'I=Immunized (2xGeimpfte+Genesene)' und 'S=Susceptible' bezeichnet.
+- Die Daten der AGES weisen die Inzidenz unter den 2xGeimpften und den Nicht2xGeimpften aus. Die Effekte der Immunisierung durch Genesung oder 1xImpfung bleiben unberücksichtigt. In den Formeln sind diese beiden Gruppen mit 'V=Vaccinated' und 'X=NotVaccinated' bezeichnet.
+
+Die aus den AGES Daten entlang der folgenden Formeln errechneten Werte für die Schutzwirkung wird tendentiell etwas zu niedrig sein, weil die Genesenen und 1xGeimpften unter den NichtGeimpften deren Inzidenz senken. Im Vergleich dazu erscheint dann die Inzidenz der Geimpften höher und damit der Schutzfaktor niedriger.
+
+
+$$
+\begin{aligned}
+e  &= \text{Immunization efficiency [0,1], usual assumption: 0.9} \\
+\\
+\text{Method with} & \text{ Vaccinated vs. notVaccinated for AGES dataset} \\
+V    &= \text{Vaccinated (2 shots)} \\
+X    &= \text{not Vaccinated (<2 shots)} \\
+n_V  &= \text{Number of positives among Vaccinated} \\ 
+z_V  &= \text{Incidence among Vaccinated } \\ 
+z_X  &= \text{Incidence among notVaccinated } \\
+z_X  &= \frac{n_X}{X} \\
+z_V  &= (1-e)*z_X \\
+e_{VX} &= 1-\frac{z_V}{z_X}
+\\
+\text{Method with} & \text{ Immunized vs. Susceptibles (adaptable to different modes of immunization)} \\
+R    &= \text{Recovered (symptomatic + asymptomatic)} \\
+I    &= \text{Immunized (e.g. Vaccinated+Recovered)} \\
+S    &= \text{Susceptibles (Population-AllImmunized)} \\
+n_S  &= \text{Number of positives among Susceptibles} \\ 
+z_S  &= \text{Incidence among Susceptibles } \\ 
+z_I  &= \text{Incidence among Immunized } \\
+\\
+z_S  &= \frac{n_S}{S} \\
+z_I  &= (1-e)*z_S \\
+e_{IS} &= 1-\frac{z_I}{z_S}
+\end{aligned}
+$$
+
+
+
+
+
+
+## Impf- und Symptomstatus der 7-TagesInzidenz seit Juli 2021
+
+Die nachfolgenden Tabellen und Graphiken zeigen alle diesbezüglichen Daten der AGES in einer Zusammenschau. Die 7-Tages Inzidenz ist auf die hier gebräuchliche TagesInzidenz umgerechnet.
+
+AGES reportet folgende tagesaktuelle Daten für drei Altersgruppen:
+
+- Die Inzidenz bei den Geimpften und den NichtGeimpften (genauer: Anzahl positiv Getestete (Nicht)Geimpfte pro 100.000 (Nicht)Geimpfte. Abbildung: Symptomatic=YesNo)
+- Die Inzidenz bei den symptomatischen Geimpften und Nichtgeimpften (Abbildung Symptomatic=Yes, genauer: )
+
+### Inzidenz nach Altersgruppe und ImpfStatus
+
+In konkreten Zahlen ergibt sich für den  Zeitraum Ende September bis Anfang Oktober mit annähernd gleichbleibender Inzidenz ('Seitwärtsbewegung') folgendes Bild für die Inzidenz:
+
+- Spalte VaccRate: Durchimpfungsrate (Berechnet aus den AGES Impfdaten für zehn Altersgruppen)
+- Spalten VaccNo und VaccYes: Die Inzidenz in der Gruppe der NichtGeimpften und Geimpften
+- Spalten Inzidenz und InzCalc: Ersterer Wert ist direkt errechnet aus den AGES Inzidenz Zahlen mit den zehn Altersgruppen, letzterer ist errechnet aus den drei etwas Unterschiedlichen Altersgruppen für VaccNo und VaccYes. Man sieht, dass der Wert für die Jugendlichen '12-17 Jahre' mit der Gruppe aus den '<5', '5-15' und '5-25' Jährigen nur schlecht zusammenpasst. Siehe dazu auch weiter unten 'Sanity Check 1: Vergleich mit anderen AGES Daten zur Inzidenz'
+- Spalte Vacc_NoYes: Verhältnis der Inzidenzen
+- Spalte Vacc_Schutz: Impfschutz in Prozent (siehe Formeln weiter oben)
+
+```{r}
+
+crdv.a3.at.v <- crdv.a3.at %>%
+  dplyr::filter(Date>as.POSIXct("2021-09-20"), Date < as.POSIXct("2021-09-20")+days(21)) %>%
+  dplyr::group_by(Date, AgeGroup3) %>%
+  dplyr::mutate(newConfPop3 = sum(newConfirmed)/sum(Population)*100000) %>%
+  dplyr::ungroup() %>%
+  dplyr::group_by(AgeGroup3) %>%
+  dplyr::summarize(.groups="drop", VaccRate=mean(sumVaccinated_2)/mean(Population), Inzidenz=round(mean(newConfPop3)))
+
+#str(crdv.a3.at.v)
+
+df <- yzi.a3 %>%
+  dplyr::filter(Date>as.POSIXct("2021-09-20"), Date < as.POSIXct("2021-09-20")+days(21)) %>%
+  dplyr::group_by(AgeGroup3, Symptomatic, Vaccinated) %>%
+  dplyr::summarize(.groups="drop", newConfPop=round(mean(newConfPop, na.rm=TRUE))) %>%
+  tidyr::pivot_wider(names_from=Symptomatic, values_from="newConfPop", names_prefix="Symp_") %>%
+  dplyr::mutate(SympAnteil=round(Symp_Yes/Symp_YesNo*100))
+
+#df
+
+dg <- df %>%
+  tidyr::pivot_wider(names_from=Vaccinated, values_from=starts_with("Sym"), names_prefix="Vacc_") %>%
+  dplyr::rename(Vacc_No=Symp_YesNo_Vacc_No, Vacc_Yes=Symp_YesNo_Vacc_Yes) %>%
+  dplyr::mutate(Vacc_NoYes=round(Vacc_No/Vacc_Yes,1), Vacc_Schutz=round((1-Vacc_Yes/Vacc_No)*100))
+
+#dg
+
+crdv.a3.at.vx <- dg %>%
+  dplyr::rename(Symp_Vacc_No=Symp_Yes_Vacc_No, Symp_Vacc_Yes=Symp_Yes_Vacc_Yes) %>%
+  dplyr::left_join(crdv.a3.at.v, by="AgeGroup3") %>% 
+  dplyr::mutate(InzCalc = round(Vacc_No*(1-VaccRate)+Vacc_Yes*VaccRate)) %>%
+  dplyr::mutate(VaccRate=round(VaccRate*100))
+
+crdv.a3.at.vx %>%
+  dplyr::select(AgeGroup3, VaccRate, Inzidenz, InzCalc, Vacc_No, Vacc_Yes, Vacc_NoYes, Vacc_Schutz) %>% 
+  kable(caption="COVID-19 Östereich: Inzidenz mit ImpfStatus nach Altersgruppe und SymptomStatus", booktabs=T) %>%
+  kable_styling(latex_options = c("striped", "hold_position"))
+
+```
+
+
+```{r, results='hide'}
+
+dp <- yzi.a3 %>% dplyr::rename(Inzidenz=newConfPop)
+dq <- yz.a3 %>% dplyr::rename(Inzidenz=newConfPop)
+
+ggplot(data=dp, aes(x=Date, y=Inzidenz, color=AgeGroup3, linetype=Vaccinated)) + 
+  scale_y_continuous(sec.axis=dup_axis(), breaks=seq(0,100,by=20)) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_line() + 
+  #geom_line(data=dq, color="red") + 
+  facet_grid(Symptomatic~AgeGroup3, labeller=label_both) +
+  #facet_grid(Vaccinated~AgeGroup3, labeller=label_both, scales="free_y") +
+  ggtitle("COVID-19 Östereich: ImpfStatus nach Altersgruppe und SymptomStatus")
+``` 
+
+Anmerkungen:
+
+- Die relative Abnahme der Inzidenz mit dem Alter spiegelt die steigende Durchimpfungsrate
+- Der zeitliche Verlauf der Kurven lässt eine Zusammenhang mit der Durchimpfungesrate nicht unmittelbarerkennen
+
+
+### Inzidenz der Symptomatischen nach Altersgruppe und ImpfStatus
+
+Während im letzten Abschnitt die Wirksamkeit der Impfung gegen Ansteckung behandelt wurde (genauer: die Nachweisbarkeit des Virus durch einen PCR bzw. Antigen Test nach erfolgter Ansteckung), geht es hier um die Wirksamkeit der Impfung gegen die Ausbildung von Symptomen. Die Berechnung des Schutzes erfolgt wie gehabt aus dem Verhältnis der Inzidenzen der Symptomatischen Geimpften gegenüber den Symptomatischen NichtGeimpften.
+
+- Bemerkenswerte Weise ist die Schutzwirkung gegen die Ausbildung von Symptomen fast ident zur Schutzwirkung gegen die Vermehrung des Virus im Körper
+
+```{r}
+crdv.a3.at.vx %>%
+  dplyr::mutate(Symp_Vacc_NoYes = round(Symp_Vacc_No/Symp_Vacc_Yes,1), Symp_Vacc_Schutz = round((1-Symp_Vacc_Yes/Symp_Vacc_No)*100)) %>%
+  dplyr::select(AgeGroup3, VaccRate, Symp_Vacc_No, Symp_Vacc_Yes, Symp_Vacc_NoYes, Symp_Vacc_Schutz)  %>% 
+  kable(caption="COVID-19 Östereich: Inzidenz der Symptomatischen mit ImpfStatus nach Altersgruppe und SymptomStatus", booktabs=T) %>%
+  kable_styling(latex_options = c("striped", "hold_position"))
+```
+
+
+
+```{r, results='hide'}
+
+ggplot(data=dp, aes(x=Date, y=Inzidenz, color=AgeGroup3, linetype=Symptomatic)) + 
+  scale_y_continuous(sec.axis=dup_axis()) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_line() + 
+  facet_grid(Vaccinated~AgeGroup3, labeller=label_both, scales="free_y") +
+  ggtitle("COVID-19 Östereich: SymptomStatus nach Altersgruppe und ImpfStatus")
+``` 
+
+### Anteil der Symptomatischen nach Altersgruppe und ImmunisierungsStatus
+
+- Der Anteil der Symptomatischen bei den Geimpften ist gleich groß wie bei den NichtGeimpften
+- Der Anteil der Symptomatischen von grob 70% ist, gegeben die vielen 3G und Schul Tests, hoch
+- Die Altersabhängigkeit das Anteils an Symptomatischen ist bemerkenswert gering.
+
+
+```{r}
+crdv.a3.at.vx %>%
+  dplyr::select(AgeGroup3, VaccRate, Inzidenz, InzCalc, SympAnteil_Vacc_No, SympAnteil_Vacc_Yes)  %>% 
+  kable(caption="COVID-19 Östereich: Inzidenz: Anteil der Symptomatischen nach Altersgruppe und ImpfStatus", booktabs=T) %>%
+  kable_styling(latex_options = c("striped", "hold_position"))
+```
+
+
+
+### Details im Stufen Model
+
+Einen besseren Überblick zur zeitlichen Entwicklung auch bei niedriger Inzidenz gibt die hier übliche (logarithmische) Darstellung nach Inzidenzstufen. 
+
+- Bei den Senioren scheint die Wachstumskurve bei den 2xGeimpften eine Woche früher abzuflachen als bei den NichtImmunisierten
+- Bei den Erwachsenen verläuft die Inzidenzkurven der 2xGeimpften und den NichtGeimpften erstaunlich parallel, obwohl in diesem Zeitraum die Durchimpfungsrate erheblich gestiegen ist (siehe weiter unten)
+
+
+```{r, results='hide'}
+ggplot(data=dp, aes(x=Date, y=Inzidenz, color=AgeGroup3, linetype=Vaccinated)) + 
+  #scale_x_datetime(date_breaks="2 weeks", date_labels="%d.%m") +
+  scale_y_continuous(name="Inzidenz", trans="log2", limits=c(1/4,128),
+                     breaks=2^(seq(-1,10,by=1)), labels=sprintf("%g",2^(seq(-1,10,by=1))), 
+                     sec.axis=dup_axis(name="Inzidenz_Stufe", labels=seq(-1,10,by=1))) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_line() + 
+  facet_grid(Symptomatic~AgeGroup3, labeller=label_both) +
+  ggtitle("COVID-19 Östereich: TagesInzidenz nach Altersgruppe, Symptom- und ImpfStatus")
+``` 
+
+## Verhältnis Inzidenz Geimpfte zu NichtGeimpfte
+
+Der zeitliche Verlauf dieses Verhältnisses ist beeinflusst von der Entwicklung der allgemeinen Inzidenz, dem Durchimpfungsgrad und der Schutzwirkung der Impfung.
+
+- Die drei Altersgruppen weisen sehr unterschiedliche Charakteristika im Verlauf auf
+- Es gibt möglicherweise Andeutungen von drei Phasen: Hoch - Tief - Hoch, mit ähnlichem Verlauf bei Jugendlichen und Senioren
+- Der Unterschied zwischen 'Symptomatischen' und 'Asymptomatischen' ist kaum signifikant
+
+Die Kurven lassen weder eine gute Korrelation mit dem Verlauf der allgemeinen Inzidenz, der Durchimpfungsrate noch dem Impfschutz erwarten. **Probleme bei der Datenerfassung sind eine mögliche Erklärung für die nicht nachvollziehbaren Schwankungen.**
+
+```{r, results='hide'}
+
+dp <- yzi.a3 %>% dplyr::mutate(InzidenzVerhältnis=relConfPop)
+
+ggplot(data=dp, aes(x=Date, y=InzidenzVerhältnis, linetype=Symptomatic)) + 
+  scale_y_continuous(limits=c(0,NA), breaks=seq(0,1,by=.1), sec.axis=dup_axis())+
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_line(aes(color=AgeGroup3)) + 
+  facet_grid(.~AgeGroup3, labeller=label_both) +
+  ggtitle("COVID-19 Östereich: Verhältnis der Inzidenz der Immunisierten zu NichtImmunisierten")
+``` 
+
+## Abschhätzung des Impfschutzes gegen Ansteckung
+
+Lässt man die angesprochenen Probleme ausser acht und folgt dem Abschnitt "Methode zur Abschätzung des Schutzes vor Ansteckung durch die Impfung" so ergibt sich grob folgendes Bild:
+
+- Der Schutz der Impfung nimmt mit dem Alter und mit der Zeit ab
+
+Diese Tendenz ist in der Öffentlichkeit allgemein bekannt. Quantitative Aussagen dazu lassen sich auf Basis der vorhandenen Daten ohne weitere Hintergrundinformationen nicht belastbar ableiten. Vermutlich stell die hier abgeschätze Schutzwirkung eine unter Schranke dar, weil die Gruppe der Genesenen und 1x-Geimpften in den Daten der AGES unter die Gruppe der NichtGeimpften subsummiert werden.
+
+- Der idente Verlauf des Schutzes der Impfung gegen Ansteckung und Ausbildung von Symptomen ist nicht nachvollziehbar
+
+```{r, results='hide'}
+
+dp <- yzi.a3 %>% dplyr::mutate(SchutzWirkung=1-relConfPop)
+
+ggplot(data=dp, aes(x=Date, y=SchutzWirkung, linetype=Symptomatic)) + 
+  scale_y_continuous(limits=c(0,1), breaks=seq(0,1,by=.1), sec.axis=dup_axis())+
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_line(aes(color=AgeGroup3)) + 
+  geom_smooth(method=lm, se=FALSE, size=0.25, color="grey20") +
+  facet_grid(.~AgeGroup3, labeller=label_both) +
+  ggtitle("COVID-19 Östereich: Schutzwirkung der Impfung vor Ansteckung")
+``` 
+
+
+
+# Plausibilitätsprüfung der AGES Daten zum Impfstatus der Inzidenz
+
+In der Folge wird versucht die AGES Daten zur Inzidenz nach Impf- und SymptomStatus auf Verträglichkeit mit anderen Daten der AGES zu überprüfen. 
+
+Vergleiche sind insofern schwierig als die Aufschlüsselung nach Altersgruppen nicht genau übereinstimmt. Die zehn AGES Altergruppen zu Inzidenz und Impfung werden hier wie folgt zu den drei AGES Altersgruppen zum Impstatus zusammengefasst:
+
+- Jugendliche: AGES 12-17 Jahre = AGES '<5, 5-15, 15-25'
+- Erwachsene: AGES 18-59 Jahre = AGES '25-35, 35-45, 45-55, 55-65'
+- Senioren: AGES '60+' = AGES '65-75, 75-85, 85+'
+
+Die Altersgruppe 'Erwachsene' aus den vier Altersgruppen '25...65' enthält also ca. 10% mehr Daten als die Altersgruppe 'Erwachsene' der 19-59 Jährigen
+
+## Sanity Check 1: Vergleich mit den täglichen standard AGES Daten zur Inzidenz
+
+- Die täglich veröffentlichten Werte zur 7 Tages Inzidenz (siehe z.B. https://covid19-dashboard.ages.at bzw. genauer https://covid19-dashboard.ages.at/data/data.zip) passen für Erwachsenen und Pensionisten gut mit den Inzidenzen nach Impf- und SymptomStatus zusammen
+- Abweichungen gibt es bei der Altersgruppe der Jugendlichen, die im einen Fall die 12-18 Jährigen, im anderen Fall hier alle unter 25 Jahre umfasst
+
+
+```{r, results='hide'}
+
+# Inzidenz calculated from 
+da <- yzi.a3 %>%
+  dplyr::filter(Symptomatic=="YesNo") %>% 
+  dplyr::select(-relConfPop, -Symptomatic) %>%
+  tidyr::pivot_wider(names_from=Vaccinated, names_prefix="newConfPop_Vacc", values_from=newConfPop)
+
+db <- crdv.a3.at %>% dplyr::filter(Date>=as.POSIXct("2021-07-01")) %>%
+  dplyr::mutate(VaccRate=sumVaccinated_2/Population) %>%
+  dplyr::select(Date, AgeGroup3, newConfPop, VaccRate) %>%
+  dplyr::left_join(da, by=c("Date","AgeGroup3")) %>%
+  dplyr::mutate(newConfPopVacc = newConfPop_VaccNo*(1-VaccRate)+newConfPop_VaccYes*VaccRate) %>%
+  dplyr::rename(Inzidenz_Standard=newConfPop, Inzidenz_ImpfStatus=newConfPopVacc) %>%
+  tidyr::pivot_longer(cols=c("Inzidenz_Standard","Inzidenz_ImpfStatus"), names_to="DatenQuelle", values_to="Inzidenz")
+                   
+ggplot(data=db, aes(x=Date, y=Inzidenz, color=AgeGroup3, linetype=DatenQuelle)) + 
+  scale_y_continuous(breaks=seq(0,100,by=20), sec.axis=dup_axis()) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_line() + 
+  facet_grid(.~AgeGroup3, labeller=label_both) +
+  ggtitle("COVID-19 Östereich: TagesInzidenz nach AGES Datenquelle")
+
+``` 
+
+
+## Sanity Check 2: Vergleich mit den AGES Daten zur Durchimfungsrate
+
+Auffällig im ersten Abschnitt war der unter 'Verhältnis Inzidenz Geimpfte zu NichtGeimpfte' dargestellte zeitliche Verlauf des Verhältnisses der Geimpften und NichtGeimpften positiv Getesteten. In diesem Abschnitt wird anhand eines einfachen Modells versucht den theoretischen Verlauf anhand der aktuellen Zahlen zu charakterisieren und dem von AGES reporteten Verlauf gegenüberzustellen. Details zu diesem Modell finden sich weiter unten unter 'Einfaches Modell für die Anzahl der Immunisierten und Nicht-Immunisierten'.
+
+Ausgangspunkt dieses Models sind die beiden Gruppen der Immunisierten und NichtImmunisierten. Die Immunisierten setzen sich zusammen aus den 2x Geimpften, den Genesenen, und den Asymptomatischen (d.h. nicht durch positiven Test erfassten Infizierten), jeweils mit einer angenommenen Schutzwirkung von 90%. Die 1x Geimpften werden zu den NichtImmunisierten gezählt. Durch die Schutzwirkung der Impfung bzw. durchmachten Krankheit ist ein Großteil der Immunisierten nicht mehr am epidemiologischen Geschehen beteiligt.
+
+Der Rest, also die (10%) 'Impfdurchbrüche' und 'Wiedererkrankungen', wird den NichtImmunisierten gegenübergestellt. 
+
+
+
+
+Die Durchimpfungsrate und der geschätzte effektive Immunisierungsgrad ist gestiegen bei den
+
+- Senioren:    Durchimpfungsrate von 75% auf 85%, Immunisierungsgrad von 70% auf 80%  (ca. plus 10%)
+- Erwachsene:  Durchimpfungsrate von 35% auf 70%, Immunisierungsgrad von 43% auf 67%  (ca. plus 50%)
+- Jugendliche: Durchimpfungsrate von  5% auf 25%, Immunisierungsgrad von 17% auf 35%  (ca. verdoppelt)
+
+**Der Verlauf der Durchimpfungsrate (oder auch des Immunisierungsgrades) korreliert in keiner Altersgrupe mit dem Verlauf des Verhältnisses der Inzidenz der 2xGeimpften und NichtGeimpften**
+
+
+### Immunisierungsrate incl Genesene
+
+Hier zunächst die AGES Daten zu den Geimpften und Genesenen und die daraus berechnete Anzahl von Immunisierten.
+
+```{r, results='hide'}
+
+dq <- crdv.a3.at %>% 
+  dplyr::filter(Date>=as.POSIXct("2021-07-01"), Date<max(Date)-days(3)) %>%
+  dplyr::mutate(Immunized=sumImmunized/Population, Susceptible=sumSusceptibles/Population, BreakThroughs=Immunized*0.1,
+                Genesen_x2=sumRecovered*2/Population, Vaccinated_2x=sumVaccinated_2/Population)
+
+dp <- dq %>%
+  tidyr::pivot_longer(cols=c("Immunized","Vaccinated_2x","Genesen_x2"), 
+                      names_to="ImmunisierungsTyp", values_to="ImmunisierungsRate") %>%
+  dplyr::mutate(ImmunisierungsTyp=factor(ImmunisierungsTyp, 
+                                     levels=c("Immunized", "Susceptible", "BreakThroughs", "Vaccinated_2x", "Genesen_x2"), 
+                                     labels=c("Immunized", "Susceptible", "BreakThroughs", "Vaccinated_2x", "Genesen_x2")))
+
+ggplot(data=dp, aes(x=Date, y=ImmunisierungsRate, color=AgeGroup3, linetype=ImmunisierungsTyp)) + 
+  scale_x_datetime(date_breaks="months", date_labels="%b") +
+  scale_y_continuous(limits=c(0,1), breaks=seq(0,1,by=.1), sec.axis=dup_axis()) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_line() + 
+  #geom_line(aes(y=sumImmunized/Population), linetype=1, size=0.5) + 
+  #geom_line(aes(y=sumVaccinated_1/Population), linetype=3, size=.75) + 
+  #geom_line(aes(y=sumVaccinated_2/Population), linetype=2, size=.75) + 
+  #geom_point(data=crdv.a.5, aes(x=Date, y=0.5, color=AgeGroup), size=2) +
+  facet_grid(.~AgeGroup3, labeller=label_both) +
+  ggtitle("COVID-19 Österreich: Immunisierungsrate incl Genesene bei Impfeffektivität 90%")
+``` 
+
+
+Daraus abgeleitet der Anteil der NichtImmunisierten und der Durchbrüche
+
+```{r, results='hide'}
+dp <- dq %>%
+  tidyr::pivot_longer(cols=c("BreakThroughs","Susceptible"), 
+                      names_to="ImmunisierungsTyp", values_to="ImmunisierungsRate") %>%
+  dplyr::mutate(ImmunisierungsTyp=factor(ImmunisierungsTyp, 
+                                     levels=c("Immunized", "Susceptible", "BreakThroughs", "Vaccinated_2x", "Genesen_x2"), 
+                                     labels=c("Immunized", "Susceptible", "BreakThroughs", "Vaccinated_2x", "Genesen_x2")))
+
+ggplot(data=dp, aes(x=Date, y=ImmunisierungsRate, color=AgeGroup3, linetype=ImmunisierungsTyp)) + 
+  scale_x_datetime(date_breaks="months", date_labels="%b") +
+  scale_y_continuous(limits=c(0,1), breaks=seq(0,1,by=.1), sec.axis=dup_axis()) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_line() + 
+  #geom_line(aes(y=sumImmunized/Population), linetype=1, size=0.5) + 
+  #geom_line(aes(y=sumVaccinated_1/Population), linetype=3, size=.75) + 
+  #geom_line(aes(y=sumVaccinated_2/Population), linetype=2, size=.75) + 
+  #geom_point(data=crdv.a.5, aes(x=Date, y=0.5, color=AgeGroup), size=2) +
+  facet_grid(.~AgeGroup3, labeller=label_both) +
+  ggtitle("COVID-19 Österreich: Immunisierungsrate incl Genesene bei Impfeffektivität 90%")
+```
+
+
+### Verhältnis der Anzahl von infizierten Immunisierten und NichtImmunisierten
+
+```{r, results='hide'}
+dp <- dq %>%
+  dplyr::mutate(BreaksThroughs_Susceptibles = BreakThroughs/Susceptible) 
+
+dq <- yzi.a3 %>% dplyr::mutate(InzidenzVerhältnis=relConfPop)
+
+
+ggplot(data=dp, aes(x=Date, y=BreaksThroughs_Susceptibles, color=AgeGroup3)) + 
+  scale_x_datetime(date_breaks="months", date_labels="%b") +
+  scale_y_continuous(limits=c(0,NA), breaks=seq(0,10,by=.1), sec.axis=dup_axis()) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_line() + 
+  geom_line(data=dq, aes(y=InzidenzVerhältnis)) +
+  #geom_line(aes(y=sumImmunized/Population), linetype=1, size=0.5) + 
+  #geom_line(aes(y=sumVaccinated_1/Population), linetype=3, size=.75) + 
+  #geom_line(aes(y=sumVaccinated_2/Population), linetype=2, size=.75) + 
+  #geom_point(data=crdv.a.5, aes(x=Date, y=0.5, color=AgeGroup), size=2) +
+  facet_grid(.~AgeGroup3, labeller=label_both) +
+  ggtitle("COVID-19 Österreich: Immunisierungsrate incl Genesene bei Impfeffektivität 90%")
+```
+
+
+
+
+Die Immunisierten und NichtImmunisierten  sind  die Personengruppen in denen sich das Virus ausbreitet. Bei den Immunisierten ist die Ausbreitung nicht Null, sondern um den Schutzfaktor reduziert.  Dieser Schutzfaktor hängt u.a. von Alter und Geschlecht, dem Impfstoff, der Dauer seit der letzten Impfung, der aktuellen COVID Variante ab. Eine Infektion bei den Immunisierten (2xGeimpften und Genesenen) wird als 'Impfdurchbruch' bzw. 'Wiederansteckung' bezeichnet. Das Verhältnis der Anzahl der positiv getesteten Immunisierten (Impfdurchbruch und Wiederansteckung) und der positiv getesteten NichtImmunisierten ist also im Wesentlichen ein Mass für die aktuelle mittlere Schutzwirkung gegen Infektion. 
+
+- Bei niederiger Durchimpfungsrate ist der Anteil der positiv Getesteten 2xGeimpften niedrig
+- Bei hoher Durchimpfungsrate steigt der Anteil positiv Getesteter 2xGeimpfter, sprich der Anteil der 'Impfdurchbrüche'
+
+Die absolute Anzahl der Impfdurchbrüche ist aber um den Schutzfaktor der Impfung niedriger als Ansteckungen ohne Impfung auftreten würden.
+
+
+```{r, results='hide'}
+str(crdv.a3.at)
+
+dp <- crdv.a3.at %>% 
+  dplyr::filter(Date>as.POSIXct("2021-07-01")) %>%
+  dplyr::select(Date, AgeGroup3, sumImmunized, sumSusceptibles)
+
+for (e in seq(0.6,0.9,by=.1)) {
+  dt <- dp %>%
+    dplyr::mutate(newConfPop_Susc=1, newConfPop_Immu=newConfPop_Susc*(1-e)) %>%
+    dplyr::mutate(newConfSusc=newConfPop_Susc*sumSusceptibles/100000, newConfImmu=newConfPop_Immu*sumImmunized/100000) %>%
+    dplyr::mutate(Verhältnis_Immunisierte_NichtImmunisierte=newConfImmu/newConfSusc) %>%
+    dplyr::mutate(ImmunisierungsGrad=paste0(e*100,"%"))
+  if(e==0.6) {
+    dq <- dt
+  } else {
+    dq <- rbind(dq,dt)
+  }
+}
+str(dq)
+
+ggplot(data=dq, aes(x=Date, y=Verhältnis_Immunisierte_NichtImmunisierte, color=AgeGroup3, linetype=ImmunisierungsGrad)) + 
+  scale_x_datetime(date_breaks="months", date_labels="%b") +
+  scale_y_continuous(limits=c(0,NA), breaks=seq(0,10,by=.05), sec.axis=dup_axis()) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_line() + 
+  facet_grid(.~AgeGroup3, labeller=label_both) +
+  ggtitle("COVID-19 Österreich: Verhältnis Immunisierte zu NichtImmunisierte")
+
+``` 
+
+
+
+## Einfaches Modell für die Anzahl der Immunisierten und Nicht-Immunisierten
+
+Die Immunisierten setzen sich aus den Gesundeten (Recovered), den Asymptomatischen und den 2x Geimpften zusammen, mit Überschneidungen, die wie folgt berechnet werden:
+
+$$
+\begin{aligned}
+P  &= \text{Population } \\
+S  &= \text{Susceptible (calculated)} \\ 
+R  &= \text{Recovered} \\
+U  &= \text{Immunized (calculated, includes Recovered, Asymptomatic and 2nd shot Vaccinated))} \\
+\\
+v  &= \text{Full vaccination rate (range [0,1], time and Agegroup dependent)} \\
+p  &= \text{Overall protection against positive testing (range [0,1]. Assumption: 0.9)} \\
+a  &= \text{Scaling factor for asympomatic infections (range [0,inf], Assumption a=1: as many asymptomatic as symptomatic)} \\
+\\
+U  &= p * [R*(1+a) + (P-R*(1+a))*v] \\
+S  &= P-U  \\
+\end{aligned}
+$$
+
+Dieses einfache Modell soll einen ersten Hinweis auf das Verhältnis der Geschützen und Ansteckbaren in Abhängigkeit von der Durchimpfungsrate, dem Schutzfaktor der Impfung und dem Anteil der Gesundeten geben.  Die Messdaten enthalten ausschliesslich die Inzidenz nach Impfstatus, im Modell kann also auch nur diese Größe modelliert werden. 
+
+Details zur Schutzwirkung der Impfung, insbesondere die Reduktion von Ansteckung und Weitergabe sowie schwere des Krankheitsverlaufes werden nicht betrachtet. Die  und sind unter 'Overall immunization efficiencey rate (Annahme: 90%)' zusammengefasst.
+
+In diesem einfachen Modell, bei einer angenommenen Gesamtschutzwirkung der Impfung von 90%, werden 10% der vollständig Geschützten als 'Ansteckbar' eingestuft und tragen als solche wie die Ungeimpften/NochNichtErkrankten zum epidemiologischen Geschehen bei. Laut verschiedenen Studien ist dieser Ansatz was die schweren Krankheitsverläufe und Todesfälle betrifft quantitativ (90%) zulässig. Für die Teilnahme der Immunisierten am Infektionsgeschehen sind 10% aber möglicherweise zu niedrig.
+
+Eben dieser Wert sollte sich aber aus den Daten der AGES abschätzen lassen. Wenn denn die Daten plausibel wären ...
+
+```{r, results='hide'}
+
+P = 1
+propRecovered=0.05
+asymFactor=1
+immuFactor=0.9
+
+Immunized <- function(P, R, e, a, v) {
+  return(e*(R*(1+a)+(P-R*(1+a))*v))
+}
+
+vaccRate=seq(0,1,by=0.01)
+U = Immunized(1, propRecovered, immuFactor, asymFactor, vaccRate)
+df <- data.frame(vaccRate=vaccRate, Immunized=U, Susceptible=1-U) #%>%
+  #tidyr::pivot_longer(cols=c(Immunized, Susceptible), names_to="Status", values_to="Percentage")
+#str(df)
+
+#ggplot(data=df, aes(x=vaccRate, y=Percentage, color=Status)) + 
+#  scale_y_continuous(limit=c(0,1), breaks=seq(0,1,by=.1)) +
+#  geom_line() +
+#  ggtitle(paste0("Proportion of Immunized and Susceptiles: Population = S + U\npropRecovered=", propRecovered, "  asymFactor=", asymFactor, "  immuFactor=", #immuFactor))
+
+ggplot(data=df, aes(x=Immunized, y=Susceptible)) + 
+  scale_x_continuous(limit=c(0,1), breaks=seq(0,1,by=.1)) +
+  scale_y_continuous(limit=c(0,1), breaks=seq(0,1,by=.1)) +
+  geom_line(color="blue") +
+  geom_line(aes(y=vaccRate), color="red", linetype=3) +
+  ggtitle(paste0("DurchImpfungsrate: Ansteckbare,Immunisierte. 10% Genesene, 90% Impfeffektivität"))
+
+``` 
+
+## Vergleich des Models mit den Daten zur Inzidenz nach Impfstatus
+
+
+```{r, results='hide'}
+
+crdv.a3.at.x <- crdv.a3.at %>%
+  # Estimate Inzidenz among Immunized and Susceptibles  --> calc with specific immuFactor when needed
+  dplyr::mutate(newConfImm=newConfirmed*sumImmunized/Population^2*100000) %>%
+  dplyr::mutate(newConfSus=newConfirmed*sumSusceptibles/Population^2*100000) %>%
+  dplyr::select(Date, AgeGroup3, Population, starts_with("new"), starts_with("sum"))
+
+# merge  crdv.a3.at and yzi.a3
+crdvyzi.a3.at <- yzi.a3 %>%
+  dplyr::left_join(crdv.a3.at.x, by=c("Date", "AgeGroup3"))
+
+str(crdvyzi.a3.at)
+
+```
+
+
+
+```{r, results='hide'}
+
+ggplot(data=crdvyzi.a3.at %>% dplyr::filter(Symptomatic=="YesNo"), aes(x=Date, color=AgeGroup3, linetype=Vaccinated)) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_line(aes(y=newConfPop.x))+
+  geom_line(aes(y=newConfPop.y))+
+  facet_grid(.~AgeGroup3) +
+  ggtitle("COVID-19 Österreich:")
+```
+
+```{r, results='hide'}
+
+
+
+ggplot(data=crdvyzi.a3.at %>% dplyr::filter(Vaccinated=="Yes"), aes(x=relConfPop, y=newConfImm/newConfSus,  color=Symptomatic, shape=Symptomatic)) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_point() +
+  facet_grid(.~AgeGroup3) +
+  ggtitle("COVID-19 Österreich:")
+```
+
+
+## Effektivität der Immunisierung: Verhältnis von Inzidenz und Immunisierungsstatus 
+
+```{r, results='hide'}
+yzi.a3.x <- yzi.a3 %>%
+  dplyr::filter(Symptomatic=="YesNo") %>%
+  dplyr::select(Date, AgeGroup3, Vaccinated, newConfPop) %>%
+  tidyr::pivot_wider(names_from=c("Vaccinated"), values_from="newConfPop", names_prefix="newConfPop_") %>%
+  dplyr::mutate(propConfPop=newConfPop_Yes/newConfPop_No)
+str(yzi.a3.x)
+
+crdvyzi.a3.at <- yzi.a3.x %>%
+  dplyr::left_join(crdv.a3.at, by=c("Date", "AgeGroup3"))
+str(crdvyzi.a3.at)
+
+dp <- crdvyzi.a3.at %>% 
+  dplyr::filter(Date>as.POSIXct("2021-07-01")) %>%
+  dplyr::mutate(propImmunized=sumImmunized/sumSusceptibles) %>%
+  dplyr::mutate(ImmunizationEfficiency=1-propConfPop/propImmunized)
+
+ggplot(data=dp, aes(x=Date, y=ImmunizationEfficiency, color=AgeGroup3)) + 
+  scale_x_datetime(date_breaks="months", date_labels="%b") +
+  scale_y_continuous(limits=c(0,1), breaks=seq(0,1,by=.1), sec.axis=dup_axis()) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_line() + 
+  facet_grid(.~AgeGroup3, labeller=label_both) +
+  ggtitle("COVID-19 Österreich: Effektivität der Immunisierung")
+``` 
+
+
+
+
+
+
+# Überlegungen zu Inzidenz und Durchimpfungsrate am Beispiel Wien
+
+Unabhängig von den aufgezeigten Problemen legen die Daten nahe, dass der Anteil der Inzidenz einer Altersgruppe an der Gesamtinzidenz mit zunehmnder Durchimpfungsrate abnimmt.
+
+Im Folgenden einige Details zur Entwicklung der Durchimpfungsrate für Wien. Beschränkung auf Wien deshalb, weil über den betrachteten Zeitraum viele Impfmöglichkeiten geschaffen wurden, stark auf PCR Tests gesetzt wurde, der Lebensraum und die angewendeten Bestimmungen einigermassen homogen waren und die Dateneinmeldung augenscheinlich recht gut organisiert war.
+
+## Entwicklung der Durchimpfungsrate nach Altersgruppen in 2021
+
+Für das epidemiologische Geschehen ist die Anzahl der vollständig Immunisierten von Relevanz. Diese setzen sich aus den Genesenen und den 2x Geimpften zusammen. Weiters zu berücksichtigen sind diejenigen, die an COVID-19 erkrankt waren, deren Erkrankung aber nicht durch einen Test festgestellt wurde. In der folgenden Betrachtung wird davon ausgegangen, dass
+
+- die 'Dunkelziffer' (aka 'Asymptomatischen') die Hälfte der Erkrankungen ausmachen (siehe dazu z.B. 'Prevalenzstudie in 11/2020' der Statistik Austria)
+- die 'Unbewusst Erkrankten' sich mit der gleichen Wahrscheinlichkeit Impfen lassen wie die nicht Erkrankten.
+- die Immunisierung für alle Impfungen und die Genesenen gleich gut ist und bei 90% liegt.
+
+
+```{r, results='hide'}
+crdv.a.5 <- crdv.a.w %>% 
+  dplyr::group_by(AgeGroup) %>%
+  dplyr::mutate(d = abs(sumImmunized-Population/2)) %>%
+  dplyr::filter(d==min(d)) %>%
+  dplyr::ungroup()
+
+ggplot(data=crdv.a.w, aes(x=Date, color=AgeGroup)) + 
+  scale_x_datetime(date_breaks="months", date_labels="%b") +
+  scale_y_continuous(limits=c(0,1), breaks=seq(0,1,by=.1), sec.axis=dup_axis()) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_line(aes(y=sumImmunized/Population), linetype=1) + 
+  geom_line(aes(y=sumVaccinated_1/Population), linetype=2) + 
+  geom_line(aes(y=sumVaccinated_2/Population), linetype=3, size=0.25) + 
+  geom_point(data=crdv.a.5, aes(x=Date, y=0.5, color=AgeGroup), size=2) +
+  ggtitle("COVID-19 Wien: Anteil der Immunisierten sowie der 1x und 2x Geimpften nach Altersgruppe")
+``` 
+
+## Abschätzung der verbleibenden Nicht-Immunisierten ('Ansteckbaren'='Susceptibles')
+
+```{r, results='hide'}
+ggplot(data=crdv.a.w, aes(x=Date, y=sumSusceptibles/Population, color=AgeGroup)) + 
+  scale_x_datetime(date_breaks="months", date_labels="%b") +
+  scale_y_continuous(limits=c(0,1), breaks=seq(0,1,by=.1), sec.axis=dup_axis()) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_line() + 
+  ggtitle("COVID-19 Wien: Anteil der noch nicht Immunisierten nach Altersgruppe")
+``` 
+
+## Berechnung der Inzidenz nach Einwohnern oder Nicht-Immunisierten
+
+Die Inzidenz wird in praktisch der gesamten öffentlichen Kommunikation als 'Anzahl Positiv Gestestete pro 100.000 Einwohner' verstanden. 
+
+Mit zunehmendem Immunisierungsgrad verringert sich aber die Anzahl der 'Ansteckbaren' Personen. Unter der Annahme, dass die Immunisierten nur mehr zu einem geringen Anteil (Annahme 10%) am epidemiologischen Geschehen teilnehmen, sollte auch die Anzahl der positiv Getesteten mit steigender Durchimpfungsrate abnehmen.
+
+Es liegt daher nahe, die Inzidenz alternativ als 'Anzahl Positiv Getestete pro 100.000 Ansteckbare (Nicht-Immunisierte)' zu betrachten bzw. zu interpretieren. Diese Zahl ist dann ein Mass für die Verbreitung von COVID-19 unter den Nicht-Immunisierten. Steigt die Durchimpfungsrate z.B. von 0 auf 100% sollte die Anzahl der positiv Getesteten auf etwa 10% sinken (ohne Berücksichtigung der Genesenen und Asymptomatischen). Dieses Verhalten sollte sich anhand der unterschiedlichen Durchimpfungsraten der verschiedenen Altersgruppen nachvollziehen lassen.
+
+### Vergleich 3. und 4. Welle: Die Inzidenz als Inzidenz der Ansteckbaren
+
+In der folgenden Graphik sind beiden Berechnungsarten der Inzidenz für die dritte Welle (geringer Durchimpfungsgrad) und vierte Welle (aktueller Durchimpfungsgrad) einander gegenübergestellt:
+
+- Bei der 3. Welle ist Unterschied zwischen den beiden Berechnungnungsarten gering, in diesem Zeitraum ist die Immunisierungrate vergleichsweise niedrig (siehe aber den Unterschied im April bei den 84+ Jährigen mit einer Durchimpfungsrate von über 50%)
+- Ganz anders bei der vierten Welle, hier ist der Anteil der Inzidenz der Altersgruppen mit höher Immunisierungsrate entsprechend niedriger (oberer Teil der Graphik). Auf der anderen Seite ist die Verbreitung von COVID-19 unter den nicht Immunisierten entsprechend höher. Auffällig die Hohe Inzidenz bei den nicht geschützten Personen über 75 Jahre.  
+
+
+```{r, results='hide'}
+dp <- crdv.a.w %>%
+  dplyr::mutate(newConfSusceptibles=newConfirmed/sumSusceptibles*100000, newConfPopulation=newConfirmed/Population*100000) %>%
+  tidyr::pivot_longer(cols=c("newConfSusceptibles","newConfPopulation"), names_to="ConfSusPop", values_to="Inzidenz")
+
+ggplot(data=dp %>% dplyr::filter(Date>as.POSIXct("2021-02-15")), aes(x=Date, y=Inzidenz, color=AgeGroup)) + 
+  scale_x_datetime(date_breaks="months", date_labels="%b") +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_line() +
+  facet_grid(ConfSusPop~.) +
+  ggtitle("COVID-19 Östereich: Inzidenz je 100.000 Einwohner bzw nichtImmunisierte nach Altersgruppe")
+``` 
+
+### 4. Welle: Anstieg der Durchimpfungsrate nach Altersgruppe
+
+In der folgenden Abbildung die Entwicklung der 4. Welle ab 7/2021 im Stufenmodell. Die durchgezogene Linie ist die Tagesinzidenz, d.h. Anzahl Positive pro 100.000, nach Einwohnern,  die strichlierte Linie nach Ansteckbaren. Ein Unterschied von einer Stufe bedeutet einen Faktor 2, 3 Stufen einen Faktor 8.
+
+- Bei den 5-14 Jährigen ist die maximale Inzidenz nach Einwohner ca. 64 (Stufe 6) und unterscheidet sich wegen der niedrigen Durchimpfunsrate kaum von der Inzidenz nach Ansteckbaren.
+- Mit fortschreitender Zeit und steigender Altersgruppe, d.h. mit zunehmender Durchimpfungsrate, wird der Unterschied zwischen den beiden Berechnungsmethoden immer größer. 
+
+```{r, results='hide'}
+ggplot(data=dp %>% dplyr::filter(Date>as.POSIXct("2021-07-01")), aes(x=Date, y=Inzidenz, color=AgeGroup, linetype=ConfSusPop)) + 
+  scale_x_datetime(date_breaks="months", date_labels="%b") +
+  scale_y_continuous(name="Inzidenz", trans="log2", limits=c(1/2,128),
+                     breaks=2^(seq(-1,10,by=1)), labels=sprintf("%g",2^(seq(-1,10,by=1))), 
+                     sec.axis=dup_axis(name="Inzidenz_Stufe", labels=seq(-1,10,by=1))) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_line() +
+  facet_wrap(.~AgeGroup, ncol=5) +
+  ggtitle("COVID-19 Östereich: Inzidenz je 100.000 Einwohner bzw nichtImmunisierte nach Altersgruppe")
+``` 
+
+
+
+## Durchimpfungsrate und Inzidenz in Altersgruppen
+
+```{r, results='hide'}
+
+asymFactor=2
+immuFactor=0.9
+
+crdv <- readRDS("./data/curated/crdv_rag.rda")
+
+# Vienna selection
+crdv.a.w.w <- crdv %>%
+  dplyr::filter(Region=="Wien") %>%
+  dplyr::filter(Date>=as.POSIXct("2020-08-01"), Date<max(Date)-days(3)) %>%
+#  dplyr::mutate(Date=as.POSIXct.Date(Date)) %>%
+  dplyr::arrange(Date, AgeGroup) %>%
+  dplyr::group_by(Date, AgeGroup) %>%
+  dplyr::summarize(.groups="drop", 
+                   Population = sum(Population),
+                   dplyr::across(.cols=starts_with("new"), ~ sum(.x, na.rm=TRUE)),
+                   dplyr::across(.cols=starts_with("sum"), ~ sum(.x, na.rm=TRUE))) %>%
+  # assume as many asymptomatic as recovered -> asymptomatics are immunnized, but may have been vaccinated
+  dplyr::mutate(sumImmunized = immuFactor*(sumRecovered*asymFactor + sumVaccinated_2/Population*(Population-sumRecovered*asymFactor))) %>%
+  dplyr::mutate(sumSusceptibles = Population - sumImmunized) 
+#str(crdv.a.w.w)
+
+# Construct Wave identifier
+dw <- data.frame(Date=sort(unique(crdv.a.w.w$Date)), WaveID="NoWave", stringsAsFactors=FALSE)
+#str(dw)
+
+waveStart=c(as.POSIXct("2020-10-20"), as.POSIXct("2021-03-10"), as.POSIXct("2021-08-16"), as.POSIXct("2021-09-13"))
+waveName=c("Wave2","Wave3","Wave4","Flat4")
+idx <- dw$Date>waveStart[1] & dw$Date<=(waveStart[1]+days(28))
+dw$WaveID[idx] <- waveName[1]
+idx <- dw$Date>waveStart[2] & dw$Date<=(waveStart[2]+days(28))
+dw$WaveID[idx] <- waveName[2]
+idx <- dw$Date>waveStart[3] & dw$Date<=(waveStart[3]+days(28))
+dw$WaveID[idx] <- waveName[3]
+idx <- dw$Date>waveStart[4] & dw$Date<=(waveStart[4]+days(28))
+dw$WaveID[idx] <- waveName[4]
+dw$WaveID <- factor(dw$WaveID, levels=waveName, labels=waveName)
+# str(dw)
+#table(dw$WaveID)
+
+crdv.a.w.wx <- crdv.a.w.w %>%
+  dplyr::left_join(dw, by="Date")
+#str(crdv.a.w.wx)
+#table(crdv.a.w.wx$WaveID)
+
+# Wave 2-4, means by AgeGroup: newConfirmed, sumVaccinated, sumSusceptible, newConfPop, newConfSus
+crdv.a.w.wxy <- crdv.a.w.wx  %>%
+  dplyr::filter(WaveID!="NoWave") %>%
+  dplyr::group_by(AgeGroup, WaveID) %>%
+  dplyr::summarize(.groups="drop", Population=first(Population),
+                   newConfirmed = mean(newConfirmed), 
+                   sumVaccinated_2=mean(sumVaccinated_2), sumImmunized=mean(sumImmunized), 
+                   sumSusceptible=mean(sumSusceptibles)) %>%
+  dplyr::mutate(newConfPop = newConfirmed/Population*100000) %>%
+  dplyr::mutate(newConfSus = newConfirmed/sumSusceptible*100000) %>%
+  dplyr::mutate(newConfImm = newConfirmed/sumImmunized*100000)
+  str(crdv.a.w.wxy)
+#table(crdv.a.w.wxy$WaveID)
+
+# Wave 2-4: Proportions by AgeGroup: propConfirmed, propConfPop, propConfSus
+crdv.a.w.wxz <- crdv.a.w.wxy %>%
+  dplyr::group_by(WaveID) %>%
+  dplyr::mutate(propConfirmed = (newConfirmed/sum(newConfirmed))) %>%
+  dplyr::mutate(propConfPop = (newConfPop/sum(newConfPop))) %>%
+  dplyr::mutate(propConfSus = (newConfSus/sum(newConfSus))) %>%
+  dplyr::mutate(propConfImm = (newConfImm/sum(newConfImm))) %>%
+  dplyr::ungroup()
+str(crdv.a.w.wxz)
+#table(crdv.a.w.wxz$WaveID)
+
+```
+
+### Welle 2-4: Mittlere Inzidenz nach Ansteckbaren in den Altersgrupppen
+
+```{r, results='hide'}
+ggplot(data=crdv.a.w.wxy, aes(x=AgeGroup, y=newConfPop, fill=WaveID, color=WaveID, shape=WaveID)) + 
+  scale_y_continuous(limit=c(0,NA)) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  #geom_col(position="dodge") + 
+  geom_line(aes(group=WaveID)) + 
+  geom_point(aes(group=WaveID)) + 
+  ggtitle("COVID-19 Wien: Welle 2-4: Inzidenz nach Altersgruppen")
+```
+
+### Anteil der Altersgruppen an den positiv Getesteten
+
+```{r, results='hide'}
+ggplot(data=crdv.a.w.wxz, aes(x=AgeGroup, y=propConfirmed, fill=WaveID, color=WaveID, shape=WaveID)) + 
+  scale_y_continuous(limit=c(0,NA)) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  #geom_col(position="dodge") + 
+  geom_line(aes(group=WaveID)) + 
+  geom_point(aes(group=WaveID)) + 
+  ggtitle("COVID-19 Wien: Anteil der Altersgruppen an den Positiv Getesteten")
+```
+
+### Anteil der Altersgruppen an der Inzidenz nach Population
+
+```{r, results='hide'}
+ggplot(data=crdv.a.w.wxz, aes(x=AgeGroup, y=propConfPop, fill=WaveID, color=WaveID, shape=WaveID)) + 
+  scale_y_continuous(limit=c(0,NA)) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  #geom_col(position="dodge") + 
+  geom_line(aes(group=WaveID)) + 
+  geom_point(aes(group=WaveID)) + 
+  ggtitle("COVID-19 Wien: Anteil der Altersgruppen an der Inzidenz nach Population")
+```
+
+### Anteil der Altersgruppen an der Inzidenz nach Ansteckbaren
+
+```{r, results='hide'}
+ggplot(data=crdv.a.w.wxz, aes(x=AgeGroup, y=propConfSus, fill=WaveID, color=WaveID, shape=WaveID)) + 
+  scale_y_continuous(limit=c(0,NA)) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  #geom_col(position="dodge") + 
+  geom_line(aes(group=WaveID)) + 
+  geom_point(aes(group=WaveID)) + 
+  ggtitle("COVID-19 Wien: Anteil der Altersgruppen an der Inzidenz nach Ansteckbaren")
+```
+
+### Anteil der Altersgruppen an der Inzidenz nach Immunisierten
+
+```{r, results='hide'}
+ggplot(data=crdv.a.w.wxz, aes(x=AgeGroup, y=propConfImm, fill=WaveID, color=WaveID, shape=WaveID)) + 
+  scale_y_continuous(limit=c(0,NA)) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  #geom_col(position="dodge") + 
+  geom_line(aes(group=WaveID)) + 
+  geom_point(aes(group=WaveID)) + 
+  ggtitle("COVID-19 Wien: Anteil der Altersgruppen an der Inzidenz nach Immunisierten")
+```
+
+```{r, results='hide'}
+```
+
+# Appendix
+
+## Unterschiede zwischen Erwachsenen und Senioren
+
+```{r, results='hide'}
+crdv.a3.x <- crdv.a3.at %>%
+  dplyr::mutate(newConfPop=newConfirmed/Population*100000) %>%
+  dplyr::mutate(propImmunized=sumImmunized/Population) %>%
+  dplyr::mutate(propSusceptibles=sumSusceptibles/Population) %>%
+  dplyr::select(Date, AgeGroup3, newConfPop, propImmunized, propSusceptibles) %>%
+  tidyr::pivot_wider(names_from="AgeGroup3", values_from=c(newConfPop,propImmunized, propSusceptibles)) %>%
+  #dplyr::mutate(relInz_Jug_Erw = newConfPop_Jugendliche/newConfPop_Erwachsene, relInz_Sen_Erw = newConfPop_Senioren/newConfPop_Erwachsene) %>%
+  #dplyr::mutate(relImm_Jug_Erw = relImmunized_Jugendliche/relImmunized_Erwachsene, relImm_Sen_Erw = relImmunized_Senioren/relImmunized_Erwachsene) %>%
+  #dplyr::mutate(relSus_Jug_Erw = relSusceptible_Jugendliche/relSusceptible_Erwachsene, relSus_Sen_Erw = relSusceptible_Senioren/relSusceptible_Erwachsene) %>%
+  dplyr::mutate(propInz_Sen_Erw = newConfPop_Senioren/newConfPop_Erwachsene) %>%
+  dplyr::mutate(propImm_Sen_Erw = propImmunized_Senioren/propImmunized_Erwachsene) %>%
+  dplyr::mutate(propSus_Sen_Erw = propSusceptibles_Senioren/propSusceptibles_Erwachsene) %>%
+  dplyr::select(Date, propInz_Sen_Erw, propImm_Sen_Erw, propSus_Sen_Erw) %>%
+  tidyr::pivot_longer(cols=starts_with("prop"), names_to="Proportions", values_to="Quotient")  
+#str(crdv.a3.x)
+```
+
+```{r, results='hide'}
+ggplot(data=crdv.a3.x, aes(x=Date, y=Quotient)) + 
+  scale_x_datetime(date_breaks="months", date_labels="%b") +
+  scale_y_continuous(limits=c(0,2.05), breaks=seq(0,2,by=0.2), sec.axis=dup_axis()) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  geom_line(aes(color=Proportions)) + 
+  #geom_line(data=crdv.a3, aes(x=Date, y=sumVaccinated_2/Population, color=AgeGroup3)) +
+  #geom_line(data=crdv.a3, aes(x=Date, y=sumVaccinated_1/Population, color=AgeGroup3), linetype=3) +
+  #geom_line(data=crdv.a3, aes(x=Date, y=sumImmunized/Population, color=AgeGroup3), linetype=2) +
+  ggtitle("COVID-19 Östereich: Relative Durchimpfungstrate und Inzidenz zwischen Altersgruppen")
+``` 
+
