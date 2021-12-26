@@ -22,7 +22,7 @@ slackMsg <- function (title, msg, hostName = hostSystem) {
   invisible(r)
 }
 
-
+  
 
 
 # ===================================================================================

@@ -104,7 +104,7 @@ htmlWeatherMap <- "<p><b>Tages Inzidenz: Lage und Vorhersage</b></p>
                         Die Progonose berücksichtigt seit Version 1.0.0 eine <b>Verlangsamung oder Beschleunigung</b> des Ausbreitungsgeschehens. 
                         In beiden Fällen ist die entstehende Kurve eine Parabel, und hat ein <b>Maximum bzw. Minimum</b>. 
                         Maximum und Minimum können in der <b>Vergangenheit oder Zukunft</b> liegen.
-                        Für die Berechnung der Parabel werden die letzen 21 Tage berücksichtigt, das entspricht grob den zeitlichen Verzögerungen bei <b>Lockdowns oder Lockerungen</b>
+                        Für die Berechnung der Parabel werden die letzen 28 Tage berücksichtigt (siehe auch Tab 'Prognose'), das entspricht etwas konservativ den zeitlichen Verzögerungen bei <b>Lockdowns oder Lockerungen</b>
                         So flacht sich z.B. die Inzidenzkurve etwa 10 Tage nach Inkrafttreten eines Lockdowns ab, erreicht nach 2-3 Wochen ein Maximum, und beginnt danach wieder zu sinken.
                     </p><p> Als <b>Grenzwert für Lockerungen aus einem LockDown</b> wurde von offizieller Seite immer wieder ein Sinken auf eine Wochen Inzidenz 
                       von 50 genannt, d.h. eine <b>Tages Inzidenz von ca. 8</b>. Als Grenzwert für ein neuerliches <b>Inkrafttreten eines Lockdown</b> wurde 
@@ -298,8 +298,73 @@ htmlExponential <- "<p><b>Rückblick 2020</b></p>
                   
 hlpBmsgpk <- "<p><b>GesundheitsMinisterium</b></p>"
 
-htmlWave42 <- "<p><b>Vergleich 2. und 4. Welle</b></p>"
-
+htmlWave42 <- "<p><b>Vergleich 2. und 4. Welle</b></p>
+              <p>Ein <b>direkter Vergleich</b> der beiden Pandemie Wellen im Herbst 2020 und Herbst 2021 ist wegen der unterschiedlichen Rahmenbedingungen (Anzahl Tests, Virus Variante, Impfung, etc) <b>nicht möglich</b>.
+              Die folgenden Graphiken sind daher eher ein Versuch die vorhandenen <b>Daten aus verschiedenen Blickwinkeln</b> zu betrachten und 
+              einen Eindruck von den <b>Schwierigkeiten bei der Interpretation</b> aufzuzeigen. Betrachtet werden in den Graphiken die Anzahl der  
+              </p><p>
+               <li><b>Tests</b> (Reihe 1, newTestPop)
+               </li><li><b>Tagesinzidenz</b> (Reihe 2, newConfPop)
+               </li><li><b>Hospitalisierungen</b> (Reihe 3, newHospPop)
+               </li><li><b>Aufenthalte auf Intensiv</b> (Reihe 4, newICUPop)
+               </li><li><b>Sterbefälle</b> (Reihe 5, newDeathPop)
+               </li>
+               </p><p>
+               pro 100.000 Einwohner nach Bundesland, bei einer <b>Zeitverschiebung von einem Jahr</b> zwischen der 2. und 4. Welle
+               </p><p>
+               Die <b>Bezeichnung der Variablen</b> folgt dem Schema 'zählweiseAnzahlBezugsmenge'. Zum Beispiel:
+               <li><b>newConfPop</b> bedeutet 'Anzahl der täglich neuen (=new) positiven Tests (=Confirmed) pro 100k Einwohner (=Population)</li>
+               <li><b>sumICUPop</b> bedeutet 'GesamtAnzahl (=sum) der Intensivbetreuungen (=ICU) pro 100k Einwohner (=Population)</li>
+               <li><b>relICUConf</b> bedeutet 'Prozentsatz (=rel) der positiv Getesteten (=Confirmed) die auf die Intensivstation (=ICU) müssen</li>
+               </p><p>
+               Zur Betrachtung unterschiedlicher Aspekte kann die <b>Skalierung der Graphiken</b> über das <b>Menü links</b> 'Vergleich 2. und 4. Welle' verändert werden: </p> 
+               <li><b>Anzahl pro 100k Einwohner</b>: Absolute Zahlen, normiert auf 100k Einwohner: new*Pop (1000 entspricht 1%)</li>
+               <li><b>Prozent vom Maximum 2.Welle</b>: Alle Parameter relativ zu ihrem Maximum der 2.Welle: new*Pop</li>
+               <li><b>Prozent Einw/Tested/Positiv</b>: %Getestet pro Einwohner (relConfPop), %Positive pro Getesteten (relConfTest), %Spital/%ICU/%Verstorben pro Positiven (rel*Conf) </li>
+               <p>
+               Zusätzlich ist es sinnvoll den Masstab der y-Achse mittels der <b>Checkbox 'StufenModell'</b> zwischen linear und logarithmisch umzuschalten.
+               </p><p> Der Aufbau der Graphiken dauert etwas, bitte um Geduld</p>
+               <p>
+               Der <b>Vergleich 4. gegen 2. Welle</b> entlang der Zeitachse zeigt (Stand 2021-12-06):
+               <li><b>Begin beider Wellen im Sommer (4:Juli bzw 2:August)</b></li>
+               <li><b>Starke Unterschiede zwischen den Bundesländern</b></li>
+               <li>Rund <b>15 bis 25 (Wien) mal so viele Tests</b>: Während der 2.Welle wurden täglich rund 250 Tests pro 100k Einwohner durchgeführt (0.25%), in der 4.Welle grob 5000 (5%) (erste Reihe) </li>
+               </p><p>
+               Ein <b>Vergleich der Maxima der 4.Welle gegenüber der 2.Welle</b> lässt sich bei Skalierung der Graphiken auf 'Prozent vom Maximum 2.Welle' bei ausgeschaltenem 'StufenModell' ablesen:
+               <li>Inzidenz 150%-250%</li>
+               <li>Hospitalisierung 60%-100%</li>
+               <li>Intensivstation 70%-160%</li>
+               <li>Verstobene 25%-60%</li>
+               </p><p>
+               Dieser Vergleich der Maxima der beiden Wellen gibt einen relevanten Eindruck zu den Unterschieden hinsichtlich Auslastung der Spitäler und Intensivstationen.
+               Die maximale Inzidenz ist in der 4. Welle bei 20x mehr Tests etwa doppelt so hoch, die Hospitaliserungen sind niedriger, die Intensivstationen ähnlich belegt wie in der 2.Welle, 
+               mit bisher deutlich weniger Sterbefällen, jeweils mit starken Unterschieden zwischen den Bundesländern. 
+               </p><p>
+               Weniger geeignet sind die Maxima für einen Gesamtvergleich der beiden Wellen.
+               Dazu wird jetzt die Gesamtanzahl der Positiven, Hospitalisierten, Intensivbehandelten und Verstorbenen betrachtet.
+               </p>
+               <p><b>Vergleich 2., 3. und 4. Welle Anhand der Entwicklung der Gesamtanzahl der Fälle</b></p>
+               <p>
+               Die <b>Geamtanzahl der Positiven</b> wurde in der 4. Welle durch eine etwa 20 mal so hohe Anzahl von Tests im Vergleich zur 2. Welle ermittelt.
+               Damit sollten die 'asymptomatisch Positiven' besser erfasst sein. 
+               Insofern ist die die Anzal der Positiven als Referenzgröße zur Bestimmung der Unterschiede zwischen den beiden Wellen nur eingeschränkt aussagekräftig. 
+               Lässt man dieses Problem ausser acht, dann ist der Prozentsatz der Hospitalisierten in der 4. Welle etwa halb so groß, 
+               der Prozentsatz der Verstorbenen ein Drittel verglichen mit der der 2. Welle.  (Spalten 1-3 in der Balken Graphik)
+               </p><p>
+               Betrachtet man die <b>Gesamtanzahl der Hospitalisierungen</b> als Bezugsgröße so ergibt sich ein gegenläufiges Bild für die Intensivstationen.
+               Der Anteil an Patienten, die im Verlauf der 4. Welle von der Normal auf die Intensivstation verlegt werden, ist deutlich von grob 10% auf grob 20% gestiegen.
+               Als Ursache kommen u.a. ein schwererer Verlauf der Krankheit bei der Delta-Variante oder eine geänderete Vorgangsweise in den Spitälern in Frage. 
+               Der Anteil der Verstorbenen ist gemessen an der Anzahl der Hospitalisierungen ist in der 4. Welle etwa halb so hoch wie in der 2. Welle. 
+               </p><p>
+               Die Anzahl an Verstorbenen gemessen an der <b>Gesamtanzahl der Intensivbehandlungen</b> ist in der 4. Welle auf weniger als die Häfte gesunken. 
+               Diese Beobachtung ist im Einklang mit den Werten relativ zu den Positiven und den Hospitalisierten.
+               Anmerkung: Die Anzahl der Verstorbenen kann höher sein als die Anzahl der Patienten auf Intensivstationen, 
+               weil Erkrankte auch auf Normalstationen oder ausserhalb von Spitälern versterben 
+               </p><p>
+               Schlussfolgerung: Die Sterblichkeit im Verlauf der 4. Welle ist substantiell (50%-%65) niedriger als in der 2. Welle.
+               Einflussfaktoren sind u.a. die Deltavariante, mehr Tests, mehr Erfahrung in den Spitälern und die Impfung.
+               </p>
+               "
 htmlDissemination1 <- "<p><b>Inzidenz und Ausbreitungsgeschwindigkeit</b><br>Für die Beurteilung der aktuellen Lage muss die Inzidenz
                       zusammen mit der Ausbreitungsgeschwindigkeit (dem Reproduktionsfaktor) betrachtet werden.
                       (wie insbesondere vom Gesundheitsministerium immer wieder betont wird).

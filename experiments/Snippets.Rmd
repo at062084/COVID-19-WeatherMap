@@ -1,0 +1,842 @@
+---
+title: "Snippets"
+author: "Thomas.Strehl@at.ibm.com"
+date: "7/16/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+dp1 %>% dplyr::group_by(Status, Gender) %>%
+  dplyr::summarize(Population=sum(Population)) %>% 
+  kableExtra::kbl(caption="Österreich: Einwohner nach Alter und Geschlecht in 2019  (Statistik Austria)", align="r", format="html") %>% 
+  kable_classic_2(html_font="Times") %>%
+  kable_styling(htmltable_class="lightable-striped", full_width=F, position="center", html_font="Times", font_size=14, bootstrap_options=c("striped"))
+```
+
+
+Die vorliegende Untersuchung versucht das Risiko einer Impfung und die Risiken, die mit einer Erkrankung an COVID-19 verbunden sind miteinander zu vergleichen. Im Vordergrund der Betrachtung steht die Wahrscheinlichkeit eines schweren oder tödlichen Verlaufes einer COVID-19 Erkrankung und die Wahrscheinlichkeit von schweren Nebenwirkungen oder Todesfällen als Nebenwirkung einer Impfung. Es werden  folgende Informationen zusammengestellt:
+
+- Die Wahrscheinlichkeit an COVID-19 schwer zu erkranken (Spitalsaufenthalt) oder zu sterben
+- Die Wahrscheinlichkeit aufgrund der Impfung schwere Nebenwirkungen zu bekommen oder zu sterben
+
+Beide Größen korrelieren sehr stark mit dem Alter, aber auch dem Geschlecht  Zu berücksichtigen sind also u.a.:
+
+- Alter und Geschlecht
+- Eventuelle Vorerkrankungen
+- Der Impfstoff
+- Die vorherrschenden Mutanten im Untersuchungszeitraum und Gebiet
+- Die Anzahl der asypmtomatischen Erkrankungen
+- Die Schwere bei Erkrankung bei COVID-19 bzw. die Schwere der Nebenwirkungen bei Impfung
+- Die Todesursache, deren zeitlicher Zusammenhang zur Impfung, und die Häufigkeit einer Todesursache ohne Impfung
+- Die Verfügbarkeit von Daten
+
+Informationen zu bleibenden Schäden sind weder für die Covid-19 Krankheit selbst noch für die Nebenwirkung der Impfung einfach zugänglich und werden hier nicht betrachtet.
+
+# StatA-Population-2019_AgeGroup_Gender.csv: Demographische Daten 
+
+Im folgenden wird die Anzahl der Nebenwirkungen, Todesfälle und anderer Ereignisse auf die Anzahl pro 100.000 Einwohner bzw Geimpfte umgerechnet. Damit wird der direkte Vergleich von unterschiedlichen Berichten zu Impfnebenwirkungen sowie den im COVID-19 Umfeld üblichen Zahlen wie TagesInzidenz pro 100.000 Einwohner ermöglicht.
+
+Eine entscheidende Rolle bei der Beurteilung der Wirkung, Nebenwirkungen und des Risikos einer Impfung spielen das Alter und das Geschlecht. Deshalb wird zunächst die Altersstruktur und die von Covid-19 unabhängige Sterblichkeit in Österreich dargestellt. Die demographischen Daten dazu werden u.a. von der Statistik Austria veröffentlicht.
+
+https://portal.statistik.at/statistik.at/ext/statcube/jsf/dataCatalogueExplorer.xhtml
+
+### Einwohner nach Altersgruppe und Geschlecht in Österreich
+
+Zunächst die Alterstruktur in Österreich für 2019 in 20 fünf Jahres Intervallen. 
+
+- Bis zu einem Alter von 20 Jahren gibt es etwa 8.000 Einwohner pro Jahrgang
+- Von 25 bis 50 Jahren sind es etwa 15.000, von 55 bis 65 Jahre etwa 18.000 Einwohner pro Jahrgang
+- Ab 65 Jahren nimmt die Anzahl stark ab, über 90 Jahre sind insgesamt etwa 80.000 Menschen (ca. 1%)
+- 7.2 Mio (81%) Einwohner sind unter 65 Jahre, 1.7 Mio (19%) über 65 Jahre
+- Die Anzahl der Personen im erwerbsfähigen Alter ist etwa 5.5 Mio (62 %)
+- Die junge Generation (Jahrgänge ab 2000) ist gegenüber den Erwachsenen (Jahrgänge 1970 bis 1995) um 30% in der Unterzahl
+- Bei den Personen über 65 Jahre ist der Frauenanteil etwa 57%, bei den Personen unter 65 Jahre etwa 51%
+
+```{r}
+dpd2 <- dpd %>%
+  dplyr::group_by(AgeGroup15, Gender) %>% 
+  dplyr::summarize(.groups="drop",
+                   Population=sum(Population), 
+                   Deaths=sum(Deaths), 
+                   Deaths_100k=round(sum(Deaths)/sum(Population)*100000)) %>%
+  dplyr::ungroup() %>%
+  dplyr::arrange(AgeGroup15, Gender) %>%
+  dplyr::select(AgeGroup15, Gender, Population, Deaths, Deaths_100k) 
+
+dpd2 %>%   kableExtra::kbl(caption="Wien: Positiv Getestete und Verstorbene nach Altersgruppe und Geschlecht", align="r", format="html") %>% 
+  kable_classic_2(html_font="Times") %>%
+  kable_styling(htmltable_class="lightable-striped", full_width=F, position="center", html_font="Times", font_size=14, bootstrap_options=c("striped"))
+
+```
+
+
+
+```{r}
+# Create standard object for table rendering
+makePT <- function(df, cdg=NULL) {
+  pt <- PivotTable$new()
+  pt$addData(df)
+  pt$theme <- "default"
+  pt$setDefault(addTotal=TRUE)
+  pt$setDefault(totalPosition="before")
+  pt$setDefault(outlineBefore=list(isEmpty=FALSE, caption="Gesamt ({value})", totalPosition="before",
+                                             groupStyleDeclarations=list("background-color"="lightgray","color"="black", "font-style"="italic"),
+                                             cellStyleDeclarations =list("background-color"="lightgray","color"="black", "font-style"="italic")))
+  pt$setDefault(outlineTotal=list(isEmpty=FALSE,  caption="Gesamt ({value})", totalPosition="before", 
+                                            groupStyleDeclarations=list("background-color"="lightblue", "color"="black", "font-style"="italic"),
+                                            cellStyleDeclarations =list("background-color"="lightblue", "color"="black", "font-style"="italic")))
+  if (!is.null(cdg)) {
+    pt$addColumnDataGroups(cdg, totalPosition="before",
+                         styleDeclarations=list("background-color"="lightblue", "color"="black", "font-weight"="bold", "font-style"="italic"))  
+  }
+  # "border"="1px solid blue"
+  return(pt)
+}
+``` 
+
+
+```{r}
+pt <- makePT(dg %>% dplyr::filter(Region=="Wien"), "Gender")
+pt$addRowDataGroups("AgeGroup2", outlineBefore=TRUE, outlineTotal=TRUE)
+pt$addRowDataGroups("AgeGroup", addTotal=FALSE)
+
+pt$defineCalculation(calculationName="Einwohner", summariseExpression="paste0(round(sum(AgePopulation)/1000), ' k')",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic"))
+pt$defineCalculation(calculationName="Positiv", summariseExpression="paste0(round(sum(sumConfirmed)/1000), ' k')",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic"))
+pt$defineCalculation(calculationName="Verstorben", summariseExpression="sum(sumDeath)",
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic"))
+pt$renderPivot()
+```  
+
+
+
+
+```{r}
+qhpvt(dg %>% dplyr::filter(Region=="Wien"),  c("AgeGroup2", "AgeGroup"), "Gender",
+      c(
+        "Einw"="round(sum(AgePopulation)/1000)",
+        "Posit"="round(sum(sumConfirmed)/1000)",
+        "Verst"="sum(sumDeath)"
+        ),
+      formats=list("%d k", "%d k", "%d"),
+      totals=list("Gender"="M+W", AgeGroup2="Working+Retired", AgeGroup="Summe"),
+      tableStyle=list("border-color"="darkgrey"),
+      headingStyle=list("color"="black", "background-color"="lightgrey", 
+                       "font-style"="italic", "border-color"="darkgrey"), 
+      cellStyle=list("color"="black", "background-color"="white", 
+                    "border-color"="darkgrey"),
+      totalStyle=list("color"="black", "background-color"="lightblue", 
+                     "border-color"="darkgrey", "font-style"="italic", "font-weight"="bold"))
+```
+
+
+
+```{r}
+qhpvt(dh, "Gender", "AgeGroup2", 
+      c(
+        "Pos100k"="round(sum(sumConfirmed)/sum(AgePopulation),4)*100",
+        "Tot100k"="round(sum(sumDeath)    /sum(AgePopulation),6)*100000"
+        ),
+      formats=list("%.3f", "%.0f"))
+```
+
+```{r, }
+# Sum over AgeGroup into AgeGroup2
+qlpvt(dg, "Gender", c("AgeGroup2"), 
+      c(
+        "Pop/tPop"="round(sum(AgePopulation)/sum(dg$AgePopulation),2)*100",
+        "Pos/tPos"="round(sum(sumConfirmed)/sum(dg$sumConfirmed),2)*100",
+        "Tot/tTot"="round(sum(sumDeath)/sum(dg$sumDeath),3)*100",
+        "Tot/tPos"="round(sum(sumDeath)/sum(dg$sumConfirmed),4)*100"
+        ),
+      formats=list( "%.0f", "%.0f", "%.1f", "%0.2f"))
+```
+
+
+```{r}
+qhpvt(dg, "Gender", c("AgeGroup2"), 
+      c(
+        "nPositiv"="paste0(round(sum(sumConfirmed)/1000), 'k')", 
+        #"pPositiv"="round(sum(sumConfirmed)/sum(dg$sumConfirmed),2)*100",
+        "nDeath"="paste0(round(sum(sumDeath)/1000,1), 'k')"),
+        #"pDeath"="round(sum(sumDeath)/sum(dg$sumDeath),2)*100",
+        #"ppDeath"="round(sum(sumDeath)/sum(dg$sumConfirmed),4)*100"),
+      formats=list("%.0f", "%.0f"))
+```
+
+```{r}
+dt <- dg %>%
+  dplyr::group_by(AgeGroup2, Gender) %>%
+  dplyr::summarize(Population=sum(AgePopulation), sumConfirmed=sum(sumConfirmed), sumDeath=sum(sumDeath))
+
+```  
+
+  
+```{r}
+dg <- dg %>%
+  dplyr::mutate(sumConfirmed_100k=round(sumConfirmed/RegPopulation*100000)) %>%
+  dplyr::mutate(sumRecovered_100k=round(sumRecovered/RegPopulation*100000)) %>%
+  dplyr::mutate(sumDeath_100k    =round(sumDeath/    RegPopulation*100000,1)) %>% 
+
+  dplyr::mutate(sumConfirmed_Proz=round(sumConfirmed/RegPopulation*100,2)) %>%
+  dplyr::mutate(sumRecovered_Proz=round(sumRecovered/RegPopulation*100,2)) %>%
+  dplyr::mutate(sumDeath_Proz    =round(sumDeath/    RegPopulation*100,3))
+```  
+
+  
+```{r}
+dh <- dg %>%
+  # cumsum over ageGroup
+  dplyr::arrange(Region,Gender,AgeGroup) %>%
+  dplyr::group_by(Region,Gender) %>%
+  
+  dplyr::mutate(csRegPopulation = cumsum(RegPopulation)) %>%
+  
+  dplyr::mutate(proSumConfirmed = round((sumConfirmed/sum(sumConfirmed))*100,1)) %>%
+  dplyr::mutate(proSumDeath     = round((sumDeath/sum(sumDeath))*100,1)) %>%
+  dplyr::mutate(csSumConfirmed    = round(cumsum(sumConfirmed))) %>%
+  dplyr::mutate(csSumDeath        = round(cumsum(sumDeath))) %>%
+  dplyr::mutate(proCsSumConfirmed = round(cumsum(sumConfirmed/sum(sumConfirmed))*100,1)) %>%
+  dplyr::mutate(proCsSumDeath     = round(cumsum(sumDeath/sum(sumDeath))*100,1)) %>%
+  
+  dplyr::mutate(csSumConfirmed_100k    = round(cumsum(sumConfirmed_100k))) %>%
+  dplyr::mutate(csSumDeath_100k        = round(cumsum(sumDeath_100k),1)) %>%
+  dplyr::mutate(proCsSumConfirmed_100k = round(cumsum(sumConfirmed_100k/sum(sumConfirmed_100k))*100,1)) %>%
+  dplyr::mutate(proCsSumDeath_100k     = round(cumsum(sumDeath_100k/sum(sumDeath_100k))*100,1)) %>%
+
+  dplyr::ungroup()
+```
+
+
+
+```{r}
+  dh %>% 
+    dplyr::mutate(AgeGroup=ifelse(AgeGroupID<=7,"Working","Retired")) %>%
+    summarize(
+      Population=sum(RegPopulation), 
+      Positive=sum(sumConfirmed), 
+      Positive_Proz=round(sum(sumConfirmed)/sum(RegPopulation)*100,2), 
+      Positive_100k=round(sum(sumConfirmed)/sum(RegPopulation)*100000),   
+      Death=sum(sumDeath), 
+      Death_Proz=round(sum(sumDeath)/sum(RegPopulation)*100,2),
+      Death_100k=round(sum(sumDeath)/sum(RegPopulation)*100000)
+      ) %>% 
+  kableExtra::kbl(caption="PopulationPositive", align="c", format="html") %>% kable_classic(full_width = F, html_font = "Cambria")
+```
+
+```{r}
+  dh %>% 
+    dplyr::mutate(AgeGroup=ifelse(AgeGroupID<=7,"Working","Retired")) %>%
+    group_by(Gender) %>% 
+        summarize(
+          Population=sum(RegPopulation), 
+          Positive=sum(sumConfirmed), 
+          Positive_Proz=round(sum(sumConfirmed)/sum(RegPopulation)*100,2), 
+          Positive_100k=round(sum(sumConfirmed)/sum(RegPopulation)*100000),   
+          Death=sum(sumDeath), 
+          Death_Proz=round(sum(sumDeath)/sum(RegPopulation)*100,2),
+          Death_100k=round(sum(sumDeath)/sum(RegPopulation)*100000)
+      )  %>% 
+  kable()
+```
+
+```{r}
+dh %>% 
+    dplyr::mutate(AgeGroup=ifelse(AgeGroupID<=7,"Working","Retired")) %>%
+    group_by(AgeGroup, Gender) %>% 
+        summarize(.groups="drop",
+          Population=sum(RegPopulation), 
+          Positive=sum(sumConfirmed), 
+          Positive_Proz=round(sum(sumConfirmed)/sum(RegPopulation)*100,2), 
+          Positive_100k=round(sum(sumConfirmed)/sum(RegPopulation)*100000),   
+          Death=sum(sumDeath), 
+          Death_Proz=round(sum(sumDeath)/sum(RegPopulation)*100,2),
+          Death_100k=round(sum(sumDeath)/sum(RegPopulation)*100000)
+      ) %>% 
+  kableExtra::kbl(caption="Wien: Positiv Getestete und Verstorbene nach Altersgruppe und Geschlecht", align="r", format="html") %>% 
+  kable_classic_2(html_font="Times") %>%
+  kable_styling(htmltable_class="lightable-striped", full_width=F, position="center", html_font="Times", font_size=14, bootstrap_options=c("striped")) %>%
+  
+  row_spec(0, angle = 0)
+```  
+
+```{r}
+dg <- dh %>% 
+    dplyr::mutate(AgeGroup=ifelse(AgeGroupID<=7,"Working","Retired")) %>%
+    group_by(AgeGroup, Gender) %>% 
+        summarize(.groups="drop",
+          Population=sum(RegPopulation), 
+          Positive=sum(sumConfirmed), 
+          Positive_Proz=round(sum(sumConfirmed)/sum(RegPopulation)*100,2), 
+          Positive_100k=round(sum(sumConfirmed)/sum(RegPopulation)*100000),   
+          Death=sum(sumDeath), 
+          Death_Proz=round(sum(sumDeath)/sum(RegPopulation)*100,2),
+          Death_100k=round(sum(sumDeath)/sum(RegPopulation)*100000)
+      )
+
+gt <- gt(dg)
+gt_preview(gt)
+
+```   
+
+
+
+```{r }
+# Naming conventions for current document
+dn <- dm %>% dplyr::filter(Region=="Wien") %>% 
+  dplyr::select(AgeGroup, Gender, 
+                Posit      =sumConfirmed,         Verst     =sumDeath,
+                PositPro     =proSumConfirmed,      VerstPro    =proSumDeath,
+                Posit100k  =sumConfirmed_100k,    Verst100k =sumDeath_100k, 
+                Posit100kPro =proSumConfirmed_100k, Verst100kPro=proSumDeath_100k)
+
+dn %>% dplyr::arrange(AgeGroup, Gender) %>%
+  select(AgeGroup, Gender, Posit, Verst, PositPro, VerstPro, Posit100k, Verst100k, Posit100kPro,  Verst100kPro) %>%
+  kable()
+```
+
+
+```{r }
+
+dm <- dg %>%
+
+  dplyr::mutate(AgeGroup=ifelse(AgeGroupID<=7,"Working","Retired")) %>%
+  dplyr::group_by(Region, Gender, AgeGroup) %>%
+  dplyr::summarize(sumConfirmed=sum(sumConfirmed), sumRecovered=sum(sumRecovered), sumDeath=sum(sumDeath),
+                   RegPopulation=sum(RegPopulation)) %>%
+  dplyr::ungroup() %>%
+  
+  dplyr::mutate(sumConfirmed_100k=round(sumConfirmed/RegPopulation*100000)) %>%
+  dplyr::mutate(sumRecovered_100k=round(sumRecovered/RegPopulation*100000)) %>%
+  dplyr::mutate(sumDeath_100k    =round(sumDeath/    RegPopulation*100000,1)) %>% 
+    
+  # cumsum over ageGroup
+  dplyr::arrange(Region,Gender,AgeGroup) %>%
+  dplyr::group_by(Region,Gender) %>%
+  
+  dplyr::mutate(proSumConfirmed = round((sumConfirmed/sum(sumConfirmed))*100,1)) %>%
+  dplyr::mutate(proSumDeath     = round((sumDeath/sum(sumDeath))*100,1)) %>%
+  
+  dplyr::mutate(proSumConfirmed_100k = round((sumConfirmed_100k/sum(sumConfirmed_100k))*100,1)) %>%
+  dplyr::mutate(proSumDeath_100k     = round((sumDeath_100k/sum(sumDeath_100k))*100,1)) %>%
+
+  dplyr::ungroup()
+
+```
+dk %>% select(AgeGroup, Gender, PopAgeGroup,
+              Posit, PositProz, Posit100k, csPosit, csPosit100k, csPositProz,  
+              Verst, VerstProz, Verst100k, csVerst, csVerst100k, csVerstProz) %>%
+  kable()
+
+```{r }
+# Naming conventions for current document
+dk1 <- dv %>% 
+  dplyr::select(AgeGroupID, AgeGroup, Gender, PopAgeGroup = RegPopulation,
+                Posit          =sumConfirmed,           Verst=sumDeath,
+                PositProz      =proSumConfirmed,        VerstProz=proSumDeath,
+                csPosit        =csSumConfirmed,         csVerst=csSumDeath,
+                csPositProz    =proCsSumConfirmed,      csVerstProz=proCsSumDeath,
+                Posit100k      =sumConfirmed_100k,      Verst100k=sumDeath_100k, 
+                csPosit100k    =csSumConfirmed_100k,    csVerst100k=csSumDeath_100k, 
+                csPosit100kProz=proCsSumConfirmed_100k, csVerst100kProz=proCsSumDeath_100k)
+```
+
+```{r}
+dv1 <- dw %>%
+  dplyr::mutate(sumConfirmed_100k=round(sumConfirmed/RegPopulation*100000)) %>%
+  dplyr::mutate(sumRecovered_100k=round(sumRecovered/RegPopulation*100000)) %>%
+  dplyr::mutate(sumDeath_100k    =round(sumDeath/    RegPopulation*100000,1)) %>% 
+
+  dplyr::mutate(sumConfirmed_Proz=round(sumConfirmed/RegPopulation*100,2)) %>%
+  dplyr::mutate(sumRecovered_Proz=round(sumRecovered/RegPopulation*100,2)) %>%
+  dplyr::mutate(sumDeath_Proz    =round(sumDeath/    RegPopulation*100,3)) %>%
+  
+  # cumsum over ageGroup
+  dplyr::arrange(Region,Gender,AgeGroup) %>%
+  dplyr::group_by(Region,Gender) %>%
+  
+  dplyr::mutate(csRegPopulation = cumsum(RegPopulation)) %>%
+  
+  dplyr::mutate(proSumConfirmed = round((sumConfirmed/sum(sumConfirmed))*100,1)) %>%
+  dplyr::mutate(proSumDeath     = round((sumDeath/sum(sumDeath))*100,1)) %>%
+  dplyr::mutate(csSumConfirmed    = round(cumsum(sumConfirmed))) %>%
+  dplyr::mutate(csSumDeath        = round(cumsum(sumDeath))) %>%
+  dplyr::mutate(proCsSumConfirmed = round(cumsum(sumConfirmed/sum(sumConfirmed))*100,1)) %>%
+  dplyr::mutate(proCsSumDeath     = round(cumsum(sumDeath/sum(sumDeath))*100,1)) %>%
+  
+  dplyr::mutate(csSumConfirmed_100k    = round(cumsum(sumConfirmed_100k))) %>%
+  dplyr::mutate(csSumDeath_100k        = round(cumsum(sumDeath_100k),1)) %>%
+  dplyr::mutate(proCsSumConfirmed_100k = round(cumsum(sumConfirmed_100k/sum(sumConfirmed_100k))*100,1)) %>%
+  dplyr::mutate(proCsSumDeath_100k     = round(cumsum(sumDeath_100k/sum(sumDeath_100k))*100,1)) %>%
+
+  dplyr::ungroup()
+```
+
+
+```{r}
+# Sum over AgeGroup into AgeGroup2
+du1 <- dv1 %>% 
+  dplyr::mutate(Gender=factor(Gender)) %>%
+  dplyr::group_by(AgeGroup2, Gender) %>%
+  dplyr::summarize(.groups="drop", sumConfirmed=sum(sumConfirmed), sumDeath=sum(sumDeath), AgePopulation=sum(AgePopulation), Region=first(Region)) %>%
+  dplyr::ungroup()
+```
+
+
+  #dplyr::mutate(AgeGroup20=factor(dd.y$AgeGroup20, levels=levels(dd.y$AgeGroup20) %>% unique(), ordered=TRUE)) %>%
+  #dplyr::mutate(AgeGroupID20=as.integer(AgeGroup20)) %>%
+  #dplyr::mutate(AgeGroup2=factor(ifelse(AgeGroupID20>=14,"Über65","Unter65"), levels=c("Unter65","Über65"))) %>%
+  #dplyr::mutate(Population=as.integer(Population)) %>%
+  #dplyr::mutate(Deaths=as.integer(Deaths)) %>%
+  #dplyr::mutate(Deaths_100k=round(Deaths/Population*100000)) %>%
+  #dplyr::mutate(AgeGroupID20=as.integer(AgeGroup20)) %>%
+  #dplyr::mutate(AgeGroupID10=ceiling(AgeGroupID20/2)) %>%
+  #dplyr::mutate(AgeGroup10=paste("Age",(AgeGroupID10-1)*10,"to",AgeGroupID10*10, sep="_")) %>%
+  #dplyr::mutate(AgeGroupID10=ceiling((pmin(AgeGroupID20,18)+1)/2)) %>%
+  #dplyr::mutate(AgeGroup10=paste("Age",pmax(0,(AgeGroupID10-1)*10-5),"to", ifelse(AgeGroupID10*10-5<90,AgeGroupID10*10-5,""), sep="_"))  %>%
+  
+  dpd.ya <- dpd.y %>% dplyr::select(AgeGroup15, Gender, Population, Deaths) %>%
+  dplyr::group_by(AgeGroup15, Gender) %>%
+  dplyr::summarize(.groups="drop", Deaths=sum(Deaths), AgePopulation=sum(Population)) %>%
+  dplyr::mutate(AgeGroup = factor(AgeGroup15, labels=levels(dm$AgeGroup), ordered=TRUE)) %>%
+  dplyr::mutate(Deaths100k = round(Deaths/AgePopulation*100000)) %>%
+  dplyr::mutate(Gender=factor(Gender, levels=c("female","male"), labels=c("W","M"))) %>%
+  dplyr::select(-AgeGroup15)
+
+
+dx <- dcd.yu  %>% 
+  dplyr::mutate(AgeGroup=factor(AgeGroup, ordered=TRUE)) %>%
+  dplyr::mutate(Gender=factor(Gender)) %>%
+  dplyr::inner_join(dpd.ya)
+
+ggplot(data=dx, 
+       aes(x=AgeGroup, y=Verst100k, color=Gender, shape=Gender)) +
+  scale_y_continuous(limits=c(1,NA), trans="log10", breaks=10^(-1:4)) +
+  #scale_fill_manual(values=c("black","blue")) +
+  #scale_color_manual(values=c("black","blue")) +
+  geom_point(size=3) + 
+  geom_point(aes(y=Deaths100k), size=3) +
+  ggtitle("COVID-19 Wien: Verstorbene pro 100k pro Altersgruppe (y=log2)")
+  
+
+```{r}
+dx <- tcd.mw %>%
+  dplyr::mutate(Verst100k=newDeath/newConfirmed*100000) %>%
+  dplyr::arrange(AgeGroup, Gender, Date) %>%
+  dplyr::group_by(AgeGroup, Gender) %>%
+  dplyr::mutate(VerstInc = Verst100k/first(Verst100k)) %>%
+  dplyr::ungroup()
+
+
+ggplot(data=dx %>% dplyr::filter(as.integer(AgeGroup)>5) , aes(x=Date, y=VerstInc, color=Gender, shape=Gender)) +
+  scale_x_datetime(breaks="months", date_labels="%b.%y") +
+  scale_y_continuous(limits=c(0,10)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  geom_point(size=3) + 
+  geom_path() + 
+  facet_grid(~AgeGroup, scales="free_y") +
+  ggtitle("COVID-19 Wien: Zunahme Anteil Verstorbene an Positiven nach Quartal und Altersgruppe ")
+```
+
+
+
+
+
+
+
+### Anteil Verstorbene an Bevölkerung
+
+Dieser Wert (f) sollte 
+
+- steigen mit der Prevalenz (gegeben gleichbleibende Ansteckbare)
+- mit steigender Durchimpfung and Anzahl Genesener fallen (gegeben gleiche Prevalenz und Prevalenz klein gegen den Anteil Ansteckbare)
+
+**Kandidat für PrevalenzNormierung**
+
+
+$$
+\begin{aligned}
+Sterblichkeit_B = F_P &= \frac{D}{P} = \frac{Verstorbene}{Bevölkerung} \\
+\\
+f_p  &= \frac{_pD_n}{_pP} & \text{Fatalities rate by popolation in Austria} \\
+f_a  &= \frac{_aD_n}{_aP} & \text{Fatalities rate by population per agegroup}
+\end{aligned}
+$$
+
+
+
+
+### Anteil Verstorbene an Ansteckbaren
+
+Dieser Wert (e) sollte sein:
+
+- proportional zur Prevalenz
+- unabhängig von der Durchimpfungsrate
+- eventuell abhängig von der aktuellen Mutante
+
+**Kandidat für PrevalenzNormierung**
+
+$$
+\begin{aligned}
+Sterblichkeit_A  = F_S &= \frac{D}{S} = \frac{Verstorbene}{Ansteckbare} \\
+\\
+e_p  &= \frac{_pD_n}{_pS} & \text{Fatalities rate by scusceptibles in Austria} \\
+e_a  &= \frac{_aD_n}{_aS} & \text{Fatalities rate by scusceptibles per agegroup}
+\end{aligned}
+$$
+
+
+### Altersspezifische relative Sterblichkeit der Bevölkerung innerhalb einer Messperiode
+
+**Kandidat für PrevalenzNormierung**
+
+$$
+\begin{aligned}
+\text{Altersgruppe relative Sterblichkeit} =  _PF_{r} &= \frac{_PF_A}{_PF_P} =  \frac{ \text{Sterblichkeit in der AltersGruppe} }{ \text{Sterblichkeit in der gesamten Bevölkerung} } \\
+\\
+_PF_{r} &=  
+\frac { \frac{_aD_n}{_aP_n} } {  \frac{_pD_n}{_pP_n} } =
+\frac { \frac{_aD_n}{_aP_n} } {  \frac{\sum^A{_aD_n}}{\sum^A{_aP_n}} }
+\end{aligned}
+$$
+
+
+
+### Altersspezifische relative Sterblichkeit der Erkrankten innerhalb einer Messperiode
+
+$$
+\begin{aligned}
+\text{Altersgruppe relative Sterblichkeit der Erkrankten} =  _IF_{r} &= \frac{_IF_A}{_IF_P} =  \frac{ \text{Sterblichkeit Erkrankte in AltersGruppe} }{ \text{Sterblichkeit aller Erkrankten} } \\
+\\
+_IF_{r} &= 
+\frac { \frac{_aD_n}{_aR_n + _aD_n} } {  \frac{_pD_n}{_pR_n + _pD_n} } =
+\frac { \frac{_aD_n}{_aR_n + _aD_n} } {  \frac{\sum^A{_aD_n}}{\sum^A{(_aR_n + _aD_n)}} }
+\end{aligned}
+$$
+
+
+###  3 Altersgruppe relative Sterblichkeit der Bevölkerung innerhalb einer Messperiode gegen Referenzperiode
+
+$$
+\begin{aligned}
+fp_p  &= \frac{_pD_n}{_pP} & \text{Fatalities rate by popolation in Austria} \\
+fp_a  &= \frac{_aD_n}{_aP} & \text{Fatalities rate by population per agegroup}
+\end{aligned}
+$$
+
+###  3 Altersgruppe relative Sterblichkeit der Bevölkerung innerhalb einer Messperiode gegen Referenzperiode
+
+$$
+\begin{aligned}
+_pp(m) &= \frac{_pR_n(m) + _pD_n(m)}{_pS_c(m-1)} & \text{prevalence in Austria} \\
+_ap(m) &= \frac{_aR_n(m) + _aD_n(m)}{_aS_c(m-1)} & \text{prevalence in agegroup}  \\
+& p & \text{prevalenz measured in terms of S, R and D} \\
+& m & \text{month under considereation}
+\end{aligned}
+$$
+
+
+
+
+
+## Table Formats
+
+```{r}
+# Create standard object for table rendering
+makePT <- function(df, cdg=NULL) {
+  pt <- PivotTable$new(tableStyle  =list("color"="black", "border-color"="black"),
+                       headingStyle=list("color"="black", "border-color"="black", "background-color"="white", "font-style"="italic"), 
+                       cellStyle   =list("color"="black", "border-color"="black", "background-color"="white"),
+                       totalStyle  =list("color"="black", "border-color"="black", "background-color"="lightblue", "font-weight"="bold"))
+  pt$addData(df)
+  # pt$theme <- "default"
+  pt$setDefault(addTotal=FALSE)
+  pt$setDefault(totalPosition="before")
+  #pt$setDefault(totalCaption="Gesamt {value}")
+  pt$setDefault(outlineBefore=list(isEmpty=FALSE, caption="Gesamt {value}", totalPosition="before",
+                                             groupStyleDeclarations=list("color"="black", "border-color"="black", "background-color"="lightgray", "font-style"="italic"),
+                                             cellStyleDeclarations =list("color"="black", "border-color"="black", "background-color"="lightgray", "font-style"="italic")))
+  pt$setDefault(outlineTotal=list(isEmpty=FALSE,  caption="Gesamt {value}", totalPosition="before", 
+                                            groupStyleDeclarations=list("color"="black", "border-color"="black", "background-color"="lightgreen", "font-style"="italic"),
+                                            cellStyleDeclarations =list("color"="black", "border-color"="black", "background-color"="lightgreen", "font-style"="italic")))
+  if (!is.null(cdg)) {
+    pt$addColumnDataGroups(cdg, totalPosition="before", totalCaption="Gesamt", addTotal=TRUE, 
+                         styleDeclarations=list("color"="black", "border-color"="black", "background-color"="lightblue", "font-weight"="bold", "font-style"="italic"))  
+  }
+  # "border"="1px solid blue"
+  return(pt)
+}
+
+makePTcalc <- function(pt, calName, summariseExp) {
+  cat (calName, summariseExp)
+  pt <- pt$defineCalculation(type="summary", calculationName=calName, summariseExpression=summariseExp,
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic"),
+                     cellStyleDeclarations=list("color"="black"))
+  return(pt)
+}
+
+makePTcalc100k <- function(pt, calName, summariseExp) {
+  pt <- pt$defineCalculation(type="summary", calculationName=calName, summariseExpression=summariseExp,
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic", "color"="royalblue"),
+                     cellStyleDeclarations=list("color"="royalblue"))
+  return(pt)
+}
+``` 
+
+```{r}
+# Create standard object for table rendering
+makePT <- function(df, cdg=NULL) {
+  pt <- PivotTable$new(tableStyle  =list("color"="black", "border-color"="black"),
+                       headingStyle=list("color"="black", "border-color"="black", "background-color"="white", "font-style"="italic"), 
+                       cellStyle   =list("color"="black", "border-color"="black", "background-color"="white"),
+                       totalStyle  =list("color"="black", "border-color"="black", "background-color"="lightblue", "font-weight"="bold"))
+  pt$addData(df)
+  # pt$theme <- "default"
+  pt$setDefault(addTotal=FALSE)
+  pt$setDefault(totalPosition="before")
+  #pt$setDefault(totalCaption="Gesamt {value}")
+  pt$setDefault(outlineBefore=list(isEmpty=FALSE, caption="Gesamt {value}", totalPosition="before",
+                                             groupStyleDeclarations=list("color"="black", "border-color"="black", "background-color"="lightgray", "font-style"="italic"),
+                                             cellStyleDeclarations =list("color"="black", "border-color"="black", "background-color"="lightgray", "font-style"="italic")))
+  pt$setDefault(outlineTotal=list(isEmpty=FALSE,  caption="Gesamt {value}", totalPosition="before", 
+                                            groupStyleDeclarations=list("color"="black", "border-color"="black", "background-color"="lightgreen", "font-style"="italic"),
+                                            cellStyleDeclarations =list("color"="black", "border-color"="black", "background-color"="lightgreen", "font-style"="italic")))
+  if (!is.null(cdg)) {
+    pt$addColumnDataGroups(cdg, totalPosition="before", totalCaption="Gesamt", addTotal=TRUE, 
+                         styleDeclarations=list("color"="black", "border-color"="black", "background-color"="lightblue", "font-weight"="bold", "font-style"="italic"))  
+  }
+  # "border"="1px solid blue"
+  return(pt)
+}
+
+makePTcalc <- function(pt, calName, summariseExp) {
+  cat (calName, summariseExp)
+  pt <- pt$defineCalculation(type="summary", calculationName=calName, summariseExpression=summariseExp,
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic"),
+                     cellStyleDeclarations=list("color"="black"))
+  return(pt)
+}
+
+makePTcalc100k <- function(pt, calName, summariseExp) {
+  pt <- pt$defineCalculation(type="summary", calculationName=calName, summariseExpression=summariseExp,
+                     headingStyleDeclarations=list("font-weight"="bold", "font-style"="italic", "color"="royalblue"),
+                     cellStyleDeclarations=list("color"="royalblue"))
+  return(pt)
+}
+``` 
+
+
+Das Risiko an Covid-19 zu erkranken ist in erheblichem Ausmass von der Zahl der sozialen Kontakte, der Einhaltung der Abstandsregeln, den Hygiene Standards, der TagesInzidenz u.a.m. abhängig, ebenso wie vom Erreichungsgrad der Herdenimmunität. Das Ziel der Impfkampagne ist in jedem Fall die Wiederherstellung des Normalzustandes. Ohne Massnahmen würde die gesamte Bevölkerung in kurzer Zeit an COVID-19 erkranken, obgleich viele Verläufe asymtomatisch verlaufen würden.
+
+Für die folgenden Betrachtungen wird davon ausgegangen, dass im 'Normalbetrieb' jeder/jede an COVID-19 erkranken würde. Es geht daher um die Betrachtung der schweren (Spitalsaufenthalt), schwersten (Intensivstation) und tödlichen Verläufe.
+
+
+
+Hinweise zu den nachfolgenden Tabellen und Graphiken:
+
+- Entsprechend der im COVID-19 Umfeld üblichen Darstellung werden die absoluten Zahlen (Positiv Getestete, Erkrankte, Verstorbene) auf die Anzahl pro 100.000 Personen umgerechnet (Spalten in blau)
+- In der nachfolgenden Tabelle werden die Verstorbenen auf 100k Positiv Getestete (Spalte 'PosVerst') und 100k Einwohner (Spalte 'Verstorben') normiert.
+
+## Sterblichkeit 2019 in von AGES benutzte Altersklassen
+
+In der folgenden Tabelle sind die Alterstufen in die in den AGES COVID-19 Daten benutzten Intervalle zusammengefasst.
+
+
+*Demograpische Daten zur Sterblichkeit in Österreich in 2019 umgerechnet auf von AGES für COVID-19 benutze Altersgruppen*
+<center>
+```{r}
+pt <- makePT(dpd.y, "Gender")
+pt$addRowDataGroups("AgeGroup2", outlineBefore=TRUE, outlineTotal=TRUE)
+pt$addRowDataGroups("AgeGroup", outlineTotal=FALSE)
+defPTcalcAbs(pt, "Einwohner", "paste0(round(sum(Population)/1000), ' k')")
+defPTcalcAbs(pt, "Gestorben", "paste0(round(sum(Deceased)/1000,2), ' k')")
+defPTcalcRel(pt, "Gest/100k", "paste0(round(sum(Deceased)/sum(Population)*100,2), ' k')")
+pt$renderPivot()
+```  
+
+</center>
+
+csvFile="mortalitaet-woechentlich.csv"
+dskFile <- paste0("./data/download/Ages/",csvFile)
+df <- read.csv(dskFile, sep=";")
+dg <- df %>% dplyr::mutate(REF_YEAR=factor(REF_YEAR, ordered=TRUE), WEEK_NO=factor(WEEK_NO, ordered=TRUE)) %>% dplyr::arrange(REF_YEAR, WEEK_NO) 
+ggplot(dg %>% dplyr::filter(BUNDESLAND=="Österreich", REF_YEAR!="2020", REF_YEAR!="2021"), aes(x=WEEK_NO, y=DEATHS_65PLUS)) + geom_boxplot()  + 
+geom_line(data=dg %>% dplyr::filter(BUNDESLAND=="Österreich", REF_YEAR=="2020"), aes(group=REF_YEAR), size=1.5, color="red") +
+geom_line(data=dg %>% dplyr::filter(BUNDESLAND=="Österreich", REF_YEAR=="2021"), aes(group=REF_YEAR), size=1, color="blue") + 
+ggtitle("COVID-19 Österreich: Anzahl Todesfälle über 65 Jahr: Boxplot: 2007-2019. Lines: 2020, 2021")
+
+ggplot(data=atcrdzhi %>% dplyr::filter(Date>as.POSIXct("2020-09-01"), Date<as.POSIXct("2021-07-01"), AgeGroup3=="Senioren"), aes(x=Date, y=newDeath)) + geom_line(color="red") + 
+geom_line(aes(y=sumVaccinated_2/Population*100), color="blue") + 
+scale_x_datetime(breaks = "months", date_labels="%Y-%m") + 
+geom_line(aes(y=newConfirmed/10), color="green") + 
+ggtitle("COVID-19 Österreich: Altersgruppe >65 Jahre: TagesInzidenz/10, Todesfälle, Anteil Geimpfte")
+
+ggplot(data=atcrdzhi %>% dplyr::filter(Date>as.POSIXct("2020-11-01"), Date<as.POSIXct("2021-09-01"), AgeGroup3=="Senioren"), aes(x=Date, y=newDeath)) + geom_line(color="red") + 
+geom_line(aes(y=sumVaccinated_2/Population*100), color="blue") + 
+geom_line(aes(y=sumVaccinated_1/Population*100), color="blue", linetype=2) + 
+scale_x_datetime(breaks = "months", date_labels="%Y-%m") + geom_line(aes(y=newConfirmed/10), color="black") + 
+scale_y_continuous(limits=c(0.1,NA), trans="identity") + 
+ggtitle("COVID-19 Österreich: Altersgruppe >65 Jahre: TagesInzidenz/10, Todesfälle, Anteil Geimpfte (1.+2.)")
+
+
+
+```{r}
+
+A = 185.8
+H = 3.05
+V = A*H 
+Cq = 72
+la = 12
+lv = 0.36
+Qb = 0.49
+Pm = 1
+epsilon = 0.1
+r = 2.5  # mu
+RH = .6
+
+# vs <- 0.003*3600*(2.5/5*((1-0.6)/(1-0.6))^1/3)^2
+#vs <- 0.9382*(1-RH)^(-2/3) # [m/h]
+vs <- 1.466*(1-RH)^(-2/3) # [m/h]
+ls <- vs/H
+
+# Sum up all releasing factors
+lc = la + lv + ls
+
+
+# Question 1  
+N0=80
+Pm = 1
+# beta = (0.49^2*72)/(12*185.8*3.05)
+Nt = epsilon*lc*V/(Qb^2*Pm^2*Cq)
+t0 = Nt/N0 * 60
+
+# Question 2
+N1 = 185.8/3.34
+t1 = Nt/N1*60
+
+# Preparation Questions 3-5
+Pmf = .75  # mask filteration capacity
+Pme = 0.9  # mask efficiency
+Pm = 1-Pmf*Pme
+beta = (Qb^2*Pm^2*Cq)/(lc*V)
+NT = epsilon / beta
+
+# Question 3
+NO = 80
+tm = NT/(N0-1)
+
+# Question 4
+T=40
+N = NT/T +1
+
+# Question 5
+pi=100/100000
+
+N = 80
+T = 40
+NTp = N^2 * T
+
+(pi <- NT/NTp)
+
+```
+
+
+```{r}
+# Compare 
+# - Wave4 data on Inzidenz by AgeGroup3+Immunized+Symptomatic (from 2021-07-01) with 
+# - Wave2 data on Inzidenz by AgeGroup3 with Immunized=No and Symptomatic="YesNo" (from 2020-08-01)
+# timeshift for overlay plot taken from 'Comparison of Wave 4 with Wave 2 in app.R
+
+yzi_a3 <- readRDS("./data/curated/yzi_a3.rda") %>% 
+  dplyr::left_join(POP.2021.a3 %>% dplyr::filter(Region=="Österreich") %>% dplyr::select(-Region), by=c("AgeGroup3")) 
+str(yzi_a3)
+ggplot(data=yzi_a3, aes(x=Date, y=newConfirmed, color=Immunized, shape=Immunized)) + geom_point() + geom_line() + facet_grid(Symptomatic~AgeGroup3)
+
+crdv_rag <- readRDS("./data/curated/crdv_rag.rda")
+str(crdv_rag)
+
+crdv_a3 <- crdv_rag %>%
+  dplyr::filter(Region=="Österreich") %>%
+  dplyr::group_by(Date, AgeGroup3) %>%
+  dplyr::summarize(.groups="drop", newConfirmed=sum(newConfirmed)/sum(Population)*100000) %>%
+  dplyr::mutate(Symptomatic="YesNo", Immunized="ImmuNo") %>%
+  dplyr::select(Date, AgeGroup3, Symptomatic, Immunized, newConfirmed)
+str(crdv_a3)
+
+trans="log2"
+ggplot(data=yzi_a3 %>% dplyr::filter(newConfirmed>0), aes(x=Date, y=newConfirmed, color=Immunized, shape=Immunized)) + 
+  scale_y_continuous(trans=trans, limits=c(1/4,96), breaks=round(2^(seq(-2,7,by=0.5)),2)) + 
+  geom_point() + geom_line() + 
+  facet_grid(Symptomatic~AgeGroup3) +
+  geom_line(data=crdv_a3 %>% dplyr::filter(Date>as.POSIXct("2020-08-01"), Date<as.POSIXct("2020-12-31")), aes(x=Date+days(326), y=newConfirmed)) +
+  ggtitle("COVID-19 Österreich: TagesInzidenz nach Symptomatic=Yes|YesNo und Immunisiert=ImmuYes|ImmuNo für die 2. und 4. Welle")
+```
+
+
+
+
+
+  output$ggpWave42Wien <- renderPlot({
+    
+    daysDiff42 <- 333
+    selCols=c("newConfirmed", "curHospital", "curICU", "newDeath")
+    
+    dp <- dtcrdzhi.rm() %>% 
+      dplyr::filter(Region=="Wien") %>%
+      dplyr::select(c(Date, selCols)) %>%
+      # max(ICU) liegt in der 3. Welle -> confine calc to 2. Welle (2020)
+      dplyr::mutate(across(.cols=selCols, .fns= ~ .x/max(.x[1:300], na.rm=TRUE))) %>%
+      tidyr::pivot_longer(cols=selCols, 
+                          names_to="Parameter", values_to="Anzahl") %>%
+      dplyr::mutate(Parameter = factor(Parameter, levels=selCols, labels=selCols, ordered=TRUE)) %>%
+      dplyr::rename(Wave2=Date) %>%
+      dplyr::mutate(Wave4=Wave2-days(daysDiff42)) %>%
+      tidyr::pivot_longer(cols=c(Wave2, Wave4), values_to="Date", names_to="Wave")
+    # str(dp)
+    
+    ggplot(data=dp, aes(x=Date, y=Anzahl, color=Wave)) +
+      scale_x_datetime(name="2. Welle 8/2020", limits=c(as.POSIXct("2020-08-01"),as.POSIXct("2020-12-15")),  date_breaks="months", date_labels="%b",
+                       sec.axis=sec_axis(name="4. Welle 7/2021", trans = (~ . +hms::hms(days=daysDiff42)))) +
+      scale_y_continuous(name="Prozent(max)", trans="log2", limits=c(1/256,1), breaks=round(2^(seq(-8,0,by=1)),3),
+                         sec.axis=dup_axis(name="Prozent_Stufe = log2(Prozent(max))", labels=seq(-8,0,by=1))) +
+      geom_line(size=1) +
+      facet_wrap(Parameter~., nrow=1) +
+      ggtitle("COVID-19 Wien: Vergleich 2. und 4. Welle mittels zeitlicher Überlagerung der Kennzahlen relativ zum Maximum der 2. Welle")
+  })  
+  
+  
+    output$ggpWave42AbsX <- renderPlot({
+  
+    daysDiff42 <- 326
+    selCols=c("newConfirmed", "curHospital", "curICU", "newDeath")
+
+    input$abUpdate
+    inRegions <- isolate(input$cbgRegion)
+    
+    dp <- dtcrdzhi.rm() %>% 
+      dplyr::filter(Region %in% inRegions) %>%
+      dplyr::select(c(Date, selCols)) %>%
+      tidyr::pivot_longer(cols=selCols, 
+                          names_to="Parameter", values_to="Anzahl") %>%
+      dplyr::mutate(Parameter = factor(Parameter, levels=selCols, labels=selCols, ordered=TRUE))%>%
+      dplyr::rename(Wave2=Date) %>%
+      dplyr::mutate(Wave4=Wave2-days(daysDiff42)) %>%
+      tidyr::pivot_longer(cols=c(Wave2, Wave4), values_to="Date", names_to="Wave")
+    #str(dp)
+    
+    ggplot(data=dp, aes(x=Date, y=Anzahl, color=Wave)) +
+      scale_x_datetime(name="2. Welle 8/2020", limits=c(as.POSIXct("2020-08-01"),as.POSIXct("2020-12-15")),  date_breaks="months", date_labels="%b",
+                       sec.axis=sec_axis(name="4. Welle 7/2021", trans = (~ . +hms::hms(days=daysDiff42)))) +
+      scale_y_continuous(name="Anzahl", trans="log2", breaks=2^(seq(0,15,by=1)),
+                         sec.axis=dup_axis(name="Anzahl_Stufe = log2(Anzahl)", labels=seq(0,15,by=1))) +
+      geom_line(size=1) +
+      facet_wrap(Parameter~., nrow=1) +
+      ggtitle("COVID-19 Österreich: Vergleich 2. und 4. Welle mittels zeitlicher Überlagerung der Kennzahlen (Positiv, Spital, ICU, Verstorben)")
+  })  
+  
+  
+  

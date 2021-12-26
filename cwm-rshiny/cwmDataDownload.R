@@ -18,9 +18,9 @@ caDataDownload <- function() {
   
   # Ages
   caDataDownloadAges_zipFile()
-  caDataDownloadAges_impfinz()
-  caDataDownloadAges_impfsym()
   caDataDownloadAges_mortweek()
+  #caDataDownloadAges_impfinz() TODO: Update for nwe Data Structure as of 2012-12-12 !!!!
+  #caDataDownloadAges_impfsym()
 
   return(TRUE)
 }
@@ -153,8 +153,8 @@ caDataDownloadAges_impfinz <- function(bSave=TRUE) {
   logMsg("Executing caDataDownloadAges_impfinz")
 
   csvFiles=c("Inzidenz_Impfstatus_12bis17Jahre.csv",
-           "Inzidenz_Impfstatus_18bis59Jahre.csv",
-           "Inzidenz_Impfstatus_60plus.csv")
+             "Inzidenz_Impfstatus_18bis59Jahre.csv",
+             "Inzidenz_Impfstatus_60plus.csv")
   
   # new files as of 2021-08-27
   url="https://www.ages.at/fileadmin/AGES2015/Themen/Krankheitserreger_Dateien/Coronavirus/Inzidenz_Impfstatus/"

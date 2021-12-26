@@ -2,7 +2,7 @@
 title: "COVID-19: Impfung und Antikörper Messung"
 subtitle: "http://cwm.rshiny.world"
 author: Thomas Strehl  https://www.linkedin.com/in/strehl-thomas-122867110
-date: "2021-10-10"
+date: "2021-12-04"
 output:
   pdf_document:
     fig_height: 6
@@ -55,20 +55,27 @@ df <- df %>%
 
 ```{r}
 # Regression Models
-Monat=seq(0,12,by=.1)
+Monat=seq(0,24,by=.1)
 
-ds1 <- df %>% dplyr::filter(ImpfStoff=="BiontecPfizer", ImpfStatus=="ZweiteImpfung", Aktion=="AntiKörper")
-lm1 <- lm(formula=log2(Wert)~Monat, data=ds1)
-pred1 <- 2^predict(lm1, newdata=data.frame(Monat=Monat))
-dp1 <- data.frame(Monat=Monat, Wert=pred1, ImpfStoff="BiontecPfizer")
+ds1_2 <- df %>% dplyr::filter(ID==1, ImpfStoff=="BiontecPfizer", ImpfStatus=="ZweiteImpfung", Aktion=="AntiKörper")
+lm1_2 <- lm(formula=log2(Wert)~Monat, data=ds1_2)
+pred1_2 <- 2^predict(lm1_2, newdata=data.frame(Monat=Monat))
+dp1_2 <- data.frame(Geschlecht="M", Monat=Monat, Wert=pred1_2, ImpfStoff="BiontecPfizer")
+
+
+ds1_3 <- df %>% dplyr::filter(ID==1, ImpfStoff=="BiontecPfizer", ImpfStatus=="DritteImpfung", Aktion=="AntiKörper", Datum>as.POSIXct("2021-12-01"))
+lm1_3 <- lm(formula=log2(Wert)~Monat, data=ds1_3)
+pred1_3 <- 2^predict(lm1_3, newdata=data.frame(Monat=Monat))
+dp1_3 <- data.frame(Geschlecht="M", Monat=Monat, Wert=pred1_3, ImpfStoff="BiontecPfizer")
+
 ```
 
 
 ```{r}
-ds2 <- df %>% dplyr::filter(ImpfStoff=="AstraZeneca", ImpfStatus=="ZweiteImpfung", Aktion=="AntiKörper")
+ds2 <- df %>% dplyr::filter(ID==2, ImpfStoff=="AstraZeneca", ImpfStatus=="ZweiteImpfung", Aktion=="AntiKörper")
 lm2 <- lm(formula=log2(Wert)~Monat, data=ds2)
 pred2 <- 2^predict(lm2, newdata=data.frame(Monat=Monat))
-dp2 <- data.frame(Monat=Monat, Wert=pred2, ImpfStoff="AstraZeneca")
+dp2 <- data.frame(Geschlecht="W", Monat=Monat, Wert=pred2, ImpfStoff="AstraZeneca")
 ```
 
 
@@ -85,15 +92,16 @@ In der folgenden Darstellung sind die Zeitreihen der Antikörper Messungen der b
 In beiden Fällen nehmen die Werte mit der Zeit in etwa exponentiell ab (Mit den Daten der TestPerson W mit AstraZeneca wäre statt des exponentiellen auch ein linears Modell verträglich; ein zerfallsprozessartigen Vorgang kann aber nicht durch ein lineares Modell modelliert werden)
 
 ```{r}
-ggplot(data=df %>% dplyr::filter(Aktion=="AntiKörper"), aes(x=Monat, y=Wert, shape=ImpfStatus, color=ImpfStatus, group=ImpfStatus)) +
+ggplot(data=df %>% dplyr::filter(Aktion=="AntiKörper"), aes(x=Monat, y=Wert, shape=ImpfStoff, color=ImpfStatus, group=ImpfStatus)) +
   scale_x_continuous(limit=c(-3.1,9), breaks=-3:9, sec.axis=dup_axis()) +
-  scale_y_continuous(limit=c(-50,2000), breaks=seq(0,1900,by=100), sec.axis=dup_axis(), expand=c(0.0,0.0)) +
-  geom_vline(data=df %>% dplyr::filter(Aktion=="Impfung"), aes(xintercept=Monat, color=ImpfStatus), size=2) +
-  geom_point(size=3, color="blue") + 
+  scale_y_continuous(limit=c(-50,2500), breaks=seq(0,2500,by=200), sec.axis=dup_axis(), expand=c(0.0,0.0)) +
+  geom_vline(data=df %>% dplyr::filter(Aktion=="Impfung"), aes(xintercept=Monat, color=ImpfStatus), size=1.5) +
   geom_line(size=1) +
-  facet_grid(ImpfStoff~.) +
-  geom_line(data=dp1, aes(x=Monat, y=Wert), inherit.aes=FALSE, linetype=3) +
-  geom_line(data=dp2, aes(x=Monat, y=Wert), inherit.aes=FALSE, linetype=3) +
+  facet_grid(Geschlecht~.) +
+  geom_line(data=dp1_2, aes(x=Monat, y=Wert), inherit.aes=FALSE, linetype=3) +
+  geom_line(data=dp1_3, aes(x=Monat, y=Wert), inherit.aes=FALSE, linetype=3) +
+  geom_line(data=dp2, aes(x=Monat, y=Wert), inherit.aes=FALSE, linetype=2) +
+  geom_point(size=3, color="black") + 
   ggtitle("Vacination and AntiBody Test results: 2 Samples (AgeGroup 55-65, M and W), \nExponential Model, BAU/ml units")
 ```
 \newpage
@@ -115,15 +123,16 @@ Trotz wesentlich höherer Maximalwerte werden bei Testperson M mit BiontecPfizer
 
 
 ```{r}
-ggplot(data=df %>% dplyr::filter(Aktion=="AntiKörper"), aes(x=Monat, y=Wert, shape=ImpfStatus, color=ImpfStatus, group=ImpfStatus)) +
+ggplot(data=df %>% dplyr::filter(Aktion=="AntiKörper"), aes(x=Monat, y=Wert, shape=ImpfStoff, color=ImpfStatus, group=ImpfStatus)) +
   scale_x_continuous(limit=c(-3.1,12), breaks=-3:12, sec.axis=dup_axis()) +
-  scale_y_continuous(limit=c(10,2000), breaks=2^seq(0:12), sec.axis=dup_axis(), trans="log2") +
-  geom_vline(data=df %>% dplyr::filter(Aktion=="Impfung"), aes(xintercept=Monat, color=ImpfStatus), size=2) +
-  geom_point(size=3, color="black") + 
+  scale_y_continuous(limit=c(10,2500), breaks=2^seq(0:12), sec.axis=dup_axis(), trans="log2") +
+  geom_vline(data=df %>% dplyr::filter(Aktion=="Impfung"), aes(xintercept=Monat, color=ImpfStatus), size=1.5) +
   geom_line() +
-  facet_grid(ImpfStoff~.) +
-  geom_line(data=dp1, aes(x=Monat, y=Wert), inherit.aes=FALSE, linetype=3) +
-  geom_line(data=dp2, aes(x=Monat, y=Wert), inherit.aes=FALSE, linetype=3) +
+  facet_grid(Geschlecht~.) +
+  geom_line(data=dp1_2, aes(x=Monat, y=Wert), inherit.aes=FALSE, linetype=3) +
+  geom_line(data=dp1_3, aes(x=Monat, y=Wert), inherit.aes=FALSE, linetype=3) +
+  geom_line(data=dp2, aes(x=Monat, y=Wert), inherit.aes=FALSE, linetype=2) +
+  geom_point(size=3, color="black") + 
   ggtitle("Vacination and AntiBody Test results: 2 Samples (AgeGroup 55-65, M and W), \nExponential Model, logScale y, BAU/ml units for half/double")
 ```
 
@@ -142,7 +151,7 @@ str(df)
 ## Daten
 
 ```{r}
-df %>% select(ID, Alter, Geschlecht, Datum, ImpfStatus, ImpfStoff, Aktion, Wert)
+df %>% select(ID, Alter, Geschlecht, Datum, ImpfStatus, ImpfStoff, Aktion, Wert) %>% print(n=100)
 ```
 
 \newpage
@@ -150,15 +159,25 @@ df %>% select(ID, Alter, Geschlecht, Datum, ImpfStatus, ImpfStoff, Aktion, Wert)
 
 Halbwertszeit der BAU Werte in Monaten
 
-### TestPerson 1
+### TestPerson M, 62J
 
+Zweite Impfung
 ```{r}
-summary(lm1)
-(HalbwertsZeit = -1/coef(lm1)[2])
+summary(lm1_2)
+(HalbwertsZeit = -1/coef(lm1_2)[2])
 
 ```
 
-### TestPerson 2
+Dritte Impfung
+
+```{r}
+summary(lm1_3)
+(HalbwertsZeit = -1/coef(lm1_3)[2])
+
+```
+
+
+### TestPerson W, 56J
 
 ```{r}
 summary(lm2)

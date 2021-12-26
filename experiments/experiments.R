@@ -337,36 +337,6 @@ ggplot(data=df %>% dplyr::filter(rm7NewConfTest>0.001, Date>as.Date("2020-08-01"
   scale_x_continuous(limits=c(0,NA), trans="identity") +
   scale_y_continuous(limits=c(0,NA), trans="identity")
 
-bmsgpk <- read.csv("/home/at062084/DataEngineering/COVID-19/COVID-19-Austria/bmsgpk/data/COVID-19-austria.csv")
-ggplot (data=bmsgpk %>% dplyr::mutate(Date=as.Date(Stamp)) %>% dplyr::filter(Status=="Tested"), aes(x=Date, y=AT)) + 
-  geom_line(col="red") + 
-  geom_line(data=bmsgpk %>% dplyr::mutate(Date=as.Date(Stamp)) %>% dplyr::filter(Status=="Tested_PCR"),aes(y=AT), col="blue") + 
-  geom_line(data=bmsgpk %>% dplyr::mutate(Date=as.Date(Stamp)) %>% dplyr::filter(Status=="Tested_AG"), aes(y=AT), col="green")
-
-ggplot (data=bmsgpk %>% dplyr::mutate(Date=as.Date(Stamp)), aes(x=Date, y=AT, group=Status, col=Status)) + geom_line()
-  
-bm <- bmsgpk %>% 
-  dplyr::mutate(Date=as.Date(Stamp)) %>%
-  dplyr::select(-Stamp) %>%
-  group_by(Date,Status) %>% 
-  summarize_all(first) %>% 
-  dplyr::ungroup() %>% 
-  tidyr::gather(key=Region, value=Count, "AT":"W") %>%
-  tidyr::spread(key=Status, value=Count, fill=NA, drop=FALSE) %>%
-  dplyr::arrange(Region, Date) %>%
-  dplyr::group_by(Region) %>%
-  dplyr::mutate(newConfirmed=rollmean(Confirmed-lag(Confirmed),7, align="center", fill=NA)) %>%
-  dplyr::mutate(newTested=rollmean(Tested-lag(Tested),7, align="center", fill=NA)) %>%
-  dplyr::mutate(newTested_PCR=rollmean(Tested_PCR-lag(Tested_PCR),7, align="center", fill=NA)) %>%
-  dplyr::mutate(newTested_AG=rollmean(Tested_AG-lag(Tested_AG),7, align="center", fill=NA)) %>%
-  dplyr::ungroup()
-  
-ggplot(data=bm %>% dplyr::filter(Region=="AT", Date > as.Date("2020-10-01")), aes(x=Date, y=newTested)) + geom_line(col="blue") +
-  geom_line(aes(y=newTested_PCR), col="cyan") + 
-  geom_line(aes(y=newTested_AG), col="magenta")  +
-  #geom_line(aes(y=Confirmed*10), col="red") +
-  geom_line(aes(y=newConfirmed/newTested*1000000), col="green") +
-  geom_line(aes(y=newConfirmed*10), col="black")
 
 
 # Mutations
@@ -442,5 +412,365 @@ ggplot(data=dg %>% dplyr::filter(Status %in% fltStatus), aes(x=Date, y=Count, co
     scale_y_continuous()
 
 
+  
+
+
+# ---------------------------------------------------
+# ages-ConfHistory-Reconstruct
+# ---------------------------------------------------
+cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#444444", "#F0D042", "#0072B2", "#D55E00", "#CC79A7", "#C40000")
+atShapes <- c(10,6,7,2,11,5,12,22,1,9)
+dataPath <- "./data"
+agesProcessedFile <-"COVID-19-CWM-AGES-TestedProcessed.rda"
+agesEvaluatedFile <-"COVID-19-CWM-AGES-TestedEvaluated.rda"
+zipPath<-"../../COVID-19-Austria/bmsgpk/data/zip"
+unzipPath="./data/unzip"
+bUnziped <- FALSE
+nSettleDays <- 10 # Number of days to wait until status 'all tests returned' reached (may or not actually be the case) 
+nCalcWeeks <- 5 # Number of past weeks to use for estimation of fraction of under-reporting before nSettleDays reached
+
+
+do <- readRDS(paste0(dataPath,"/",agesEvaluatedFile))
+
+# Calculate fill fo current day per Region and WeekDay from past nCalcWeeks Weeks
+
+# remove one potential outlier
+trimMean <- function(x) {
+  res <- abs(x-mean(x))
+  mean(x[which(res!=max(res))])
+}
+
+da <- do %>% 
+  dplyr::filter(DateReported > max(DateReported)-weeks(nCalcWeeks) - days(nSettleDays)) %>%
+  dplyr::group_by(Region, WdayReported, daysDayN) %>%
+  dplyr::summarize(countPropDayN = n(), meanPropDayN = round(trimMean(propDayN),2)) %>%
+  dplyr::ungroup() %>%
+  dplyr::filter(daysDayN==0)
+str(da)
+
+
+
+
+dd <- do %>% dplyr::filter(Region=="Wien") 
+ggplot(data=dd , aes(x=DateEvaluated, y=DateReported)) +
+  theme(panel.grid.major = element_line(color = "darkgray", linetype=3), 
+        panel.grid.minor=element_line(color = "gray90", linetype=1),
+        axis.text = element_text(size=10), axis.title.x=element_blank()) +
+  scale_x_date(date_breaks="1 weeks") + 
+  scale_y_date(date_breaks="1 weeks") + 
+  geom_raster(aes(fill=newConfirmed)) +
+  scale_fill_gradient(low="white", high="black", guide="colorbar")
+
+
+ggplot(data=dd %>% dplyr::filter(DateEvaluated==(DateReported-days(7))), aes(x=DateEvaluated, y=newConfirmed, fill=WdayEvaluated)) +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  scale_x_date(date_breaks="1 weeks") + 
+  geom_col()
+geom_line() + geom_point()
+
+ggplot(data=dd %>% 
+         dplyr::filter(daysDayN<7, propDayN>.7, MonthEvaluated!="Sep", MonthEvaluated!="Okt",MonthEvaluated!="Nov",MonthEvaluated!="Dez"), 
+       aes(x=daysDayN, y=propDayN, group=as.character(DateEvaluated), color=WdayEvaluated)) + 
+  theme(panel.grid.major = element_line(color = "darkgray", linetype=3), 
+        panel.grid.minor=element_line(color = "gray90", linetype=1),
+        axis.text = element_text(size=10), legend.position="right") +
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  scale_shape_manual(values=atShapes) +
+  geom_point(aes(shape=WdayEvaluated),size=3) + geom_line() +   
+  #facet_wrap(.~Region, nrow=2) +
+  scale_x_continuous(breaks=0:10)
+
+ggplot(data=do %>% 
+         dplyr::filter(daysDayN<4, propDayN>.7, propDayN<1.25, WdayEvaluated!="Di") %>% 
+         dplyr::filter(MonthEvaluated!="Sep", MonthEvaluated!="Okt",MonthEvaluated!="Nov", MonthEvaluated!="Dez"), 
+       aes(x=factor(daysDayN), y=propDayN, fill=Region, color=Region, shape=Region)) + 
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  scale_shape_manual(values=atShapes) +
+  geom_boxplot() +
+  facet_grid(MonthEvaluated~WdayEvaluated)
+#facet_wrap(MonthEvaluated~., ncol=4)
+
+dd <- do %>% 
+  select(DateEvaluated, Region, newConfirmed, daysDayN) %>% 
+  dplyr::mutate(NachTragTag=factor(daysDayN, levels=6:0)) %>%
+  dplyr::group_by(Region, DateEvaluated) %>%
+  dplyr::mutate(diffConfirmed=newConfirmed-lag(newConfirmed, default=0)) %>%
+  dplyr::ungroup()
+
+colPal <- c("#DDDDDD", "#56B4E9","#E69F00",  "#009E73", "#0072B2", "#D55E00",  "#C40000")[7:1]
+ggplot(data=dd %>% dplyr::filter(DateEvaluated>(max(DateEvaluated,na.rm=TRUE)-days(35))), 
+       aes(x=DateEvaluated, y=diffConfirmed)) + 
+  theme(panel.grid.major.x = element_line(color = "darkgray", linetype=2), 
+        axis.text = element_text(size=10), axis.title.x=element_blank()) +
+  geom_col(aes(fill=NachTragTag), width=.95 , color="grey70")+
+  scale_fill_manual(values=colPal) +
+  scale_color_manual(values=colPal) +
+  scale_x_date(date_breaks="1 weeks", date_labels="%d.%m") + 
+  facet_wrap(Region~., scales="free_y", nrow=2) + 
+  ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Rückwirkende Verortung der täglichen Fallzahlen (BMSGPK)  zum TestDatum (AGES).  Basisdaten: AGES"))
+# %>% dplyr::filter(MonthEvaluated!=10, propDayN>.5)
+#, color=as.character(DateEvaluated), fill=as.character(DateEvaluated)
+#  geom_point(, size=1) + scale_y_continuous(limits=c(0.5,1))
+
+
+csvFile <- paste0("./data/COVID-19-austria.reconstructed.csv")
+logMsg(paste("Writing reconstructed datafile", csvFile))
+write.csv(dw, file=csvFile, quote=FALSE, row.names=FALSE)
+
+
+# remove one potential outlier
+trimMean <- function(x) {
+  res <- abs(x-mean(x, na.rm=TRUE))
+  mean(x[which(res!=max(res, na.rm=TRUE))], na.rm=TRUE)
+}
+
+# Enrich data and write to disk
+dq %>%
+  dplyr::mutate(WdayReported=as.character(wday(DateReported, week_start=1, label=TRUE, abbr=TRUE))) %>%
+  dplyr::mutate(WdayEvaluated=as.character(wday(DateEvaluated, week_start=1, label=TRUE, abbr=TRUE))) %>%
+  dplyr::mutate(MonthEvaluated=as.character(month(DateEvaluated, label=TRUE, abbr=TRUE))) %>%
+  dplyr::select(DateEvaluated, MonthEvaluated, WdayEvaluated, DateReported, WdayReported, RegionID, Region, newConfirmed) %>%
+  dplyr::arrange(RegionID, Region, DateEvaluated, DateReported) %>%
+  dplyr::filter(DateEvaluated <(max(DateReported)-days(nSettleDays))) %>%
+  dplyr::group_by(DateEvaluated, Region) %>%
+  dplyr::mutate(daysDayN=as.integer(DateReported-DateEvaluated)) %>%
+  dplyr::mutate(propDayN = newConfirmed/last(newConfirmed)) %>%  
+  dplyr::mutate(numDays = n()) %>%  
+  dplyr::ungroup() %>% 
+  #dplyr::filter(DateEvaluated==as.Date("2021-02-21"),Region=="Tirol")
+  dplyr::filter(Region=="Wien", daysDayN==0,WdayEvaluated=="Do") %>%
+  dplyr::group_by(Region,daysDayN,WdayEvaluated) #%>% 
+  dplyr::summarise(round(mean(propDayN),3))
+#  dplyr::mutate(newConfirmedCorrected = newConfirmed/propDayN, added=newConfirmedCorrected-newConfirmed)
+
+
+da <- do %>% 
+  dplyr::filter(DateReported > max(DateReported)-weeks(nCalcWeeks) - days(nSettleDays)) %>%
+  dplyr::group_by(Region, WdayReported, daysDayN) %>%
+  dplyr::summarize(countPropDayN = n(), meanPropDayN = round(trimMean(propDayN),2)) %>%
+  dplyr::ungroup() %>%
+  dplyr::filter(daysDayN==0)
+str(da)
+
+  
+# Load data frames by running cron.R
+
+# Tested data by bmsgkp (from 2021-03-01 only)
+ggplot(data=dd %>% dplyr::filter(Region=="Wien"), aes(x=Date)) +
+  geom_line(aes(y=sumConfirmedNUTS2/sumTested), col="black") +
+  geom_line(aes(y=sumConfirmedNUTS2/sumTestedAG), col="red") +
+  geom_line(aes(y=sumConfirmedNUTS2/sumTestedPCR), col="blue") +
+  ggtitle("")
+  
+ggplot(data=dd %>% dplyr::filter(Region=="Wien"), aes(x=Date)) +
+  geom_line(aes(y=newConfirmedNUTS2*50), col="green") +
+  geom_line(aes(y=newTested), col="black") +
+  geom_line(aes(y=newTestedAG), col="red") +
+  geom_line(aes(y=newTestedPCR), col="blue") +
+  ggtitle("")
+
+
+# Tested data by AGES
+dF <- df %>% dplyr::select(Date, Region, newTested, newConfirmed) %>% dplyr::filter(Region=="Wien")
+ggplot(data=dF, aes(x=Date)) +
+  geom_line(aes(y=newTested), col="black") +
+  geom_line(aes(y=newConfirmed), col="red") +
+  scale_y_continuous(trans="log10") +
+  ggtitle("")
+
+
+# read bmsgpk data scraped from website. sanitize for double scrapes
+bmsgpk.csv <- read.csv("/home/at062084/DataEngineering/COVID-19/COVID-19-Austria/bmsgpk/data/COVID-19-austria.csv", stringsAsFactors=FALSE) %>%
+  dplyr::filter(!is.na(Stamp)) %>%
+  dplyr::mutate(Date=as.Date(Stamp)) %>%
+  dplyr::arrange(Stamp, Status) %>%
+  dplyr::group_by(Date, Status) %>%
+  summarize_all(first) %>% 
+  dplyr::ungroup() %>%
+  dplyr::group_by(Status) %>%
+  tidyr::gather(key=Regions, value=Count, AT:W) %>%
+  dplyr::ungroup() %>%
+  dplyr::inner_join(datATRegions %>% dplyr::select(RegionID, Region, Regions, Population)) %>%
+  dplyr::select(Date, RegionID, Region, Population, Status, Count, -Regions, -Stamp)
+
+ggplot(data=bmsgpk.csv %>% dplyr::filter(Date>as.Date("2021-01-20")), aes(x=Date, y=Count)) +
+  geom_line(aes(color=Region)) +
+  facet_wrap(Status~., nrow=2)+
+  scale_fill_manual(values=cbPalette) +
+  scale_color_manual(values=cbPalette) +
+  scale_y_continuous(trans="log10")
+  
+
+# Dirty: Impute single NA's with mean for neighours
+imputeBmsgkp1NA <- function(x) {
+  idx <- which(is.na(x))
+  idx <- idx[idx>305] # ignore any NA's before 2021-01-04
+  x[idx] <- round((x[idx-1]+x[idx+1])/2)
+  return(x)
+}
+
+bmsgpk <- data.frame(bmsgpk.csv) %>%
+  # restructure
+  dplyr::arrange(Date, Region) %>%
+  dplyr::group_by(Region) %>%
+  tidyr::spread(key=Status, value=Count, fill=NA, drop=TRUE) %>%
+  dplyr::rename(sumTested=Tested, sumTestedAG=Tested_AG, sumTestedPCR=Tested_PCR, sumConfirmed=Confirmed, sumDeaths=Deaths, sumRecovered=Recovered) %>%
+  dplyr::ungroup() %>%
+  # impute single NA's
+  dplyr::arrange(Date, Region) %>%
+  dplyr::group_by(Region) %>%
+  dplyr::mutate_at(vars(starts_with("sum")), imputeBmsgkp1NA) %>%
+  # new*
+  dplyr::mutate(newConfirmed=(sumConfirmed-lag(sumConfirmed))) %>%
+  dplyr::mutate(newTested=(sumTested-lag(sumTested))) %>%
+  dplyr::mutate(newTestedPCR=(sumTestedPCR-lag(sumTestedPCR))) %>%
+  dplyr::mutate(newTestedAG=(sumTestedAG-lag(sumTestedAG))) %>%
+  # per 100.000
+  dplyr::mutate(newConfPop=newConfirmed/Population*100.000) %>%
+  dplyr::mutate(newTestPop=newTested/Population*100.000) %>%
+  dplyr::mutate(newTestPopPCR=newTestedPCR/Population*100.000) %>%
+  dplyr::mutate(newTestPopAG=newTestedAG/Population*100.000) %>%
+  # rm7*
+  dplyr::mutate(rm7NewConfirmed=rollmean(newConfirmed,7, align="right", fill=NA)) %>%
+  dplyr::mutate(rm7NewTested=rollmean(newTested,7, align="right", fill=NA)) %>%
+  dplyr::mutate(rm7NewTestedPCR=rollmean(newTestedPCR,7, align="right", fill=NA)) %>%
+  dplyr::mutate(rm7NewTestedAG=rollmean(newTestedAG,7, align="right", fill=NA)) %>%
+  # per 100.000
+  dplyr::mutate(rm7NewConfPop=rm7NewConfirmed/Population*100.000) %>%
+  dplyr::mutate(rm7NewTestPop=rm7NewTested/Population*100.000) %>%
+  dplyr::mutate(rm7NewTestPopPCR=rm7NewTestedPCR/Population*100.000) %>%
+  dplyr::mutate(rm7NewTestPopAG=rm7NewTestedAG/Population*100.000) %>%
+  # cur*
+  dplyr::rename(curHospital=Hospitalisierung, curICU=Intensivstation) %>%
+  dplyr::ungroup() %>%
+  dplyr::select(Date, Region, starts_with("new"), starts_with("rm7"), starts_with("cur"), starts_with("sum"))
+
+
+bm21 <- bmsgpk %>% dplyr::filter(Date>as.Date("2021-01-10")) %>%
+  dplyr::filter(newConfirmed>0, newTested>0, newTestedPCR>0, newTestedAG>0)
+
+ggplot(data=bm21, aes(x=Date)) +
+  geom_line(aes(y=rm7NewTestPop), col="black") + 
+  geom_line(aes(y=rm7NewTestPopPCR), col="green") + 
+  geom_line(aes(y=rm7NewTestPopAG), col="blue")  +
+  geom_line(aes(y=rm7NewConfPop), col="red")  +
+  geom_line(aes(y=rm7NewConfPop/rm7NewTestPop), col="magenta")  +
+  scale_y_continuous(trans="log10") +
+  facet_wrap(Region~., nrow=2, scales="free_y") +
+  ggtitle("")
+
+bm20 <- bmsgpk %>% # dplyr::filter(Date<as.Date("2021-01-01")) %>%
+  dplyr::filter(newConfirmed>0, newTested>0)
+
+ggplot(data=bm20, aes(x=Date)) +
+  geom_line(aes(y=rm7NewTestPop), col="black") + 
+  geom_line(aes(y=rm7NewConfPop), col="red")  +
+  geom_line(aes(y=rm7NewConfPop/rm7NewTestPop), col="magenta")  +
+  scale_y_continuous(trans="log10") +
+  facet_wrap(Region~., nrow=2) +
+  ggtitle("")
+
+ggplot(data=bm20, aes(x=Date)) +
+  geom_line(aes(y=rm7NewTested), col="black") + 
+  geom_line(aes(y=rm7NewConfirmed), col="red")  +
+  geom_line(aes(y=rm7NewConfirmed/rm7NewTested), col="magenta")  +
+  scale_y_continuous(trans="log10") +
+  facet_wrap(Region~., nrow=2, scales="free_y") +
+  ggtitle("")
+
+
+ggplot (data=bmsgpk  %>% dplyr::filter(Status=="Tested"), aes(x=Date, y=AT)) + 
+  geom_line(col="red") + 
+  geom_line(data=bmsgpk %>% dplyr::mutate(Date=as.Date(Stamp)) %>% dplyr::filter(Status=="Tested_PCR"),aes(y=AT), col="blue") + 
+  geom_line(data=bmsgpk %>% dplyr::mutate(Date=as.Date(Stamp)) %>% dplyr::filter(Status=="Tested_AG"), aes(y=AT), col="green")
+
+ggplot (data=bmsgpk %>% dplyr::mutate(Date=as.Date(Stamp)), aes(x=Date, y=AT, group=Status, col=Status)) + geom_line()
+
+bm <- bmsgpk %>% 
+  dplyr::mutate(Date=as.Date(Stamp)) %>%
+  dplyr::select(-Stamp) %>%
+  group_by(Date,Status) %>% 
+  summarize_all(first) %>% 
+  dplyr::ungroup() %>% 
+  tidyr::gather(key=Region, value=Count, "AT":"W") %>%
+  tidyr::spread(key=Status, value=Count, fill=NA, drop=FALSE) %>%
+  dplyr::arrange(Region, Date) %>%
+  dplyr::group_by(Region) %>%
+  dplyr::mutate(newConfirmed=rollmean(Confirmed-lag(Confirmed),7, align="center", fill=NA)) %>%
+  dplyr::mutate(newTested=rollmean(Tested-lag(Tested),7, align="center", fill=NA)) %>%
+  dplyr::mutate(newTested_PCR=rollmean(Tested_PCR-lag(Tested_PCR),7, align="center", fill=NA)) %>%
+  dplyr::mutate(newTested_AG=rollmean(Tested_AG-lag(Tested_AG),7, align="center", fill=NA)) %>%
+  dplyr::ungroup()
+
+
+dp <- do %>%
+  select(DateEvaluated, Region, newConfirmed, daysDayN) %>% 
+  dplyr::mutate(NachTragTag=factor(daysDayN, levels=(nSettleDays:1)-1)) %>%
+  dplyr::group_by(Region, DateEvaluated) %>%
+  dplyr::mutate(diffConfirmed=newConfirmed-lag(newConfirmed, default=0)) %>%
+  dplyr::ungroup() %>%
+  dplyr::filter(DateEvaluated>(max(DateEvaluated,na.rm=TRUE)-days(nSettleDays)-weeks(nCalcWeeks)))
+
+colPal <- c("#DDDDDD", "#56B4E9","#E69F00",  "#009E73", "#0072B2", "#D55E00",  "#C40000")[7:1]
+ggplot(data=dp, aes(x=DateEvaluated, y=diffConfirmed)) + 
+  theme(panel.grid.major.x = element_line(color = "darkgray", linetype=2), 
+        axis.text = element_text(size=10), axis.title.x=element_blank()) +
+  geom_col(aes(fill=NachTragTag), width=.95 , color="grey70")+
+  scale_fill_manual(values=colPal) +
+  scale_color_manual(values=colPal) +
+  scale_x_date(date_breaks="1 weeks", date_labels="%d.%m") + 
+  facet_wrap(Region~., scales="free_y", nrow=2) + 
+  ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Rückwirkende Verortung der täglichen Fallzahlen (BMSGPK)  zum TestDatum (AGES).  Basisdaten: AGES"))
+
+
+
+
+# --------------------------------------------------------------------------------------
+# experoiments with new data structure
+# --------------------------------------------------------------------------------------
+yzi_a3 <- readRDS("./data/curated/yzi_a3.rda")
+str(yzi_a3)
+
+ggplot(data=yzi_a3, aes(x=Date, y=relConfirmed, color=Immunized, shape=Immunized)) + geom_point() + geom_line() + facet_grid(Symptomatic~AgeGroup3, labeller=label_both)
+ggplot(data=yzi_a3, aes(x=Date, y=newConfirmed, color=Immunized, shape=Immunized)) + 
+  scale_y_continuous(trans="log2", limits=c(1/4, 80), breaks=2^(0:8)) +
+  geom_point() + geom_line() + 
+  facet_grid(Symptomatic~AgeGroup3, labeller=label_both)
+
+
+
+$$
+  \begin{aligned}
+e  &= \text{Immunization efficiency [0,1], usual assumption: 0.9} \\
+\\
+\text{Method with} & \text{ Vaccinated vs. notVaccinated for AGES dataset} \\
+V    &= \text{Vaccinated (2 shots)} \\
+X    &= \text{not Vaccinated (<2 shots)} \\
+n_V  &= \text{Number of positives among Vaccinated} \\ 
+z_V  &= \text{Incidence among Vaccinated } \\ 
+z_X  &= \text{Incidence among notVaccinated } \\
+z_X  &= \frac{n_X}{X} \\
+z_V  &= (1-e)*z_X \\
+e_{VX} &= 1-\frac{z_V}{z_X}
+\\
+\text{Method with} & \text{ Immunized vs. Susceptibles (adaptable to different modes of immunization)} \\
+R    &= \text{Recovered (symptomatic + asymptomatic)} \\
+I    &= \text{Immunized (e.g. Vaccinated+Recovered)} \\
+S    &= \text{Susceptibles (Population-AllImmunized)} \\
+n_S  &= \text{Number of positives among Susceptibles} \\ 
+z_S  &= \text{Incidence among Susceptibles } \\ 
+z_I  &= \text{Incidence among Immunized } \\
+\\
+z_S  &= \frac{n_S}{S} \\
+z_I  &= (1-e)*z_S \\
+e_{IS} &= 1-\frac{z_I}{z_S}
+\end{aligned}
+$$
+  
+  
+  
   
   

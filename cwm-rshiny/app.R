@@ -32,6 +32,7 @@ slackMsg(title="COVID-19-WeatherMap",msg=paste("Start shiny global section in ap
 # -----------------------------------------------------------
 logMsg("Loading libraries")
 library(shiny)
+library(reactlog)
 library(dplyr)
 library(ggplot2)
 library(stringi)
@@ -42,6 +43,10 @@ library(leaflet.extras)
 library(geojsonsf)
 library(spdplyr)
 library(readr)
+
+# Enable recording of reactive flow
+#reactlog_enable()
+
 
 logMsg("Sourcing fun.R")
 source("fun.R", local=TRUE)
@@ -348,19 +353,111 @@ dtcrdzhi.r.rfr <- reactiveFileReader(
 )
 dtcrdzhi <- eventReactive(dtcrdzhi.r.rfr(), {
   logMsg(paste("eventReactive reactiveFileReader:dtcrdzhi.r", cwmStatesFile_dtcrdzh)) 
-  return(dtcrdzhi.r.rfr())
-})
-dtcrdzhi.rm <- eventReactive(dtcrdzhi.r.rfr(), {
-  logMsg(paste("eventReactive reactiveFileReader:dtcrdzhi.r.rm", cwmStatesFile_dtcrdzh)) 
-  dtcrdzhi.rm <- dtcrdzhi.r.rfr() %>%
-    dplyr::arrange(Date, Region, Date) %>%
-    dplyr::group_by(Region) %>%
-    dplyr::mutate(newConfirmed = rollmean(newConfirmed, k=7, align="center", fill=NA)) %>%
-    dplyr::mutate(newDeath = rollmean(newDeath, k=7, align="center", fill=NA)) %>%
-    dplyr::ungroup()
-    return(dtcrdzhi.rm)
-})
 
+  # Calculated as sum(curHospital)/TotalNumberOfHospitalisedCases=52767 before 2021-10-01, taken from "Factsheet Coronavirus Hospitalisierungen Update Nov v2.pdf"
+  meanDaysHospital = 9  # includes ICU
+  # Calculated as sum(curICU)/TotalNumberOfICUCases=9207 before 2021-10-01, taken from "Factsheet Coronavirus Hospitalisierungen Update Nov v2.pdf"
+  meanDaysICU = 13
+  # According to "Factsheet_Coronavirus_Hospitalisierungen-2021-10.pdf"
+  # meanDaysICU = 14
+
+  # Align features to 'newConfirmed': Österreich, Wien: Compromise
+  leadDaysRecovered_Wien=21
+  leadDaysRecovered_Österreich=10
+  leadDaysHospital=9
+  leadDaysICU=14
+  leadDaysDeath=11
+  rollwin=7
+    
+  df <- dtcrdzhi.r.rfr() %>% 
+  #df <- dtcrdzhi %>% 
+    # Performance tuning: throw away data not needed for comparison of Wave2 ff
+    dplyr::filter(Date>=as.POSIXct("2020-08-01")) %>% 
+    dplyr::select(-newInzidenz, -newRecovered, -sumRecovered, -starts_with("sum")) %>%
+    # Estimate daily and total number of cases in Hospital and ICU
+    dplyr::mutate(newHospital = curHospital/meanDaysHospital, 
+                  newICU = curICU/meanDaysICU) %>%
+    dplyr::select(-starts_with("cur")) %>%
+    # Smooth daily data
+    dplyr::arrange(Region, Date) %>%
+    dplyr::group_by(Region) %>%
+    # align right, left pad with 0 so cumsum works
+    dplyr::mutate(across(starts_with("new"), ~ rollmean(.x, k=rollwin*2, align="right", fill=0))) %>%
+    # timeshift features to align with 'confirmed'
+    dplyr::mutate(newHospital=dplyr::lead(newHospital,leadDaysHospital), 
+                  newICU=dplyr::lead(newICU,leadDaysICU),
+                  newDeath=dplyr::lead(newDeath,leadDaysDeath)) %>%
+    # recalc cumsums from smoothed, shifted data
+    dplyr::mutate(across(starts_with("new"), ~ cumsum(.x), .names="sum{str_sub(.col, 4)}")) %>%
+    dplyr::ungroup() %>%
+    dplyr::mutate(
+      # Absolute number of new Cases as incidenz
+      newTestPop=newTested/Population*100000,
+      newConfPop=newConfirmed/Population*100000,
+      newHospPop=newHospital/Population*100000,
+      newICUPop=newICU/Population*100000,
+      newDeathPop=newDeath/Population*100000,
+      # Percentage of parent population
+      relTestPop=newTested/Population,
+      relConfTest=newConfirmed/newTested,
+      relHospConf=newHospital/newConfirmed,
+      relICUConf=newICU/newConfirmed,
+      relDeathConf=newDeath/newConfirmed) %>%
+    dplyr::select(Date, Region, Population, starts_with("new"), starts_with("sum"), starts_with("rel"))
+  #str(df)
+  return(df)
+})
+#dtcrdzhi.rm <- eventReactive(dtcrdzhi(), {
+#  logMsg(paste("eventReactive reactiveFileReader:dtcrdzhi.r.rm", cwmStatesFile_dtcrdzh)) ##
+#
+#  selCols=c("newTestPop", "newConfPop", "newHospPop", "newICUPop", "newDeathPop")
+#  #selCols=c("relTestPop", "relConfTest", "relDeathConf", "relDeathHosp", "relDeathICU")
+#  daysDiff42 <- 5+10.5*30
+#  daysDiff42 <- 365
+#  rollwin=7#
+#
+#  dx <- dtcrdzhi() %>%
+#    dplyr::select(c(Date, Region, mutCols)) %>%
+#    tidyr::pivot_longer(cols=selCols, names_to="Parameter", values_to="Anzahl") %>%
+#    dplyr::mutate(Parameter = factor(Parameter, levels=selCols, labels=selCols, ordered=TRUE))%>%
+#    dplyr::rename(Wave2=Date) %>%
+#    dplyr::mutate(Wave4=Wave2-days(daysDiff42)) %>%
+#    tidyr::pivot_longer(cols=c(Wave2, Wave4), values_to="Date", names_to="Wave")
+#  return(dx)
+#})
+dtcrdzhi.cs <- eventReactive(dtcrdzhi(), {
+  logMsg(paste("eventReactive reactiveFileReader:dtcrdzhi.r.cs", cwmStatesFile_dtcrdzh)) 
+  
+  waveLength <- 120  # Wave2 and Wave 3 contiguous
+  startWave2 <- as.POSIXct("2020-10-01")
+  startWave3 <- as.POSIXct("2021-02-01")
+  startWave4 <- as.POSIXct("2021-09-01")
+  
+  ds <- dtcrdzhi() %>% dplyr::mutate(Wave=NA)
+  ds$Wave[ds$Date>=startWave2 & ds$Date<(startWave2+days(waveLength))] <- "Wave2"
+  ds$Wave[ds$Date>=startWave3 & ds$Date<(startWave3+days(waveLength))] <- "Wave3"
+  ds$Wave[ds$Date>=startWave4 & ds$Date<(startWave4+days(waveLength))] <- "Wave4"
+  
+  ds <- ds %>%
+    dplyr::filter(!is.na(Wave)) %>%
+    dplyr::select(Date, Region, Population, Wave, starts_with("new"), -ends_with("Pop")) %>%
+    dplyr::mutate(Region=factor(Region), Wave=factor(Wave))%>%
+    dplyr::group_by(Region,Wave) %>%
+    dplyr::mutate(across(.cols=starts_with("new"), .fns= ~ cumsum(.x)/Population*100000, .names="sum{str_sub(.col,4,7)}Pop")) %>%
+    dplyr::ungroup() %>%
+    dplyr::rename(sumDeathPop=sumDeatPop) %>%
+    dplyr::select(Region, Wave, starts_with("sum")) %>%
+    dplyr::group_by(Region, Wave) %>%
+    dplyr::summarize(.groups="drop",
+                     lmHospConf  = round(coef(lm(sumHospPop  ~ sumConfPop -1))*100,1),
+                     lmICUConf   = round(coef(lm(sumICUPop   ~ sumConfPop -1))*100,1),
+                     lmDeathConf = round(coef(lm(sumDeathPop ~ sumConfPop -1))*100,1),
+                     lmICUHosp   = round(coef(lm(sumICUPop   ~ sumHospPop -1))*100,1),
+                     lmDeathHosp = round(coef(lm(sumDeathPop ~ sumHospPop -1))*100,1),
+                     lmDeathICU  = round(coef(lm(sumDeathPop ~ sumICUPop  -1))*100,1))
+  # str(ds) 
+  return(ds)
+})
 
 # -------------------------------------------------------------------------------------------------
 # Confirmed by Immunization status
@@ -440,25 +537,25 @@ ui <- fluidPage(
                            "Salzburg", 
                            "Tirol", 
                            "Vorarlberg"), 
-            selected = c("Wien","Niederösterreich","Burgenland","Österreich"))),
+            selected = c("Wien","Österreich","Oberösterreich"))),
         column(6,
           actionButton("abUpdate", "Anzeigen"))),
 
-      fluidRow(
-        checkboxInput("cbLogScale", label="StufenModell", value=TRUE, width="220px")),
-        
       fluidRow( 
         sliderInput("sldPastTime",
                     width="220px",
                     label="ZeitRaum (letzte n Monate)",
-                    min=1, max=15, step=1, value=12)),
+                    min=1, max=24, step=1, value=16)),
+      
+      fluidRow(
+        checkboxInput("cbLogScale", label="StufenModell", value=TRUE, width="220px")),
       
       fluidRow( 
         hr(style = "border-top: 3px solid #777777;"),
         sliderInput("sldModelDays",
                      width="220px",
                      label="Prognose: BerechnungsTage",
-                     min=7, max=63, step=7, value=35)),
+                     min=7, max=63, step=7, value=28)),
       fluidRow(        
         radioButtons("rbsModelOrder",
                      width="220px",
@@ -466,6 +563,24 @@ ui <- fluidPage(
                      choices = list("Linear (Gerade)" = "1",
                                     "Quadratisch (Parabel)" = "2"),
                      selected="2")),
+      fluidRow(        
+        hr(style = "border-top: 3px solid #777777;"),
+        radioButtons("rbsWaveCompare",
+                     width="220px",
+                     label="Vergleich 2. und 4. Welle",
+                     choices = list("Anzahl pro 100k Einwohner" = "Cases100k",
+                                    "Prozent vom Maximum 2.Welle" = "RelMaximum",
+                                    "Prozent von Einw/Tests/Positiv" = "RelConfirmed"),
+                     selected="Cases100k")),
+
+      fluidRow(        
+        radioButtons("rbsWaveScatter",
+                     width="220px",
+                     label="Vergleich 2.,3. und 4. Welle",
+                     choices = list("Referenz Positive" = "sumConfPop",
+                                    "Referenz Hospitalisierte" = "sumHospPop"),
+                     selected="sumConfPop")),
+      
       # Asympomatic, Vaccination efficiency
       fluidRow( 
         hr(style = "border-top: 3px solid #777777;"),
@@ -516,12 +631,13 @@ ui <- fluidPage(
                 
         tabPanel("2.vs.4.Welle",
                  h4("Vergleich des Verlaufes der 2. und 4. Welle", align = "left", style="color:gray"),
-                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
-                 fluidRow(column(width=9, 
-                                 plotOutput(outputId = "ggpWave42Abs", height="60vh"),
-                                 plotOutput(outputId = "ggpWave42Prop", height="60vh"),
-                                 plotOutput(outputId = "ggpWave42Wien", height="60vh")),
-                          column(width=3, htmlOutput(outputId="hlpWave42")))),
+                 p("[Menüauswahl: Region, StufenModell, Vergleich 2. und 4. Welle]", align = "left", style="color:green"),
+                 fluidRow(column(width=3, htmlOutput(outputId="hlpWave42")),
+                          column(width=9, 
+                                 plotOutput(outputId = "ggpWave42Compare", height="80vh"),
+                                 plotOutput(outputId = "ggpWave42CumSum", height="60vh"),
+                                 DT::dataTableOutput(outputId = "tblWave42CumSum"))
+                          )),
         
         tabPanel("Aktuelles",
                  h4("Darstellung und Interpretation von aktuellen Daten", align = "left", style="color:black"),
@@ -694,14 +810,14 @@ server <- function(input, output, session) {
     logMsg("  output renderPlot ggpFrontPage", sessionID)
     options(warn=-1)
     
-    popSteps=c(1,2,4,8,16,32,64,128)
+    popSteps=c(1,2,4,8,16,32,64,128, 256)
     dp <- df() %>% dplyr::filter(Date>as.Date("2020-07-04"), Region=="Österreich") %>% dplyr::select(Date, Region, rm7NewConfPop)
     trans <- ifelse(input$cbLogScale, "log10", "identity")
     
     ggplot(dp, aes(x=Date, y=rm7NewConfPop, color=Region, shape=Region))+
       cwmConfPopStyle(sldPastTime=6, cbLogScale=TRUE, inRegions="Österreich") +
       scale_x_date(date_breaks="1 months", date_labels="%b") +
-      scale_y_continuous(limits=c(1,128), breaks=popSteps, position="right",  trans=trans, name="TagesInzidenz",
+      scale_y_continuous(limits=c(1,256), breaks=popSteps, position="right",  trans=trans, name="TagesInzidenz",
                          sec.axis=dup_axis(name="WochenInzidenz", labels=as.character(popSteps*7))) +
       theme(legend.position="none") +
       geom_point(size=1, col="red")+geom_line(col="red", size=1)+
@@ -734,11 +850,11 @@ server <- function(input, output, session) {
       "<table>
           <tr><td><strong>%s</strong></td><td align='right'> %s </td></tr>
           <tr><td>TagesInzidenz AGES: </td><td align='right'> %g</td></tr>
-          <tr><td><small><i><b>Modell aus den letzten %s Tagen</b></i></small></td> </tr>
+          <tr><td><small><i><b>Prognose aus den letzten %s Tagen</b></i></small></td> </tr>
           <tr><td>Inzidenz heute: </td><td align='right'> %g</td></tr>
           <tr><td>Inzidenz kommende Woche: </td><td align='right'>  %g </td></tr>
           <tr><td>Inzidenz nächstes Monat: </td><td align='right'>  %g </td></tr>
-          <tr><td>Tage Inzidenz %s (linear):  </td><td align='right'> %g </td></tr>
+          <tr><td>Geschwindigkeit: Tage bis %s: </td><td align='right'> %g </td></tr>
         </table>",
       pMapNUTS$Region, format(pMapNUTS$Date,"%a, %d.%m"),
       round(pMapNUTS$rmaNewConfPop,1),  nModelDaysPrediction, 
@@ -873,6 +989,8 @@ server <- function(input, output, session) {
       geom_line(data=dk, aes(x=Date, y=32), size=.8, color="black") +
       geom_line(data=dk, aes(x=Date, y=64), size=1.0, color="black") +
       geom_line(data=dk, aes(x=Date, y=128), size=1.5, color="black") +
+      geom_line(data=dk, aes(x=Date, y=256), size=2.0, color="black") +
+      geom_line(data=dk, aes(x=Date, y=512), size=2.5, color="black") +
       geom_point(data=dk%>%dplyr::filter(Date==max(Date)),size=5) + 
       geom_point(data=dk%>%dplyr::filter(Date==max(Date)),size=2) + 
       geom_point(data=dp%>%dplyr::filter(Date %in% c(max(Date), max(Date)-weeks(3))),size=5) + 
@@ -932,7 +1050,7 @@ server <- function(input, output, session) {
     dp <- dg.past() %>% dplyr::filter(rm7NewConfPop>0, Region %in% inRegions)
     
     ggplot(dp, aes(x=Date, y=rm7NewConfPop, group=CountyID))+
-      cwmConfPopStyle(sldPastTime=input$sldPastTime, cbLogScale=input$cbLogScale, inRegions=inRegions[inRegions!="Österreich"], yLimits=c(.5,256)) +
+      cwmConfPopStyle(sldPastTime=input$sldPastTime, cbLogScale=input$cbLogScale, inRegions=inRegions[inRegions!="Österreich"], yLimits=c(.5,1024)) +
       geom_line(size=.25, aes(color=Region))+
       ggtitle(paste0("COVID-19 Österreich, Bundesländer und Bezirke: Positiv Getestete pro 100.000 Einw. seit ", min(dp$Date), ".  Basisdaten: AGES"))
   })
@@ -1083,86 +1201,187 @@ server <- function(input, output, session) {
  
   output$hlpWave42 <- renderText({ htmlWave42 })
   
-  output$ggpWave42Abs <- renderPlot({
-  
-    daysDiff42 <- 326
-    selCols=c("newConfirmed", "curHospital", "curICU", "newDeath")
-
-    dp <- dtcrdzhi.rm() %>% 
-      dplyr::filter(Region=="Österreich") %>%
-      dplyr::select(c(Date, selCols)) %>%
-      tidyr::pivot_longer(cols=selCols, 
-                          names_to="Parameter", values_to="Anzahl") %>%
+  output$ggpWave42Compare <- renderPlot({
+    
+    # Reactive Values
+    daysDiff42 <- 365
+    input$abUpdate
+    inRegions <- isolate(input$cbgRegion)
+    whichPlot <- input$rbsWaveCompare
+    if(input$cbLogScale) {
+      trans <- "log2"
+      breaks <- 2^seq(-8,16,2)
+    } else {
+      trans <-"identity" 
+      breaks <- waiver()
+    }
+    
+    # Filter for selected Regions
+    daysDiff42 <- 365
+    do <- dtcrdzhi() %>%
+      dplyr::filter(Region %in% inRegions)
+    
+    # Prepare type of plot
+    if (whichPlot == "Cases100k") {
+      yintercept = NULL
+      selCols=c("newTestPop", "newConfPop", "newHospPop", "newICUPop", "newDeathPop")
+      plotTitle="COVID-19 Österreich: Vergleich 2. Welle 2020 und 4. Welle 2021: Anzahl pro 100k (Tested, Positive, Hosp, ICU, Verst)"
+    }
+    if (whichPlot == "RelConfirmed") {
+      yintercept = NULL
+      selCols=c("relTestPop", "relConfTest", "relHospConf", "relICUConf", "relDeathConf")
+      plotTitle="COVID-19 Österreich: Vergleich 2. Welle 2020 und 4. Welle 2021: Relative Anteile (Tested, Positive, Hosp, ICU, Verst)"
+    }
+    if (whichPlot == "RelMaximum") {
+      yintercept = 100
+      selCols=c("newTestPop", "newConfPop", "newHospPop", "newICUPop", "newDeathPop")
+      plotTitle="COVID-19 Österreich: Vergleich 2. Welle 2020 und 4. Welle 2021: Prozent vom Maximum der 2. Welle (Tested, Positive, Hosp, ICU, Verst)"
+    }
+    
+    # Prepare data (common all plots)
+    dp <- do %>%
+      dplyr::select(c(Date, Region, selCols)) %>%
+      tidyr::pivot_longer(cols=selCols, names_to="Parameter", values_to="Anzahl") %>%
       dplyr::mutate(Parameter = factor(Parameter, levels=selCols, labels=selCols, ordered=TRUE))%>%
       dplyr::rename(Wave2=Date) %>%
       dplyr::mutate(Wave4=Wave2-days(daysDiff42)) %>%
-      tidyr::pivot_longer(cols=c(Wave2, Wave4), values_to="Date", names_to="Wave")
-    #str(dp)
+      tidyr::pivot_longer(cols=c(Wave2, Wave4), values_to="Date", names_to="Wave") %>%
+      dplyr::mutate(Wave=factor(Wave), Region=factor(Region))
     
-    ggplot(data=dp, aes(x=Date, y=Anzahl, color=Wave)) +
-      scale_x_datetime(name="2. Welle 8/2020", limits=c(as.POSIXct("2020-08-01"),as.POSIXct("2020-12-15")),  date_breaks="months", date_labels="%b",
-                       sec.axis=sec_axis(name="4. Welle 7/2021", trans = (~ . +hms::hms(days=daysDiff42)))) +
-      scale_y_continuous(name="Anzahl", trans="log2", breaks=2^(seq(0,15,by=1)),
-                         sec.axis=dup_axis(name="Anzahl_Stufe = log2(Anzahl)", labels=seq(0,15,by=1))) +
+    # Apply filters for plot
+    if (whichPlot == "Cases100k") {
+      dq <- dp %>%
+        dplyr::filter(Anzahl>0, 
+                    !(Parameter=="newTestPop" & Anzahl<16), 
+                    !(Parameter=="newConfPop" & Anzahl<1), 
+                    !(Parameter=="newHospPop" & Anzahl<.1), 
+                    !(Parameter=="newICUPop" & Anzahl<.01), 
+                    !(Parameter=="newDeathPop" & Anzahl<.005))
+    }
+    if (whichPlot == "RelConfirmed") {
+      dq <- dp %>%
+        dplyr::filter(Anzahl>0, 
+                      !(Parameter=="relTestPop" & Anzahl<0), 
+                      !(Parameter=="relConfTest" & Anzahl<0.001), 
+                      !(Parameter=="relHospConf" & Anzahl<0.01), 
+                      !(Parameter=="relHospConf" & Anzahl>0.25), 
+                      !(Parameter=="relICUConf" & Anzahl<0.001), 
+                      !(Parameter=="relICUConf" & Anzahl>0.05), 
+                      !(Parameter=="relDeathConf" & Anzahl<0.001)) %>%
+        dplyr::mutate(Anzahl=round(Anzahl*100,2))
+    }
+    if (whichPlot == "RelMaximum") {
+      dm <- dp %>%
+        dplyr::filter(Wave=="Wave2", Date>as.POSIXct("2020-10-01"), Date<as.POSIXct("2020-12-31")) %>%
+        dplyr::filter(!(Parameter=="relConfTest" & Anzahl>.5)) %>%
+        dplyr::group_by(Region, Parameter) %>%
+        dplyr::summarize(.groups="drop", maxWave2=max(Anzahl))
+      dq <- dp %>%
+        dplyr::left_join(dm, by=c("Region","Parameter")) %>%
+        dplyr::mutate(Anzahl=Anzahl/maxWave2*100) %>%
+        dplyr::filter(Anzahl < Inf, Anzahl > -Inf, !is.na(Anzahl),
+                      !(Parameter=="newTestPop" & Anzahl<16), 
+                      !(Parameter=="newConfPop" & Anzahl<1), 
+                      !(Parameter=="newHospPop" & Anzahl<1), 
+                      !(Parameter=="newICUPop" & Anzahl<1), 
+                      !(Parameter=="newDeathPop" & Anzahl<1)) %>%
+        dplyr::select(-maxWave2)
+    }
+ 
+    ggplot(data=dq, aes(x=Date, y=Anzahl, color=Wave)) +
+      scale_x_datetime(name="2. Welle 8/2020", limits=c(as.POSIXct("2020-08-01"),as.POSIXct("2021-02-01")),  date_breaks="months", date_labels="%b",
+                       sec.axis=dup_axis(name="4. Welle 7/2021", trans = (~ . +hms::hms(days=daysDiff42)))) +
+      scale_y_continuous(name="Anzahl", sec.axis=dup_axis(), trans=trans, breaks=breaks) +
       geom_line(size=1) +
-      facet_wrap(Parameter~., nrow=1) +
-      ggtitle("COVID-19 Österreich: Vergleich 2. und 4. Welle mittels zeitlicher Überlagerung der Kennzahlen (Positiv, Spital, ICU, Verstorben)")
+      geom_hline(yintercept=yintercept, color="darkgray") +
+      theme(strip.text=element_text(size=13), axis.text=element_text(size=12), axis.title=element_text(size=13), plot.title=element_text(size=18)) +
+      facet_grid(Parameter~Region, scales="free_y") +
+      ggtitle(plotTitle)
+  })
+  
+  
+  output$tblWave42CumSum <- DT::renderDataTable({
+    
+    # Reactive Values
+    input$abUpdate
+    inRegions <- isolate(input$cbgRegion)
+
+    dp <- dtcrdzhi.cs() %>%
+      dplyr::filter(Region %in% inRegions)
+    
+    return(dp)
+  }) 
+  
+  output$ggpWave42CumSum <- renderPlot({
+    
+    # Reactive Values
+    input$abUpdate
+    inRegions <- isolate(input$cbgRegion)
+
+    levels=c("lmHospConf","lmICUConf","lmDeathConf","lmICUHosp","lmDeathHosp","lmDeathICU")
+    labels=c("% Hospitalisierte \npro Positive","% Intensivstation \npro Positive","% Verstorbene \npro Positive",
+             "% Intensivstation \npro Hospitalisierung","% Verstorbene \npro Hospitalisierung","% Verstorbene \npro Intensivstation")
+    dp <- dtcrdzhi.cs() %>%
+      dplyr::filter(Region %in% inRegions) %>%
+      tidyr::pivot_longer(cols=starts_with("lm"), names_to="Parameter", values_to="Percentage") %>%
+      dplyr::mutate(Parameter=factor(Parameter, levels=levels, labels=labels))
+    
+    ggplot(data=dp, aes(x=Wave, y=Percentage, color=Wave, fill=Wave)) +
+      scale_y_continuous(sec.axis=dup_axis()) +
+      geom_col(width=.5, position=position_dodge()) +
+      theme(strip.text=element_text(size=13), axis.text=element_text(size=12), axis.title=element_text(size=13), plot.title=element_text(size=18)) +
+      facet_grid(Region~Parameter, scales="free", labeller = label_value) +
+      coord_flip() +
+      ggtitle("COVID-19 Österreich: Vergleich 2., 3. und 4 Welle: Kennwerte aus GesamtAnzahl von Positive, Hosp, ICU und Verst")
+  }) 
+  
+  
+  output$ggpWave42CumSum_Old <- renderPlot({
+
+    # Reactive Values
+    input$abUpdate
+    inRegions <- isolate(input$cbgRegion)
+
+    if (input$rbsWaveScatter =="sumConfPop") {
+      gTitle <- "positiven Tests"
+      xName <- "positive tests"
+      normCol <- "Population"
+      refCol <- "sumConfPop"
+      featCols <- c("sumHospPop","sumICUPop", "sumDeathPop")
+    } else {
+      gTitle <- "Hospitalisierten"
+      xName <- "hospitalized"
+      normCol <- 
+      refCol <- "sumHospPop"
+      featCols <- c("sumICUPop", "sumDeathPop")
+    }
+    
+    dp <- dtcrdzhi.cs() %>%
+      dplyr::filter(Region %in% inRegions) %>%
+      dplyr::mutate(Region=factor(Region), Wave=factor(Wave))%>%
+      dplyr::group_by(Region,Wave) %>%
+      dplyr::mutate(across(.cols=starts_with("new"), .fns= ~ cumsum(.x)/Population*100000, .names="sum{str_sub(.col,4,7)}Pop")) %>%
+      dplyr::ungroup() %>%
+      dplyr::rename(sumDeathPop=sumDeatPop) %>%
+      dplyr::select(Region, Wave, starts_with("sum"))
+    
+    dq <- dp %>%
+      dplyr::select(Region, Wave, c(refCol,featCols)) %>%
+      tidyr::pivot_longer(cols=all_of(featCols), names_to="Parameter", values_to="sumCasesPop") %>%
+      dplyr::mutate(Parameter=factor(Parameter, levels=featCols, labels=featCols))
+    
+    #str(dq)
+    #print(refCol)
+    #print(table(dq$Wave))
+    
+    ggplot(data=dq, aes_string(x=refCol, y="sumCasesPop", color="Wave")) +
+      scale_x_continuous(name=paste("Cummulative number of", xName ,"cases per 100k since start of wave"), sec.axis=dup_axis()) +
+      scale_y_continuous(name="Cummulative Number of cases per 100k since start of wave", sec.axis=dup_axis()) +
+      geom_line(size=1) +
+      facet_grid(Parameter~Region, scales="free_y") +
+      ggtitle(paste("COVID-19 Österreich: Vergleich 2. bis 4. Welle mittels Skalierung auf gleiche Gesamtanzahl von", gTitle, "pro 100.000 Einwohner"))
   })  
   
-  output$ggpWave42Prop <- renderPlot({
-    
-    daysDiff42 <- 326
-    selCols=c("newConfirmed", "curHospital", "curICU", "newDeath")
-    
-    dp <- dtcrdzhi.rm() %>% 
-      dplyr::filter(Region=="Österreich") %>%
-      dplyr::select(c(Date, selCols)) %>%
-      dplyr::mutate(across(.cols=selCols, .fns= ~ .x/max(.x, na.rm=TRUE))) %>%
-      tidyr::pivot_longer(cols=selCols, 
-                          names_to="Parameter", values_to="Anzahl") %>%
-      dplyr::mutate(Parameter = factor(Parameter, levels=selCols, labels=selCols, ordered=TRUE)) %>%
-      dplyr::rename(Wave2=Date) %>%
-      dplyr::mutate(Wave4=Wave2-days(daysDiff42)) %>%
-      tidyr::pivot_longer(cols=c(Wave2, Wave4), values_to="Date", names_to="Wave")
-    # str(dp)
-    
-    ggplot(data=dp, aes(x=Date, y=Anzahl, color=Wave)) +
-      scale_x_datetime(name="2. Welle 8/2020", limits=c(as.POSIXct("2020-08-01"),as.POSIXct("2020-12-15")),  date_breaks="months", date_labels="%b",
-                       sec.axis=sec_axis(name="4. Welle 7/2021", trans = (~ . +hms::hms(days=daysDiff42)))) +
-      scale_y_continuous(name="Prozent(max)", trans="log2", limits=c(1/256,1), breaks=round(2^(seq(-8,0,by=1)),3),
-                         sec.axis=dup_axis(name="Prozent_Stufe = log2(Prozent(max))", labels=seq(-8,0,by=1))) +
-      geom_line(size=1) +
-      facet_wrap(Parameter~., nrow=1) +
-      ggtitle("COVID-19 Österreich: Vergleich 2. und 4. Welle mittels zeitlicher Überlagerung der Kennzahlen relativ zum Maximum der 2. Welle")
-  })  
-  
-  output$ggpWave42Wien <- renderPlot({
-    
-    daysDiff42 <- 333
-    selCols=c("newConfirmed", "curHospital", "curICU", "newDeath")
-    
-    dp <- dtcrdzhi.rm() %>% 
-      dplyr::filter(Region=="Wien") %>%
-      dplyr::select(c(Date, selCols)) %>%
-      # max(ICU) liegt in der 3. Welle -> confine calc to 2. Welle (2020)
-      dplyr::mutate(across(.cols=selCols, .fns= ~ .x/max(.x[1:300], na.rm=TRUE))) %>%
-      tidyr::pivot_longer(cols=selCols, 
-                          names_to="Parameter", values_to="Anzahl") %>%
-      dplyr::mutate(Parameter = factor(Parameter, levels=selCols, labels=selCols, ordered=TRUE)) %>%
-      dplyr::rename(Wave2=Date) %>%
-      dplyr::mutate(Wave4=Wave2-days(daysDiff42)) %>%
-      tidyr::pivot_longer(cols=c(Wave2, Wave4), values_to="Date", names_to="Wave")
-    # str(dp)
-    
-    ggplot(data=dp, aes(x=Date, y=Anzahl, color=Wave)) +
-      scale_x_datetime(name="2. Welle 8/2020", limits=c(as.POSIXct("2020-08-01"),as.POSIXct("2020-12-15")),  date_breaks="months", date_labels="%b",
-                       sec.axis=sec_axis(name="4. Welle 7/2021", trans = (~ . +hms::hms(days=daysDiff42)))) +
-      scale_y_continuous(name="Prozent(max)", trans="log2", limits=c(1/256,1), breaks=round(2^(seq(-8,0,by=1)),3),
-                         sec.axis=dup_axis(name="Prozent_Stufe = log2(Prozent(max))", labels=seq(-8,0,by=1))) +
-      geom_line(size=1) +
-      facet_wrap(Parameter~., nrow=1) +
-      ggtitle("COVID-19 Wien: Vergleich 2. und 4. Welle mittels zeitlicher Überlagerung der Kennzahlen relativ zum Maximum der 2. Welle")
-  })  
   
   
   # -------------------------------------------
