@@ -11,6 +11,7 @@ library(forcats)
 
 # -------------------------------------------------------------------------------------------
 # Globals
+# prefix 'ca' is akkronym CovidAustria
 # -------------------------------------------------------------------------------------------
 # Mandatory smoothing of raw data (sum* -> new*, cur*)
 rollMeanDays <- 7
@@ -23,6 +24,14 @@ leadDaysDeath=20
 # Days until Immunization
 lagDaysVaccinated_1 <- 21
 lagDaysVaccinated_2 <- 14
+
+# Definition of Infection waves
+caWaves <- data.frame(stringsAsFactors=FALSE,
+  Wave=(c("Wave1","Wave2","Wave3","Wave4","Wave5")),
+  Beg=as.POSIXct(c("2020-03-01","2020-10-15","2021-02-15","2021-10-10","2021-12-28")),
+  End=as.POSIXct(c("2020-05-01","2020-12-15","2021-05-01","2021-12-20","2022-02-28")),
+  Variant=(c("Original","Alpha","Beta","Delta","Omicron"))
+)
 
 
 # ===========================================================================================
@@ -43,6 +52,7 @@ caDataIngestionPipeline <- function() {
 
 # -------------------------------------------------------------------------------------------
 # CWM: GIT commit and push
+# Only push ascii csv files to repo. All other file types are derived and can be reconstructed 
 # -------------------------------------------------------------------------------------------
 caGitCommitPush <- function() {
 
@@ -51,10 +61,6 @@ caGitCommitPush <- function() {
   LogMsg("Adding files to git commit: *.csv")
   cmd <- paste0("\"add ./data/*/*.csv\"")
   system2("git", cmd)
-  
-  #LogMsg("Adding files to git commit: *.rda")
-  #cmd <- paste0("\"add ./data/*/*.rda\"")
-  #system2("git", cmd)
   
   LogMsg("Commiting files to git: *.csv")
   cmd <- paste0("\"commit -m AutoCommit\"")
@@ -119,6 +125,17 @@ caDataCurate_crdv_rag <- function(bSave=TRUE) {
   dcrdv$newVaccinated_2[idx] <- 0
   idx <- is.na(dcrdv$sumVaccinated_2)
   dcrdv$sumVaccinated_2[idx] <- 0
+  
+  # Add caWaves
+  dcrdv$Wave=NA
+  dcrdv$Variant=NA
+  for (w in 1:dim(caWaves)[1]) {
+    idx <- dcrdv$Date >= caWaves$Beg[w] & dcrdv$Date < caWaves$End[w]
+    dcrdv$Wave[idx] <- caWaves$Wave[w]
+    dcrdv$Variant[idx] <- caWaves$Variant[w]
+  }
+  dcrdv$Wave <- factor(dcrdv$Wave)
+  dcrdv$Variant <- factor(dcrdv$Variant)
   
   if (bSave) {
     rdaFile <- "./data/curated/crdv_rag.rda"   

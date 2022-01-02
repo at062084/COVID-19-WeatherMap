@@ -333,7 +333,7 @@ crdv.rag.ts.rfr <- reactiveFileReader(
 )
 # Raw data
 crdv.ts <- eventReactive(crdv.rag.ts.rfr(), {
-  logMsg(paste("eventReactive reactiveFileReader:crdv.rag.ts", cwmStatesFile_crdv_ts)) 
+  logMsg(paste("eventReactive reactiveFileReader:crdv.rag.ts", cwmStatesFile_crdv_ts))
   return(crdv.rag.ts.rfr())
 })
 
@@ -614,56 +614,44 @@ ui <- fluidPage(
                  fluidRow(column(width=6, plotOutput(outputId="ggpFrontPage", height="50vh")),
                           column(width=6, htmlOutput(outputId = "htmlFrontPageBot")))),
 
-        tabPanel("DurchSeuchung",
-                 h4("Einschätzung der Auswirkung der Impfung auf die zu erwartenden Todesfälle", align = "left", style="color:gray"),
-                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
-                 fluidRow(column(width=9, plotOutput(outputId="ggpDissemination1")),
-                          column(width=3, htmlOutput(outputId="hlpDissemination1"))
-                        ),
-                 fluidRow(column(width=9, DT::dataTableOutput(outputId="dtoDissemination1")),
-                          column(width=3, htmlOutput(outputId="hlpDissemination2"))
-                        ),
-                 fluidRow(column(width=12, DT::dataTableOutput(outputId="dtoDissemination2"))
-                          ),
-                 fluidRow(column(width=12, plotOutput(outputId="ggpDissemination2"))
-                          )
-                 ),
-                
-        tabPanel("2.vs.4.Welle",
-                 h4("Vergleich des Verlaufes der 2. und 4. Welle", align = "left", style="color:gray"),
-                 p("[Menüauswahl: Region, StufenModell, Vergleich 2. und 4. Welle]", align = "left", style="color:green"),
-                 fluidRow(column(width=3, htmlOutput(outputId="hlpWave42")),
-                          column(width=9, 
-                                 plotOutput(outputId = "ggpWave42Compare", height="80vh"),
-                                 plotOutput(outputId = "ggpWave42CumSum", height="60vh"),
-                                 DT::dataTableOutput(outputId = "tblWave42CumSum"))
-                          )),
-        
-        tabPanel("Aktuelles",
-                 h4("Darstellung und Interpretation von aktuellen Daten", align = "left", style="color:black"),
-                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
-                 htmlOutput(outputId="blogNews")),
-        
-       tabPanel("Bundesländer",
-                 h4("Lage und Aussichten Bundesländer", align = "left", style="color:gray"),
-                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
-                 fluidRow(column(width=9,  leafletOutput(outputId = "lftWeatherMap", height="60vh"),
-                                          DT::dataTableOutput(outputId = "dtoWeatherMap")),
-                         column(width=3, htmlOutput(outputId="hlpWeatherMap")))),
- 
-       tabPanel("Bezirke",
-                h4("Lage und Aussichten Bezirke", align = "left", style="color:gray"),
-                p("[Menüauswahl: keine]", align = "left", style="color:green"),
-                fluidRow(column(width=9,  leafletOutput(outputId = "lftWeatherMapCounties", height="60vh"),
-                                          DT::dataTableOutput(outputId = "dtoWeatherMapCounties")),
-                         column(width=3, htmlOutput(outputId="hlpWeatherMapCounties")))),
-                                  
+         tabPanel("Bundesländer",
+                   h4("Lage und Aussichten Bundesländer", align = "left", style="color:gray"),
+                   p("[Menüauswahl: keine]", align = "left", style="color:green"),
+                   fluidRow(column(width=9,  leafletOutput(outputId = "lftWeatherMap", height="60vh"),
+                                            DT::dataTableOutput(outputId = "dtoWeatherMap")),
+                           column(width=3, htmlOutput(outputId="hlpWeatherMap")))),
+   
+         tabPanel("Bezirke",
+                  h4("Lage und Aussichten Bezirke", align = "left", style="color:gray"),
+                  p("[Menüauswahl: keine]", align = "left", style="color:green"),
+                  fluidRow(column(width=9,  leafletOutput(outputId = "lftWeatherMapCounties", height="60vh"),
+                                            DT::dataTableOutput(outputId = "dtoWeatherMapCounties")),
+                           column(width=3, htmlOutput(outputId="hlpWeatherMapCounties")))),
+
+        tabPanel("Impfung und 2.3.4.Welle",
+                 h4("Vergleich des Verlaufes der 2., 3. und 4. Welle", align = "left", style="color:gray"),
+                 p("[Menüauswahl: Region, StufenModell, Vergleich 2. und 4. Welle]", align = "left", style="color:green"), 
+                 fluidRow(column(width=11, htmlOutput(outputId="hlpWave42Intro"))),
+                 fluidRow(column(width=5, htmlOutput(outputId="hlpWave42_1")),
+                          column(width=7, plotOutput(outputId = "ggpWave42CFR", height="60vh"))),
+                 fluidRow(column(width=5, htmlOutput(outputId="hlpWave42_2")),
+                          column(width=7, plotOutput(outputId = "ggpWave42CumSum", height="60vh"))),
+                 fluidRow(column(width=4, htmlOutput(outputId="hlpWave42_3")),
+                          column(width=8, plotOutput(outputId = "ggpWave42Compare", height="100vh")))
+        ),
+      
         tabPanel("Prognose",
                  h4("Prognose TagesInzidenz", align = "left", style="color:gray"),
                  p("[Menüauswahl: Region,StufenModell, BerechnungsTage,BerechnungsModell]", align = "left", style="color:green"),
                  fluidRow(column(width=8, plotOutput(outputId = "ggpIncidencePrediciton", height="75vh")),
                           column(width=4, htmlOutput(outputId="hlpIncidencePrediction")))),
 
+        tabPanel("Geschwindigkeit",
+                 h4("Änderung der TagesInzidenz in % vom Vortag", align = "left", style="color:gray"),
+                 p("[Menüauswahl: Region,Zeitbereich]", align = "left", style="color:green"),
+                 fluidRow(column(width=9, plotOutput(outputId = "ggpChangeRateStates", height="75vh")),
+                          column(width=3, htmlOutput(outputId="hlpChangeRateStates")))),
+        
         tabPanel("Inzidenz Bundesländer",
                  h4("TagesInzidenz Bundesländer", align = "left", style="color:gray"),
                  p("[Menüauswahl: Region,Zeitbereich,StufenModell]", align = "left", style="color:green"),
@@ -676,13 +664,34 @@ ui <- fluidPage(
                  fluidRow(column(width=9, plotOutput(outputId = "ggpIncidenceCounties", height="75vh"),
                                           DT::dataTableOutput(outputId = "dtoIncidenceCounties")),
                           column(width=3, htmlOutput(outputId="hlpIncidenceCounties")))),
+
+        tabPanel("Rückblick 2020",
+                 h4("Exponentielles Wachstum in zweiten Halbjahr 2020", align = "left", style="color:gray"),
+                 p("[Menüauswahl: Region, StufenModell]", align = "left", style="color:green"),
+                 fluidRow(column(width=9, 
+                                 plotOutput(outputId = "ggpExpDateConfPop", height="60vh"),
+                                 plotOutput(outputId = "ggpExpDatedt7ConfPop", height="60vh"),
+                                 plotOutput(outputId = "ggpExpConfPopdt7ConfPop", height="60vh")),
+                          column(width=3, htmlOutput(outputId="hlpExponential")))),
         
-        tabPanel("Geschwindigkeit",
-                 h4("Änderung der TagesInzidenz in % vom Vortag", align = "left", style="color:gray"),
-                 p("[Menüauswahl: Region,Zeitbereich]", align = "left", style="color:green"),
-                 fluidRow(column(width=9, plotOutput(outputId = "ggpChangeRateStates", height="75vh")),
-                          column(width=3, htmlOutput(outputId="hlpChangeRateStates")))),
-       
+        tabPanel("Sterblichkeit",
+                h4("Alters- und Geschlechtsabhängigkeit der Sterblichkeit und Vergleich mit COVID-19", align = "left", style="color:black"),
+                p("[Menüauswahl: keine]", align = "left", style="color:green"),
+                htmlOutput(outputId="blogAge")),
+         
+        tabPanel("Formeln",
+                 h4("Zur Berechnung der epidemiologischen Parameter und abgeleiteter Grössen", align = "left", style="color:black"),
+                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
+                 htmlOutput(outputId="blogFormulas")),
+
+
+        tabPanel("Erläuterungen",
+                 h4("Beschreibung der Graphiken und Hintergrund zu Berechnungen", align = "left", style="color:black"),
+                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
+                 htmlOutput(outputId="manDescription"))
+        
+        
+                
 #       tabPanel("Einmeldungen",
 #                h4("Anzahl der täglichen Einmeldungen und späteren Nachträge für den Tag der Testung", align = "left", style="color:gray"),
 #                p("[Menüauswahl: keine]", align = "left", style="color:green"),
@@ -694,32 +703,34 @@ ui <- fluidPage(
 #                fluidRow(column(width=12, plotOutput(outputId = "ggpBmsgpkCTAP", height="60vh"))),
 #                h1(""),
 #                fluidRow(column(width=12, plotOutput(outputId = "ggpBmsgpkCHIR", height="60vh")))),
-       
-              
+
+
 #        tabPanel("Mutationen",
 #                 h4("Britische (B.1.1.7, N501Y-V1), Afrikanische (B.1.351, N501Y-V2) und deren Stamm Mutation (N501Y)", align = "left", style="color:gray"),
 #                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
 #                 fluidRow(column(width=12, plotOutput(outputId = "ggpMutations", height="75vh")))),
+        
+        
 
+#        tabPanel("DurchSeuchung",
+#                 h4("Einschätzung der Auswirkung der Impfung auf die zu erwartenden Todesfälle", align = "left", style="color:gray"),
+#                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
+#                 fluidRow(column(width=9, plotOutput(outputId="ggpDissemination1")),
+#                          column(width=3, htmlOutput(outputId="hlpDissemination1"))
+#                        ),
+#                 fluidRow(column(width=9, DT::dataTableOutput(outputId="dtoDissemination1")),
+#                          column(width=3, htmlOutput(outputId="hlpDissemination2"))
+#                        ),
+#                 fluidRow(column(width=12, DT::dataTableOutput(outputId="dtoDissemination2"))
+#                          ),
+#                 fluidRow(column(width=12, plotOutput(outputId="ggpDissemination2"))
+#                          )
+#                 ),
+#        tabPanel("Aktuelles",
+#                 h4("Darstellung und Interpretation von aktuellen Daten", align = "left", style="color:black"),
+#                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
+#                 htmlOutput(outputId="blogNews")),
 
-        tabPanel("Sterblichkeit",
-                h4("Alters- und Geschlechtsabhängigkeit der Sterblichkeit und Vergleich mit COVID-19", align = "left", style="color:black"),
-                p("[Menüauswahl: keine]", align = "left", style="color:green"),
-                htmlOutput(outputId="blogAge")),
-         
-        tabPanel("Rückblick 2020",
-                 h4("Exponentielles Wachstum in zweiten Halbjahr 2020", align = "left", style="color:gray"),
-                 p("[Menüauswahl: Region, StufenModell]", align = "left", style="color:green"),
-                 fluidRow(column(width=9, 
-                                 plotOutput(outputId = "ggpExpDateConfPop", height="60vh"),
-                                 plotOutput(outputId = "ggpExpDatedt7ConfPop", height="60vh"),
-                                 plotOutput(outputId = "ggpExpConfPopdt7ConfPop", height="60vh")),
-                          column(width=3, htmlOutput(outputId="hlpExponential")))),
-
-        tabPanel("Formeln",
-                 h4("Zur Berechnung der epidemiologischen Parameter und abgeleiteter Grössen", align = "left", style="color:black"),
-                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
-                 htmlOutput(outputId="blogFormulas")),
 
 #        tabPanel("Rohdaten Bundesländer",
 #          h4("Rohdaten Bundesländer", align = "left", style="color:black"),
@@ -731,11 +742,6 @@ ui <- fluidPage(
 #                 p("[Menüauswahl: Zeitbereich,Region]", align = "left", style="color:green"),
 #                 DT::dataTableOutput(outputId = "dtoRawDataCounty")),
         
-        tabPanel("Erläuterungen",
-                 h4("Beschreibung der Graphiken und Hintergrund zu Berechnungen", align = "left", style="color:black"),
-                 p("[Menüauswahl: keine]", align = "left", style="color:green"),
-                 htmlOutput(outputId="manDescription"))
-
 #        tabPanel("SessionData",
 #                 h3("Parsed query string"),
 #                 verbatimTextOutput("queryText"),
@@ -1199,7 +1205,10 @@ server <- function(input, output, session) {
   # 2. vs. 4. Welle
   # -------------------------------------------
  
-  output$hlpWave42 <- renderText({ htmlWave42 })
+  output$hlpWave42_1 <- renderText({ htmlWave42_1 })
+  output$hlpWave42_2 <- renderText({ htmlWave42_2 })
+  output$hlpWave42_3 <- renderText({ htmlWave42_3 })
+  output$hlpWave42Intro <- renderText({ htmlWave42Intro })
   
   output$ggpWave42Compare <- renderPlot({
     
@@ -1312,24 +1321,79 @@ server <- function(input, output, session) {
     return(dp)
   }) 
   
+  # COVID-19 Zweite Welle: Sterblichkeitsrate in % nach Alter und Geschlecht
+  output$ggpWave42CFR <- renderPlot({
+    
+    dp <- crdv.ts() %>% 
+    # dp <- dcrdv %>% 
+      dplyr::filter(Region=="Österreich") %>%
+      dplyr::filter(!is.na(Wave) & Wave!="Wave1") %>%
+      dplyr::filter(AgeGroupID > 3) %>%
+      dplyr::group_by(Region, Wave, AgeGroup, Gender) %>%
+      dplyr::summarize(.groups="drop", 
+                       sumConfirmed=sum(newConfirmed/Population, na.rm=TRUE), 
+                       sumDeaths=sum(newDeath/Population, na.rm=TRUE), 
+                       meanDeathConf=sum(newDeath, na.rm=TRUE)/sum(newConfirmed, na.rm=TRUE)*100)
+    # meanDeathConf relativ to Wave2
+    mDC2 <- dp$meanDeathConf[dp$Wave=="Wave2"]
+    dp$refDeathConf[dp$Wave=="Wave2"] <- mDC2 
+    dp$refDeathConf[dp$Wave=="Wave3"] <- mDC2 
+    dp$refDeathConf[dp$Wave=="Wave4"] <- mDC2 
+    dp$relDeathConf <- dp$meanDeathConf/dp$refDeathConf*100
+    
+    dp <- dp %>%
+      tidyr::pivot_longer(cols=c(meanDeathConf, relDeathConf), names_to="Compare", values_to="Prozent") %>%
+      dplyr::mutate(Compare=factor(Compare, levels=c("meanDeathConf", "relDeathConf"), labels=c("SterbeRate_InProzent", "SterbeRate_ProzentRelativZuWelle2")))
+    
+    waveShapes=c(19,17,15,18,10,12)
+    waveColors <- c("#E69F00", "#009E73", "#56B4E9", "#D55E00", "#CC79A7", "#C40000", "#F0D042", "#0072B2")
+    ggplot(data=dp, aes(x=AgeGroup, y=Prozent, color=Wave, fill=Wave, shape=Wave, group=Wave)) +
+      theme(strip.text=element_text(size=13), axis.text=element_text(size=12), axis.title=element_text(size=13), plot.title=element_text(size=18)) +
+      scale_shape_manual(values=waveShapes)+
+      scale_fill_manual(values=waveColors) +
+      scale_color_manual(values=waveColors) +
+      scale_y_continuous(limits=c(0,NA))+
+      #scale_y_continuous(trans="log10", breaks=c(seq(0,0.01,by=0.001),seq(0,0.1,by=0.01),seq(0,1.0,by=0.1)), limits=c(0.0005,0.5))+
+      #theme(axis.text.x = element_text(angle = 90, hjust = 1), panel.grid.minor.y = element_blank()) + ,sec.axis=dup_axis() , labeller = label_both
+      geom_point(size=5) + 
+      geom_line() + 
+      facet_grid(Compare~Gender, scales="free") +
+      ggtitle("COVID-19 Österreich: Vergleich 2.3.4. Welle: Sterblichkeitsrate bei Infektion nach Alter und Geschlecht")
+  }) 
+  
+  
   output$ggpWave42CumSum <- renderPlot({
     
     # Reactive Values
     input$abUpdate
     inRegions <- isolate(input$cbgRegion)
-
+    
     levels=c("lmHospConf","lmICUConf","lmDeathConf","lmICUHosp","lmDeathHosp","lmDeathICU")
     labels=c("% Hospitalisierte \npro Positive","% Intensivstation \npro Positive","% Verstorbene \npro Positive",
              "% Intensivstation \npro Hospitalisierung","% Verstorbene \npro Hospitalisierung","% Verstorbene \npro Intensivstation")
+    atRegions=c("Österreich","Burgenland","Kärnten","Niederösterreich","Oberösterreich","Salzburg","Steiermark","Tirol","Vorarlberg","Wien")
+    atRegionsShort=c("AT","B","K","NOe","OOe","Szbg","Stmk","T","V","W")
+    
     dp <- dtcrdzhi.cs() %>%
       dplyr::filter(Region %in% inRegions) %>%
       tidyr::pivot_longer(cols=starts_with("lm"), names_to="Parameter", values_to="Percentage") %>%
-      dplyr::mutate(Parameter=factor(Parameter, levels=levels, labels=labels))
+      dplyr::mutate(Parameter=factor(Parameter, levels=levels, labels=labels),
+                    Wave=factor(Wave, levels=paste0("Wave",seq(4,2,by=-1)), labels=paste0("Wave",seq(4,2,by=-1))),
+                    Region=factor(Region, levels=atRegions, labels=atRegionsShort))
     
-    ggplot(data=dp, aes(x=Wave, y=Percentage, color=Wave, fill=Wave)) +
-      scale_y_continuous(sec.axis=dup_axis()) +
-      geom_col(width=.5, position=position_dodge()) +
-      theme(strip.text=element_text(size=13), axis.text=element_text(size=12), axis.title=element_text(size=13), plot.title=element_text(size=18)) +
+    waveShapes=c(15,17,19)
+    waveColors <- c("#56B4E9", "#009E73", "#E69F00", "#444444", "#F0D042", "#0072B2", "#D55E00", "#CC79A7", "#C40000")
+    ggplot(data=dp, aes(x=Wave, y=Percentage, fill=Wave, color=Wave, shape=Wave)) +
+      scale_shape_manual(values=waveShapes)+
+      scale_fill_manual(values=waveColors) +
+      scale_color_manual(values=waveColors) +
+      scale_y_continuous(sec.axis=dup_axis(), limits=c(0,NA)) +
+      #geom_col(position=position_dodge2(padding=0.5),color="lightgrey",) +
+      geom_point(size=5) +
+      geom_col(width=0.05) +
+      theme(strip.text=element_text(size=12), axis.text=element_text(size=12),
+            axis.title=element_text(size=13), plot.title=element_text(size=18),
+            panel.spacing=unit(1, "lines")) +
       facet_grid(Region~Parameter, scales="free", labeller = label_value) +
       coord_flip() +
       ggtitle("COVID-19 Österreich: Vergleich 2., 3. und 4 Welle: Kennwerte aus GesamtAnzahl von Positive, Hosp, ICU und Verst")

@@ -112,7 +112,7 @@ caDataDownloadBmsgpk_timelines <- function (bSave=TRUE) {
     
     # gather to long format
     rc <- rc %>% 
-      dplyr::mutate(Datum=as.Date(Datum)) %>% 
+      dplyr::mutate(Datum=as.Date(Datum, format="%d.%m.%Y")) %>% 
       dplyr::select(-starts_with("Bev")) %>%
       tidyr::gather(key="Key", value="Value", -Datum, -BundeslandID, -Name) %>%
       dplyr::mutate(Source=!!csvSource)

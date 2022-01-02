@@ -840,3 +840,39 @@ ggplot(data=yzi_a3 %>% dplyr::filter(newConfirmed>0), aes(x=Date, y=newConfirmed
   
   
   
+  html <- "    <p>
+               Weniger geeignet sind die Maxima für einen Gesamtvergleich der beiden Wellen.
+               Dazu wird jetzt die Gesamtanzahl der Positiven, Hospitalisierten, Intensivbehandelten und Verstorbenen betrachtet.
+               </p>
+               <p><b>Vergleich 2., 3. und 4. Welle Anhand der Entwicklung der Gesamtanzahl der Fälle</b></p>
+               <p>
+               Die <b>Geamtanzahl der Positiven</b> wurde in der 4. Welle durch eine etwa 20 mal so hohe Anzahl von Tests im Vergleich zur 2. Welle ermittelt.
+               Damit sollten die 'asymptomatisch Positiven' besser erfasst sein. 
+               Insofern ist die die Anzal der Positiven als Referenzgröße zur Bestimmung der Unterschiede zwischen den beiden Wellen nur eingeschränkt aussagekräftig. 
+               Lässt man dieses Problem ausser acht, dann ist der Prozentsatz der Hospitalisierten in der 4. Welle etwa halb so groß, 
+               der Prozentsatz der Verstorbenen ein Drittel verglichen mit der der 2. Welle.  (Spalten 1-3 in der Balken Graphik)
+               </p><p>
+               Betrachtet man die <b>Gesamtanzahl der Hospitalisierungen</b> als Bezugsgröße so ergibt sich ein gegenläufiges Bild für die Intensivstationen.
+               Der Anteil an Patienten, die im Verlauf der 4. Welle von der Normal auf die Intensivstation verlegt werden, ist deutlich von grob 10% auf grob 20% gestiegen.
+               Als Ursache kommen u.a. ein schwererer Verlauf der Krankheit bei der Delta-Variante oder eine geänderete Vorgangsweise in den Spitälern in Frage. 
+               Der Anteil der Verstorbenen ist gemessen an der Anzahl der Hospitalisierungen ist in der 4. Welle etwa halb so hoch wie in der 2. Welle. 
+               </p><p>
+               Die Anzahl an Verstorbenen gemessen an der <b>Gesamtanzahl der Intensivbehandlungen</b> ist in der 4. Welle auf weniger als die Häfte gesunken. 
+               Diese Beobachtung ist im Einklang mit den Werten relativ zu den Positiven und den Hospitalisierten.
+               Anmerkung: Die Anzahl der Verstorbenen kann höher sein als die Anzahl der Patienten auf Intensivstationen, 
+               weil Erkrankte auch auf Normalstationen oder ausserhalb von Spitälern versterben 
+               </p><p>
+               Schlussfolgerung: Die Sterblichkeit im Verlauf der 4. Welle ist substantiell (50%-%65) niedriger als in der 2. Welle.
+               Einflussfaktoren sind u.a. die Deltavariante, mehr Tests, mehr Erfahrung in den Spitälern und die Impfung.
+               </p>
+               
+               
+               <p>
+               Die <b>Bezeichnung der Variablen</b> folgt dem Schema 'zählweiseAnzahlBezugsmenge'. Zum Beispiel:
+               <li><b>newConfPop</b> bedeutet 'Anzahl der täglich neuen (=new) positiven Tests (=Confirmed) pro 100k Einwohner (=Population)</li>
+               <li><b>sumICUPop</b> bedeutet 'GesamtAnzahl (=sum) der Intensivbetreuungen (=ICU) pro 100k Einwohner (=Population)</li>
+               <li><b>relICUConf</b> bedeutet 'Prozentsatz (=rel) der positiv Getesteten (=Confirmed) die auf die Intensivstation (=ICU) müssen</li>
+               </p>
+               
+               "
+  

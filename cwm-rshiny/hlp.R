@@ -298,11 +298,62 @@ htmlExponential <- "<p><b>Rückblick 2020</b></p>
                   
 hlpBmsgpk <- "<p><b>GesundheitsMinisterium</b></p>"
 
-htmlWave42 <- "<p><b>Vergleich 2. und 4. Welle</b></p>
-              <p>Ein <b>direkter Vergleich</b> der beiden Pandemie Wellen im Herbst 2020 und Herbst 2021 ist wegen der unterschiedlichen Rahmenbedingungen (Anzahl Tests, Virus Variante, Impfung, etc) <b>nicht möglich</b>.
-              Die folgenden Graphiken sind daher eher ein Versuch die vorhandenen <b>Daten aus verschiedenen Blickwinkeln</b> zu betrachten und 
-              einen Eindruck von den <b>Schwierigkeiten bei der Interpretation</b> aufzuzeigen. Betrachtet werden in den Graphiken die Anzahl der  
+htmlWave42Intro <- "<p>Ein <b>direkter Vergleich</b> der 2. und 4. Welle in 10-11/2020 bzw. 10-12/2021, sowie der 3. Welle in 02-04/2021, 
+              ist wegen der unterschiedlichen Rahmenbedingungen (Anzahl/Art Tests, Virus Variante, Spitalsbehandlung, Impfung, Datenerfassung, etc.)<b> mit grossen Schwierigkeiten verbunden</b>.
+              Insbesondere ist eine stabile Referenzgrösse z.B. in Form von regelmässigen Prevalenzstudien nicht verfügbar.
+              Die folgende Zusammenstellung ist daher eher ein Versuch die vorhandenen <b>Daten aus verschiedenen Blickwinkeln</b> zu betrachten und sowohl
+              <b>mögliche Interpretationen</b> als auch Schwierigkeiten damit aufzuzeigen. 
+              </p>"
+htmlWave42_1 <-  "<p>
+              <b>Risiko für tötlichen Krankheitsverlauf in den drei Wellen</b><br>
+              Die erste Graphik zeigt in der oberen Reihe die Wahrscheinlichkeit an Covid-19 zu sterben, nach Geschlecht und Alter.
+              Auffällig die <b><i>starke Altersabhängigkeit</b></i>, sowie die <b><i>Unterschiede zwischen Frauen und Männern</b></i>. Am kritischsten ist die Situation für Männer über 85.
+              <br>Mangels entsprechender Daten kann nicht zwischen Immunisierten und NichtImmunisierten unterschieden werden. 
+              <b><i>Anzeichen für die Wirksamkeit der Impfung</b></i> lassen sich aber an der vergleichsweise geringeren Sterblichkeit in den Altersgruppen mit den höheren Durchimpfungsraten erkennen.
               </p><p>
+              <b>Vergleich der Sterblichkeit in der 3. und 4. Welle mit der 2. Welle</b><br> 
+              In der unteren Reihe der ersten Graphik wird die Sterblichkeit in der 2. Welle als Referenz (100%) verwendet. 
+              Die Sterblichkeit in der 3. und 4. Welle wird relativ dazu betrachtet, nach Altersgruppe und Geschlecht.
+              <li>Die relative Sterblichkeit in der 3. Welle ist wenig einheitlich, liegt aber in den höheren Altersgruppen niedriger als bei den Jüngeren, 
+              in grober Übereinstimmung mit dem Trend der Durchimpfungsrate.
+              </li><li>Die Sterblichkeit in der 4. Welle liegt bei den Jüngeren bei grob 70%, bei den Älteren unter 50% im Vergleich zur 2. Welle, grob entlang der Höhe der Durchimpfungsrate. 
+              </li>
+              </p><p>
+              <b>Schlussfolgerungen</b><br>
+              Diese Daten legen nahe, dass die <b><i>Impfung das Risiko an COVID-19 zu sterben beträchtlich senkt, für Immunisierte auf vermutlich grob 35% bei Infektion</b></i>. 
+              Dieser Wert ist grob verträglich mit einem Bericht der <b><i>'Gesundheit Österreich'</b></i> (GÖ) aus 11/2021, in der der <b><i>Schutzfaktor der Impfung gegen schweren Verlauf 
+              mit 73% </b></i> beziffert  wird, basierend auf dem Impfstatus von Spitalspatienten in der 4. Welle.
+              <br>Die in der  Einleitung genannten unterschiedlichen Rahmenbedingungen, sowie insbesondere 
+              <b><i>fehlende Daten</b></i> zum Impfstatus der Infizierten, Hospitalisierten und Verstorbenen nach Region, Alter und Geschlecht <b><i>verhindern eine bessere Quantifizierung</i></b>.
+              </p>"
+htmlWave42_2 <-"<p>
+              <b>Vergleich der Inzidenzen, Hospitalisierungen, Intensivbetreuungen und Sterbefälle</b>  
+              </p><p>
+              In der zweiten Graphik werden die drei Wellen anhand der Anteile von schweren und schwersten Verläufen betrachtet.
+              Verglichen wird die Gesamtanzahl der Infektionen, Hospitalisierungen, ICU Aufenthalte und Sterbefälle in den drei Wellen.
+              <br>
+              Die Verstorbenen umfassen die Sterbefälle auf ICU (~30%), im Spital (~25%) und ausserhalb eines Spitals (~45%).
+              Der Zeitbereich für die Erfassung der Sterbefälle ist um 14 Tage gegenüber dem Zeitbereich der Inzidenz verschoben.
+              <br>Die Charakteristika der drei Wellen sind in den Bundenländern z.T. sehr unterschiedlich. 
+              Einige Gemeinsamkeiten im Vergleich zur 2. Welle lassen sich erkennen: 
+              </p><p>
+              <b>Zusammenfassung</b> der Plots von links nach rechts:
+              <br>[Auswahl der Bundesländer über das Menü links]
+               <li>Weniger als 50% Hospitalisierungen <b>pro Infektion</b> in der 4. Welle 
+               </li><li>Mehr ICU Aufenthalte in der 3. Welle, weniger in der 4. Welle
+               </li><li>Weniger als 30% Verstorbene pro Infektion in der 4. Welle
+               </li><li>Mehr ICU Aufenthalte <b>pro Hospitalisierung</b> in der 3. und 4. Welle
+               </li><li>50%-70% Verstorbene pro Hospitalisierung in der 4. Welle
+               </li><li>Weniger als 50% Verstorbene <b>pro ICU Aufenthalt</b>
+               </li>
+              </p>"
+htmlWave42_3 <-"<p>
+              <b>Vergleich des zeitlichen Verlaufs der 2. und 4. Welle</b>  
+              </p><p>
+              In der dritten Graphik wird der zeitliche Verlauf der in der zweiten Graphik betrachteten Größen untersucht.
+              Betrachtet wird die tägliche Zahl der Tests, Infektionen, Spitalsaufenthalte, ICU Aufenthalte und Sterbefälle pro 100.000 Einwohner (Population).
+               </p><p>
+               Dargestellte Größen, von oben nach unten:
                <li><b>Tests</b> (Reihe 1, newTestPop)
                </li><li><b>Tagesinzidenz</b> (Reihe 2, newConfPop)
                </li><li><b>Hospitalisierungen</b> (Reihe 3, newHospPop)
@@ -310,22 +361,13 @@ htmlWave42 <- "<p><b>Vergleich 2. und 4. Welle</b></p>
                </li><li><b>Sterbefälle</b> (Reihe 5, newDeathPop)
                </li>
                </p><p>
-               pro 100.000 Einwohner nach Bundesland, bei einer <b>Zeitverschiebung von einem Jahr</b> zwischen der 2. und 4. Welle
+               <i>Zur Betrachtung unterschiedlicher Aspekte kann im <b>Menü links</b> der Masstab der y-Achse mittels der <b>Checkbox 'StufenModell'</b> zwischen linear und logarithmisch umgeschalten werden,
+               sowie die <b>Normierung der Kenngrössen</b> unter 'Vergleich 2. und 4. Welle' verändert werden:</i>
+               <li><b>Anzahl pro 100k Einwohner</b> (new*Pop)</li>
+               <li><b>Prozent vom Maximum 2.Welle</b> (new*Pop) </li>
+               <li><b>Prozent Einw/Tested/Positiv</b> (rel**) <br>%Getestete pro Einwohner (relConfPop), <br>%Positive pro Getestete (relConfTest), <br>%Spital/%ICU/%Verstorben pro Positiven (rel*Conf) </li>
                </p><p>
-               Die <b>Bezeichnung der Variablen</b> folgt dem Schema 'zählweiseAnzahlBezugsmenge'. Zum Beispiel:
-               <li><b>newConfPop</b> bedeutet 'Anzahl der täglich neuen (=new) positiven Tests (=Confirmed) pro 100k Einwohner (=Population)</li>
-               <li><b>sumICUPop</b> bedeutet 'GesamtAnzahl (=sum) der Intensivbetreuungen (=ICU) pro 100k Einwohner (=Population)</li>
-               <li><b>relICUConf</b> bedeutet 'Prozentsatz (=rel) der positiv Getesteten (=Confirmed) die auf die Intensivstation (=ICU) müssen</li>
-               </p><p>
-               Zur Betrachtung unterschiedlicher Aspekte kann die <b>Skalierung der Graphiken</b> über das <b>Menü links</b> 'Vergleich 2. und 4. Welle' verändert werden: </p> 
-               <li><b>Anzahl pro 100k Einwohner</b>: Absolute Zahlen, normiert auf 100k Einwohner: new*Pop (1000 entspricht 1%)</li>
-               <li><b>Prozent vom Maximum 2.Welle</b>: Alle Parameter relativ zu ihrem Maximum der 2.Welle: new*Pop</li>
-               <li><b>Prozent Einw/Tested/Positiv</b>: %Getestet pro Einwohner (relConfPop), %Positive pro Getesteten (relConfTest), %Spital/%ICU/%Verstorben pro Positiven (rel*Conf) </li>
-               <p>
-               Zusätzlich ist es sinnvoll den Masstab der y-Achse mittels der <b>Checkbox 'StufenModell'</b> zwischen linear und logarithmisch umzuschalten.
-               </p><p> Der Aufbau der Graphiken dauert etwas, bitte um Geduld</p>
-               <p>
-               Der <b>Vergleich 4. gegen 2. Welle</b> entlang der Zeitachse zeigt (Stand 2021-12-06):
+               Der <b>Vergleich 4. gegen 2. Welle</b> entlang der Zeitachse zeigt (Stand 2021-12-31):
                <li><b>Begin beider Wellen im Sommer (4:Juli bzw 2:August)</b></li>
                <li><b>Starke Unterschiede zwischen den Bundesländern</b></li>
                <li>Rund <b>15 bis 25 (Wien) mal so viele Tests</b>: Während der 2.Welle wurden täglich rund 250 Tests pro 100k Einwohner durchgeführt (0.25%), in der 4.Welle grob 5000 (5%) (erste Reihe) </li>
@@ -339,30 +381,6 @@ htmlWave42 <- "<p><b>Vergleich 2. und 4. Welle</b></p>
                Dieser Vergleich der Maxima der beiden Wellen gibt einen relevanten Eindruck zu den Unterschieden hinsichtlich Auslastung der Spitäler und Intensivstationen.
                Die maximale Inzidenz ist in der 4. Welle bei 20x mehr Tests etwa doppelt so hoch, die Hospitaliserungen sind niedriger, die Intensivstationen ähnlich belegt wie in der 2.Welle, 
                mit bisher deutlich weniger Sterbefällen, jeweils mit starken Unterschieden zwischen den Bundesländern. 
-               </p><p>
-               Weniger geeignet sind die Maxima für einen Gesamtvergleich der beiden Wellen.
-               Dazu wird jetzt die Gesamtanzahl der Positiven, Hospitalisierten, Intensivbehandelten und Verstorbenen betrachtet.
-               </p>
-               <p><b>Vergleich 2., 3. und 4. Welle Anhand der Entwicklung der Gesamtanzahl der Fälle</b></p>
-               <p>
-               Die <b>Geamtanzahl der Positiven</b> wurde in der 4. Welle durch eine etwa 20 mal so hohe Anzahl von Tests im Vergleich zur 2. Welle ermittelt.
-               Damit sollten die 'asymptomatisch Positiven' besser erfasst sein. 
-               Insofern ist die die Anzal der Positiven als Referenzgröße zur Bestimmung der Unterschiede zwischen den beiden Wellen nur eingeschränkt aussagekräftig. 
-               Lässt man dieses Problem ausser acht, dann ist der Prozentsatz der Hospitalisierten in der 4. Welle etwa halb so groß, 
-               der Prozentsatz der Verstorbenen ein Drittel verglichen mit der der 2. Welle.  (Spalten 1-3 in der Balken Graphik)
-               </p><p>
-               Betrachtet man die <b>Gesamtanzahl der Hospitalisierungen</b> als Bezugsgröße so ergibt sich ein gegenläufiges Bild für die Intensivstationen.
-               Der Anteil an Patienten, die im Verlauf der 4. Welle von der Normal auf die Intensivstation verlegt werden, ist deutlich von grob 10% auf grob 20% gestiegen.
-               Als Ursache kommen u.a. ein schwererer Verlauf der Krankheit bei der Delta-Variante oder eine geänderete Vorgangsweise in den Spitälern in Frage. 
-               Der Anteil der Verstorbenen ist gemessen an der Anzahl der Hospitalisierungen ist in der 4. Welle etwa halb so hoch wie in der 2. Welle. 
-               </p><p>
-               Die Anzahl an Verstorbenen gemessen an der <b>Gesamtanzahl der Intensivbehandlungen</b> ist in der 4. Welle auf weniger als die Häfte gesunken. 
-               Diese Beobachtung ist im Einklang mit den Werten relativ zu den Positiven und den Hospitalisierten.
-               Anmerkung: Die Anzahl der Verstorbenen kann höher sein als die Anzahl der Patienten auf Intensivstationen, 
-               weil Erkrankte auch auf Normalstationen oder ausserhalb von Spitälern versterben 
-               </p><p>
-               Schlussfolgerung: Die Sterblichkeit im Verlauf der 4. Welle ist substantiell (50%-%65) niedriger als in der 2. Welle.
-               Einflussfaktoren sind u.a. die Deltavariante, mehr Tests, mehr Erfahrung in den Spitälern und die Impfung.
                </p>
                "
 htmlDissemination1 <- "<p><b>Inzidenz und Ausbreitungsgeschwindigkeit</b><br>Für die Beurteilung der aktuellen Lage muss die Inzidenz
