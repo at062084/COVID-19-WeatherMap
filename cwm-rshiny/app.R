@@ -520,7 +520,7 @@ ui <- fluidPage(
     
     # Sidebar panel for inputs ----
     sidebarPanel(
-      p("CWM-V1.5.0-20220103"),
+      p("CWM-V1.5.1-20220103"),
       
       fluidRow(
         column(6,
@@ -573,26 +573,26 @@ ui <- fluidPage(
                                     "Prozent von Einw/Tests/Positiv" = "RelConfirmed"),
                      selected="Cases100k")),
 
-      fluidRow(        
-        radioButtons("rbsWaveScatter",
-                     width="220px",
-                     label="Vergleich 2.,3. und 4. Welle",
-                     choices = list("Referenz Positive" = "sumConfPop",
-                                    "Referenz Hospitalisierte" = "sumHospPop"),
-                     selected="sumConfPop")),
+#      fluidRow(        
+#        radioButtons("rbsWaveScatter",
+#                     width="220px",
+#                     label="Vergleich 2.,3. und 4. Welle",
+#                     choices = list("Referenz Positive" = "sumConfPop",
+#                                    "Referenz Hospitalisierte" = "sumHospPop"),
+#                     selected="sumConfPop")),
       
       # Asympomatic, Vaccination efficiency
-      fluidRow( 
-        hr(style = "border-top: 3px solid #777777;"),
-        sliderInput("sldAsymptomatic",
-                    width="220px",
-                    label="Anzahl Asymtopmatische: Symptomatische*k",
-                    min=0, max=4, step=1, value=1)),
-      fluidRow( 
-        sliderInput("sldVaccinationEfficiency",
-                    width="220px",
-                    label="Impfung: Schutz vor tötlicher Infektion [%]",
-                    min=50, max=100, step=5, value=90)),
+#      fluidRow( 
+#        hr(style = "border-top: 3px solid #777777;"),
+#        sliderInput("sldAsymptomatic",
+#                    width="220px",
+#                    label="Anzahl Asymtopmatische: Symptomatische*k",
+#                    min=0, max=4, step=1, value=1)),
+#      fluidRow( 
+#        sliderInput("sldVaccinationEfficiency",
+#                    width="220px",
+#                    label="Impfung: Schutz vor tötlicher Infektion [%]",
+#                    min=50, max=100, step=5, value=90)),
 
       width=2
   ),
@@ -630,7 +630,7 @@ ui <- fluidPage(
 
         tabPanel("Impfung und 2.3.4.Welle",
                  h4("Vergleich des Verlaufes der 2., 3. und 4. Welle", align = "left", style="color:gray"),
-                 p("[Menüauswahl: Region, StufenModell, Vergleich 2. und 4. Welle]", align = "left", style="color:green"), 
+                 p("[Menüauswahl: Region, StufenModell, Vergleich 2. und 4. Welle]  (--> Dauert einige Sekunden)", align = "left", style="color:green"), 
                  fluidRow(column(width=11, htmlOutput(outputId="hlpWave42Intro"))),
                  fluidRow(column(width=5, htmlOutput(outputId="hlpWave42_1")),
                           column(width=7, plotOutput(outputId = "ggpWave42CFR", height="60vh"))),

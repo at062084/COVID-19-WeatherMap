@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cwm-ingress
+  labels:
+    app: cwm-ingress
+    context: COVID-19
+  annotations:
+    kubernetes.io/ingress.class: "public-iks-k8s-nginx"
+spec:
+  tls:
+  - hosts:
+    - rep-k8s-cluster.eu-de.containers.appdomain.cloud
+    secretName: rep-k8s-cluster-48a40589c62cd829903b0d7849def5a2-0000
+  rules:
+    - host: rep-k8s-cluster.eu-de.containers.appdomain.cloud
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend: 
+          service:
+            name: cwm-rshiny-service
+            port: 
+              number: 3838
+
