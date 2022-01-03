@@ -228,15 +228,20 @@ cwm.model <- function(dx, nPoly=2, nModelDays=nModelDaysPrediction, dg=datATRegi
 cwm.predict <- function(df, nPoly=2, nModelDays=nModelDaysPrediction, nPredDays=7, modWeights=NULL) {
 }
 
-cwmFacetTheme.TextScale <- 1.5
+# theme(strip.text=element_text(size=13), axis.text=element_text(size=12), axis.title=element_text(size=13), plot.title=element_text(size=18)) +
+
+cwmFacetTheme.TextScale <- 2.5
 cwmFacetTheme <- theme(
+# plot.title   = element_text(size=rel(cwmFacetTheme.TextScale)),
+  plot.title   = element_text(size=15),
+  strip.text   = element_text(size=12),
+# strip.text   = element_text(size=rel(cwmFacetTheme.TextScale)),
+  axis.title   = element_text(size=13),
   axis.title.x = element_blank(),
-  plot.title   = element_text(size=rel(cwmFacetTheme.TextScale)),
-  strip.text.x = element_text(size=rel(cwmFacetTheme.TextScale)),
-  strip.text.y = element_text(size=rel(cwmFacetTheme.TextScale)),
-  axis.text    = element_text(size=rel(cwmFacetTheme.TextScale *.75)),
-  legend.text  = element_text(size=rel(cwmFacetTheme.TextScale *.75)),
-  legend.title = element_text(size=rel(cwmFacetTheme.TextScale *.75))
+  axis.text    = element_text(size=11),
+# axis.text    = element_text(size=rel(cwmFacetTheme.TextScale *.75)),
+  legend.title = element_text(size=12),
+  legend.text  = element_text(size=11)
 )
 # text = element_text(size=rel(cwmFacetTheme.TextScale)
 
@@ -261,9 +266,15 @@ cwmConfPopStyle <- function(sldPastTime=3, cbLogScale=TRUE, inRegions="Österrei
   # expand=expand_scale(mult=0.025), expand=expand_scale(add=1)
   
   list(
-    theme(panel.grid.major = element_line(color = "darkgray", linetype=3), 
-          panel.grid.minor=element_line(color = "gray90", linetype=1),
-          axis.text = element_text(size=12), axis.title.x=element_blank()),
+    theme(panel.grid.major = element_line(color="darkgray", linetype=3), 
+          panel.grid.minor = element_line(color="gray90", linetype=1),
+          plot.title   = element_text(size=16),
+          strip.text   = element_text(size=12),
+          axis.title   = element_text(size=14),
+          axis.title.x = element_blank(),
+          axis.text    = element_text(size=12),
+          legend.title = element_text(size=14),
+          legend.text  = element_text(size=12)),
       scale_shape_manual(values=regShapes),
       scale_fill_manual(values=regPalette),
       scale_color_manual(values=regPalette),
@@ -308,7 +319,13 @@ cwmSpreadStyle <- function(sldPastTime=3, inRegions=1:10, yLimits=c(0.84, 1.19))
   list(
     theme(panel.grid.major = element_line(color = "darkgray", linetype=3), 
           panel.grid.minor=element_line(color = "gray90", linetype=1),
-          axis.text = element_text(size=12), axis.title.x=element_blank()),
+          plot.title   = element_text(size=16),
+          strip.text   = element_text(size=12),
+          axis.title   = element_text(size=14),
+          axis.title.x = element_blank(),
+          axis.text    = element_text(size=12),
+          legend.title = element_text(size=14),
+          legend.text  = element_text(size=12)),
     scale_shape_manual(values=regShapes),
     scale_x_date(date_breaks=rvBreaks, date_labels=rvLabels,  sec.axis=dup_axis()),
     scale_y_continuous(limits=yLimits, breaks=exp(log(2)/dblXDays), labels=dblXDays, position="right", name="Tage bis Verdoppelung/Halbierung der Inzidenz",

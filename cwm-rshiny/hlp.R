@@ -299,18 +299,19 @@ htmlExponential <- "<p><b>Rückblick 2020</b></p>
                   
 hlpBmsgpk <- "<p><b>GesundheitsMinisterium</b></p>"
 
-htmlWave42Intro <- "<p>Ein <b>direkter Vergleich</b> der 2. und 4. Welle in 10-11/2020 bzw. 10-12/2021, sowie der 3. Welle in 02-04/2021, 
+htmlWave42Intro <- "<p>Ein <b>direkter Vergleich</b> der 2. und 4. Welle in 10-12/2020 bzw. 10-12/2021, sowie der 3. Welle in 02-04/2021, 
               ist wegen der unterschiedlichen Rahmenbedingungen (Anzahl/Art Tests, Virus Variante, Spitalsbehandlung, Impfung, Datenerfassung, etc.)<b> mit grossen Schwierigkeiten verbunden</b>.
               Insbesondere ist eine stabile Referenzgrösse z.B. in Form von regelmässigen Prevalenzstudien nicht verfügbar.
               Die folgende Zusammenstellung ist daher eher ein Versuch die vorhandenen <b>Daten aus verschiedenen Blickwinkeln</b> zu betrachten und sowohl
               <b>mögliche Interpretationen</b> als auch Schwierigkeiten damit aufzuzeigen. 
               </p>"
 htmlWave42_1 <-  "<p>
-              <b>Risiko für tötlichen Krankheitsverlauf in den drei Wellen</b><br>
+              <b>Sterblichkeit anhand der <i>Gesamtanzahl</i> von Infizierten und Verstorbenen je Welle</b><br>
               Die erste Graphik zeigt in der oberen Reihe die Wahrscheinlichkeit an Covid-19 zu sterben, nach Geschlecht und Alter.
               Auffällig die <b><i>starke Altersabhängigkeit</b></i>, sowie die <b><i>Unterschiede zwischen Frauen und Männern</b></i>. Am kritischsten ist die Situation für Männer über 85.
               <br>Mangels entsprechender Daten kann nicht zwischen Immunisierten und NichtImmunisierten unterschieden werden. 
-              <b><i>Anzeichen für die Wirksamkeit der Impfung</b></i> lassen sich aber an der vergleichsweise geringeren Sterblichkeit in den Altersgruppen mit den höheren Durchimpfungsraten erkennen.
+              <b><i>Anzeichen für die Wirksamkeit der Impfung</b></i> lassen sich aber an der vergleichsweise geringeren Sterblichkeit in den Altersgruppen 
+              mit den höheren Durchimpfungsraten erkennen (Verbesserung 2.->3.->4. Welle).
               </p><p>
               <b>Vergleich der Sterblichkeit in der 3. und 4. Welle mit der 2. Welle</b><br> 
               In der unteren Reihe der ersten Graphik wird die Sterblichkeit in der 2. Welle als Referenz (100%) verwendet. 
@@ -322,8 +323,8 @@ htmlWave42_1 <-  "<p>
               </p><p>
               <b>Schlussfolgerungen</b><br>
               Diese Daten legen nahe, dass die <b><i>Impfung das Risiko an COVID-19 zu sterben beträchtlich senkt, für Immunisierte auf vermutlich grob 35% bei Infektion</b></i>. 
-              Dieser Wert ist grob verträglich mit einem Bericht der <b><i>'Gesundheit Österreich'</b></i> (GÖ) aus 11/2021, in der der <b><i>Schutzfaktor der Impfung gegen schweren Verlauf 
-              mit 73% </b></i> beziffert  wird, basierend auf dem Impfstatus von Spitalspatienten in der 4. Welle.
+              Dieser Wert ist grob verträglich mit einem <b><a href='https://goeg.at/Intensivpflege_COVID', target='_blank'>Bericht der Gesundheit Österreich (GÖ)</a></b> aus 12/2021, 
+              in der der <b><i>Schutzfaktor der Impfung gegen schweren Verlauf mit 73% </b></i> beziffert  wird, basierend auf dem Impfstatus von Spitalspatienten in der 4. Welle.
               <br>Die in der  Einleitung genannten unterschiedlichen Rahmenbedingungen, sowie insbesondere 
               <b><i>fehlende Daten</b></i> zum Impfstatus der Infizierten, Hospitalisierten und Verstorbenen nach Region, Alter und Geschlecht <b><i>verhindern eine bessere Quantifizierung</i></b>.
               </p>"
@@ -347,7 +348,16 @@ htmlWave42_2 <-"<p>
                </li><li>50%-70% Verstorbene pro Hospitalisierung in der 4. Welle
                </li><li>Weniger als 50% Verstorbene <b>pro ICU Aufenthalt</b>
                </li>
-              </p>"
+              </p><p>
+              <b>Anmerkungen</b>
+               <li>Die Zählung der Positiven als Referenz in Spalte 1-3 ist wegen der 10-20 mal häufigeren Tests in der 3. und 4. Welle problematisch
+               </li><li>Der erhöhte Anteil an ICU Aufenthalten pro Hospitalisierung in der 3. und 4. Welle kann viele Ursachen haben, 
+                    von schwererem Krankheitsverlauf bei den Varianten bis geänderte Behandlungsmethoden
+               </li><li>Vor diesem Hintergrund ist die Abschätzung des Schutzes der Impfung vor schwerstem Verlauf auf Basis der öffentlich verfügbaren Zahlen mit einigen Unsicherheiten behaftet
+               </li>
+              </p><p><i>Eine bessere Abschätzung liefert der o.g. <b>Bericht der 'Gesundheit Österreich'</b> auf Basis detailierter Daten zur Spitalsbelegung seit Anfang der Pandiemie</i> 
+              </p>
+              "
 htmlWave42_3 <-"<p>
               <b>Vergleich des zeitlichen Verlaufs der 2. und 4. Welle</b>  
               </p><p>
