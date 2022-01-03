@@ -6,10 +6,11 @@ htmlFrontPageNews <- "<i><b>News:</b>
                       Details dazu den Reiter '<b>Bundesländer</b>'und '<b>Prognose</b></i>'
                     "
 htmlFrontPageTop <- "<b>News:</b><i>
-                      <br>Version 1.4.0: (31.8.2021) Drei Darstellungen zu Wirksamkeit der Impfungen, Sterblichkeit und benutzten Formeln
-                      <br>Version 1.3.0: (24.5.2021) Korrektur Wetterkarte und Prognose der Bezirke (Prognose ident mit Bundesländern)
-                      <br>Version 1.2.0: (21.4.2021) Daten aus dem Dashboard des Gesundheitsministeriums ab 1.2.2021 für die 'Dritte Welle'
-                      <br>Version 1.1.0: (4.4.2021) Zeitlicher Verlauf der Einmeldungen in das EMS (letzte 5 Wochen)
+                      <br>Version 1.5.0: (03.01.2022) Neue Version Vergleich 2.3.4 Welle und Wirksamkeit der Impfung.  
+                      <br>Version 1.4.0: (31.08.2021) Drei Darstellungen zu Wirksamkeit der Impfungen, Sterblichkeit und benutzten Formeln
+                      <br>Version 1.3.0: (24.05.2021) Korrektur Wetterkarte und Prognose der Bezirke (Prognose ident mit Bundesländern)
+                      <br>Version 1.2.0: (21.04.2021) Daten aus dem Dashboard des Gesundheitsministeriums ab 1.2.2021 für die 'Dritte Welle'
+                      <br>Version 1.1.0: (04.04.2021) Zeitlicher Verlauf der Einmeldungen in das EMS (letzte 5 Wochen)
                       <br>Version 1.0.0 (16.3.2021) Die Prognose der COVID Inzidenz für die Bundesländer berücksichtigt die Effekte 
                       von <b>Öffnungen (Beschleunigung)</b> und <b>Lockdowns (Abbremsung)</b>.
                       Details siehe  '<b>Bundesländer</b>' und '<b>Prognose</b></i>'

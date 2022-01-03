@@ -1,0 +1,54 @@
+apiVersion: networking.k8s.io/v1beta1
+# use above for kubernetes <=1.18 (for >=1.19 its 'v1')
+kind: Ingress
+metadata:
+  name: cwm-ingress
+  namespace: cwmnamespace
+  labels:
+    app: cwm-ingress
+    context: COVID-19
+  annotations:
+    # run old 'IBM custom Ingress Controller'
+    ingress.bluemix.net/redirect-to-https: "True"
+    ingress.bluemix.net/sticky-cookie-services: "serviceName=cwm-rshiny-service name=COVID-19-WeatherMap-Session expires=12h path=/COVID-19-WeatherMap"
+    nginx.org/websocket-services: "cwm-rshiny-service"
+    ingress.bluemix.net/server-snippets: |
+      location ~ /COVID-19-WeatherMap {
+        rewrite /COVID-19-WeatherMap http://cwm.rshiny.world permanent;
+      }
+
+#        location = /health {
+#          return 200 'Healthy';
+#          add_header Content-Type text/plain;
+#        }
+
+    # switch to new kubernetes ingress controller: BEWARE: must do several other steps (ssl certs, ....) first !!!
+    # kubernetes.io/ingress.class: "public-iks-k8s-nginx"
+
+    # nginx.ingress.kubernetes.io/ssl-redirect: "True" --> Does not work
+    # kubernetes.io/ingress.class: nginx
+    # nginx.ingress.kubernetes.io/affinity: "cookie"
+    # nginx.ingress.kubernetes.io/affinity-mode: "persistent"
+    # nginx.ingress.kubernetes.io/session-cookie-max-age: "36000" (secs)
+    # nginx.ingress.kubernetes.io/session-cookie-expires: "3600"
+    #nginx.ingress.kubernetes.io/websocket-services: "shiny1"
+    #ingress.bluemix.net/proxy-connct-timeout: "serviceName=cwm-rshiny-service timeout=32s"
+    #ingress.bluemix.net/proxy-read-timeout: "serviceName=cwm-rshiny-service timeout=256s"
+    #ingress.bluemix.net/keepalive-requests: "1024"
+    #ingress.bluemix.net/keepalive-timeout:  "32"
+    #ingress.bluemix.net/sticky-cookie-services: "serviceName=cwm-rshiny-service name=cwm-rshiny expires=1h path=/ hash=sha1"
+  
+spec:
+  tls:
+  - hosts:
+    - rep-k8s-cluster.eu-de.containers.appdomain.cloud
+    secretName: rep-k8s-cluster-48a40589c62cd829903b0d7849def5a2-0000
+  rules:
+  - host: rep-k8s-cluster.eu-de.containers.appdomain.cloud
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: cwm-rshiny-service
+          servicePort: 3838
+
