@@ -171,7 +171,7 @@ cwm.model <- function(dx, nPoly=2, nModelDays=nModelDaysPrediction, dg=datATRegi
   # dx: Date, Region, rm7NewConfPop and rmaNewConfPop range(Date)
   maxDate=max(dx$Date)
   n <- c(0,nForeCastDaysWeek,nForeCastDaysMonth) # Days to be predicted in nNewData (today=0)
-  t <- c(128,64,32,16,8)
+  t <- c(256,128,64,32,16)
   
   #rowNames <- c("Date", "AGES", "Heute","In einer Woche","In vier Wochen", "ÄnderungVortag","dblDays","Tage bis Verdoppelung","Tage bis   Halbierung", paste0("Tage bis Inzidenz=",t))
   #rowIDs <- c("Date","rmaNewConfPop","rm7NewConfPop.0","rm7NewConfPop.7","rm7NewConfPop.28","dtDay", "dblDays", "DblDays","HalfDays",paste0("rm7NewConfPop",t))

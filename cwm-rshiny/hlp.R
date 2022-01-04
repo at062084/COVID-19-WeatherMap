@@ -254,11 +254,11 @@ htmlChangeRateStates <- "<p><b>Ausbreitungsgeschwindigkeit</b></p>
                              Die Werte der letzten drei Tage sind oftmals von den Schwankungen der Einmeldungen in das EMS verfälscht.
                          </p>"
 
-htmlExponential <- "<p><b>Rückblick 2020</b></p>
+htmlExponential_1 <- "<p><b>Rückblick 2020</b></p>
                     <p>
                       Die drei Graphiken auf dieser Seie gehen der Frage nach, was aus der Entwicklung der <b>Inzidenz Zahlen im Sommer und Herbst 2020</b> abgeleitet werden kann.
-                    </p>
-                    <p> Die nebenstehenden Darstellungen werden übersichtlicher, wenn nur sehr wenige Bundesländer ausgewählt sind (z.B. Österreich und ein Bundesland)
+                    <br>
+                    <i> Die Darstellungen werden übersichtlicher, wenn im Menü links nur sehr wenige Bundesländer ausgewählt sind (z.B. Österreich und ein Bundesland)</i>
                     </p>
                     <p><b>Inzidenz</b><br><p>
                       Aus der ersten Graphik wird deutlich, dass seit Ende Juli die <b>Fallzahlen gleichmäßig steigen</b>, mit einigen Abweichungen, aber in allen Bundesländern ähnlich.
@@ -268,26 +268,29 @@ htmlExponential <- "<p><b>Rückblick 2020</b></p>
                       Dieses Verhalten wird erst durch die Betrachtung mit 'Verdoppelungsstufen', d.h.  in einer logarithmischen Skala, deutlich.
                       Die in Ministerien und ORF üblicherweise gewählte 'lineare' Skala verschleiert diese der Pandemie inherente Gesetzmässigkeit. 
                       Die 'lineare' Skala kann durch enfernen des Häckchens bei 'LogScale' im Menü links entfernt werden.
-                    </p><p>
-                      Weiters lässt sich aus der ersten Graphik ablesen, dass seit Anfang August die <b>Inzidenz in drei Stufen gestiegen</b> ist.
-                      Betrachtet man Österreich gesamt, so hat die erste Stufe Anfang August die Inzidenz von 1 auf 3 angehoben, 
-                      die zweite Stufe Anfang Sepember von 3 auf 8, und die dritte Stufe ab Mitte Oktober von 8 auf 80.
-                      Diese dritte Stufe (seit August 2020) wird von Ministerien und ORF als <b>'zweite Welle'</b>   bezeichnet.
-                      Das Verhalten ist in allen Bundesländern ähnlich, z.T. zeitgleich, z.T. mit leichten Verschiebungen oder kleineren Zwischenstufen.
-                      Gleichwohl mach die Graphik anhand der ersten beiden Stufen deutlich, 
-                      daß eine dritte Stufe mit dramatischen Fallzahlen ohne rechtzeitige Gegenmassnahmen nicht vermeidbar ist.
-                      Der <b>Zeitpunkt für die Gegenmassnahmen</b> ist das erreichen einer kritischen Inzidenz. 
-                      Legt man diese kritische Inzidenz auf 10, so ist das der 5.Okt., bei 15 der 12.Okt, und bei 20 der 19.Okt. 
-                      Auffällig ist die <b>starke Zunahme der Inzidenz ab 19.Okt.</b>, 
-                      auch in Bundesländern mit bis dahin sehr gleichmäßigem Anstieg (e.g. Burgenland oder Kärnten) 
-                    </p>
-                     <p><b>Ausbreitungsgeschwindigkeit</b><br>Die zweite Graphik zeigt Geschwindigkeit der Zunahme bzw. Abnahme der Inzidenz. 
+                    </p>"
+htmlExponential_2 <- "
+                    <p><b>Ausbreitungsgeschwindigkeit</b><br>Die zweite Graphik zeigt Geschwindigkeit der Zunahme bzw. Abnahme der Inzidenz. 
                         Die Messung erfolgt in Änderung in Prozent vom Vortag, 
                         und ist in der Skala rechts umgerechnet auf die 'Anzahl Tage bis Verdoppelung' bzw. Halbierung der Inzidenz.
                         An dieser Darstellung lassen sich die drei Stufen aus dem letzten Abschnitt eindeutig identifizieren.
                         Zu beachten ist, dass, solange die Ausbreitungsgeschwindigkeit größer als 0% ist, die Infektionszahlen zunehmen. 
                         Das ist zwischen August und November bis auf wenige Tage immer der Fall.
-                    </p><p><b>Inzidenz und Ausbreitungsgeschwindigkeit</b><br>Für die Beurteilung der aktuellen Lage muss die Inzidenz
+                        </p><p>
+                      Weiters lässt sich aus den ersten beiden Graphiken ablesen, dass seit Anfang August die <b>Inzidenz in drei Stufen gestiegen</b> ist.
+                      Betrachtet man Österreich gesamt, so hat die erste Stufe Anfang August die Inzidenz von 1 auf 3 angehoben, 
+                      die zweite Stufe Anfang Sepember von 3 auf 8, und die dritte Stufe ab Mitte Oktober von 8 auf 80.
+                      Diese dritte Stufe (seit August 2020) wird von Ministerien und ORF als <b>'zweite Welle'</b>   bezeichnet.
+                      Das Verhalten ist in allen Bundesländern ähnlich, z.T. zeitgleich, z.T. mit leichten Verschiebungen oder kleineren Zwischenstufen.
+                      Gleichwohl machen die Graphiken anhand der ersten beiden Stufen deutlich, 
+                      daß eine dritte Stufe mit dramatischen Fallzahlen ohne rechtzeitige Gegenmassnahmen nicht vermeidbar ist.
+                      Der <b>Zeitpunkt für die Gegenmassnahmen</b> ist das erreichen einer kritischen Inzidenz. 
+                      Legt man diese kritische Inzidenz auf 10, so ist das der 5.Okt., bei 15 der 12.Okt, und bei 20 der 19.Okt. 
+                      Auffällig ist die <b>starke Zunahme der Inzidenz ab 19.Okt.</b>, 
+                      auch in Bundesländern mit bis dahin sehr gleichmäßigem Anstieg (e.g. Burgenland oder Kärnten) 
+                    </p>"
+htmlExponential_3 <- "
+                    <p><b>Inzidenz und Ausbreitungsgeschwindigkeit</b><br>Für die Beurteilung der aktuellen Lage muss die Inzidenz
                       zusammen mit der Ausbreitungsgeschwindigkeit (dem Reproduktionsfaktor) betrachtet werden.
                       (wie insbesondere vom Gesundheitsministerium immer wieder betont wird).
                       Die dritte Graphik zeigt den Zusammenhang zwischen Inzidenz und Ausbreitungsgeschwindigkeit. Die Kurve beschreibt den <b>Weg Österreichs 
@@ -305,8 +308,9 @@ htmlWave42Intro <- "<p>Ein <b>direkter Vergleich</b> der 2. und 4. Welle in 10-1
               Die folgende Zusammenstellung ist daher eher ein Versuch die vorhandenen <b>Daten aus verschiedenen Blickwinkeln</b> zu betrachten und sowohl
               <b>mögliche Interpretationen</b> als auch Schwierigkeiten damit aufzuzeigen. 
               </p>"
-htmlWave42_1 <-  "<p>
-              <b>Sterblichkeit anhand der <i>Gesamtanzahl</i> von Infizierten und Verstorbenen je Welle</b><br>
+htmlWave42_1 <-"<p>
+              <b>Sterblichkeit anhand der <i>Gesamtanzahl</i> der Infizierten und Verstorbenen je Welle</b>
+              </p><p>
               Die erste Graphik zeigt in der oberen Reihe die Wahrscheinlichkeit an Covid-19 zu sterben, nach Geschlecht und Alter.
               Auffällig die <b><i>starke Altersabhängigkeit</b></i>, sowie die <b><i>Unterschiede zwischen Frauen und Männern</b></i>. Am kritischsten ist die Situation für Männer über 85.
               <br>Mangels entsprechender Daten kann nicht zwischen Immunisierten und NichtImmunisierten unterschieden werden. 

@@ -15,7 +15,7 @@ logMsg <- function(msg, sessionID="_global_") {
 
 hostSystem <- system("hostname", intern=TRUE)
 slackMsg <- function (title, msg, hostName = hostSystem) {
-  url <- as.character(read.csv("./secrets/slack.txt",header=FALSE)[1,1])
+  url <- as.character(read.csv("../secrets/slack.txt",header=FALSE)[1,1])
   body <- list(text = paste(paste0(now()," *",title,"*: "), paste0(hostName,": ",msg)))
   r <- POST(url, content_type_json(), body = body, encode = "json")
   invisible(r)
@@ -630,12 +630,15 @@ ui <- fluidPage(
 
         tabPanel("Impfung und 2.3.4.Welle",
                  h4("Vergleich des Verlaufes der 2., 3. und 4. Welle", align = "left", style="color:gray"),
-                 p("[Menüauswahl: Region, StufenModell, Vergleich 2. und 4. Welle]  (--> Dauert einige Sekunden)", align = "left", style="color:green"), 
+                 p("[Menüauswahl: Region, StufenModell, Vergleich 2. und 4. Welle]  (--> Dauert einige Sekunden)", align = "left", style="color:green"),
                  fluidRow(column(width=11, htmlOutput(outputId="hlpWave42Intro"))),
+                 hr(style = "border-top: 1px solid #777777;", .noWS="before"),
                  fluidRow(column(width=5, htmlOutput(outputId="hlpWave42_1")),
                           column(width=7, plotOutput(outputId = "ggpWave42CFR", height="60vh"))),
+                 hr(style = "border-top: 1px solid #777777;", .noWS="before"),
                  fluidRow(column(width=5, htmlOutput(outputId="hlpWave42_2")),
                           column(width=7, plotOutput(outputId = "ggpWave42CumSum", height="60vh"))),
+                 hr(style = "border-top: 1px solid #777777;", .noWS="before"),
                  fluidRow(column(width=4, htmlOutput(outputId="hlpWave42_3")),
                           column(width=8, plotOutput(outputId = "ggpWave42Compare", height="100vh")))
         ),
@@ -643,8 +646,8 @@ ui <- fluidPage(
         tabPanel("Prognose",
                  h4("Prognose TagesInzidenz", align = "left", style="color:gray"),
                  p("[Menüauswahl: Region,StufenModell, BerechnungsTage,BerechnungsModell]", align = "left", style="color:green"),
-                 fluidRow(column(width=8, plotOutput(outputId = "ggpIncidencePrediciton", height="75vh")),
-                          column(width=4, htmlOutput(outputId="hlpIncidencePrediction")))),
+                 fluidRow(column(width=7, plotOutput(outputId = "ggpIncidencePrediciton", height="75vh")),
+                          column(width=5, htmlOutput(outputId="hlpIncidencePrediction")))),
 
         tabPanel("Geschwindigkeit",
                  h4("Änderung der TagesInzidenz in % vom Vortag", align = "left", style="color:gray"),
@@ -661,18 +664,22 @@ ui <- fluidPage(
         tabPanel("Inzidenz Bezirke",
                  h4("TagesInzidenz Bezirke", align = "left", style="color:gray"),
                  p("[Menüauswahl: Region,Zeitbereich,StufenModell]", align = "left", style="color:green"),
-                 fluidRow(column(width=9, plotOutput(outputId = "ggpIncidenceCounties", height="75vh"),
-                                          DT::dataTableOutput(outputId = "dtoIncidenceCounties")),
-                          column(width=3, htmlOutput(outputId="hlpIncidenceCounties")))),
+                 fluidRow(column(width=9, plotOutput(outputId = "ggpIncidenceCounties", height="75vh")),
+                          column(width=3, htmlOutput(outputId="hlpIncidenceCounties"))),
+                 hr(style = "border-top: 1px solid #777777;", .noWS="before"),
+                 fluidRow(column(width=12, DT::dataTableOutput(outputId = "dtoIncidenceCounties")))),
 
-        tabPanel("Rückblick 2020",
-                 h4("Exponentielles Wachstum in zweiten Halbjahr 2020", align = "left", style="color:gray"),
+        tabPanel("Rückblick 2.Welle",
+                 h4("Exponentielles Wachstum im zweiten Halbjahr 2020", align = "left", style="color:gray"),
                  p("[Menüauswahl: Region, StufenModell]", align = "left", style="color:green"),
-                 fluidRow(column(width=9, 
-                                 plotOutput(outputId = "ggpExpDateConfPop", height="60vh"),
-                                 plotOutput(outputId = "ggpExpDatedt7ConfPop", height="60vh"),
-                                 plotOutput(outputId = "ggpExpConfPopdt7ConfPop", height="60vh")),
-                          column(width=3, htmlOutput(outputId="hlpExponential")))),
+                 fluidRow(column(width=9, plotOutput(outputId = "ggpExpDateConfPop", height="60vh")),
+                          column(width=3, htmlOutput(outputId="hlpExponential_1"))),
+                 hr(style = "border-top: 1px solid #777777;", .noWS="before"),
+                 fluidRow(column(width=9, plotOutput(outputId = "ggpExpDatedt7ConfPop", height="60vh")),
+                          column(width=3, htmlOutput(outputId="hlpExponential_2"))),
+                 hr(style = "border-top: 1px solid #777777;", .noWS="before"),
+                 fluidRow(column(width=9, plotOutput(outputId = "ggpExpConfPopdt7ConfPop", height="60vh")),
+                          column(width=3, htmlOutput(outputId="hlpExponential_3")))),
         
         tabPanel("Sterblichkeit",
                 h4("Alters- und Geschlechtsabhängigkeit der Sterblichkeit und Vergleich mit COVID-19", align = "left", style="color:black"),
@@ -1528,8 +1535,10 @@ server <- function(input, output, session) {
   # -------------------------------------------
   # 2020
   # -------------------------------------------
-  output$hlpExponential <- renderText({ htmlExponential })
-
+  output$hlpExponential_1 <- renderText({ htmlExponential_1 })
+  output$hlpExponential_2 <- renderText({ htmlExponential_2 })
+  output$hlpExponential_3 <- renderText({ htmlExponential_3 })
+  
   output$ggpExpDateConfPop <- renderPlot({
     logMsg("  output renderPlot ggpExpDateConfPop", sessionID)
     options(warn=-1)
@@ -1537,7 +1546,7 @@ server <- function(input, output, session) {
     input$abUpdate
     inRegions <- isolate(input$cbgRegion)
     ggplot(de.regions(), aes(x=Date, y=rm7NewConfPop, color=Region, shape=Region))+
-      cwmConfPopStyle(sldPastTime=1, cbLogScale=input$cbLogScale, inRegions=inRegions, stepDate=max(de.regions()$Date)) +
+      cwmConfPopStyle(sldPastTime=1, cbLogScale=input$cbLogScale, inRegions=inRegions, stepDate=max(de.regions()$Date), yLimits=c(1,128)) +
       geom_point(size=2)+geom_line()+
       geom_line(aes(y=modrm7NewConfPop)) +
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: TagesInzidenz: Positiv getestete pro Tag pro 100.000 Einwohner.  Basisdaten: AGES"))
