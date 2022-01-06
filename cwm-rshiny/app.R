@@ -520,7 +520,7 @@ ui <- fluidPage(
     
     # Sidebar panel for inputs ----
     sidebarPanel(
-      p("CWM-V1.5.3-20220104"),
+      p("CWM-V1.5.4-20220106"),
       
       fluidRow(
         column(6,
