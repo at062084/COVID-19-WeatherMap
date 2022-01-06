@@ -830,7 +830,7 @@ server <- function(input, output, session) {
     ggplot(dp, aes(x=Date, y=rm7NewConfPop, color=Region, shape=Region))+
       cwmConfPopStyle(sldPastTime=6, cbLogScale=TRUE, inRegions="Österreich") +
       scale_x_date(date_breaks="1 months", date_labels="%b") +
-      scale_y_continuous(limits=c(1,256), breaks=popSteps, position="right",  trans=trans, name="TagesInzidenz",
+      scale_y_continuous(limits=c(1,512), breaks=popSteps, position="right",  trans=trans, name="TagesInzidenz",
                          sec.axis=dup_axis(name="WochenInzidenz", labels=as.character(popSteps*7))) +
       theme(legend.position="none") +
       geom_point(size=1, col="red")+geom_line(col="red", size=1)+
@@ -992,7 +992,7 @@ server <- function(input, output, session) {
     dp <- cwmAgesRm7EstimatePoly(dk, nPoly=as.integer(input$rbsModelOrder), nModelDays=input$sldModelDays, nPredDays=28)
     
     ggplot(data=dp, aes(x=Date, y=rm7NewConfPop, color=Region, shape=Region)) + 
-      cwmConfPopStyle(sldPastTime=1, cbLogScale=input$cbLogScale, inRegions=inRegions, xLimits=c(max(dk$Date)-weeks(8), max(dp$Date)+days(1))) +
+      cwmConfPopStyle(sldPastTime=1, cbLogScale=input$cbLogScale, inRegions=inRegions, xLimits=c(max(dk$Date)-weeks(8), max(dp$Date)+days(1)), yLimits=c(1,2048)) +
       geom_line(linetype=2, size=1) + 
       geom_line(data=dk, aes(x=Date, y=1), size=1.0, color="green") +
       geom_line(data=dk, aes(x=Date, y=2), size=1.0, color="orange") +
@@ -1001,9 +1001,11 @@ server <- function(input, output, session) {
       geom_line(data=dk, aes(x=Date, y=16), size=.8, color="darkred") +
       geom_line(data=dk, aes(x=Date, y=32), size=.8, color="black") +
       geom_line(data=dk, aes(x=Date, y=64), size=1.0, color="black") +
-      geom_line(data=dk, aes(x=Date, y=128), size=1.5, color="black") +
-      geom_line(data=dk, aes(x=Date, y=256), size=2.0, color="black") +
-      geom_line(data=dk, aes(x=Date, y=512), size=2.5, color="black") +
+      geom_line(data=dk, aes(x=Date, y=128), size=1.25, color="black") +
+      geom_line(data=dk, aes(x=Date, y=256), size=1.5, color="black") +
+      geom_line(data=dk, aes(x=Date, y=512), size=1.75, color="black") +
+      geom_line(data=dk, aes(x=Date, y=1024), size=2.0, color="black") +
+      geom_line(data=dk, aes(x=Date, y=2048), size=2.25, color="black") +
       geom_point(data=dk%>%dplyr::filter(Date==max(Date)),size=5) + 
       geom_point(data=dk%>%dplyr::filter(Date==max(Date)),size=2) + 
       geom_point(data=dp%>%dplyr::filter(Date %in% c(max(Date), max(Date)-weeks(3))),size=5) + 
@@ -1029,7 +1031,7 @@ server <- function(input, output, session) {
     if (bDebug) logMsg(paste("sldPastTime=",input$sldPastTime, "cbLogScale=",input$cbLogScale, "inRegions=",inRegions))
     
     ggplot(dp, aes(x=Date, y=rm7NewConfPop, color=Region, shape=Region))+
-      cwmConfPopStyle(sldPastTime=as.integer(input$sldPastTime), cbLogScale=input$cbLogScale, inRegions=inRegions) +
+      cwmConfPopStyle(sldPastTime=as.integer(input$sldPastTime), cbLogScale=input$cbLogScale, inRegions=inRegions, yLimits=c(1,1024)) +
       geom_point(size=2)+geom_line()+
       geom_point(data=dp %>% dplyr::filter(Date==max(Date)), size=4)+
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Positiv Getestete pro 100.000 Einw. seit ", min(dp$Date), ".  Basisdaten: AGES"))
@@ -1063,7 +1065,7 @@ server <- function(input, output, session) {
     dp <- dg.past() %>% dplyr::filter(rm7NewConfPop>0, Region %in% inRegions)
     
     ggplot(dp, aes(x=Date, y=rm7NewConfPop, group=CountyID))+
-      cwmConfPopStyle(sldPastTime=input$sldPastTime, cbLogScale=input$cbLogScale, inRegions=inRegions[inRegions!="Österreich"], yLimits=c(.5,1024)) +
+      cwmConfPopStyle(sldPastTime=input$sldPastTime, cbLogScale=input$cbLogScale, inRegions=inRegions[inRegions!="Österreich"], yLimits=c(1,1024)) +
       geom_line(size=.25, aes(color=Region))+
       ggtitle(paste0("COVID-19 Österreich, Bundesländer und Bezirke: Positiv Getestete pro 100.000 Einw. seit ", min(dp$Date), ".  Basisdaten: AGES"))
   })

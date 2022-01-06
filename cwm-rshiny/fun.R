@@ -20,9 +20,9 @@ bDebug <- FALSE
 
 # Settings for cwmConfPopStyle
 popBreaksAll <- c(0,1,2,3,4,5,6,7,8,9,10,12,15,seq(20,100,by=10),120,150,200,300,400,500)
-popSteps=c(1,2,4,8,16,32,64,128,256,512)
+popSteps=c(1,2,4,8,16,32,64,128,256,512,1024,2048)
 yLimMin <- 1
-yLimMax <- 512
+yLimMax <- 1024
 
 # Setings for cwmSpreadStyle
 dblXDays <- c(1:7,10,14,21,28,56,Inf,-56,-28,-21,-14,-10,-7,-6,-5,-4,-3,-2,-1)
@@ -281,7 +281,7 @@ cwmConfPopStyle <- function(sldPastTime=3, cbLogScale=TRUE, inRegions="Österrei
       scale_x_date(limits=xLimits, date_breaks=rvBreaks, date_labels=rvLabels, sec.axis=dup_axis()),
       scale_y_continuous(limits=yLimits, breaks=popSteps, name=yLabel, labels=as.character(popSteps), position="right",  trans=trans,
                          sec.axis=dup_axis(name="WochenInzidenz", labels=as.character(popSteps*7))),
-      annotate("text", x=stepDate, y=2^(0:9)*1.5, label=as.character(1:10), colour="grey", size=15),
+      annotate("text", x=stepDate, y=2^(0:10)*1.5, label=as.character(1:11), colour="grey", size=15),
       geom_line(aes(y=1), size=1.0, color="green"),
       geom_line(aes(y=2), size=1.0, color="orange"),
       geom_line(aes(y=4), size=.8, color="magenta"),
@@ -289,9 +289,11 @@ cwmConfPopStyle <- function(sldPastTime=3, cbLogScale=TRUE, inRegions="Österrei
       geom_line(aes(y=16), size=.8, color="darkred"),
       geom_line(aes(y=32), size=.8, color="black"),
       geom_line(aes(y=64), size=1.0, color="black"),
-      geom_line(aes(y=128), size=1.5, color="black"),
-      geom_line(aes(y=256), size=2.0, color="black"),
-      geom_line(aes(y=512), size=2.5, color="black")
+      geom_line(aes(y=128), size=1.25, color="black"),
+      geom_line(aes(y=256), size=1.5, color="black"),
+      geom_line(aes(y=512), size=1.75, color="black"),
+      geom_line(aes(y=1024), size=2.0, color="black"),
+      geom_line(aes(y=2048), size=2.25, color="black")
   )
 }
 
