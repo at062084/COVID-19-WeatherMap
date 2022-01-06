@@ -338,7 +338,7 @@ htmlWave42_2 <-"<p>
               In der zweiten Graphik werden die drei Wellen anhand der Anteile von schweren und schwersten Verläufen betrachtet.
               Verglichen wird die Gesamtanzahl der Infektionen, Hospitalisierungen, ICU Aufenthalte und Sterbefälle in den drei Wellen.
               <br>
-              Die Verstorbenen umfassen die Sterbefälle auf ICU (~30%), im Spital (~25%) und ausserhalb eines Spitals (~45%).
+              Die Verstorbenen umfassen die Sterbefälle auf ICU (22% 2.Welle, 40% 3.Welle), auf Normalstationen (56% 2.Welle, 55% 3.Welle) und ausserhalb eines Spitals (22% 2.Welle, 5% 3.Welle)
               Der Zeitbereich für die Erfassung der Sterbefälle ist um 14 Tage gegenüber dem Zeitbereich der Inzidenz verschoben.
               <br>Die Charakteristika der drei Wellen sind in den Bundenländern z.T. sehr unterschiedlich. 
               Einige Gemeinsamkeiten im Vergleich zur 2. Welle lassen sich erkennen: 

@@ -545,7 +545,7 @@ ui <- fluidPage(
         sliderInput("sldPastTime",
                     width="220px",
                     label="ZeitRaum (letzte n Monate)",
-                    min=1, max=24, step=1, value=16)),
+                    min=1, max=24, step=1, value=6)),
       
       fluidRow(
         checkboxInput("cbLogScale", label="StufenModell", value=TRUE, width="220px")),
@@ -555,7 +555,7 @@ ui <- fluidPage(
         sliderInput("sldModelDays",
                      width="220px",
                      label="Prognose: BerechnungsTage",
-                     min=7, max=63, step=7, value=28)),
+                     min=7, max=63, step=7, value=21)),
       fluidRow(        
         radioButtons("rbsModelOrder",
                      width="220px",
@@ -1080,11 +1080,11 @@ server <- function(input, output, session) {
     
     input$abUpdate
     inRegions <- isolate(input$cbgRegion)
-    dp <- df.past() %>% dplyr::filter(Region %in% inRegions) %>% dplyr::filter(dt7rm7NewConfPop<1.19, dt7rm7NewConfPop>.84)
+    dp <- df.past() %>% dplyr::filter(Region %in% inRegions) %>% dplyr::filter(dt7rm7NewConfPop<2, dt7rm7NewConfPop>.5) # 1.19, .84
     #dp <- df %>% dplyr::filter(dt7rm7NewConfPop<1.20, dt7rm7NewConfPop>.85)
     
     ggplot(dp, aes(x=Date, y=dt7rm7NewConfPop, color=Region, shape=Region))+
-      cwmSpreadStyle(sldPastTime=input$sldPastTime, inRegions=inRegions) +
+      cwmSpreadStyle(sldPastTime=input$sldPastTime, inRegions=inRegions, yLimits=c(0.84, NA)) +
       geom_line(size=.75) +
       geom_point(size=2) + 
       geom_point(data=dp %>% dplyr::filter(Date==max(Date)), size=4)+
