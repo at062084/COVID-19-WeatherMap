@@ -7,6 +7,7 @@ htmlFrontPageNews <- "<i><b>News:</b>
                       Details dazu den Reiter '<b>Bundesländer</b>'und '<b>Prognose</b></i>'
                     "
 htmlFrontPageTop <- "<b>News:</b><i>
+                      <br>Version 1.6.0: (12.01.2022) Vergleich Delta und Omicron Welle.  
                       <br>Version 1.5.0: (03.01.2022) Neue Version Vergleich 2.3.4 Welle und Wirksamkeit der Impfung.  
                       <br>Version 1.4.0: (31.08.2021) Drei Darstellungen zu Wirksamkeit der Impfungen, Sterblichkeit und benutzten Formeln
                       <br>Version 1.3.0: (24.05.2021) Korrektur Wetterkarte und Prognose der Bezirke (Prognose ident mit Bundesländern)
