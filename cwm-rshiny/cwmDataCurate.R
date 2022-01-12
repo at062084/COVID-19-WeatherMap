@@ -28,8 +28,8 @@ lagDaysVaccinated_2 <- 14
 # Definition of Infection waves
 caWaves <- data.frame(stringsAsFactors=FALSE,
   Wave=(c("Wave1","Wave2","Wave3","Wave4","Wave5")),
-  Beg=as.POSIXct(c("2020-03-01","2020-10-15","2021-02-15","2021-10-10","2021-12-28")),
-  End=as.POSIXct(c("2020-05-01","2020-12-15","2021-05-01","2021-12-20","2022-02-28")),
+  Beg=as.POSIXct(c("2020-03-01","2020-10-15","2021-02-15","2021-10-15","2021-12-26")),
+  End=as.POSIXct(c("2020-05-01","2020-12-15","2021-05-01","2021-12-26","2022-02-28")),
   Variant=(c("Original","Alpha","Beta","Delta","Omicron"))
 )
 
@@ -150,7 +150,7 @@ caDataCurate_crdv_rag <- function(bSave=TRUE) {
 # Confirmed, Recovered, Death, Vaccinated by Region, AgeGroup, Gender
 # time shiftd for best match of newDeath with newConfirmed
 # -------------------------------------------------------------------------------------------
-caDataCurate_crdv_rag_ts <- function(bSave=TRUE, rollMeanTimeShift=14) {
+caDataCurate_crdv_rag_ts <- function(bSave=TRUE) {
   
   logMsg("Executing caDataCurate_crdv_rag_ts")
 
@@ -162,7 +162,6 @@ caDataCurate_crdv_rag_ts <- function(bSave=TRUE, rollMeanTimeShift=14) {
   dcrdv.ts <- dcrdv %>%
     dplyr::arrange(Region, AgeGroup, Gender, Date) %>%
     dplyr::group_by(Region, AgeGroup, Gender) %>%
-    dplyr::mutate(dplyr::across(starts_with("new"), ~ rollmean(.x, k=rollMeanTimeShift, align="center", fill=0))) %>%
     dplyr::mutate(newRecovered=dplyr::lead(newRecovered,leadDaysRecovered), 
                   newDeath=dplyr::lead(newDeath,leadDaysDeath)) %>%
     dplyr::ungroup()
@@ -183,8 +182,8 @@ caDataCurate_tcrdzhi_r <- function(bSave=TRUE, rollMeanDays=7) {
   
   logMsg("Executing caDataCurate_tcrdzhi_r")
 
-  # interactive download from original websites
-  #dcrdz <- caAgesData_crd_r(rollMeanDays=7)
+  #dcrdz <- caAgesData_crd_r(rollMeanDays=7). 
+  # Also contains z = Inzidence as reported by Ages
   rdaFile <- "./data/prepared/Ages/crd_r.rda"
   logMsg(paste("Reading", rdaFile))
   dcrdz <- readRDS(file=rdaFile)  
@@ -196,16 +195,21 @@ caDataCurate_tcrdzhi_r <- function(bSave=TRUE, rollMeanDays=7) {
   dthi <- readRDS(file=rdaFile)  
   # str(dthi)
   
-  
   dtcrdzhi <- dcrdz %>%
     dplyr::left_join(dthi, by=c("Date","Region")) %>%
-    dplyr::arrange(Region, Date) %>%
-    dplyr::group_by(Region) %>%
-    #dplyr::mutate(dplyr::across(starts_with("sum"), ~ rollmean(.x, k=rollMeanDays, align="center", fill=NA))) %>%
-    dplyr::mutate(newTested=sumTested-dplyr::lag(sumTested)) %>%
-    dplyr::ungroup() %>%
     dplyr::select(Date, Region, Population, starts_with("new"), starts_with("cur") , starts_with("sum"))
   # str(dtcrdzhi)
+  
+  # Add caWaves
+  dtcrdzhi$Wave=NA
+  dtcrdzhi$Variant=NA
+  for (w in 1:dim(caWaves)[1]) {
+    idx <- dtcrdzhi$Date >= caWaves$Beg[w] & dtcrdzhi$Date < caWaves$End[w]
+    dtcrdzhi$Wave[idx] <- caWaves$Wave[w]
+    dtcrdzhi$Variant[idx] <- caWaves$Variant[w]
+  }
+  dtcrdzhi$Wave <- factor(dtcrdzhi$Wave)
+  dtcrdzhi$Variant <- factor(dtcrdzhi$Variant)
   
   if (bSave) {
     rdaFile <- "./data/curated/tcrdzhi_r.rda"

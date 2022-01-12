@@ -289,12 +289,11 @@ caDataPrepareAges_crd_rag <- function(rollMeanDays=7, bSave=TRUE) {
     # smooth for weekly means
     dplyr::arrange(Region, AgeGroup, Gender, Date) %>%
     dplyr::group_by(Region, AgeGroup, Gender) %>%
-    dplyr::mutate(dplyr::across(starts_with("sum"), ~ rollmean(.x, k=rollMeanDays, align="right", fill=0))) %>%
-    # calc new* from sum*
-    #dplyr::mutate(dplyr::across(starts_with("new"), ~ .x - dplyr::lag(.x))) %>%
     dplyr::mutate(newConfirmed=sumConfirmed-dplyr::lag(sumConfirmed), 
                   newRecovered=sumRecovered-dplyr::lag(sumRecovered), 
                   newDeath=sumDeath-dplyr::lag(sumDeath)) %>%
+    dplyr::mutate(dplyr::across(starts_with("new"), ~ rollmean(.x, k=rollMeanDays, align="right", fill=NA))) %>%
+    dplyr::mutate(dplyr::across(starts_with("sum"), ~ rollmean(.x, k=rollMeanDays, align="right", fill=NA))) %>%
     dplyr::ungroup() %>%
     
     # Beautify data frame
@@ -343,18 +342,19 @@ caDataPrepareAges_crd_r <- function(rollMeanDays=7, bSave=TRUE) {
     dplyr::arrange(Region, Date) %>%
     dplyr::group_by(Region) %>%
     # align right to fit with AGES way of calculating Inzidenz
-    dplyr::mutate(dplyr::across(starts_with("sum"), ~ rollmean(.x, k=rollMeanDays, align="right", fill=0))) %>%
     dplyr::mutate(newConfirmed=sumConfirmed-dplyr::lag(sumConfirmed)) %>%
     dplyr::mutate(newRecovered=sumRecovered-dplyr::lag(sumRecovered)) %>%
     dplyr::mutate(newDeath=sumDeath-dplyr::lag(sumDeath)) %>%
+    dplyr::mutate(dplyr::across(starts_with("new"), ~ rollmean(.x, k=rollMeanDays, align="right", fill=NA))) %>%
+    dplyr::mutate(dplyr::across(starts_with("sum"), ~ rollmean(.x, k=rollMeanDays, align="right", fill=NA))) %>%
     dplyr::ungroup() %>%
-    dplyr::select(Date, Region, Population, starts_with("new"), starts_with("cur"), starts_with("sum"))
+    dplyr::select(Date, Region, Population, starts_with("new"), starts_with("sum"))
   #str(crd_r)
   
   if (bSave) {
     rdaFile <- paste0("./data/prepared/Ages/crd_r.rda")   
     logMsg(paste("Writing", rdaFile))
-    saveRDS(df, file=rdaFile)  
+    saveRDS(crd_r, file=rdaFile)  
   }
   
   return(crd_r)
@@ -381,16 +381,17 @@ caDataPrepareAges_thi_r <- function(rollMeanDays=7, bSave=TRUE) {
   thi_r <- df %>%
     dplyr::arrange(Region, Date) %>%
     dplyr::group_by(Region) %>%
-    dplyr::mutate(dplyr::across(starts_with("sum"), ~ rollmean(.x, k=rollMeanDays, align="right", fill=NA))) %>%
-    dplyr::mutate(dplyr::across(starts_with("cur"), ~ rollmean(.x, k=rollMeanDays, align="right", fill=NA))) %>%
     dplyr::mutate(newTested=sumTested-dplyr::lag(sumTested)) %>%
+    dplyr::mutate(dplyr::across(starts_with("new"), ~ rollmean(.x, k=rollMeanDays, align="right", fill=NA))) %>%
+    dplyr::mutate(dplyr::across(starts_with("cur"), ~ rollmean(.x, k=rollMeanDays, align="right", fill=NA))) %>%
+    dplyr::mutate(dplyr::across(starts_with("sum"), ~ rollmean(.x, k=rollMeanDays, align="right", fill=NA))) %>%
     dplyr::ungroup() %>%
     dplyr::select(Date, Region, starts_with("new"), starts_with("cur"), starts_with("sum"))
 
   if (bSave) {
     rdaFile <- "./data/prepared/Ages/thi_r.rda"  
     logMsg(paste("Writing", rdaFile))
-    saveRDS(df, file=rdaFile)  
+    saveRDS(thi_r, file=rdaFile)  
   }
   
   return(thi_r)

@@ -1,4 +1,5 @@
 
+htmlUnderConstruction <- "<h3>In Arbeit</h3>"
 
 htmlFrontPageNews <- "<i><b>News:</b>
                       Mit Version 1.0.0 vom 16.3.2021 berücksichtigt die Prognose der COVID Inzidenz die <b>Effekte 
@@ -301,6 +302,24 @@ htmlExponential_3 <- "
                     </p>"
                   
 hlpBmsgpk <- "<p><b>GesundheitsMinisterium</b></p>"
+
+htmlWave45 <-"<p><b>Die Omicron Welle im Vergleich mit der Delta Welle</b>
+              </p><p>
+              Die kritische Frage bei der Omicron Variante ist die <b>Anzahl an Spitalseinweisungen</b>, Aufenthalten auf den <b>Intensivstationen</b> und die Anzahl der <b>Sterbefälle</b> im Vergleich zur Delta Variante.
+              Aussagen dazu lassen sich erst 3-4 Wochen nach Beginn der Omicron Welle machen.  
+              </p><p>
+              Für diese Gegenüberstellung wird angenommen, dass die Omicron Welle kurz nach dem Tiefstand der Inzidenz um Weichnachten 2021 am 27.12. begonnen hat.
+              In der Nebenstehenden Graphik sind die <b>Maxima der 4.Welle aneinander ausgerichtet</b>, sodass der <b>Verzögerte Verlauf der Spitalsaufenthalte und Sterbefälle</b> besser sichtbar wird.
+              Der Tiefststand der Spitals und ICU Aufenthalte sowie Todesfälle dürfte spätestens Mitte Jänner erreicht sein.
+              Ab <b>Mitte Jänner</b> sollte der <b>Anstieg der Spitalsbelegungen und Sterbefälle</b> in den Zahlen der AGES zu sehen sein.
+              </p><p>
+              Die Inzidenz wird zu diesem Zeitpunkt (stark vom Bundesland abhängig) etwa so hoch wie das <b>Maximum der Delta Welle</b> sein. 
+              Bei gleichbleibendem Trend bedeutet das einen Anstieg der Inzidenz um einen <b>weiteren Faktor 10 bis Ende Jänner</b> oder Anfang Feber.
+              Das entspricht etwa 1% der Bevölkerung oder <b>100.000 Infektionen pro Tag</b> und könnte <b>Mitte Feber in Summe 1 Mio Einwohner</b> erfasst haben.
+              </p><p>
+              Ausgehend von einer Sterblichkeitsrate wie bei der Deltawelle von grob 0.5 Prozent würde das 5000 Sterbefälle bedeuten. 
+              Bei einer <b>Sterblichkeit von Omicron von 1 Promille</b> würde sich der Wert auf <b>1000 Sterbefälle</b> reduzieren 
+              </p>"
 
 htmlWave42Intro <- "<p>Ein <b>direkter Vergleich</b> der 2. und 4. Welle in 10-12/2020 bzw. 10-12/2021, sowie der 3. Welle in 02-04/2021, 
               ist wegen der unterschiedlichen Rahmenbedingungen (Anzahl/Art Tests, Virus Variante, Spitalsbehandlung, Impfung, Datenerfassung, etc.)<b> mit grossen Schwierigkeiten verbunden</b>.
