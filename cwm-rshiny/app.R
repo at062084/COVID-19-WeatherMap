@@ -15,7 +15,7 @@ logMsg <- function(msg, sessionID="_global_") {
 
 hostSystem <- system("hostname", intern=TRUE)
 slackMsg <- function (title, msg, hostName = hostSystem) {
-  url <- as.character(read.csv("../secrets/slack.txt",header=FALSE)[1,1])
+  url <- as.character(read.csv("./secrets/slack.txt",header=FALSE)[1,1])
   body <- list(text = paste(paste0(now()," *",title,"*: "), paste0(hostName,": ",msg)))
   r <- POST(url, content_type_json(), body = body, encode = "json")
   invisible(r)
@@ -496,7 +496,7 @@ ui <- fluidPage(
     
     # Sidebar panel for inputs ----
     sidebarPanel(
-      p("CWM-V1.5.5-20220107"),
+      p("CWM-V1.6.0-20220112"),
       
       fluidRow(
         column(6,
@@ -1021,7 +1021,7 @@ server <- function(input, output, session) {
     if (bDebug) logMsg(paste("sldPastTime=",input$sldPastTime, "cbLogScale=",input$cbLogScale, "inRegions=",inRegions))
     
     ggplot(dp, aes(x=Date, y=rm7NewConfPop, color=Region, shape=Region))+
-      cwmConfPopStyle(sldPastTime=as.integer(input$sldPastTime), cbLogScale=input$cbLogScale, inRegions=inRegions, yLimits=c(1,NA)) +
+      cwmConfPopStyle(sldPastTime=as.integer(input$sldPastTime), cbLogScale=input$cbLogScale, inRegions=inRegions, yLimits=c(1,1024x)) +
       geom_point(size=2)+geom_line()+
       geom_point(data=dp %>% dplyr::filter(Date==max(Date)), size=4)+
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Positiv Getestete pro 100.000 Einw. seit ", min(dp$Date), ".  Basisdaten: AGES"))
