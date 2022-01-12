@@ -496,7 +496,7 @@ ui <- fluidPage(
     
     # Sidebar panel for inputs ----
     sidebarPanel(
-      p("CWM-V1.6.1-20220112"),
+      p("CWM-V1.6.2-20220112"),
       
       fluidRow(
         column(6,
@@ -1021,7 +1021,7 @@ server <- function(input, output, session) {
     if (bDebug) logMsg(paste("sldPastTime=",input$sldPastTime, "cbLogScale=",input$cbLogScale, "inRegions=",inRegions))
     
     ggplot(dp, aes(x=Date, y=rm7NewConfPop, color=Region, shape=Region))+
-      cwmConfPopStyle(sldPastTime=as.integer(input$sldPastTime), cbLogScale=input$cbLogScale, inRegions=inRegions, yLimits=c(1,1024x)) +
+      cwmConfPopStyle(sldPastTime=as.integer(input$sldPastTime), cbLogScale=input$cbLogScale, inRegions=inRegions, yLimits=c(1,1024)) +
       geom_point(size=2)+geom_line()+
       geom_point(data=dp %>% dplyr::filter(Date==max(Date)), size=4)+
       ggtitle(paste0("COVID-19 Österreich, Wien und Bundesländer: Positiv Getestete pro 100.000 Einw. seit ", min(dp$Date), ".  Basisdaten: AGES"))
