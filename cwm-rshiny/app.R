@@ -15,7 +15,7 @@ logMsg <- function(msg, sessionID="_global_") {
 
 hostSystem <- system("hostname", intern=TRUE)
 slackMsg <- function (title, msg, hostName = hostSystem) {
-  url <- as.character(read.csv("./secrets/slack.txt",header=FALSE)[1,1])
+  url <- as.character(read.csv("../secrets/slack.txt",header=FALSE)[1,1])
   body <- list(text = paste(paste0(now()," *",title,"*: "), paste0(hostName,": ",msg)))
   r <- POST(url, content_type_json(), body = body, encode = "json")
   invisible(r)
@@ -385,7 +385,7 @@ dtcrdzhi.ts <- eventReactive(dtcrdzhi(), {
     dplyr::arrange(Region, Date) %>%
     dplyr::group_by(Region) %>%
     # align right, left pad with 0 so cumsum works
-    dplyr::mutate(across(starts_with("new"), ~ rollmean(.x, k=rollwin*2, align="right", fill=0))) %>%
+    dplyr::mutate(across(starts_with("new"), ~ rollmean(.x, k=rollwin*2, align="right", fill=NA))) %>%
     # timeshift features to align with 'confirmed'
     dplyr::mutate(newHospital=dplyr::lead(newHospital,leadDaysHospital), 
                   newICU=dplyr::lead(newICU,leadDaysICU),
@@ -531,7 +531,7 @@ ui <- fluidPage(
         sliderInput("sldModelDays",
                      width="220px",
                      label="Prognose: BerechnungsTage",
-                     min=7, max=63, step=7, value=21)),
+                     min=7, max=63, step=7, value=nModelDaysPrediction)),
       fluidRow(        
         radioButtons("rbsModelOrder",
                      width="220px",
@@ -886,7 +886,7 @@ server <- function(input, output, session) {
       addMarkers(lng=~cxNUTS, lat=~cyNUTS, icon=~iconsDirection[idxDblConfPop], group="Trend",
                  label=labWeatherMap, labelOptions = labelOptions(style=list("font-weight"="normal", padding="3px 8px"),textsize="15px")) %>%
       addMarkers(lng=~cxNUTS+.35, lat=~cyNUTS, icon=~iconsWeather[idxForConfPop], group="ForeCast") %>%
-      addLegend(pal=colConfPop, values=~rm7NewConfPop.0, position="bottomright", opacity=1, title="Incidence") %>%
+      addLegend(pal=colConfPop, values=~rm7NewConfPop.0, position="bottomright", opacity=1, title="TagesInzidenz") %>%
       addLabelOnlyMarkers(lng=11, lat=48.5, label=paste("Daten mit Stand von",format(pMapNUTS$Date[1],"%a., %d. %b %Y")), 
                           labelOptions = labelOptions(noHide=T, direction='top', textsize='10pt', style=list('color'='white', 'background'='#444444'))) %>%
       setView(lng=pMapNUTS$cxNUTS[1]-3, lat=pMapNUTS$cyNUTS[1], zoom=7)
@@ -959,7 +959,7 @@ server <- function(input, output, session) {
                         options=layersControlOptions(collapsed=FALSE)) %>%
       addLabelOnlyMarkers(lng=11, lat=48.5, label=paste("Daten mit Stand von",format(pMapCounties$Date[1],"%a., %d. %b %Y")), 
                           labelOptions = labelOptions(noHide=T, direction='top', textsize='10pt', style=list('color'='white', 'background'='#444444'))) %>%
-      addLegend(pal=colConfPop, values=~rm7NewConfPop.0, position="bottomright", opacity=1, title="Incidence") %>%
+      addLegend(pal=colConfPop, values=~rm7NewConfPop.0, position="bottomright", opacity=1, title="TagesInzidenz") %>%
       setView(lng=mapNUTSAT$cxNUTS[1]-3, lat=mapNUTSAT$cyNUTS[1], zoom=7)
   })
  
@@ -1223,8 +1223,11 @@ server <- function(input, output, session) {
     
 
     shiftCurHospital <- 9
-    shiftCurICU <- 14
+    shiftCurICU <- 15
     shiftNewDeath <- 10
+    #shiftCurHospitalW <- 13
+    #shiftCurICU <- 15
+    #shiftNewDeath <- 10
     
     dp <- dtcrdzhi() %>% 
 #    dp <- dtcrdzhi %>% 
@@ -1302,18 +1305,21 @@ server <- function(input, output, session) {
     # Prepare type of plot
     if (whichPlot == "Cases100k") {
       yintercept = NULL
+      yLabel="Anzahl"
       selCols=c("newTestPop", "newConfPop", "newHospPop", "newICUPop", "newDeathPop")
       plotTitle="COVID-19 Österreich: Vergleich 2. Welle 2020 und 4. Welle 2021: Anzahl pro 100k (Tested, Positive, Hosp, ICU, Verst)"
     }
-    if (whichPlot == "RelConfirmed") {
-      yintercept = NULL
-      selCols=c("relTestPop", "relConfTest", "relHospConf", "relICUConf", "relDeathConf")
-      plotTitle="COVID-19 Österreich: Vergleich 2. Welle 2020 und 4. Welle 2021: Relative Anteile (Tested, Positive, Hosp, ICU, Verst)"
-    }
     if (whichPlot == "RelMaximum") {
       yintercept = 100
+      yLabel="Anzahl"
       selCols=c("newTestPop", "newConfPop", "newHospPop", "newICUPop", "newDeathPop")
       plotTitle="COVID-19 Österreich: Vergleich 2. Welle 2020 und 4. Welle 2021: Prozent vom Maximum der 2. Welle (Tested, Positive, Hosp, ICU, Verst)"
+    }
+    if (whichPlot == "RelConfirmed") {
+      yintercept = NULL
+      yLabel="Prozent"
+      selCols=c("relTestPop", "relConfTest", "relHospConf", "relICUConf", "relDeathConf")
+      plotTitle="COVID-19 Österreich: Vergleich 2. Welle 2020 und 4. Welle 2021: Prozentuelle Anteile der Kenngrössen"
     }
     
     # Prepare data (common all plots)
@@ -1341,6 +1347,7 @@ server <- function(input, output, session) {
         dplyr::filter(Anzahl>0, 
                       !(Parameter=="relTestPop" & Anzahl<0), 
                       !(Parameter=="relConfTest" & Anzahl<0.001), 
+                      !(Parameter=="relConfTest" & Anzahl>100), 
                       !(Parameter=="relHospConf" & Anzahl<0.01), 
                       !(Parameter=="relHospConf" & Anzahl>0.25), 
                       !(Parameter=="relICUConf" & Anzahl<0.001), 
@@ -1369,7 +1376,7 @@ server <- function(input, output, session) {
     ggplot(data=dq, aes(x=Date, y=Anzahl, color=Wave)) +
       scale_x_datetime(name="2. Welle 8/2020", limits=c(as.POSIXct("2020-08-01"),as.POSIXct("2021-02-01")),  date_breaks="months", date_labels="%b",
                        sec.axis=dup_axis(name="4. Welle 7/2021", trans = (~ . +hms::hms(days=daysDiff42)))) +
-      scale_y_continuous(name="Anzahl", sec.axis=dup_axis(), trans=trans, breaks=breaks) +
+      scale_y_continuous(name=yLabel, sec.axis=dup_axis(), trans=trans, breaks=breaks) +
       geom_line(size=1) +
       geom_hline(yintercept=yintercept, color="darkgray") +
       theme(strip.text=element_text(size=13), axis.text=element_text(size=12), axis.title=element_text(size=13), plot.title=element_text(size=18)) +
@@ -1447,7 +1454,7 @@ server <- function(input, output, session) {
     
     dp <- dtcrdzhi.cs() %>%
       dplyr::filter(Region %in% inRegions) %>%
-      dplyr::filter(!is.na(Wave) & Wave!="Wave1" & Wave!="Wave5") %>%
+      dplyr::filter(!is.na(Wave) & Wave!="Wave1") %>%
       tidyr::pivot_longer(cols=starts_with("lm"), names_to="Parameter", values_to="Percentage") %>%
       dplyr::mutate(Parameter=factor(Parameter, levels=levels, labels=labels),
                     Wave=factor(Wave, levels=paste0("Wave",seq(5,2,by=-1)), labels=paste0("Wave",seq(5,2,by=-1))),

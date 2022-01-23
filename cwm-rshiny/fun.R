@@ -29,7 +29,7 @@ dblXDays <- c(1:7,10,14,21,28,56,Inf,-56,-28,-21,-14,-10,-7,-6,-5,-4,-3,-2,-1)
 
 # WeatherMaps
 nModelPolyGrade = 2
-nModelDaysPrediction = 28
+nModelDaysPrediction = 21
 nModelDaysPredictionCounties = 14
 nModelDaysPredictionPast = 70
 
@@ -45,15 +45,19 @@ nForeCastDaysQuater = 91
 nForeCastDaysCountyWeek =  7
 nForeCastDaysCountyMonth = 28
 nForeCastDaysCountyQuater = 91
-binConfPop <- c(-Inf,1,1.4,2,2.8,4,5.6,8,11,16,22,32,45,64,90,128,Inf)
-palConfPop <- c(brewer.pal(9,"Greens")[c(7,6,5,4)], brewer.pal(9,"YlOrRd"), "#404040", brewer.pal(9,"Greys")[c(8,9)])
-colConfPop <- colorBin(palette=palConfPop, domain=0:1024, bins=binConfPop)
+binConfPop <- c(-Inf,1,1.4,2,2.8,4,5.6,8,11,16,22,32,45,64,90,128,192,256,384,512,768,1024,1540,2048,Inf)
+#palConfPop <- c(brewer.pal(9,"Greens")[c(7,6,5,4,3)], "#FFFFFF", brewer.pal(9,"YlOrRd"), "#404040", brewer.pal(9,"Greys")[c(6,7,8,9)])
+palConfPop <- c("#000000", "#000000", "#000000",  "#2A0D16",  "#42161C",  "#581C22",  "#69222A",  "#7C2632",  
+                "#8C2E38", "#9F323D", "#AF3847",  "#C43D4B",  "#DB4551",  "#ED4F55",  "#F65858",  "#FC7A5F",  
+                "#FFA85A", "#FAE553", "#F4F649",  "#DBEA40",  "#BADD38",  "#9CD22E",  "#7AC71C",  "#58BD00")[seq(24,1,by=-1)]
+colConfPop <- colorBin(palette=palConfPop, domain=0:2048, bins=binConfPop)
 dblDays <- c(1,14,28,56,-56,-28,-14,-1)
 binDblDays <- sort(round(exp(log(2)/dblDays),3))
 binForeCast <- c(0,4,8,16,32,Inf)
 
 nSettleDays <- 7 # Number of days to wait until status 'all tests returned' reached (may or not actually be the case) 
 nCalcWeeks <- 4 # Number of past weeks to use for estimation of fraction of under-reporting before nSettleDays reached
+
 
 # ----------------------------------------------------------------------------------
 # Geo data (from OpenData*)

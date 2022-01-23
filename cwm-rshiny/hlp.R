@@ -304,7 +304,7 @@ htmlExponential_3 <- "
                   
 hlpBmsgpk <- "<p><b>GesundheitsMinisterium</b></p>"
 
-htmlWave45 <-"<p><b>Die Omicron Welle im Vergleich mit der Delta Welle</b>
+htmlWave45 <-"<p><b>Vergleich Omicron gegen Delta Welle</b>
               </p><p>
               Die kritische Frage bei der Omicron Variante ist die <b>Anzahl an Spitalseinweisungen</b>, Aufenthalten auf den <b>Intensivstationen</b> und die Anzahl der <b>Sterbefälle</b> im Vergleich zur Delta Variante.
               Aussagen dazu lassen sich erst 3-4 Wochen nach Beginn der Omicron Welle machen.  
@@ -318,15 +318,24 @@ htmlWave45 <-"<p><b>Die Omicron Welle im Vergleich mit der Delta Welle</b>
               Bei gleichbleibendem Trend bedeutet das einen Anstieg der Inzidenz um einen <b>weiteren Faktor 10 bis Ende Jänner</b> oder Anfang Feber.
               Das entspricht etwa 1% der Bevölkerung oder <b>100.000 Infektionen pro Tag</b> und könnte <b>Mitte Feber in Summe 1 Mio Einwohner</b> erfasst haben.
               </p><p>
-              Ausgehend von einer Sterblichkeitsrate wie bei der Deltawelle von grob 0.5 Prozent würde das 5000 Sterbefälle bedeuten. 
+              Ausgehend von einer Sterblichkeitsrate wie bei der <b>Deltawelle</b> von grob <b>0.5 Prozent</b> würde das <b>5000 Sterbefälle</b> bedeuten. 
               Bei einer <b>Sterblichkeit von Omicron von 1 Promille</b> würde sich der Wert auf <b>1000 Sterbefälle</b> reduzieren 
+              </p><p>
+              <b>Referenz: Die 4.Welle in Österreich</b>
+              <li>Die maximale TagesInzidenz der 4.Welle ist 150 (tägliche Infektionen pro 100k Einwohner)</li>
+              <li>Der Bedarf an Spitalsbetten  pro 100k Einwohner ist maximal 30 auf Normalstationen und 7.5 auf Intensivstationen</li>
+              <li>Die Zahl der täglichen Todesfälle liegt in der 4. Welle bei maximal 0.65 pro 100k Einwohner. 
+              Das entspricht knapp 0.5% derjenigen, die sich am Tag der maximalen Inzidenz angesteckt haben</li>
               </p>"
 
 htmlWave42Intro <- "<p>Ein <b>direkter Vergleich</b> der 2. und 4. Welle in 10-12/2020 bzw. 10-12/2021, sowie der 3. Welle in 02-04/2021, 
               ist wegen der unterschiedlichen Rahmenbedingungen (Anzahl/Art Tests, Virus Variante, Spitalsbehandlung, Impfung, Datenerfassung, etc.)<b> mit grossen Schwierigkeiten verbunden</b>.
               Insbesondere ist eine stabile Referenzgrösse z.B. in Form von regelmässigen Prevalenzstudien nicht verfügbar.
               Die folgende Zusammenstellung ist daher eher ein Versuch die vorhandenen <b>Daten aus verschiedenen Blickwinkeln</b> zu betrachten und sowohl
-              <b>mögliche Interpretationen</b> als auch Schwierigkeiten damit aufzuzeigen. 
+              <b>mögliche Interpretationen</b> als auch Schwierigkeiten damit aufzuzeigen.
+              </p><p><b>Anmerkung zur 5.Welle:</b>  Der Beginn ist mit 27.12.2021 festgelegt.
+              In den ersten Wochen danach sind die Daten zu Spitalsaufenthalten und Sterbefällen eine Mischung aus der 4. und 5. Welle und somit nur bedingt aussagekräftig. 
+              Das gilt insbesondere für die 1. und 2. Graphik.
               </p>"
 htmlWave42_1 <-"<p>
               <b>Sterblichkeit anhand der <i>Gesamtanzahl</i> der Infizierten und Verstorbenen je Welle</b>
