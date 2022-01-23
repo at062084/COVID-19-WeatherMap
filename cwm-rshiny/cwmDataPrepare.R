@@ -184,8 +184,8 @@ caDataPrepareBmsgpk_v_rag <- function(rollMeanDays=7, bSave=TRUE, AgeGroups10) {
                                    labels=c(rep("Jugendliche",3), rep("Erwachsene",4), rep("Senioren",3)), ordered=TRUE)) %>%
     dplyr::arrange(Region, RegionID, AgeGroup, Gender, Date) %>%
     dplyr::group_by(Region, RegionID, AgeGroup, Gender) %>%
-    dplyr::mutate(sumVaccinated_1=rollmean(sumVaccinated_1, k=rollMeanDays, align="center", fill=0)) %>%
-    dplyr::mutate(sumVaccinated_2=rollmean(sumVaccinated_2, k=rollMeanDays, align="center", fill=0)) %>%
+    dplyr::mutate(sumVaccinated_1=rollmean(sumVaccinated_1, k=rollMeanDays, align="right", fill=NA)) %>%
+    dplyr::mutate(sumVaccinated_2=rollmean(sumVaccinated_2, k=rollMeanDays, align="right", fill=NA)) %>%
     dplyr::mutate(newVaccinated_1=sumVaccinated_1-dplyr::lag(sumVaccinated_1)) %>%
     dplyr::mutate(newVaccinated_2=sumVaccinated_2-dplyr::lag(sumVaccinated_2)) %>%
     dplyr::ungroup() %>%
@@ -230,7 +230,7 @@ caDataPrepareBmsgpk_crdhit_r <- function(rollMeanDays=7, bSave=TRUE) {
   crdhit <- df %>% 
     dplyr::arrange(Region, Date) %>%
     dplyr::group_by(Region) %>%
-    dplyr::mutate(dplyr::across(starts_with("sum"), ~ rollmean(.x, k=rollMeanDays, align="center", fill=NA))) %>%
+    dplyr::mutate(dplyr::across(starts_with("sum"), ~ rollmean(.x, k=rollMeanDays, align="right", fill=NA))) %>%
     #dplyr::mutate(dplyr::across(starts_with("new"), ~ .x - dplyr::lag(.x))) %>%
     dplyr::mutate(newTested=sumTested-dplyr::lag(sumTested),
                   newConfirmed=sumConfirmed-dplyr::lag(sumConfirmed), 
@@ -368,6 +368,7 @@ caDataPrepareAges_thi_r <- function(rollMeanDays=7, bSave=TRUE) {
   logMsg("Executing caDataPrepareAges_thi_r")
   
   # "Alter in 5-Jahresgruppen","Values","Time section","Gender <2>","Number","Annotations"
+  # CovidFallzahlen.csv data available from 2020-04-01 as compared to Hospitalisierung.csv starting 2021-01-24 with nonCovidICU/Hosp data
   fName <- "./data/download/Ages/CovidFallzahlen.csv"
   col.names=c("Date","sumTested","NULL", "curHospital", "curICU", "NULL", "NULL", "RegionID", "Region")
   colClasses=c("character","numeric","NULL","numeric", "numeric","NULL","NULL","character","character")
@@ -381,11 +382,11 @@ caDataPrepareAges_thi_r <- function(rollMeanDays=7, bSave=TRUE) {
   thi_r <- df %>%
     dplyr::arrange(Region, Date) %>%
     dplyr::group_by(Region) %>%
-    dplyr::mutate(newTested=sumTested-dplyr::lag(sumTested)) %>%
-    dplyr::mutate(dplyr::across(starts_with("new"), ~ rollmean(.x, k=rollMeanDays, align="right", fill=NA))) %>%
+    # don't average cur features (no consistent 7 day specifics)
     dplyr::mutate(dplyr::across(starts_with("cur"), ~ rollmean(.x, k=rollMeanDays, align="right", fill=NA))) %>%
     dplyr::mutate(dplyr::across(starts_with("sum"), ~ rollmean(.x, k=rollMeanDays, align="right", fill=NA))) %>%
     dplyr::ungroup() %>%
+    dplyr::mutate(newTested=sumTested-dplyr::lag(sumTested)) %>%
     dplyr::select(Date, Region, starts_with("new"), starts_with("cur"), starts_with("sum"))
 
   if (bSave) {
@@ -412,9 +413,10 @@ caDataPrepareAges_hi_r <- function(rollMeanDays=7, bSave=TRUE) {
     dplyr::select(c(Date,-1,-2,3,4,6)) %>%
     dplyr::rename(Region=Bundesland, curHospital=NormalBettenBelCovid19, curICU=IntensivBettenBelCovid19) %>%
     dplyr::arrange(Region, Date) %>%
-    dplyr::group_by(Region) %>%
-    dplyr::mutate(dplyr::across(starts_with("cur"), ~ rollmean(.x, k=rollMeanDays, align="right", fill=NA))) %>%
-    dplyr::ungroup()
+    #dplyr::group_by(Region) %>%
+    #dplyr::mutate(dplyr::across(starts_with("cur"), ~ rollmean(.x, k=rollMeanDays, align="right", fill=NA))) %>%
+    #dplyr::ungroup() %>%
+    dplyr::select(Date, Region, starts_with("cur"))
   # str(df)
   
   if (bSave) {
@@ -605,7 +607,7 @@ caBmsgpkData_crdhit_r0 <- function(rollMeanDays=7, bSave=TRUE) {
   crdhit_r0 <-df  %>%
     dplyr::arrange(Region, Date) %>%
     dplyr::group_by(Region) %>%
-    dplyr::mutate(dplyr::across(starts_with("sum"), ~ rollmean(.x, k=rollMeanDays, align="center", fill=NA))) %>%
+    dplyr::mutate(dplyr::across(starts_with("sum"), ~ rollmean(.x, k=rollMeanDays, align="right", fill=NA))) %>%
     dplyr::mutate(newTested=sumTested-dplyr::lag(sumTested),
                   newConfirmed=sumConfirmed-dplyr::lag(sumConfirmed), 
                   newRecovered=sumRecovered-dplyr::lag(sumRecovered), 
